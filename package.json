@@ -1,0 +1,33 @@
+{
+  "name": "ivision-r-api",
+  "version": "1.0.0",
+  "author": "Fabrice Payet",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "dev": "nodemon main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/vision-r/ivisionr-api.git"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/vision-r/ivisionr-api/issues"
+  },
+  "homepage": "https://gitlab.com/vision-r/ivisionr-api#readme",
+  "dependencies": {
+    "@sentry/node": "^5.19.2",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.9.24"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.10.4",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-register": "^6.26.0"
+  }
+}
