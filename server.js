@@ -3,6 +3,8 @@ import * as Sentry from "@sentry/node";
 import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
+import configureAuthStrategy from "./lib/configure-auth-strategy";
+import passport from "passport";
 
 import createRoutes from "./routes";
 
@@ -23,7 +25,10 @@ app.options(
 );
 
 app.use(cors());
+app.use(passport.initialize());
+app.use(passport.session());
 
+configureAuthStrategy(passport);
 createRoutes(app);
 
 const PORT = process.env.PORT || 3001;
@@ -36,11 +41,11 @@ mongoose.connect(process.env.MONGO_URI, {
 });
 
 mongoose.connection.on("connected", () => {
-  console.log("Connection with mongo ok");
+  console.info("Connection with mongo ok");
 });
 
 app.listen(PORT, () => {
-  console.log(`Server in running on port ${PORT}`);
+  console.info(`Server in running on port ${PORT}`);
 });
 
 module.exports = app;

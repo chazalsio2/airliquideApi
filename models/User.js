@@ -8,6 +8,19 @@ var schema = new mongoose.Schema(
     password: {
       type: String,
     },
+    roles: {
+      type: Array,
+    },
+    "roles.$": {
+      type: String,
+      enum: [
+        "admin",
+        "commercial",
+        "sales_mandate",
+        "management_mandate",
+        "purchase_mandate",
+      ],
+    },
   },
   {
     timestamps: true,
