@@ -20,9 +20,10 @@ export default (app) => {
   // Administrators
   app.get(
     "/users",
-    // passport.authenticate("jwt", { session: false }),
+    passport.authenticate("jwt", { session: false }),
     checkAdmin,
-    getUsers
+    getUsers,
+    errorHandle
   );
 
   // Sales mandate
