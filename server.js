@@ -5,6 +5,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import configureAuthStrategy from "./lib/configure-auth-strategy";
 import passport from "passport";
+import bodyParser from "body-parser";
 
 import createRoutes from "./routes";
 
@@ -25,6 +26,7 @@ app.options(
 );
 
 app.use(cors());
+app.use(bodyParser.json());
 app.use(passport.initialize());
 app.use(passport.session());
 

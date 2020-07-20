@@ -2,8 +2,7 @@ import passport from "passport";
 
 import { login } from "./controllers/auth";
 import { createAdmin } from "./controllers/users";
-import checkSuperAdmin from "./middlewares/checkSuperAdmin";
-// import { test1, test2 } from "./middlewares";
+import { checkSuperAdmin, errorHandle } from "./middlewares";
 
 export default (app) => {
   // Public route
@@ -11,11 +10,11 @@ export default (app) => {
     return res.json({ success: true, status: "ok" });
   });
 
-  app.post("/login", passport.authenticate("jwt", { session: false }), login);
+  app.post("/login", login, errorHandle);
 
   // SuperAdmin
 
-  app.post("/users/admin", checkSuperAdmin, createAdmin);
+  app.post("/users/admin", checkSuperAdmin, createAdmin, errorHandle);
 
   // Administrators
 
