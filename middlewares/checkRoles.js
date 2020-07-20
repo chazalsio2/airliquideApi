@@ -1,3 +1,3 @@
-export default async function (req, res, next) {
+export default async function (role, req, res, next) {
   next();
 }

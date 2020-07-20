@@ -1,22 +1,29 @@
 import passport from "passport";
 
-import { login } from "./controllers/auth";
-import { createAdmin } from "./controllers/users";
-import { checkSuperAdmin, errorHandle } from "./middlewares";
+import {
+  createAdmin,
+  login,
+  createPassword,
+  getUsers,
+} from "./controllers/users";
+import { checkSuperAdmin, errorHandle, checkRoles } from "./middlewares";
+
+const checkAdmin = (req, res, next) => checkRoles("admin", req, res, next);
 
 export default (app) => {
-  // Public route
-  app.get("/", (req, res) => {
-    return res.json({ success: true, status: "ok" });
-  });
-
   app.post("/login", login, errorHandle);
+  app.post("/users/create-password", createPassword, errorHandle);
 
   // SuperAdmin
-
   app.post("/users/admin", checkSuperAdmin, createAdmin, errorHandle);
 
   // Administrators
+  app.get(
+    "/users",
+    // passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    getUsers
+  );
 
   // Sales mandate
 

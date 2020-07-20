@@ -16,6 +16,10 @@ var schema = new mongoose.Schema(
       type: String,
       default: () => uuidv4(),
     },
+    active: {
+      type: Boolean,
+      default: false,
+    },
     "roles.$": {
       type: String,
       enum: [
