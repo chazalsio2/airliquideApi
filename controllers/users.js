@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import _ from "underscore";
+import { v4 as uuidv4 } from "uuid";
 
 import { generateError } from "../lib/utils";
 import User from "../models/User";
@@ -70,7 +71,10 @@ export async function createPassword(req, res, next) {
 
   const hash = await bcrypt.hash(password, SALT_ROUNDS);
 
-  User.updateOne({ token }, { $set: { active: true, password: hash } }).exec();
+  User.updateOne(
+    { token },
+    { $set: { active: true, password: hash, token: uuidv4() } }
+  ).exec();
 
   await User.updateOne({ token });
 }
