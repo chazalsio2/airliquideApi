@@ -5,6 +5,7 @@ import {
   login,
   createPassword,
   getUsers,
+  createUser,
 } from "./controllers/users";
 import { checkSuperAdmin, errorHandle, checkRoles } from "./middlewares";
 
@@ -23,6 +24,14 @@ export default (app) => {
     passport.authenticate("jwt", { session: false }),
     checkAdmin,
     getUsers,
+    errorHandle
+  );
+
+  app.post(
+    "/users",
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    createUser,
     errorHandle
   );
 

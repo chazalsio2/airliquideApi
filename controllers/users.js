@@ -1,9 +1,9 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import _ from "underscore";
 
 import { generateError } from "../lib/utils";
 import User from "../models/User";
-import { json } from "body-parser";
 
 const SALT_ROUNDS = 10;
 
@@ -79,4 +79,31 @@ export async function getUsers(req, res, next) {
   const users = await User.find({}, "email roles createdAt active").lean();
 
   return res.json({ success: true, data: users });
+}
+
+export async function createUser(req, res, next) {
+  const { email, roles } = req.body;
+
+  const allowedRoles = [
+    "commercial",
+    "sales_mandate",
+    "management_mandate",
+    "purchase_mandate",
+  ];
+
+  if (!_.isArray(roles) || !roles.length) {
+    return next(generateError("Wrong arguments", 401));
+  }
+
+  const isValidRoles = _.all(
+    roles,
+    (role) => allowedRoles.indexOf(role) !== -1
+  );
+
+  if (!isValidRoles) {
+    return next(generateError("Wrong arguments", 401));
+  }
+
+  await new User({ email, roles }).save();
+  return res.json({ success: true });
 }
