@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { v4 as uuidv4 } from "uuid";
 
 var schema = new mongoose.Schema(
   {
@@ -10,6 +11,10 @@ var schema = new mongoose.Schema(
     },
     roles: {
       type: Array,
+    },
+    token: {
+      type: String,
+      default: () => uuidv4(),
     },
     "roles.$": {
       type: String,
