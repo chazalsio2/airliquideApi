@@ -19,12 +19,12 @@ export async function login(req, res, next) {
     email,
   });
 
-  if (!user.active) {
-    return next(generateError("Your account is not activated yet", 401));
-  }
-
   if (!user) {
     return next(generateError("Wrong email or password", 401));
+  }
+
+  if (!user.active) {
+    return next(generateError("Your account is not activated yet", 401));
   }
 
   const isPasswordMatch = await bcrypt.compare(password, user.password);
@@ -45,13 +45,13 @@ export async function login(req, res, next) {
 }
 
 export async function createAdmin(req, res, next) {
-  const { email } = req.body;
+  const { email, displayName } = req.body;
 
-  if (!email) {
+  if (!email || !displayName) {
     return next(generateError("Missing fields", 400));
   }
 
-  await new User({ email, roles: ["admin"] }).save();
+  await new User({ email, displayName, roles: ["admin"] }).save();
 
   res.json({ success: true });
 }
@@ -86,13 +86,17 @@ export async function getUsers(req, res, next) {
 }
 
 export async function createUser(req, res, next) {
-  const { email, roles } = req.body;
+  const { email, roles, displayName } = req.body;
+
+  if (!email || !roles || !displayName) {
+    return next(generateError("Missing fields", 400));
+  }
 
   const allowedRoles = [
-    "commercial",
-    "sales_mandate",
-    "management_mandate",
-    "purchase_mandate",
+    "commercial_agent",
+    "client_sales_mandate",
+    "client_management_mandate",
+    "client_purchase_mandate",
   ];
 
   if (!_.isArray(roles) || !roles.length) {

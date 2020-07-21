@@ -3,6 +3,9 @@ import { v4 as uuidv4 } from "uuid";
 
 var schema = new mongoose.Schema(
   {
+    displayName: {
+      type: String,
+    },
     email: {
       type: String,
     },
@@ -24,10 +27,10 @@ var schema = new mongoose.Schema(
       type: String,
       enum: [
         "admin",
-        "commercial",
-        "sales_mandate",
-        "management_mandate",
-        "purchase_mandate",
+        "commercial_agent",
+        "client_sales_mandate",
+        "client_management_mandate",
+        "client_purchase_mandate",
       ],
     },
   },
