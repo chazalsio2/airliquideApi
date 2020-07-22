@@ -57,6 +57,19 @@ export async function createUser(req, res, next) {
     return next(generateError("Wrong arguments", 401));
   }
 
-  await new User({ email, roles }).save();
+  try {
+    await new User({ email, roles, displayName }).save();
+
+    // Send email here
+
+    const user = await User.findOne({ email }).exec();
+
+    console.info(
+      `[EMAIL] Votre compte a été créer sur iVision-R, pour y accèder veuillez créer votre mot de passe : ${process.env.APP_URL}/create-password?token=${user.token}`
+    );
+  } catch (e) {
+    return res.status(500).json({ success: false, reason: e.message });
+  }
+
   return res.json({ success: true });
 }
