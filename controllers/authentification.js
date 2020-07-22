@@ -119,7 +119,7 @@ export async function forgotPassword(req, res, next) {
     return next(generateError("User not found", 404));
   }
 
-  console.log(
+  console.info(
     `[SENDEMAIL] Votre lien pour le changement de mot de passe est ${process.env.APP_URL}/change-password?t=${user.token}`
   );
 

@@ -3,16 +3,31 @@ import _ from "underscore";
 
 export async function getUsers(req, res, next) {
   const LIMIT_BY_PAGE = 10;
-  const userCount = await User.countDocuments({}).exec();
+  const { page = "", filter = "" } = req.query;
+  const pageNumber = Number(page) || 1;
+  const selector = {
+    $or: [
+      {
+        displayName: { $regex: filter, $options: "i" },
+      },
+      {
+        email: { $regex: filter, $options: "i" },
+      },
+    ],
+  };
+  const userCount = await User.countDocuments(selector).exec();
   const users = await User.find(
-    {},
+    selector,
     "email roles createdAt active displayName active",
-    { limit: LIMIT_BY_PAGE }
+    { limit: LIMIT_BY_PAGE, skip: (pageNumber - 1) * LIMIT_BY_PAGE }
   ).lean();
 
   const pageCount = Math.ceil(userCount / LIMIT_BY_PAGE);
 
-  return res.json({ success: true, data: { users, pageCount } });
+  return res.json({
+    success: true,
+    data: { users, pageCount, total: userCount },
+  });
 }
 
 export async function createUser(req, res, next) {
