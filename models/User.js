@@ -30,7 +30,7 @@ var schema = new mongoose.Schema(
         "commercial_agent",
         "client_sales_mandate",
         "client_management_mandate",
-        "client_purchase_mandate",
+        "client_search_mandate",
       ],
     },
   },

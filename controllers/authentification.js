@@ -8,6 +8,31 @@ import User from "../models/User";
 
 const SALT_ROUNDS = 10;
 
+export async function changePassword(req, res, next) {
+  const { token, password } = req.body;
+
+  if (!token || !password) {
+    return next(generateError("Required params missing", 400));
+  }
+
+  const user = await User.findOne({
+    token,
+  }).exec();
+
+  if (!user) {
+    return next(generateError("Invalid token", 401));
+  }
+
+  const hash = await bcrypt.hash(password, SALT_ROUNDS);
+
+  await User.updateOne(
+    { token },
+    { $set: { password: hash, token: uuidv4() } }
+  ).exec();
+
+  return res.json({ success: true });
+}
+
 export async function login(req, res, next) {
   const { email, password } = req.body;
 
@@ -17,7 +42,7 @@ export async function login(req, res, next) {
 
   const user = await User.findOne({
     email,
-  });
+  }).exec();
 
   if (!user) {
     return next(generateError("Wrong email or password", 401));
@@ -37,6 +62,8 @@ export async function login(req, res, next) {
       success: true,
       data: {
         jwt: jwtGenerated,
+        displayName: user.displayName,
+        roles: user.roles,
       },
     });
   } else {
@@ -79,39 +106,22 @@ export async function createPassword(req, res, next) {
   await User.updateOne({ token });
 }
 
-export async function getUsers(req, res, next) {
-  const users = await User.find({}, "email roles createdAt active").lean();
+export async function forgotPassword(req, res, next) {
+  const { email } = req.body;
 
-  return res.json({ success: true, data: users });
-}
-
-export async function createUser(req, res, next) {
-  const { email, roles, displayName } = req.body;
-
-  if (!email || !roles || !displayName) {
+  if (!email) {
     return next(generateError("Missing fields", 400));
   }
 
-  const allowedRoles = [
-    "commercial_agent",
-    "client_sales_mandate",
-    "client_management_mandate",
-    "client_purchase_mandate",
-  ];
+  const user = await User.findOne({ email }).exec();
 
-  if (!_.isArray(roles) || !roles.length) {
-    return next(generateError("Wrong arguments", 401));
+  if (!user) {
+    return next(generateError("User not found", 404));
   }
 
-  const isValidRoles = _.all(
-    roles,
-    (role) => allowedRoles.indexOf(role) !== -1
+  console.log(
+    `[SENDEMAIL] Votre lien pour le changement de mot de passe est ${process.env.APP_URL}/change-password?t=${user.token}`
   );
 
-  if (!isValidRoles) {
-    return next(generateError("Wrong arguments", 401));
-  }
-
-  await new User({ email, roles }).save();
   return res.json({ success: true });
 }
