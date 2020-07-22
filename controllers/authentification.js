@@ -104,6 +104,18 @@ export async function createPassword(req, res, next) {
   ).exec();
 
   await User.updateOne({ token });
+
+  const payload = { userId: user._id, roles: user.roles };
+  const jwtGenerated = jwt.sign(payload, process.env.JWT_SECRET);
+
+  return res.json({
+    success: true,
+    data: {
+      jwt: jwtGenerated,
+      displayName: user.displayName,
+      roles: user.roles,
+    },
+  });
 }
 
 export async function forgotPassword(req, res, next) {

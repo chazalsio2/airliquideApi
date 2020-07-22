@@ -19,7 +19,11 @@ export async function getUsers(req, res, next) {
   const users = await User.find(
     selector,
     "email roles createdAt active displayName active",
-    { limit: LIMIT_BY_PAGE, skip: (pageNumber - 1) * LIMIT_BY_PAGE }
+    {
+      limit: LIMIT_BY_PAGE,
+      skip: (pageNumber - 1) * LIMIT_BY_PAGE,
+      sort: { createdAt: -1 },
+    }
   ).lean();
 
   const pageCount = Math.ceil(userCount / LIMIT_BY_PAGE);
@@ -65,7 +69,7 @@ export async function createUser(req, res, next) {
     const user = await User.findOne({ email }).exec();
 
     console.info(
-      `[EMAIL] Votre compte a été créer sur iVision-R, pour y accèder veuillez créer votre mot de passe : ${process.env.APP_URL}/create-password?token=${user.token}`
+      `[EMAIL] Bonjour ${user.displayName}, votre compte a été créé sur iVision-R, pour y accèder veuillez créer votre mot de passe : ${process.env.APP_URL}/create-password?t=${user.token}`
     );
   } catch (e) {
     return res.status(500).json({ success: false, reason: e.message });
