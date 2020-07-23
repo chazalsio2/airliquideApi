@@ -16,6 +16,10 @@ export async function changePassword(req, res, next) {
     return next(generateError("Required params missing", 400));
   }
 
+  if (!password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/)) {
+    return next(generateError("Weak password", 401));
+  }
+
   const user = await User.findOne({
     token,
   }).exec();
