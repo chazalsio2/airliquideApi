@@ -8,7 +8,7 @@ import {
   changePassword,
 } from "./controllers/authentification";
 
-import { getUsers, createUser } from "./controllers/administration";
+import { getUsers, createUser, editUser } from "./controllers/administration";
 
 import { checkSuperAdmin, errorHandle, checkRoles } from "./middlewares";
 import { getProfile } from "./controllers/account";
@@ -46,6 +46,14 @@ export default (app) => {
     passport.authenticate("jwt", { session: false }),
     checkAdmin,
     createUser,
+    errorHandle
+  );
+
+  app.put(
+    "/admin/users",
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    editUser,
     errorHandle
   );
 
