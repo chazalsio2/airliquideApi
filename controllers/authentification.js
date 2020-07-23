@@ -97,6 +97,10 @@ export async function createPassword(req, res, next) {
     return next(generateError("Invalid token", 404));
   }
 
+  if (!password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/)) {
+    return next(generateError("Weak password", 401));
+  }
+
   const hash = await bcrypt.hash(password, SALT_ROUNDS);
 
   User.updateOne(
