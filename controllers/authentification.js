@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import { generateError } from "../lib/utils";
 import User from "../models/User";
+import { sendEmail } from "../lib/mailjet";
 
 const SALT_ROUNDS = 10;
 
@@ -131,9 +132,12 @@ export async function forgotPassword(req, res, next) {
     return next(generateError("User not found", 404));
   }
 
-  console.info(
-    `[SENDEMAIL] Votre lien pour le changement de mot de passe est ${process.env.APP_URL}/change-password?t=${user.token}`
-  );
+  sendEmail({
+    email,
+    name: user.displayName,
+    subject: "Change de mot de passe sur iVision-R",
+    textPart: `Bonjour ${user.displayName},\r\n\r\nVous avez fait une demande de changement de mot de passe sur iVision-R, pour continuer veuillez cliquez sur le lien ci-dessous :\r\n\r\n ${process.env.APP_URL}/change-password?t=${user.token}\r\n\r\nSi vous n'êtes pas à l'origine de cette demande, veuillez ignorer cet email.\r\n\r\nL'équipe de VISION-R\r\nVotre Startup Immobilière`,
+  });
 
   return res.json({ success: true });
 }
