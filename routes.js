@@ -12,8 +12,11 @@ import { getUsers, createUser, editUser } from "./controllers/administration";
 
 import { checkSuperAdmin, errorHandle, checkRoles } from "./middlewares";
 import { getProfile } from "./controllers/account";
+import { searchTerm } from "./controllers/search";
 
 const checkAdmin = (req, res, next) => checkRoles("admin", req, res, next);
+const checkAdminOrCommercial = (req, res, next) =>
+  checkRoles(["admin", "commercial_agent"], req, res, next);
 
 export default (app) => {
   app.post("/login", login, errorHandle);
@@ -54,6 +57,14 @@ export default (app) => {
     passport.authenticate("jwt", { session: false }),
     checkAdmin,
     editUser,
+    errorHandle
+  );
+
+  app.get(
+    "/search",
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    searchTerm,
     errorHandle
   );
 

@@ -15,8 +15,8 @@ var schema = new mongoose.Schema(
   },
   {
     timestamps: true,
-    collection: "clients",
+    collection: "client_files",
   }
 );
 
-export default mongoose.model("Client", schema);
+export default mongoose.model("ClientFile", schema);
