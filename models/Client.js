@@ -12,11 +12,16 @@ var schema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       required: false,
     },
+    types: {
+      type: Array,
+      default: [],
+    },
+    "types.$": { type: String, enum: ["management", "sales", "search"] },
   },
   {
     timestamps: true,
-    collection: "client_files",
+    collection: "clients",
   }
 );
 
-export default mongoose.model("ClientFile", schema);
+export default mongoose.model("Client", schema);

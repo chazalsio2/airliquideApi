@@ -17,7 +17,7 @@ const fakeResults = [
     _id: uuidv4(),
     type: "document",
     context: "Documents",
-    name: "Les secrets de l'investisseur immo",
+    name: "Les secrets de l'investisseur immo.pdf",
   },
 ];
 

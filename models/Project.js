@@ -22,8 +22,8 @@ var schema = new mongoose.Schema(
   },
   {
     timestamps: true,
-    collection: "cases",
+    collection: "projects",
   }
 );
 
-export default mongoose.model("Case", schema);
+export default mongoose.model("Project", schema);
