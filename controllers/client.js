@@ -11,8 +11,8 @@ export async function getClients(req, res) {
 
 export async function getClient(req, res, next) {
   try {
-    const { userId } = req.params;
-    const client = await Client.findById(userId).lean();
+    const { clientId } = req.params;
+    const client = await Client.findById(clientId).lean();
 
     if (!client) {
       return next(generateError("Client not found", 404));
