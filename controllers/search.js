@@ -31,7 +31,10 @@ export async function searchTerm(req, res, next) {
   if (isAdminOrCommercial(req.user)) {
     const clients = await Client.find(
       {
-        $or: [{ displayName: { $regex: t, $options: "i" } }],
+        $or: [
+          { displayName: { $regex: t, $options: "i" } },
+          { email: { $regex: t, $options: "i" } },
+        ],
       },
       null,
       { limit: 50 }
@@ -49,7 +52,10 @@ export async function searchTerm(req, res, next) {
   if (isAdmin(req.user)) {
     const users = await User.find(
       {
-        $or: [{ displayName: { $regex: t, $options: "i" } }],
+        $or: [
+          { displayName: { $regex: t, $options: "i" } },
+          { email: { $regex: t, $options: "i" } },
+        ],
       },
       null,
       { limit: 50 }
