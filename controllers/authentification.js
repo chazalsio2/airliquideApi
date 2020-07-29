@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 import { generateError } from "../lib/utils";
 import User from "../models/User";
 import { sendEmail } from "../lib/mailjet";
+import { sendWelcomeEmail } from "../lib/email";
 
 const SALT_ROUNDS = 10;
 
@@ -77,15 +78,25 @@ export async function login(req, res, next) {
 }
 
 export async function createAdmin(req, res, next) {
-  const { email, displayName } = req.body;
+  try {
+    const { email, displayName } = req.body;
 
-  if (!email || !displayName) {
-    return next(generateError("Missing fields", 400));
+    if (!email || !displayName) {
+      return next(generateError("Missing fields", 400));
+    }
+
+    const user = await new User({
+      email,
+      displayName,
+      roles: ["admin"],
+    }).save();
+
+    sendWelcomeEmail(user);
+
+    res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
   }
-
-  await new User({ email, displayName, roles: ["admin"] }).save();
-
-  res.json({ success: true });
 }
 
 export async function createPassword(req, res, next) {

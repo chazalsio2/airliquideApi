@@ -1,9 +1,10 @@
 import User from "../models/User";
 import _ from "underscore";
-import { sendEmail } from "../lib/mailjet";
 import { generateError } from "../lib/utils";
+import { sendWelcomeEmail } from "../lib/email";
 
 const allowedRoles = [
+  "admin",
   "commercial_agent",
   "client_sales_mandate",
   "client_management_mandate",
@@ -65,17 +66,8 @@ export async function createUser(req, res, next) {
 
   try {
     await new User({ email, roles, displayName }).save();
-
-    // Send email here
-
     const user = await User.findOne({ email }).exec();
-
-    sendEmail({
-      email,
-      name: user.displayName,
-      subject: "Bienvenue sur iVision-R",
-      textPart: `Bonjour ${user.displayName},\r\n\r\nVotre compte a été créé sur iVision-R, pour y accèder veuillez créer votre mot de passe en cliquant sur le lien ci-dessous :\r\n\r\n${process.env.APP_URL}/create-password?t=${user.token}\r\n\r\nL'équipe de VISION-R\r\nVotre Startup Immobilière`,
-    });
+    sendWelcomeEmail(user);
   } catch (e) {
     return res.status(500).json({ success: false, reason: e.message });
   }
