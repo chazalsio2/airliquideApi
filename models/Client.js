@@ -16,6 +16,10 @@ var schema = new mongoose.Schema(
       type: Array,
       default: [],
     },
+    displayName: {
+      type: String,
+      required: false,
+    },
     "types.$": { type: String, enum: ["management", "sales", "search"] },
   },
   {
@@ -23,5 +27,14 @@ var schema = new mongoose.Schema(
     collection: "clients",
   }
 );
+
+schema.pre("save", async function (next) {
+  try {
+    this.displayName = `${this.firstName} ${this.lastname}`;
+    next();
+  } catch (e) {
+    next(e);
+  }
+});
 
 export default mongoose.model("Client", schema);
