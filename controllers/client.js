@@ -1,11 +1,27 @@
 import Client from "../models/Client";
+import Mandate from "../models/Mandate";
 import { generateError } from "../lib/utils";
 
-export async function getClients(req, res) {
+export async function getClients(req, res, next) {
   try {
-    return res.json({ success: true, data: await Client.find().lean() });
+    // TODO: pagination here
+
+    const clients = await Client.find().lean();
+
+    const clientsWithMandates = await Promise.all(
+      clients.map(async (client) => {
+        console.log("getClients -> client", client);
+        const mandates = await Mandate.find(
+          { clientId: client._id, status: { $ne: ["canceled", "draft"] } },
+          "name"
+        ).lean();
+        client.mandates = mandates;
+        return client;
+      })
+    );
+    return res.json({ success: true, data: clientsWithMandates });
   } catch (e) {
-    return res.status(500).json({ success: false });
+    return next(generateError(e.message));
   }
 }
 
@@ -17,6 +33,11 @@ export async function getClient(req, res, next) {
     if (!client) {
       return next(generateError("Client not found", 404));
     }
+
+    client.mandates = await Mandate.find(
+      { clientId: client._id, status: { $ne: ["canceled", "draft"] } },
+      "name type"
+    ).lean();
 
     return res.json({
       success: true,

@@ -2,25 +2,43 @@ import mongoose from "mongoose";
 
 var schema = new mongoose.Schema(
   {
+    civility: {
+      type: String,
+      required: false,
+      enum: ["mister", "miss", ""],
+    },
     firstname: {
       type: String,
     },
     lastname: {
       type: String,
     },
+    email: {
+      type: String,
+    },
+    phone: {
+      type: String,
+    },
+    birthday: {
+      type: String,
+    },
+    address: {
+      type: String,
+    },
+    zipcode: {
+      type: String,
+    },
+    city: {
+      type: String,
+    },
     userId: {
       type: mongoose.Types.ObjectId,
       required: false,
-    },
-    types: {
-      type: Array,
-      default: [],
     },
     displayName: {
       type: String,
       required: false,
     },
-    "types.$": { type: String, enum: ["management", "sales", "search"] },
   },
   {
     timestamps: true,
@@ -30,7 +48,7 @@ var schema = new mongoose.Schema(
 
 schema.pre("save", async function (next) {
   try {
-    this.displayName = `${this.firstName} ${this.lastname}`;
+    this.displayName = `${this.firstname} ${this.lastname}`;
     next();
   } catch (e) {
     next(e);

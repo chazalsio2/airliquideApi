@@ -39,6 +39,7 @@ export async function searchTerm(req, res, next) {
       null,
       { limit: 50 }
     ).lean();
+
     const clientsFormatted = clients.map((client) => ({
       _id: client._id,
       type: "client",

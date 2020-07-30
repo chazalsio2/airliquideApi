@@ -15,6 +15,8 @@ import { getProfile } from "./controllers/account";
 import { searchTerm } from "./controllers/search";
 import { getProjects } from "./controllers/project";
 import { getClients, getClient } from "./controllers/client";
+import { publicCreateClient } from "./controllers/public";
+import { getDocuments, getDocument } from "./controllers/document";
 
 const checkAdmin = (req, res, next) => checkRoles("admin", req, res, next);
 const checkAdminOrCommercial = (req, res, next) =>
@@ -25,6 +27,8 @@ export default (app) => {
   app.post("/users/create-password", createPassword, errorHandle);
   app.post("/users/forgot-password", forgotPassword, errorHandle);
   app.post("/users/change-password", changePassword, errorHandle);
+
+  app.post("/public/clients", publicCreateClient, errorHandle);
 
   // Authentified
   app.get(
@@ -91,6 +95,20 @@ export default (app) => {
     passport.authenticate("jwt", { session: false }),
     checkAdminOrCommercial,
     getClients,
+    errorHandle
+  );
+
+  app.get(
+    "/documents/:documentId",
+    passport.authenticate("jwt", { session: false }),
+    getDocument,
+    errorHandle
+  );
+
+  app.get(
+    "/documents",
+    passport.authenticate("jwt", { session: false }),
+    getDocuments,
     errorHandle
   );
 
