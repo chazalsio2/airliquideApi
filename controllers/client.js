@@ -10,7 +10,6 @@ export async function getClients(req, res, next) {
 
     const clientsWithMandates = await Promise.all(
       clients.map(async (client) => {
-        console.log("getClients -> client", client);
         const mandates = await Mandate.find(
           { clientId: client._id, status: { $ne: ["canceled", "draft"] } },
           "name"
