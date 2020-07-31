@@ -10,10 +10,10 @@ export async function getClients(req, res, next) {
 
     const clientsWithMandates = await Promise.all(
       clients.map(async (client) => {
-        const mandates = await Mandate.find(
-          { clientId: client._id, status: { $nin: ["canceled", "completed"] } },
-          "name"
-        ).lean();
+        const mandates = await Mandate.find({
+          clientId: client._id,
+          status: { $nin: ["canceled", "completed"] },
+        }).lean();
         client.mandates = mandates;
         return client;
       })
@@ -33,11 +33,10 @@ export async function getClient(req, res, next) {
       return next(generateError("Client not found", 404));
     }
 
-    client.mandates = await Mandate.find(
-      { clientId: client._id, status: { $nin: ["canceled", "completed"] } },
-      "name type"
-    ).lean();
-    console.log("getClient -> client", client);
+    client.mandates = await Mandate.find({
+      clientId: client._id,
+      status: { $nin: ["canceled", "completed"] },
+    }).lean();
 
     return res.json({
       success: true,

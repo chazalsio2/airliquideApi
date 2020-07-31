@@ -17,6 +17,7 @@ import { getProjects } from "./controllers/project";
 import { getClients, getClient } from "./controllers/client";
 import { publicCreateClient } from "./controllers/public";
 import { getDocuments, getDocument } from "./controllers/document";
+import { getMandate } from "./controllers/mandates";
 
 const checkAdmin = (req, res, next) => checkRoles("admin", req, res, next);
 const checkAdminOrCommercial = (req, res, next) =>
@@ -66,6 +67,8 @@ export default (app) => {
     errorHandle
   );
 
+  /** Administrateur or commercial **/
+
   app.get(
     "/search",
     passport.authenticate("jwt", { session: false }),
@@ -98,6 +101,15 @@ export default (app) => {
     errorHandle
   );
 
+  app.get(
+    "/mandates/:mandateId",
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    getMandate,
+    errorHandle
+  );
+
+  /* User connected */
   app.get(
     "/documents/:documentId",
     passport.authenticate("jwt", { session: false }),
