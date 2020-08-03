@@ -1,8 +1,8 @@
 import Client from "../models/Client";
 import { generateError } from "../lib/utils";
-import Mandate, { mandateTypes } from "../models/Mandate";
+import Project, { projectTypes } from "../models/Project";
 
-const allowedServiceTypes = [...mandateTypes, "coaching"];
+const allowedServiceTypes = [...projectTypes, "coaching"];
 
 export async function getClients(req, res, next) {
   try {
@@ -12,17 +12,17 @@ export async function getClients(req, res, next) {
       sort: { createdAt: -1 },
     }).lean();
 
-    const clientsWithMandates = await Promise.all(
+    const clientsWithProjects = await Promise.all(
       clients.map(async (client) => {
-        const mandates = await Mandate.find({
+        const projects = await Project.find({
           clientId: client._id,
           status: { $nin: ["canceled", "completed"] },
         }).lean();
-        client.mandates = mandates;
+        client.projects = projects;
         return client;
       })
     );
-    return res.json({ success: true, data: clientsWithMandates });
+    return res.json({ success: true, data: clientsWithProjects });
   } catch (e) {
     return next(generateError(e.message));
   }
@@ -37,7 +37,7 @@ export async function getClient(req, res, next) {
       return next(generateError("Client not found", 404));
     }
 
-    client.mandates = await Mandate.find({
+    client.projects = await Project.find({
       clientId: client._id,
       status: { $nin: ["canceled", "completed"] },
     }).lean();
@@ -74,8 +74,8 @@ export async function createClient(req, res, next) {
       phone,
     }).save();
 
-    if (mandateTypes.indexOf(serviceType) !== -1) {
-      const mandate = await Mandate({
+    if (projectTypes.indexOf(serviceType) !== -1) {
+      const project = await Project({
         clientId: client,
         type: serviceType,
       }).save();
@@ -83,7 +83,7 @@ export async function createClient(req, res, next) {
       return res.json({
         success: true,
         data: {
-          mandateId: mandate._id,
+          projectId: project._id,
           completed: false,
         },
       });

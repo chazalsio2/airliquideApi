@@ -13,11 +13,10 @@ import { getUsers, createUser, editUser } from "./controllers/administration";
 import { checkSuperAdmin, errorHandle, checkRoles } from "./middlewares";
 import { getProfile } from "./controllers/account";
 import { searchTerm } from "./controllers/search";
-import { getProjects } from "./controllers/project";
 import { getClients, getClient, createClient } from "./controllers/client";
 import { publicCreateClient } from "./controllers/public";
 import { getDocuments, getDocument } from "./controllers/document";
-import { getMandate } from "./controllers/mandates";
+import { getProject, getProjects } from "./controllers/project";
 
 const checkAdmin = (req, res, next) => checkRoles("admin", req, res, next);
 const checkAdminOrCommercial = (req, res, next) =>
@@ -77,13 +76,13 @@ export default (app) => {
     errorHandle
   );
 
-  app.get(
-    "/projects",
-    passport.authenticate("jwt", { session: false }),
-    checkAdminOrCommercial,
-    getProjects,
-    errorHandle
-  );
+  // app.get(
+  //   "/projects",
+  //   passport.authenticate("jwt", { session: false }),
+  //   checkAdminOrCommercial,
+  //   getProjects,
+  //   errorHandle
+  // );
 
   app.get(
     "/clients/:clientId",
@@ -102,10 +101,10 @@ export default (app) => {
   );
 
   app.get(
-    "/mandates/:mandateId",
+    "/projects/:projectId",
     passport.authenticate("jwt", { session: false }),
     checkAdminOrCommercial,
-    getMandate,
+    getProject,
     errorHandle
   );
 
@@ -132,9 +131,9 @@ export default (app) => {
     errorHandle
   );
 
-  // Sales mandate
+  // Sales role
 
-  // Management mandate
+  // Management role
 
-  // Purchase mandate
+  // Purchase role
 };

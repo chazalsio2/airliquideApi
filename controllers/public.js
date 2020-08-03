@@ -1,8 +1,6 @@
 import { generateError } from "../lib/utils";
 import Client from "../models/Client";
-import Mandate, { mandateTypes } from "../models/Mandate";
-
-const allowedServiceTypes = [...mandateTypes, "coaching"];
+import Project, { projectTypes } from "../models/Project";
 
 export async function publicCreateClient(req, res, next) {
   try {
@@ -12,10 +10,10 @@ export async function publicCreateClient(req, res, next) {
       email,
       phone,
       serviceType,
-      geographicSector
+      geographicSector,
     } = req.body;
 
-    if (allowedServiceTypes.indexOf(serviceType) === -1) {
+    if (projectTypes.indexOf(serviceType) === -1) {
       return next(generateError("Invalid service", 403));
     }
 
@@ -27,8 +25,8 @@ export async function publicCreateClient(req, res, next) {
       phone,
     }).save();
 
-    if (mandateTypes.indexOf(serviceType) !== -1) {
-      const mandate = await Mandate({
+    if (projectTypes.indexOf(serviceType) !== -1) {
+      const project = await Project({
         clientId: client,
         type: serviceType,
       }).save();
@@ -36,7 +34,7 @@ export async function publicCreateClient(req, res, next) {
       return res.json({
         success: true,
         data: {
-          mandateId: mandate._id,
+          projectId: project._id,
           completed: false,
         },
       });

@@ -2,12 +2,12 @@ import mongoose from "mongoose";
 
 var schema = new mongoose.Schema(
   {
-    mandateId: {
+    projectId: {
       type: mongoose.Types.ObjectId,
     },
     type: {
       type: String,
-      enum: ["mandate_creation", "mandate_validation"],
+      enum: ["project_creation", "project_validation"],
     },
     authorUserId: {
       type: mongoose.Types.ObjectId,
@@ -20,8 +20,8 @@ var schema = new mongoose.Schema(
   },
   {
     timestamps: true,
-    collection: "mandate_events",
+    collection: "project_events",
   }
 );
 
-export default mongoose.model("MandateEvent", schema);
+export default mongoose.model("ProjectEvent", schema);
