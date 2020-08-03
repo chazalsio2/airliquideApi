@@ -7,16 +7,12 @@ const allowedServiceTypes = [...mandateTypes, "coaching"];
 export async function publicCreateClient(req, res, next) {
   try {
     const {
-      civility,
-      address,
       firstname,
       lastname,
       email,
       phone,
-      zipcode,
-      city,
-      birthday,
       serviceType,
+      geographicSector
     } = req.body;
 
     if (allowedServiceTypes.indexOf(serviceType) === -1) {
@@ -24,14 +20,11 @@ export async function publicCreateClient(req, res, next) {
     }
 
     const client = await new Client({
-      civility,
-      address,
       firstname,
       lastname,
+      geographicSector,
       email,
       phone,
-      zipcode,
-      city,
     }).save();
 
     if (mandateTypes.indexOf(serviceType) !== -1) {

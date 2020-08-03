@@ -21,15 +21,23 @@ var schema = new mongoose.Schema(
     },
     birthday: {
       type: String,
+      required: false,
+    },
+    geographicSector: {
+      type: String,
+      enum: ["north", "east", "west", "south"],
     },
     address: {
       type: String,
+      required: false,
     },
     zipcode: {
       type: String,
+      required: false,
     },
     city: {
       type: String,
+      required: false,
     },
     userId: {
       type: mongoose.Types.ObjectId,

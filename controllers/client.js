@@ -6,7 +6,9 @@ export async function getClients(req, res, next) {
   try {
     // TODO: pagination here
 
-    const clients = await Client.find().lean();
+    const clients = await Client.find({}, null, {
+      sort: { createdAt: -1 },
+    }).lean();
 
     const clientsWithMandates = await Promise.all(
       clients.map(async (client) => {
