@@ -14,7 +14,7 @@ import { checkSuperAdmin, errorHandle, checkRoles } from "./middlewares";
 import { getProfile } from "./controllers/account";
 import { searchTerm } from "./controllers/search";
 import { getProjects } from "./controllers/project";
-import { getClients, getClient } from "./controllers/client";
+import { getClients, getClient, createClient } from "./controllers/client";
 import { publicCreateClient } from "./controllers/public";
 import { getDocuments, getDocument } from "./controllers/document";
 import { getMandate } from "./controllers/mandates";
@@ -106,6 +106,14 @@ export default (app) => {
     passport.authenticate("jwt", { session: false }),
     checkAdminOrCommercial,
     getMandate,
+    errorHandle
+  );
+
+  app.post(
+    "/clients",
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    createClient,
     errorHandle
   );
 
