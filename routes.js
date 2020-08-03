@@ -16,7 +16,11 @@ import { searchTerm } from "./controllers/search";
 import { getClients, getClient, createClient } from "./controllers/client";
 import { publicCreateClient } from "./controllers/public";
 import { getDocuments, getDocument } from "./controllers/document";
-import { getProject, getProjects } from "./controllers/project";
+import {
+  getProject,
+  getProjects,
+  getProjectsAssigned,
+} from "./controllers/project";
 
 const checkAdmin = (req, res, next) => checkRoles("admin", req, res, next);
 const checkAdminOrCommercial = (req, res, next) =>
@@ -76,13 +80,21 @@ export default (app) => {
     errorHandle
   );
 
-  // app.get(
-  //   "/projects",
-  //   passport.authenticate("jwt", { session: false }),
-  //   checkAdminOrCommercial,
-  //   getProjects,
-  //   errorHandle
-  // );
+  app.get(
+    "/projects",
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    getProjects,
+    errorHandle
+  );
+
+  app.get(
+    "/projects/assigned",
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    getProjectsAssigned,
+    errorHandle
+  );
 
   app.get(
     "/clients/:clientId",

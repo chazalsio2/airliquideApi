@@ -17,6 +17,10 @@ var schema = new mongoose.Schema(
     clientId: {
       type: mongoose.Types.ObjectId,
     },
+    projectId: {
+      type: String,
+      optional: true,
+    },
   },
   {
     timestamps: true,

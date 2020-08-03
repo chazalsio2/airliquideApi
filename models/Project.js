@@ -11,6 +11,10 @@ var schema = new mongoose.Schema(
     clientId: {
       type: mongoose.Types.ObjectId,
     },
+    commercialId: {
+      type: mongoose.Types.ObjectId,
+      required: false,
+    },
     type: {
       type: String,
       enum: projectTypes,
