@@ -13,7 +13,12 @@ import { getUsers, createUser, editUser } from "./controllers/administration";
 import { checkSuperAdmin, errorHandle, checkRoles } from "./middlewares";
 import { getProfile } from "./controllers/account";
 import { searchTerm } from "./controllers/search";
-import { getClients, getClient, createClient } from "./controllers/client";
+import {
+  getClients,
+  getClient,
+  createClient,
+  addProject,
+} from "./controllers/client";
 import { publicCreateClient } from "./controllers/public";
 import { getDocuments, getDocument } from "./controllers/document";
 import {
@@ -118,6 +123,14 @@ export default (app) => {
     passport.authenticate("jwt", { session: false }),
     checkAdminOrCommercial,
     getClients,
+    errorHandle
+  );
+
+  app.post(
+    "/clients/:clientId/projects",
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    addProject,
     errorHandle
   );
 

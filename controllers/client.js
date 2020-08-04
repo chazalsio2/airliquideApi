@@ -2,8 +2,6 @@ import Client from "../models/Client";
 import { generateError } from "../lib/utils";
 import Project, { projectTypes } from "../models/Project";
 
-const allowedServiceTypes = [...projectTypes, "coaching"];
-
 export async function getClients(req, res, next) {
   try {
     // TODO: pagination here
@@ -37,10 +35,14 @@ export async function getClient(req, res, next) {
       return next(generateError("Client not found", 404));
     }
 
-    client.projects = await Project.find({
-      clientId: client._id,
-      status: { $nin: ["canceled", "completed"] },
-    }).lean();
+    client.projects = await Project.find(
+      {
+        clientId: client._id,
+        status: { $nin: ["canceled", "completed"] },
+      },
+      null,
+      { sort: { createdAt: -1 } }
+    ).lean();
 
     return res.json({
       success: true,
@@ -62,7 +64,7 @@ export async function createClient(req, res, next) {
       geographicSector,
     } = req.body;
 
-    if (allowedServiceTypes.indexOf(serviceType) === -1) {
+    if (projectTypes.indexOf(serviceType) === -1) {
       return next(generateError("Invalid service", 403));
     }
 
@@ -75,7 +77,7 @@ export async function createClient(req, res, next) {
     }).save();
 
     if (projectTypes.indexOf(serviceType) !== -1) {
-      const project = await Project({
+      const project = await new Project({
         clientId: client,
         type: serviceType,
       }).save();
@@ -90,6 +92,33 @@ export async function createClient(req, res, next) {
     }
 
     return res.json({ success: true, data: { completed: true } });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+export async function addProject(req, res, next) {
+  try {
+    const { clientId } = req.params;
+    const { projectType } = req.body;
+
+    if (
+      !clientId ||
+      !projectType ||
+      !projectTypes.indexOf(projectType) === -1
+    ) {
+      return next(generateError("Invalid request", 401));
+    }
+
+    const client = await Client.findById(clientId).lean();
+
+    if (!client) {
+      return next(generateError("Client not found", 404));
+    }
+
+    await new Project({ clientId, type: projectType }).save();
+
+    return res.json({ success: true });
   } catch (e) {
     next(generateError(e.message));
   }
