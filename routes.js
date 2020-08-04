@@ -20,6 +20,7 @@ import {
   getProject,
   getProjects,
   getProjectsAssigned,
+  getProjectsMissingValidation,
 } from "./controllers/project";
 
 const checkAdmin = (req, res, next) => checkRoles("admin", req, res, next);
@@ -93,6 +94,14 @@ export default (app) => {
     passport.authenticate("jwt", { session: false }),
     checkAdminOrCommercial,
     getProjectsAssigned,
+    errorHandle
+  );
+
+  app.get(
+    "/projects/waiting-validation",
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    getProjectsMissingValidation,
     errorHandle
   );
 

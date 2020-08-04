@@ -90,3 +90,28 @@ export async function getProjectsAssigned(req, res, next) {
     next(generateError(e.message));
   }
 }
+
+export async function getProjectsMissingValidation(req, res, next) {
+  try {
+    const projects = await Project.find({
+      status: "draft",
+    }).lean();
+
+    const clientEnrichedPromises = projects.map(async (project) => {
+      project.client = await Client.findById(project.clientId).lean();
+      if (project.commercialId) {
+        project.commercial = await User.findById(
+          project.commercialId,
+          "displayName"
+        ).lean();
+      }
+      return project;
+    });
+
+    const projectsEnriched = await Promise.all(clientEnrichedPromises);
+
+    return res.json({ success: true, data: projectsEnriched });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}

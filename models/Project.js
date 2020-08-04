@@ -30,6 +30,8 @@ var schema = new mongoose.Schema(
         "wait_sales_agreement",
         "wait_sales_deed",
         "completed",
+        "refused",
+        "canceled",
       ],
     },
   },
