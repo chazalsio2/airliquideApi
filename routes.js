@@ -27,6 +27,11 @@ import {
   getProjectsAssigned,
   getProjectsMissingValidation,
 } from "./controllers/project";
+import {
+  createProperty,
+  getProperties,
+  getProperty,
+} from "./controllers/property";
 
 const checkAdmin = (req, res, next) => checkRoles("admin", req, res, next);
 const checkAdminOrCommercial = (req, res, next) =>
@@ -107,6 +112,30 @@ export default (app) => {
     passport.authenticate("jwt", { session: false }),
     checkAdmin,
     getProjectsMissingValidation,
+    errorHandle
+  );
+
+  app.get(
+    "/properties/:propertyId",
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    getProperty,
+    errorHandle
+  );
+
+  app.post(
+    "/properties",
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    createProperty,
+    errorHandle
+  );
+
+  app.get(
+    "/properties",
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    getProperties,
     errorHandle
   );
 

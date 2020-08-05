@@ -2,12 +2,30 @@ import mongoose from "mongoose";
 
 var schema = new mongoose.Schema(
   {
-    name: {
+    type: {
+      type: String,
+      enum: [
+        "apartment",
+        "commercial",
+        "construction_land",
+        "home",
+        "parking",
+        "building",
+      ],
+    },
+    area: {
+      type: Number,
+    },
+    photos: {
+      type: Array,
+      default: [],
+    },
+    "photos.$": {
       type: String,
     },
-    clientId: {
-      type: mongoose.Types.ObjectId,
-      required: false,
+    public: {
+      type: Boolean,
+      default: false,
     },
   },
   {
