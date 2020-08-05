@@ -5,22 +5,21 @@ import Property from "../models/Property";
 export async function createProperty(req, res, next) {
   try {
     const { files, area, type } = req.body;
-    console.log("createProperty -> type", type);
-    console.log("createProperty -> area", area);
-    console.log("createProperty -> files", files.length);
 
     if (!type || !area || !files) {
       return next(generateError("Invalid request", 401));
     }
 
     const results = await uploadPhotos(files);
-    console.log("createProperty -> results", results);
 
-    const property = await new Property({ type, area }).save();
+    const property = await new Property({
+      type,
+      area,
+      photos: results.map((r) => r.url),
+    }).save();
 
     return res.json({ success: true, data: property });
   } catch (e) {
-    console.log("createProperty -> e", e);
     next(generateError(e.message));
   }
 }
@@ -37,7 +36,6 @@ export async function getProperties(req, res, next) {
 export async function getProperty(req, res, next) {
   try {
     const { propertyId } = req.params;
-    console.log("getProperty -> propertyId", propertyId);
 
     if (!propertyId) {
       return next(generateError("Invalid request", 401));
