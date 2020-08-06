@@ -62,6 +62,7 @@ export async function createClient(req, res, next) {
       phone,
       serviceType,
       geographicSector,
+      referral,
     } = req.body;
 
     if (projectTypes.indexOf(serviceType) === -1) {
@@ -74,6 +75,7 @@ export async function createClient(req, res, next) {
       geographicSector,
       email,
       phone,
+      referral,
     }).save();
 
     if (projectTypes.indexOf(serviceType) !== -1) {

@@ -43,6 +43,10 @@ var schema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       required: false,
     },
+    referral: {
+      type: String,
+      enum: ["other", "socialmedia", "wordofmouth", "website"],
+    },
     displayName: {
       type: String,
       required: false,
