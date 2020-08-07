@@ -1,13 +1,33 @@
 import Client from "../models/Client";
 import { generateError } from "../lib/utils";
 import Project, { projectTypes } from "../models/Project";
-import { sendNewClientEmail } from "../lib/email";
 
 export async function getClients(req, res, next) {
   try {
-    // TODO: pagination here
+    const LIMIT_BY_PAGE = 10;
+    const { page = "", filter = "" } = req.query;
+    const pageNumber = Number(page) || 1;
+    const selector = {
+      $or: [
+        {
+          firstname: { $regex: filter, $options: "i" },
+        },
+        {
+          lastname: { $regex: filter, $options: "i" },
+        },
+        {
+          displayName: { $regex: filter, $options: "i" },
+        },
+        {
+          email: { $regex: filter, $options: "i" },
+        },
+      ],
+    };
+    const clientCount = await Client.countDocuments(selector).exec();
 
-    const clients = await Client.find({}, null, {
+    const clients = await Client.find(selector, null, {
+      limit: LIMIT_BY_PAGE,
+      skip: (pageNumber - 1) * LIMIT_BY_PAGE,
       sort: { createdAt: -1 },
     }).lean();
 
@@ -21,7 +41,13 @@ export async function getClients(req, res, next) {
         return client;
       })
     );
-    return res.json({ success: true, data: clientsWithProjects });
+
+    const pageCount = Math.ceil(clientCount / LIMIT_BY_PAGE);
+
+    return res.json({
+      success: true,
+      data: { clients: clientsWithProjects, pageCount, total: clientCount },
+    });
   } catch (e) {
     return next(generateError(e.message));
   }
@@ -78,8 +104,6 @@ export async function createClient(req, res, next) {
       phone,
       referral,
     }).save();
-
-    // sendNewClientEmail(client); // should we send the email here ?
 
     if (projectTypes.indexOf(serviceType) !== -1) {
       const project = await new Project({
