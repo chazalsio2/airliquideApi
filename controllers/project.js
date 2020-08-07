@@ -19,8 +19,7 @@ export async function getProject(req, res, next) {
     project.client = await Client.findById(project.clientId).lean();
     project.events = await ProjectEvent.find({ projectId: project._id }).lean();
     project.documents = await Document.find(
-      {},
-      // { projectId: Types.ObjectId(project._id) }, // do not work i dont know why
+      { projectId: Types.ObjectId(project._id) }, // do not work i dont know why
       null,
       {
         sort: { createdAt: -1 },

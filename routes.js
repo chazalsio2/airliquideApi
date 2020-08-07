@@ -32,6 +32,7 @@ import {
   getProperties,
   getProperty,
 } from "./controllers/property";
+import { getFolders } from "./controllers/folder";
 
 const checkAdmin = (req, res, next) => checkRoles("admin", req, res, next);
 const checkAdminOrCommercial = (req, res, next) =>
@@ -191,6 +192,13 @@ export default (app) => {
     "/documents",
     passport.authenticate("jwt", { session: false }),
     getDocuments,
+    errorHandle
+  );
+
+  app.get(
+    "/folders",
+    passport.authenticate("jwt", { session: false }),
+    getFolders,
     errorHandle
   );
 

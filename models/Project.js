@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import ProjectEvent from "./ProjectEvent";
+import Folder from "./Folder";
 
 export const projectTypes = ["management", "sales", "search", "coaching"];
 
@@ -43,6 +44,9 @@ var schema = new mongoose.Schema(
 
 schema.pre("save", async function (next) {
   try {
+    // await Folder({
+    //   projectId: this._id,
+    // }).save();
     await ProjectEvent({
       projectId: this._id,
       type: "project_creation",
