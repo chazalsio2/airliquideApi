@@ -1,6 +1,7 @@
 import Client from "../models/Client";
 import { generateError } from "../lib/utils";
 import Project, { projectTypes } from "../models/Project";
+import { sendNewClientEmail } from "../lib/email";
 
 export async function getClients(req, res, next) {
   try {
@@ -77,6 +78,8 @@ export async function createClient(req, res, next) {
       phone,
       referral,
     }).save();
+
+    // sendNewClientEmail(client); // should we send the email here ?
 
     if (projectTypes.indexOf(serviceType) !== -1) {
       const project = await new Project({

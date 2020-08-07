@@ -1,6 +1,7 @@
 import { generateError } from "../lib/utils";
 import Client from "../models/Client";
 import Project, { projectTypes } from "../models/Project";
+import { sendNewClientEmail } from "../lib/email";
 
 export async function publicCreateClient(req, res, next) {
   try {
@@ -24,6 +25,8 @@ export async function publicCreateClient(req, res, next) {
       email,
       phone,
     }).save();
+
+    sendNewClientEmail(client);
 
     if (projectTypes.indexOf(serviceType) !== -1) {
       const project = await Project({
