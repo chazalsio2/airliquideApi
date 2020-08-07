@@ -22,8 +22,9 @@ export async function searchTerm(req, res, next) {
   const documentsFormatted = documents.map((doc) => ({
     _id: doc._id,
     type: "document",
-    context: "",
+    context: "Document",
     name: doc.name,
+    externalLink: doc.url,
   }));
 
   results.push(...documentsFormatted);
@@ -43,7 +44,7 @@ export async function searchTerm(req, res, next) {
     const clientsFormatted = clients.map((client) => ({
       _id: client._id,
       type: "client",
-      context: "Contact",
+      context: "Client",
       name: client.displayName,
     }));
 

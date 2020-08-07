@@ -4,7 +4,6 @@ import Client from "../models/Client";
 import Document from "../models/Document";
 import ProjectEvent from "../models/ProjectEvent";
 import User from "../models/User";
-// import { Types } from "mongoose";
 
 export async function getProject(req, res, next) {
   try {

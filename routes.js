@@ -33,6 +33,7 @@ import {
   getProperty,
 } from "./controllers/property";
 import { getFolders } from "./controllers/folder";
+import { getUser } from "./controllers/user";
 
 const checkAdmin = (req, res, next) => checkRoles("admin", req, res, next);
 const checkAdminOrCommercial = (req, res, next) =>
@@ -79,6 +80,14 @@ export default (app) => {
     passport.authenticate("jwt", { session: false }),
     checkAdmin,
     editUser,
+    errorHandle
+  );
+
+  app.get(
+    `/users/:userId`,
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    getUser,
     errorHandle
   );
 
