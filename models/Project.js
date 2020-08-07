@@ -1,10 +1,111 @@
 import mongoose from "mongoose";
 import ProjectEvent from "./ProjectEvent";
-import Folder from "./Folder";
+
+const citiesList = [
+  "Saint-Pierre",
+  "Le Tampon",
+  "Saint-Louis",
+  "Saint-Joseph",
+  "Saint-Philippe",
+  "Sainte-Rose",
+  "Petite-île",
+  "Saint-Denis",
+  "Sainte-Marie",
+  "Sainte-Suzanne",
+  "Saint-Paul",
+  "Saint-Gilles les Bains",
+  "Le Port",
+  "La Possession",
+  "Saint-Leu",
+  "Etang-Salé",
+  "Les Avirons",
+  "Saint-André",
+  "Saint-Benoit",
+  "Cilaos",
+  "Salazie",
+  "Maïdo",
+  "Dos d'Ane",
+  "Sans-Soucis",
+  "Le Volcan/Pas de Bellecombe",
+  "Plaine des Cafres",
+  "Plaine des Palmistes",
+];
 
 export const projectTypes = ["management", "sales", "search", "coaching"];
 
-var schema = new mongoose.Schema(
+const SearchSheet = new mongoose.Schema({
+  propertyType: {
+    type: String,
+    enum: [
+      "appartment",
+      "home",
+      "constructionground",
+      "commercial",
+      "building",
+      "parking",
+    ],
+  },
+  investmentType: {
+    type: String,
+  },
+  propertySize: {
+    type: String,
+    enum: ["studio", "T1", "T2", "T3", "T4", "bigger"],
+  },
+  propertySizeDetail: {
+    type: String,
+    required: false,
+  },
+  propertyArea: {
+    type: String,
+    enum: ["lessthan30", "lessthan90", "morethan90"],
+  },
+  land: {
+    type: String,
+    enum: ["optional", "priority"],
+  },
+  landArea: {
+    type: Number,
+    required: false,
+  },
+  searchSector: {
+    type: String,
+    enum: [
+      "whatever",
+      "tourismsector",
+      "nearschool",
+      "downtown",
+      "specificcities",
+    ],
+  },
+  searchSectorCities: {
+    type: Array,
+    required: false,
+  },
+  "searchSectorCities.$": {
+    type: String,
+    enum: citiesList,
+  },
+  swimmingpool: {
+    type: String,
+    enum: ["optional", "priority"],
+  },
+  varangue: {
+    type: String,
+    enum: ["optional", "priority"],
+  },
+  delay: {
+    type: String,
+    enum: ["soonaspossible", "lessthan6", "morethan6"],
+  },
+  budget: {
+    type: Number,
+  },
+});
+
+const SalesSheet = new mongoose.Schema({});
+
+const schema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -19,6 +120,16 @@ var schema = new mongoose.Schema(
     type: {
       type: String,
       enum: projectTypes,
+    },
+    searchSheet: {
+      type: SearchSheet,
+      required: false,
+      _id: false,
+    },
+    salesSheet: {
+      type: SalesSheet,
+      required: false,
+      _id: false,
     },
     status: {
       type: String,

@@ -26,6 +26,7 @@ import {
   getProjects,
   getProjectsAssigned,
   getProjectsMissingValidation,
+  saveSearchSheet,
 } from "./controllers/project";
 import {
   createProperty,
@@ -46,6 +47,8 @@ export default (app) => {
   app.post("/users/change-password", changePassword, errorHandle);
 
   app.post("/public/clients", publicCreateClient, errorHandle);
+
+  app.post("/projects/:projectId/search-sheet", saveSearchSheet, errorHandle);
 
   // Authentified
   app.get(

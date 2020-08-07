@@ -1,10 +1,10 @@
+import { Types } from "mongoose";
 import { generateError } from "../lib/utils";
+import User from "../models/User";
 import Project from "../models/Project";
 import Client from "../models/Client";
 import Document from "../models/Document";
 import ProjectEvent from "../models/ProjectEvent";
-import User from "../models/User";
-import { Types } from "mongoose";
 
 export async function getProject(req, res, next) {
   try {
@@ -115,6 +115,73 @@ export async function getProjectsMissingValidation(req, res, next) {
   }
 }
 
-// export async function saveClientData() {
+export async function saveSearchSheet(req, res, next) {
+  try {
+    const {
+      propertyType,
+      investmentType,
+      otherInvestmentType,
+      propertySize,
+      propertySizeDetail,
+      propertyArea,
+      land,
+      landArea,
+      searchSector,
+      searchSectorCities,
+      swimmingpool,
+      varangue,
+      delay,
+      budget,
+    } = req.body;
+    console.log("saveSearchSheet -> req.body", req.body);
 
-// }
+    const { projectId } = req.params;
+
+    if (
+      !propertyType ||
+      !investmentType ||
+      !propertySize ||
+      !propertyArea ||
+      !land ||
+      !searchSector ||
+      !swimmingpool ||
+      !varangue ||
+      !delay ||
+      !budget
+    ) {
+      return next(generateError("Invalid arguments", 401));
+    }
+
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    await Project.updateOne(
+      { _id: projectId },
+      {
+        $set: {
+          searchSheet: {
+            investmentType:
+              investmentType === "other" ? otherInvestmentType : investmentType,
+            propertySize,
+            propertySizeDetail,
+            propertyArea,
+            land,
+            landArea,
+            searchSector,
+            swimmingpool,
+            varangue,
+            delay,
+            budget,
+          },
+        },
+      }
+    ).exec();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
