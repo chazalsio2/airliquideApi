@@ -4,7 +4,7 @@ import Property from "../models/Property";
 
 export async function createProperty(req, res, next) {
   try {
-    const { files, area, type } = req.body;
+    const { files, area, type, virtualVisitLink } = req.body;
 
     if (!type || !area || !files) {
       return next(generateError("Invalid request", 401));
@@ -12,11 +12,17 @@ export async function createProperty(req, res, next) {
 
     const results = await uploadPhotos(files);
 
-    const property = await new Property({
+    const propertyData = {
       type,
       area,
       photos: results.map((r) => r.url),
-    }).save();
+    };
+
+    if (virtualVisitLink) {
+      propertyData.virtualVisitLink = virtualVisitLink;
+    }
+
+    const property = await new Property(propertyData).save();
 
     return res.json({ success: true, data: property });
   } catch (e) {

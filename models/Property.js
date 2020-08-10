@@ -23,6 +23,10 @@ var schema = new mongoose.Schema(
     "photos.$": {
       type: String,
     },
+    virtualVisitLink: {
+      type: String,
+      required: false,
+    },
     public: {
       type: Boolean,
       default: false,
