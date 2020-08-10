@@ -2,21 +2,25 @@ import { isAdminOrCommercial, isAdmin, generateError } from "../lib/utils";
 import Document from "../models/Document";
 import Client from "../models/Client";
 import User from "../models/User";
+import Folder from "../models/Folder";
+import Training from "../models/Training";
 
 export async function searchTerm(req, res, next) {
   const { t } = req.query;
+  const userRoles = req.user.roles;
 
   if (!t) {
     next(generateError("Missing fields", 401));
   }
 
   const results = [];
+  // TODO : Add roles checker
   const documents = await Document.find(
     {
       name: { $regex: t, $options: "i" },
     },
     null,
-    { limit: 50 }
+    { limit: 50, sort: { createdAt: -1 } }
   ).lean();
 
   const documentsFormatted = documents.map((doc) => ({
@@ -29,6 +33,23 @@ export async function searchTerm(req, res, next) {
 
   results.push(...documentsFormatted);
 
+  const trainings = await Training.find(
+    {
+      name: { $regex: t, $options: "i" },
+    },
+    null,
+    { limit: 50, sort: { createdAt: -1 } }
+  );
+
+  const trainingsFormatted = trainings.map((doc) => ({
+    _id: doc._id,
+    type: "training",
+    context: "Formation",
+    name: doc.name,
+  }));
+
+  results.push(...trainingsFormatted);
+
   if (isAdminOrCommercial(req.user)) {
     const clients = await Client.find(
       {
@@ -38,7 +59,7 @@ export async function searchTerm(req, res, next) {
         ],
       },
       null,
-      { limit: 50 }
+      { limit: 50, sort: { createdAt: -1 } }
     ).lean();
 
     const clientsFormatted = clients.map((client) => ({
@@ -49,6 +70,24 @@ export async function searchTerm(req, res, next) {
     }));
 
     results.push(...clientsFormatted);
+
+    const folders = await Folder.find(
+      { name: { $regex: t, $options: "i" } },
+      null,
+      {
+        sort: { createdAt: -1 },
+        limit: 50,
+      }
+    ).exec();
+
+    const foldersFormatted = folders.map((folder) => ({
+      _id: folder._id,
+      type: "folder",
+      context: "Dossier",
+      name: folder.name,
+    }));
+
+    results.push(...foldersFormatted);
   }
 
   if (isAdmin(req.user)) {
@@ -60,7 +99,7 @@ export async function searchTerm(req, res, next) {
         ],
       },
       null,
-      { limit: 50 }
+      { limit: 50, sort: { createdAt: -1 } }
     ).lean();
 
     const usersFormatted = users.map((user) => ({
