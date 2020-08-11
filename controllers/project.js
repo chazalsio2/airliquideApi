@@ -133,7 +133,6 @@ export async function saveSearchSheet(req, res, next) {
       delay,
       budget,
     } = req.body;
-    console.log("saveSearchSheet -> req.body", req.body);
 
     const { projectId } = req.params;
 
@@ -179,6 +178,45 @@ export async function saveSearchSheet(req, res, next) {
         },
       }
     ).exec();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+export async function savePersonalSituation(req, res, next) {
+  try {
+    const {
+      address,
+      crd,
+      creditamount,
+      desiredgrossyield,
+      email,
+      firstname,
+      investalone,
+      lastname,
+      loans,
+      othertypeofrentalincome,
+      personalincome,
+      personalindustry,
+      personalseniority,
+      personalsituation,
+      personalstatus,
+      phone,
+      principalresidence,
+      savings,
+      typeofincome,
+      typeofrentalincome,
+    } = req.body;
+
+    const { projectId } = req.params;
+
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
 
     return res.json({ success: true });
   } catch (e) {

@@ -27,6 +27,7 @@ import {
   getProjectsAssigned,
   getProjectsMissingValidation,
   saveSearchSheet,
+  savePersonalSituation,
 } from "./controllers/project";
 import {
   createProperty,
@@ -42,6 +43,7 @@ const checkAdminOrCommercial = (req, res, next) =>
   checkRoles(["admin", "commercial_agent"], req, res, next);
 
 export default (app) => {
+  // Public route
   app.post("/login", login, errorHandle);
   app.post("/users/create-password", createPassword, errorHandle);
   app.post("/users/forgot-password", forgotPassword, errorHandle);
@@ -50,6 +52,11 @@ export default (app) => {
   app.post("/public/clients", publicCreateClient, errorHandle);
 
   app.post("/projects/:projectId/search-sheet", saveSearchSheet, errorHandle);
+  app.post(
+    "/projects/:projectId/personal-situation",
+    savePersonalSituation,
+    errorHandle
+  );
 
   // Authentified
   app.get(
