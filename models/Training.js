@@ -8,11 +8,21 @@ var schema = new mongoose.Schema(
     url: {
       type: String,
     },
-    youtubeLink: {
+    type: {
       type: String,
+      enum: ["pdf", "youtube"],
     },
-    urlLink: {
+    roles: {
+      type: Array,
+    },
+    "roles.$": {
       type: String,
+      enum: [
+        "commercial_agent",
+        "client_sales_mandate",
+        "client_management_mandate",
+        "client_search_mandate",
+      ],
     },
   },
   {
