@@ -1,4 +1,7 @@
 import mongoose from "mongoose";
+import { allowedRoles } from "./User";
+
+export const allowedTrainingTypes = ["pdf", "youtube"];
 
 var schema = new mongoose.Schema(
   {
@@ -8,21 +11,16 @@ var schema = new mongoose.Schema(
     url: {
       type: String,
     },
-    type: {
-      type: String,
-      enum: ["pdf", "youtube"],
-    },
+    // type: {
+    //   type: String,
+    //   enum: allowedTrainingTypes,
+    // },
     roles: {
       type: Array,
     },
     "roles.$": {
       type: String,
-      enum: [
-        "commercial_agent",
-        "client_sales_mandate",
-        "client_management_mandate",
-        "client_search_mandate",
-      ],
+      enum: allowedRoles,
     },
   },
   {

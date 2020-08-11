@@ -1,6 +1,14 @@
 import mongoose from "mongoose";
 import { v4 as uuidv4 } from "uuid";
 
+export const allowedRoles = [
+  "admin",
+  "commercial_agent",
+  "client_sales_mandate",
+  "client_management_mandate",
+  "client_search_mandate",
+];
+
 var schema = new mongoose.Schema(
   {
     displayName: {
@@ -25,13 +33,7 @@ var schema = new mongoose.Schema(
     },
     "roles.$": {
       type: String,
-      enum: [
-        "admin",
-        "commercial_agent",
-        "client_sales_mandate",
-        "client_management_mandate",
-        "client_search_mandate",
-      ],
+      enum: allowedRoles,
     },
   },
   {
