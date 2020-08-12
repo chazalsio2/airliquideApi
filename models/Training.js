@@ -11,10 +11,9 @@ var schema = new mongoose.Schema(
     url: {
       type: String,
     },
-    // type: {
-    //   type: String,
-    //   enum: allowedTrainingTypes,
-    // },
+    description: {
+      type: String,
+    },
     roles: {
       type: Array,
     },

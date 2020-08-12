@@ -1,7 +1,7 @@
 import _ from "underscore";
 
 import Training from "../models/Training";
-import { generateError } from "../lib/utils";
+import { generateError, hasRole } from "../lib/utils";
 import { allowedRoles } from "../models/User";
 
 export async function getTrainings(req, res, next) {
@@ -22,9 +22,37 @@ export async function getTrainings(req, res, next) {
   }
 }
 
+export async function getTraining(req, res, next) {
+  try {
+    const { trainingId } = req.params;
+
+    const training = await Training.findById(trainingId).lean();
+
+    if (!training) {
+      throw new Error("Training not found", 404);
+    }
+
+    const isAdmin = req.user.roles.indexOf("admin") !== -1;
+
+    if (isAdmin) {
+      return res.json({ success: true, data: training });
+    } else {
+      const authorized = hasRole(user, training.roles);
+
+      if (!authorized) {
+        throw new Error("Not authorized", 401);
+      }
+
+      return res.json({ success: true, data: training });
+    }
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
 export async function createTraining(req, res, next) {
   try {
-    const { name, url, roles } = req.body;
+    const { name, url, roles, description } = req.body;
 
     if (!name || !url) {
       throw new Error("Missing arguments", 403);
@@ -47,7 +75,12 @@ export async function createTraining(req, res, next) {
       throw new Error("Wrong arguments", 403);
     }
 
-    const training = await new Training({ name, url, roles }).save();
+    const training = await new Training({
+      name,
+      url,
+      roles,
+      description,
+    }).save();
     return res.json({ success: true, data: training });
   } catch (e) {
     next(generateError(e.message));

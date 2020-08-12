@@ -7,7 +7,6 @@ import Training from "../models/Training";
 
 export async function searchTerm(req, res, next) {
   const { t } = req.query;
-  const userRoles = req.user.roles;
 
   if (!t) {
     next(generateError("Missing fields", 401));
@@ -33,13 +32,21 @@ export async function searchTerm(req, res, next) {
 
   results.push(...documentsFormatted);
 
-  const trainings = await Training.find(
-    {
-      name: { $regex: t, $options: "i" },
-    },
-    null,
-    { limit: 50, sort: { createdAt: -1 } }
-  );
+  // Trainings
+
+  const selector = isAdmin(req.user)
+    ? {
+        name: { $regex: t, $options: "i" },
+      }
+    : {
+        name: { $regex: t, $options: "i" },
+        roles: { $in: req.user.roles },
+      };
+
+  const trainings = await Training.find(selector, null, {
+    limit: 50,
+    sort: { createdAt: -1 },
+  });
 
   const trainingsFormatted = trainings.map((doc) => ({
     _id: doc._id,

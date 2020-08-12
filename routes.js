@@ -36,7 +36,11 @@ import {
 } from "./controllers/property";
 import { getFolders } from "./controllers/folder";
 import { getUser } from "./controllers/user";
-import { getTrainings, createTraining } from "./controllers/training";
+import {
+  getTrainings,
+  createTraining,
+  getTraining,
+} from "./controllers/training";
 
 const checkAdmin = (req, res, next) => checkRoles("admin", req, res, next);
 const checkAdminOrCommercial = (req, res, next) =>
@@ -70,6 +74,13 @@ export default (app) => {
     "/trainings",
     passport.authenticate("jwt", { session: false }),
     getTrainings,
+    errorHandle
+  );
+
+  app.get(
+    "/trainings/:trainingId",
+    passport.authenticate("jwt", { session: false }),
+    getTraining,
     errorHandle
   );
 
