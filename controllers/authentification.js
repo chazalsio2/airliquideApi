@@ -153,6 +153,10 @@ export async function forgotPassword(req, res, next) {
     return next(generateError("User not found", 404));
   }
 
+  if (!user.active) {
+    await User.updateOne({ email }, { $set: { active: true } }).exec();
+  }
+
   sendEmail({
     email,
     name: user.displayName,
