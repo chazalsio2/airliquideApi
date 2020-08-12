@@ -35,6 +35,10 @@ var schema = new mongoose.Schema(
       type: String,
       enum: allowedRoles,
     },
+    deactivated: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

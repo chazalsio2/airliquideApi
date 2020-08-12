@@ -28,7 +28,7 @@ export async function getUsers(req, res, next) {
   const userCount = await User.countDocuments(selector).exec();
   const users = await User.find(
     selector,
-    "email roles createdAt active displayName active",
+    "email roles createdAt active displayName active deactivated",
     {
       limit: LIMIT_BY_PAGE,
       skip: (pageNumber - 1) * LIMIT_BY_PAGE,
@@ -77,7 +77,7 @@ export async function createUser(req, res, next) {
 
 export async function editUser(req, res, next) {
   try {
-    const { roles, displayName, userId } = req.body;
+    const { roles, displayName, userId, deactivated } = req.body;
 
     if (!userId || !displayName) {
       return next(generateError("Missing fields", 400));
@@ -104,12 +104,12 @@ export async function editUser(req, res, next) {
 
     await User.updateOne(
       { _id: userId },
-      { $set: { displayName, roles } }
+      { $set: { displayName, roles, deactivated } }
     ).exec();
 
     const userUpdated = await User.findOne(
       { _id: userId },
-      "email roles createdAt active displayName active"
+      "email roles createdAt active displayName active deactivated"
     ).lean();
 
     return res.json({ success: true, data: userUpdated });

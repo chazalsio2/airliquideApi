@@ -10,7 +10,12 @@ import {
 
 import { getUsers, createUser, editUser } from "./controllers/administration";
 
-import { checkSuperAdmin, errorHandle, checkRoles } from "./middlewares";
+import {
+  checkSuperAdmin,
+  errorHandle,
+  checkRoles,
+  checkAccountDesactivated,
+} from "./middlewares";
 import { getProfile } from "./controllers/account";
 import { searchTerm } from "./controllers/search";
 import {
@@ -66,6 +71,8 @@ export default (app) => {
   app.get(
     "/users/profile",
     passport.authenticate("jwt", { session: false }),
+    // We should not check accountsuspended here
+    // checkAccountDesactivated,
     getProfile,
     errorHandle
   );
@@ -73,6 +80,7 @@ export default (app) => {
   app.get(
     "/trainings",
     passport.authenticate("jwt", { session: false }),
+    checkAccountDesactivated,
     getTrainings,
     errorHandle
   );
@@ -80,6 +88,7 @@ export default (app) => {
   app.get(
     "/trainings/:trainingId",
     passport.authenticate("jwt", { session: false }),
+    checkAccountDesactivated,
     getTraining,
     errorHandle
   );
@@ -92,6 +101,7 @@ export default (app) => {
     "/admin/users",
     passport.authenticate("jwt", { session: false }),
     checkAdmin,
+    checkAccountDesactivated,
     getUsers,
     errorHandle
   );
@@ -100,6 +110,7 @@ export default (app) => {
     "/admin/users",
     passport.authenticate("jwt", { session: false }),
     checkAdmin,
+    checkAccountDesactivated,
     createUser,
     errorHandle
   );
@@ -108,6 +119,7 @@ export default (app) => {
     "/admin/users",
     passport.authenticate("jwt", { session: false }),
     checkAdmin,
+    checkAccountDesactivated,
     editUser,
     errorHandle
   );
@@ -116,6 +128,7 @@ export default (app) => {
     "/trainings",
     passport.authenticate("jwt", { session: false }),
     checkAdmin,
+    checkAccountDesactivated,
     createTraining,
     errorHandle
   );
@@ -124,6 +137,7 @@ export default (app) => {
     `/users/:userId`,
     passport.authenticate("jwt", { session: false }),
     checkAdmin,
+    checkAccountDesactivated,
     getUser,
     errorHandle
   );
@@ -134,6 +148,7 @@ export default (app) => {
     "/search",
     passport.authenticate("jwt", { session: false }),
     checkAdminOrCommercial,
+    checkAccountDesactivated,
     searchTerm,
     errorHandle
   );
@@ -142,6 +157,7 @@ export default (app) => {
     "/projects",
     passport.authenticate("jwt", { session: false }),
     checkAdminOrCommercial,
+    checkAccountDesactivated,
     getProjects,
     errorHandle
   );
@@ -150,6 +166,7 @@ export default (app) => {
     "/projects/assigned",
     passport.authenticate("jwt", { session: false }),
     checkAdminOrCommercial,
+    checkAccountDesactivated,
     getProjectsAssigned,
     errorHandle
   );
@@ -158,6 +175,7 @@ export default (app) => {
     "/projects/waiting-validation",
     passport.authenticate("jwt", { session: false }),
     checkAdmin,
+    checkAccountDesactivated,
     getProjectsMissingValidation,
     errorHandle
   );
@@ -166,6 +184,7 @@ export default (app) => {
     "/properties/:propertyId",
     passport.authenticate("jwt", { session: false }),
     checkAdminOrCommercial,
+    checkAccountDesactivated,
     getProperty,
     errorHandle
   );
@@ -174,6 +193,7 @@ export default (app) => {
     "/properties",
     passport.authenticate("jwt", { session: false }),
     checkAdminOrCommercial,
+    checkAccountDesactivated,
     createProperty,
     errorHandle
   );
@@ -182,6 +202,7 @@ export default (app) => {
     "/properties",
     passport.authenticate("jwt", { session: false }),
     checkAdminOrCommercial,
+    checkAccountDesactivated,
     getProperties,
     errorHandle
   );
@@ -190,6 +211,7 @@ export default (app) => {
     "/clients/:clientId",
     passport.authenticate("jwt", { session: false }),
     checkAdminOrCommercial,
+    checkAccountDesactivated,
     getClient,
     errorHandle
   );
@@ -198,6 +220,7 @@ export default (app) => {
     "/clients",
     passport.authenticate("jwt", { session: false }),
     checkAdminOrCommercial,
+    checkAccountDesactivated,
     getClients,
     errorHandle
   );
@@ -206,6 +229,7 @@ export default (app) => {
     "/clients/:clientId/projects",
     passport.authenticate("jwt", { session: false }),
     checkAdminOrCommercial,
+    checkAccountDesactivated,
     addProject,
     errorHandle
   );
@@ -214,6 +238,7 @@ export default (app) => {
     "/projects/:projectId",
     passport.authenticate("jwt", { session: false }),
     checkAdminOrCommercial,
+    checkAccountDesactivated,
     getProject,
     errorHandle
   );
@@ -222,6 +247,7 @@ export default (app) => {
     "/clients",
     passport.authenticate("jwt", { session: false }),
     checkAdminOrCommercial,
+    checkAccountDesactivated,
     createClient,
     errorHandle
   );
@@ -230,6 +256,7 @@ export default (app) => {
   app.get(
     "/documents/:documentId",
     passport.authenticate("jwt", { session: false }),
+    checkAccountDesactivated,
     getDocument,
     errorHandle
   );
@@ -237,6 +264,7 @@ export default (app) => {
   app.get(
     "/documents",
     passport.authenticate("jwt", { session: false }),
+    checkAccountDesactivated,
     getDocuments,
     errorHandle
   );
@@ -244,6 +272,7 @@ export default (app) => {
   app.get(
     "/folders",
     passport.authenticate("jwt", { session: false }),
+    checkAccountDesactivated,
     getFolders,
     errorHandle
   );

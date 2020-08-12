@@ -70,6 +70,7 @@ export async function login(req, res, next) {
         jwt: jwtGenerated,
         displayName: user.displayName,
         roles: user.roles,
+        deactivated: user.deactivated,
       },
     });
   } else {
@@ -134,6 +135,7 @@ export async function createPassword(req, res, next) {
       jwt: jwtGenerated,
       displayName: user.displayName,
       roles: user.roles,
+      deactivated: user.deactivated,
     },
   });
 }
