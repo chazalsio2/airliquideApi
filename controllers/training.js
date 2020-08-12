@@ -37,7 +37,7 @@ export async function getTraining(req, res, next) {
     if (isAdmin) {
       return res.json({ success: true, data: training });
     } else {
-      const authorized = hasRole(user, training.roles);
+      const authorized = hasRole(req.user, training.roles);
 
       if (!authorized) {
         throw new Error("Not authorized", 401);
