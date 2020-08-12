@@ -5,6 +5,7 @@ import Project from "../models/Project";
 import Client from "../models/Client";
 import Document from "../models/Document";
 import ProjectEvent from "../models/ProjectEvent";
+import { sendProjectWaitingValidationEmail } from "../lib/email";
 
 export async function getProject(req, res, next) {
   try {
@@ -17,7 +18,9 @@ export async function getProject(req, res, next) {
     }
 
     project.client = await Client.findById(project.clientId).lean();
-    project.events = await ProjectEvent.find({ projectId: project._id }).lean();
+    project.events = await ProjectEvent.find({ projectId: project._id }, null, {
+      sort: { createdAt: -1 },
+    }).lean();
     project.documents = await Document.find(
       { projectId: Types.ObjectId(project._id) }, // do not work i dont know why
       null,
@@ -135,6 +138,7 @@ export async function saveSearchSheet(req, res, next) {
     } = req.body;
 
     const { projectId } = req.params;
+    const project = await Project.findById(projectId).lean();
 
     if (
       !propertyType ||
@@ -150,8 +154,6 @@ export async function saveSearchSheet(req, res, next) {
     ) {
       return next(generateError("Invalid arguments", 401));
     }
-
-    const project = await Project.findById(projectId).lean();
 
     if (!project) {
       return next(generateError("Project not found", 404));
@@ -178,6 +180,47 @@ export async function saveSearchSheet(req, res, next) {
         },
       }
     ).exec();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+export async function confirmSearchMandate(req, res, next) {
+  try {
+    const { projectId } = req.params;
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    const { readysearchmandate } = req.body;
+
+    if (!readysearchmandate) {
+      return next(generateError("Missing argument", 403));
+    }
+
+    const client = await Client.findById(project.clientId).lean();
+
+    if (!client) {
+      return next(generateError("Client not found", 404));
+    }
+
+    await Project.updateOne(
+      { _id: projectId },
+      { $set: { typeOfMandate: readysearchmandate, status: "draft" } }
+    ).exec();
+
+    sendProjectWaitingValidationEmail(project);
+
+    await new ProjectEvent({
+      projectId: project._id,
+      type: "form_completion",
+      authorUserId: project.clientId,
+      authorDisplayName: client.displayName,
+    }).save();
 
     return res.json({ success: true });
   } catch (e) {
@@ -234,7 +277,7 @@ export async function savePersonalSituation(req, res, next) {
       projectModifier.desiredGrossYield = desiredgrossyield;
     }
 
-    const result = await Project.updateOne(
+    await Project.updateOne(
       { _id: projectId },
       { $set: projectModifier }
     ).exec();
@@ -275,7 +318,7 @@ export async function savePersonalSituation(req, res, next) {
       };
     }
 
-    const clientResult = await Client.updateOne(
+    await Client.updateOne(
       { _id: project.clientId },
       {
         $set: clientModifier,

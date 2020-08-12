@@ -157,6 +157,11 @@ const schema = new mongoose.Schema(
       enum: ["4to6", "6to8", "8to10", "greaterthan10"],
       required: false,
     },
+    typeOfMandate: {
+      type: String,
+      enum: ["simple", "exlusive", "dontknow"],
+      required: false,
+    },
   },
   {
     timestamps: true,

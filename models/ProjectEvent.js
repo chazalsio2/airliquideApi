@@ -7,7 +7,7 @@ var schema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["project_creation", "project_validation"],
+      enum: ["project_creation", "form_completion", "project_validation"],
     },
     authorUserId: {
       type: mongoose.Types.ObjectId,
