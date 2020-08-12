@@ -1,5 +1,52 @@
 import mongoose from "mongoose";
 
+const allowedSituationValues = [
+  "employeefixedcontract",
+  "employeepermanentcontract",
+  "entrepreneur",
+  "freelance",
+  "investor",
+  "retired",
+  "unemployed",
+];
+
+const allowedStatusValues = [
+  "single",
+  "married",
+  "separationofproperty",
+  "legalcommunity",
+  "jointpossession",
+  "company",
+];
+
+const allowedTypesOfIncome = [
+  "income",
+  "dividends",
+  "movablecapital",
+  "others",
+];
+
+const allowedTypesOfRentalIncome = ["naked", "furnished", "seasonal", "others"];
+
+const SpouseSchema = new mongoose.Schema({
+  firstname: {
+    type: String,
+  },
+  lastname: {
+    type: String,
+  },
+  address: {
+    type: String,
+  },
+  email: {
+    type: String,
+  },
+  situation: {
+    type: String,
+    enum: allowedSituationValues,
+  },
+});
+
 var schema = new mongoose.Schema(
   {
     civility: {
@@ -50,6 +97,96 @@ var schema = new mongoose.Schema(
     displayName: {
       type: String,
       required: false,
+    },
+    spouse: {
+      type: SpouseSchema,
+      required: false,
+    },
+    address: {
+      type: String,
+      required: false,
+    },
+    principalResidence: {
+      type: String,
+      required: false,
+      enum: ["tenant", "owner"],
+    },
+    typesOfIncome: {
+      type: Array,
+      required: false,
+    },
+    "typesOfIncome.$": {
+      type: String,
+      required: false,
+      enum: allowedTypesOfIncome,
+    },
+    othersTypesOfIncome: {
+      type: String,
+      required: false,
+    },
+    typesOfRentalIncome: {
+      type: Array,
+      required: false,
+    },
+    "typesOfRentalIncome.$": {
+      type: String,
+      required: false,
+      enum: allowedTypesOfRentalIncome,
+    },
+    othersTypesOfRentalIncome: {
+      type: String,
+      required: false,
+    },
+    income: {
+      type: Number,
+      required: false,
+    },
+    industry: {
+      type: String,
+      required: false,
+    },
+    seniority: {
+      type: Number,
+      required: false,
+    },
+    situation: {
+      type: String,
+      required: false,
+      enum: allowedSituationValues,
+    },
+    status: {
+      type: String,
+      required: false,
+      enum: allowedStatusValues,
+    },
+    savings: {
+      type: Number,
+      required: false,
+    },
+    rentAmount: {
+      type: Number,
+      required: false,
+    },
+    creditAmount: {
+      type: Number,
+      required: false,
+    },
+    crd: {
+      type: Number,
+      required: false,
+    },
+    loans: {
+      type: Number,
+      required: false,
+    },
+    income: {
+      type: Number,
+    },
+    industry: {
+      type: String,
+    },
+    seniority: {
+      type: Number,
     },
   },
   {

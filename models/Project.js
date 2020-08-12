@@ -68,6 +68,7 @@ const SearchSheet = new mongoose.Schema({
     type: Number,
     required: false,
   },
+
   searchSector: {
     type: String,
     enum: [
@@ -145,6 +146,16 @@ const schema = new mongoose.Schema(
         "refused",
         "canceled",
       ],
+    },
+    investAlone: {
+      type: String,
+      enum: ["alone", "couple"],
+      required: false,
+    },
+    desiredGrossYield: {
+      type: String,
+      enum: ["4to6", "6to8", "8to10", "greaterthan10"],
+      required: false,
     },
   },
   {

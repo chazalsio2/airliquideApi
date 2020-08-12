@@ -188,26 +188,36 @@ export async function saveSearchSheet(req, res, next) {
 export async function savePersonalSituation(req, res, next) {
   try {
     const {
-      address,
-      crd,
-      creditamount,
-      desiredgrossyield,
-      email,
-      firstname,
       investalone,
+      desiredgrossyield,
+      firstname,
       lastname,
-      loans,
-      othertypeofrentalincome,
+      phone,
+      email,
+      address,
       personalincome,
       personalindustry,
       personalseniority,
       personalsituation,
       personalstatus,
-      phone,
-      principalresidence,
       savings,
+      loans,
+      crd,
+      rentamount,
+      creditamount,
+      principalresidence,
       typeofincome,
+      othertypeofincome,
       typeofrentalincome,
+      othertypeofrentalincome,
+      spousefirstname,
+      spouselastname,
+      spouseaddress,
+      spouseemail,
+      spousesituation,
+      spouseincome,
+      spouseindustry,
+      spouseseniority,
     } = req.body;
 
     const { projectId } = req.params;
@@ -217,6 +227,60 @@ export async function savePersonalSituation(req, res, next) {
     if (!project) {
       return next(generateError("Project not found", 404));
     }
+
+    const projectModifier = { investAlone: investalone };
+
+    if (desiredgrossyield) {
+      projectModifier.desiredGrossYield = desiredgrossyield;
+    }
+
+    const result = await Project.updateOne(
+      { _id: projectId },
+      { $set: projectModifier }
+    ).exec();
+
+    const clientModifier = {
+      firstname,
+      lastname,
+      phone,
+      email,
+      address,
+      savings,
+      loans,
+      crd,
+      typesOfIncome: typeofincome,
+      othersTypesOfIncome: othertypeofincome,
+      typesOfRentalIncome: typeofrentalincome,
+      othersTypesOfRentalIncome: othertypeofrentalincome,
+      principalResidence: principalresidence,
+      rentAmount: rentamount,
+      creditAmount: creditamount,
+      income: personalincome,
+      industry: personalindustry,
+      seniority: personalseniority,
+      situation: personalsituation,
+      status: personalstatus,
+    };
+
+    if (investalone === "couple") {
+      clientModifier.spouse = {
+        firstname: spousefirstname,
+        lastname: spouselastname,
+        address: spouseaddress,
+        email: spouseemail,
+        situation: spousesituation,
+        income: spouseincome,
+        industry: spouseindustry,
+        seniority: spouseseniority,
+      };
+    }
+
+    const clientResult = await Client.updateOne(
+      { _id: project.clientId },
+      {
+        $set: clientModifier,
+      }
+    ).exec();
 
     return res.json({ success: true });
   } catch (e) {
