@@ -50,7 +50,7 @@ const SearchSheet = new mongoose.Schema({
   },
   propertySize: {
     type: String,
-    enum: ["studio", "T1", "T2", "T3", "T4", "bigger"],
+    enum: ["studio", "T2", "T3", "T4", "bigger"],
   },
   propertySizeDetail: {
     type: String,

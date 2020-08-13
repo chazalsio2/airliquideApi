@@ -176,6 +176,7 @@ export async function saveSearchSheet(req, res, next) {
             varangue,
             delay,
             budget,
+            searchSectorCities: searchSectorCities || [],
           },
         },
       }
