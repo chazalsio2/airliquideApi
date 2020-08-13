@@ -197,7 +197,7 @@ export async function confirmSearchMandate(req, res, next) {
       return next(generateError("Project not found", 404));
     }
 
-    const { readysearchmandate } = req.body;
+    const { readysearchmandate, allowSaveData, timeslots } = req.body;
 
     if (!readysearchmandate) {
       return next(generateError("Missing argument", 403));
@@ -208,6 +208,18 @@ export async function confirmSearchMandate(req, res, next) {
     if (!client) {
       return next(generateError("Client not found", 404));
     }
+
+    await Client.updateOne(
+      {
+        _id: project.clientId,
+      },
+      {
+        $set: {
+          availabilities: timeslots,
+          allowSaveData,
+        },
+      }
+    ).exec();
 
     await Project.updateOne(
       { _id: projectId },

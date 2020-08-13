@@ -47,6 +47,15 @@ const SpouseSchema = new mongoose.Schema({
   },
 });
 
+const ClientAvailability = new mongoose.Schema({
+  day: {
+    type: String,
+  },
+  slotNum: {
+    type: Number,
+  },
+});
+
 var schema = new mongoose.Schema(
   {
     civility: {
@@ -187,6 +196,18 @@ var schema = new mongoose.Schema(
     },
     seniority: {
       type: Number,
+    },
+    availabilities: {
+      type: Array,
+      required: false,
+    },
+    "availabilities.$": {
+      type: ClientAvailability,
+      required: false,
+    },
+    allowSaveData: {
+      type: Boolean,
+      required: false,
     },
   },
   {
