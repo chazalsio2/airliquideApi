@@ -21,6 +21,10 @@ var schema = new mongoose.Schema(
       type: String,
       optional: true,
     },
+    folderId: {
+      type: String,
+      required: false,
+    },
   },
   {
     timestamps: true,

@@ -25,7 +25,12 @@ import {
   addProject,
 } from "./controllers/client";
 import { publicCreateClient } from "./controllers/public";
-import { getDocuments, getDocument } from "./controllers/document";
+import {
+  getDocuments,
+  getDocument,
+  getFolder,
+  getRootFolder,
+} from "./controllers/document";
 import {
   getProject,
   getProjects,
@@ -261,6 +266,22 @@ export default (app) => {
 
   /* User connected */
   app.get(
+    "/folders",
+    passport.authenticate("jwt", { session: false }),
+    checkAccountDesactivated,
+    getRootFolder,
+    errorHandle
+  );
+
+  app.get(
+    "/folders/:folderId",
+    passport.authenticate("jwt", { session: false }),
+    checkAccountDesactivated,
+    getFolder,
+    errorHandle
+  );
+
+  app.get(
     "/documents/:documentId",
     passport.authenticate("jwt", { session: false }),
     checkAccountDesactivated,
@@ -268,13 +289,13 @@ export default (app) => {
     errorHandle
   );
 
-  app.get(
-    "/documents",
-    passport.authenticate("jwt", { session: false }),
-    checkAccountDesactivated,
-    getDocuments,
-    errorHandle
-  );
+  // app.get(
+  //   "/documents",
+  //   passport.authenticate("jwt", { session: false }),
+  //   checkAccountDesactivated,
+  //   getDocuments,
+  //   errorHandle
+  // );
 
   app.get(
     "/folders",
