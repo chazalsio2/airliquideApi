@@ -45,7 +45,7 @@ export async function getProject(req, res, next) {
 export async function getProjects(req, res, next) {
   try {
     const projects = await Project.find({
-      status: { $nin: ["assigned", "canceled"] },
+      status: { $nin: ["canceled", "refused", "closed"] },
     }).lean();
 
     const clientEnrichedPromises = projects.map(async (project) => {
@@ -71,7 +71,7 @@ export async function getProjectsAssigned(req, res, next) {
   try {
     const projects = await Project.find({
       commercialId: req.user._id,
-      status: { $nin: ["assigned", "canceled"] },
+      status: { $nin: ["canceled", "refused", "closed"] },
     }).lean();
 
     const clientEnrichedPromises = projects.map(async (project) => {
