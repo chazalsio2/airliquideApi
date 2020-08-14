@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import User from "./User";
 
 var schema = new mongoose.Schema(
   {
@@ -7,7 +8,12 @@ var schema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["project_creation", "form_completion", "project_validation"],
+      enum: [
+        "project_creation",
+        "form_completion",
+        "project_validation",
+        "project_refused",
+      ],
     },
     authorUserId: {
       type: mongoose.Types.ObjectId,
@@ -23,5 +29,17 @@ var schema = new mongoose.Schema(
     collection: "project_events",
   }
 );
+
+schema.pre("save", async function (next) {
+  try {
+    if (this.authorUserId) {
+      const user = await User.findById(this.authorUserId).lean();
+      this.authorDisplayName = user.displayName;
+    }
+    next();
+  } catch (e) {
+    next(e);
+  }
+});
 
 export default mongoose.model("ProjectEvent", schema);

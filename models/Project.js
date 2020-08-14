@@ -162,6 +162,10 @@ const schema = new mongoose.Schema(
       enum: ["simple", "exlusive", "dontknow"],
       required: false,
     },
+    refusalReason: {
+      type: String,
+      required: false,
+    },
   },
   {
     timestamps: true,

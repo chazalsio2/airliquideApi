@@ -39,6 +39,7 @@ import {
   saveSearchSheet,
   savePersonalSituation,
   confirmSearchMandate,
+  refuseProject,
 } from "./controllers/project";
 import {
   createProperty,
@@ -161,6 +162,15 @@ export default (app) => {
     checkAdmin,
     checkAccountDesactivated,
     getUser,
+    errorHandle
+  );
+
+  app.post(
+    `/projects/:projectId/refuse`,
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    refuseProject,
     errorHandle
   );
 

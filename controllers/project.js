@@ -232,7 +232,6 @@ export async function confirmSearchMandate(req, res, next) {
       projectId: project._id,
       type: "form_completion",
       authorUserId: project.clientId,
-      authorDisplayName: client.displayName,
     }).save();
 
     return res.json({ success: true });
@@ -337,6 +336,39 @@ export async function savePersonalSituation(req, res, next) {
         $set: clientModifier,
       }
     ).exec();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+export async function refuseProject(req, res, next) {
+  try {
+    const { projectId } = req.params;
+    const { reason } = req.body;
+
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    if (project.status !== "draft") {
+      return next(generateError("Wrong state", 401));
+    }
+
+    await Project.updateOne(
+      { _id: projectId },
+      { $set: { status: "refused", refusalReason: reason } }
+    ).exec();
+
+    await new ProjectEvent({
+      projectId,
+      type: "project_refused",
+      comment: reason,
+      authorUserId: req.user._id,
+    }).save();
 
     return res.json({ success: true });
   } catch (e) {
