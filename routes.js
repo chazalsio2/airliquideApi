@@ -45,7 +45,7 @@ import {
   getProperties,
   getProperty,
 } from "./controllers/property";
-import { getFolders } from "./controllers/folder";
+import { getFolders, addFolder } from "./controllers/folder";
 import { getUser } from "./controllers/user";
 import {
   getTrainings,
@@ -109,6 +109,16 @@ export default (app) => {
   app.post("/users/admin", checkSuperAdmin, createAdmin, errorHandle);
 
   // Administrators
+
+  app.post(
+    "/folders",
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    addFolder,
+    errorHandle
+  );
+
   app.get(
     "/admin/users",
     passport.authenticate("jwt", { session: false }),
