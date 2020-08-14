@@ -19,6 +19,7 @@
   "homepage": "https://gitlab.com/vision-r/ivisionr-api#readme",
   "dependencies": {
     "@sentry/node": "^5.19.2",
+    "aws-sdk": "^2.733.0",
     "bcrypt": "^5.0.0",
     "body-parser": "^1.19.0",
     "cloudinary": "^1.22.0",

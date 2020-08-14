@@ -36,13 +36,18 @@ import {
   confirmSearchMandate,
   refuseProject,
   acceptProject,
+  addDocumentToProject,
 } from "./controllers/project";
 import {
   createProperty,
   getProperties,
   getProperty,
 } from "./controllers/property";
-import { getFolders, addFolder } from "./controllers/folder";
+import {
+  getFolders,
+  addFolder,
+  addDocumentInFolder,
+} from "./controllers/folder";
 import { getUser } from "./controllers/user";
 import {
   getTrainings,
@@ -106,7 +111,6 @@ export default (app) => {
   app.post("/users/admin", checkSuperAdmin, createAdmin, errorHandle);
 
   // Administrators
-
   app.post(
     "/folders",
     passport.authenticate("jwt", { session: false }),
@@ -176,6 +180,15 @@ export default (app) => {
     checkAdmin,
     checkAccountDesactivated,
     acceptProject,
+    errorHandle
+  );
+
+  app.post(
+    `/folders/:folderId/documents`,
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    addDocumentInFolder,
     errorHandle
   );
 
@@ -327,6 +340,14 @@ export default (app) => {
     passport.authenticate("jwt", { session: false }),
     checkAccountDesactivated,
     getFolders,
+    errorHandle
+  );
+
+  app.post(
+    "/projects/:projectId/documents",
+    passport.authenticate("jwt", { session: false }),
+    checkAccountDesactivated,
+    addDocumentToProject,
     errorHandle
   );
 

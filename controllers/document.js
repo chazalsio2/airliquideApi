@@ -69,7 +69,9 @@ export async function getFolder(req, res, next) {
           roles: { $in: req.user.roles },
         };
 
-    const documents = await Document.find(docSelector).lean();
+    const documents = await Document.find(docSelector, null, {
+      sort: { createdAt: -1 },
+    }).lean();
 
     // folders is empty because we do not support multi level
     return res.json({
