@@ -13,6 +13,7 @@ var schema = new mongoose.Schema(
         "form_completion",
         "project_validation",
         "project_refused",
+        "project_accepted",
       ],
     },
     authorUserId: {

@@ -375,3 +375,34 @@ export async function refuseProject(req, res, next) {
     next(generateError(e.message));
   }
 }
+
+export async function acceptProject(req, res, next) {
+  try {
+    const { projectId } = req.params;
+
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    if (project.status !== "draft") {
+      return next(generateError("Wrong state", 401));
+    }
+
+    await Project.updateOne(
+      { _id: projectId },
+      { $set: { status: "wait_mandate_signature" } }
+    ).exec();
+
+    await new ProjectEvent({
+      projectId,
+      type: "project_accepted",
+      authorUserId: req.user._id,
+    }).save();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}

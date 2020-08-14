@@ -25,12 +25,7 @@ import {
   addProject,
 } from "./controllers/client";
 import { publicCreateClient } from "./controllers/public";
-import {
-  getDocuments,
-  getDocument,
-  getFolder,
-  getRootFolder,
-} from "./controllers/document";
+import { getDocument, getFolder, getRootFolder } from "./controllers/document";
 import {
   getProject,
   getProjects,
@@ -40,6 +35,7 @@ import {
   savePersonalSituation,
   confirmSearchMandate,
   refuseProject,
+  acceptProject,
 } from "./controllers/project";
 import {
   createProperty,
@@ -171,6 +167,15 @@ export default (app) => {
     checkAdmin,
     checkAccountDesactivated,
     refuseProject,
+    errorHandle
+  );
+
+  app.post(
+    `/projects/:projectId/accept`,
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    acceptProject,
     errorHandle
   );
 
