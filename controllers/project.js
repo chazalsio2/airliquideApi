@@ -7,6 +7,7 @@ import Document from "../models/Document";
 import ProjectEvent from "../models/ProjectEvent";
 import { sendProjectWaitingValidationEmail } from "../lib/email";
 import { uploadFile } from "../lib/aws";
+import { sendToSlack } from "../lib/slack";
 
 export async function getProject(req, res, next) {
   try {

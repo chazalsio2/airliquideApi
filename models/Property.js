@@ -12,6 +12,20 @@ const AddressSchema = new mongoose.Schema({
   },
 });
 
+const RoomSchema = new mongoose.Schema({
+  area: {
+    type: Number,
+    required: false,
+  },
+  name: {
+    type: Number,
+  },
+  note: {
+    type: String,
+    required: false,
+  },
+});
+
 const schema = new mongoose.Schema(
   {
     name: {
@@ -38,9 +52,6 @@ const schema = new mongoose.Schema(
         "parking",
         "building",
       ],
-    },
-    area: {
-      type: Number,
     },
     yearOfConstruction: {
       type: Number,
@@ -76,6 +87,14 @@ const schema = new mongoose.Schema(
     public: {
       type: Boolean,
       default: false,
+    },
+    rooms: {
+      type: Array,
+      required: false,
+    },
+    "rooms.$": {
+      type: RoomSchema,
+      required: false,
     },
   },
   {
