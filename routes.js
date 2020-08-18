@@ -68,6 +68,8 @@ export default (app) => {
 
   app.post("/public/clients", publicCreateClient, errorHandle);
 
+  app.get("/public/projects/:projectId", getProject, errorHandle);
+
   app.post("/projects/:projectId/search-sheet", saveSearchSheet, errorHandle);
   app.post(
     "/projects/:projectId/personal-situation",
