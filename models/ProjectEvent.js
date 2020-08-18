@@ -35,7 +35,9 @@ schema.pre("save", async function (next) {
   try {
     if (this.authorUserId) {
       const user = await User.findById(this.authorUserId).lean();
-      this.authorDisplayName = user.displayName;
+      if (user) {
+        this.authorDisplayName = user.displayName;
+      }
     }
     next();
   } catch (e) {

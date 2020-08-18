@@ -173,19 +173,20 @@ const schema = new mongoose.Schema(
   }
 );
 
-schema.pre("save", async function (next) {
-  try {
-    // await Folder({
-    //   projectId: this._id,
-    // }).save();
-    await ProjectEvent({
-      projectId: this._id,
-      type: "project_creation",
-    }).save();
-    next();
-  } catch (e) {
-    next(e);
-  }
-});
+// schema.pre("save", async function (next) {
+//   try {
+//     // await Folder({
+//     //   projectId: this._id,
+//     // }).save();
+//     await ProjectEvent({
+//       projectId: this._id,
+//       type: "project_creation",
+//       clientId: 
+//     }).save();
+//     next();
+//   } catch (e) {
+//     next(e);
+//   }
+// });
 
 export default mongoose.model("Project", schema);

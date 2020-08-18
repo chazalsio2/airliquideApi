@@ -1,6 +1,7 @@
 import Client from "../models/Client";
 import { generateError } from "../lib/utils";
 import Project, { projectTypes } from "../models/Project";
+import ProjectEvent from "../models/ProjectEvent";
 
 export async function getClients(req, res, next) {
   try {
@@ -146,6 +147,11 @@ export async function addProject(req, res, next) {
     }
 
     await new Project({ clientId, type: projectType }).save();
+
+    await ProjectEvent({
+      projectId: this._id,
+      type: "project_creation",
+    }).save();
 
     return res.json({ success: true });
   } catch (e) {
