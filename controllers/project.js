@@ -7,7 +7,7 @@ import Document from "../models/Document";
 import ProjectEvent from "../models/ProjectEvent";
 import { sendProjectWaitingValidationEmail } from "../lib/email";
 import { uploadFile } from "../lib/aws";
-import { sendToSlack } from "../lib/slack";
+import { sendMessageToSlack } from "../lib/slack";
 
 export async function getProject(req, res, next) {
   try {
@@ -184,6 +184,12 @@ export async function saveSearchSheet(req, res, next) {
       }
     ).exec();
 
+    const client = await Client.findById(project.clientId).lean();
+
+    sendMessageToSlack({
+      message: `${client.displayName} à compléter sa fiche de recherche : ${process.env.APP_URL}/clients/${client._id}`,
+    });
+
     return res.json({ success: true });
   } catch (e) {
     next(generateError(e.message));
@@ -235,6 +241,10 @@ export async function confirmSearchMandate(req, res, next) {
       type: "form_completion",
       authorUserId: project.clientId,
     }).save();
+
+    sendMessageToSlack({
+      message: `Le mandat de recherche pour le client ${client.displayName} est en attente de validation : ${process.env.APP_URL}/projects/${projectId}`,
+    });
 
     return res.json({ success: true });
   } catch (e) {
@@ -339,6 +349,12 @@ export async function savePersonalSituation(req, res, next) {
       }
     ).exec();
 
+    const client = await Client.findById(project.clientId).lean();
+
+    sendMessageToSlack({
+      message: `${client.displayName} à renseigné sa situation personnelle : ${process.env.APP_URL}/clients/${client._id}`,
+    });
+
     return res.json({ success: true });
   } catch (e) {
     next(generateError(e.message));
@@ -372,6 +388,14 @@ export async function refuseProject(req, res, next) {
       authorUserId: req.user._id,
     }).save();
 
+    const client = await Client.findById(project.clientId).lean();
+
+    const user = await User.findById(req.user._id).lean();
+
+    sendMessageToSlack({
+      message: `Le mandat de recherche de ${client.displayName} a été refusé par ${user.displayName} : ${process.env.APP_URL}/projects/${project._id}`,
+    });
+
     return res.json({ success: true });
   } catch (e) {
     next(generateError(e.message));
@@ -402,6 +426,14 @@ export async function acceptProject(req, res, next) {
       type: "project_accepted",
       authorUserId: req.user._id,
     }).save();
+
+    const client = await Client.findById(project.clientId).lean();
+
+    const user = await User.findById(req.user._id).lean();
+
+    sendMessageToSlack({
+      message: `Le mandat de recherche de ${client.displayName} a été accepté par ${user.displayName} : ${process.env.APP_URL}/projects/${project._id}`,
+    });
 
     return res.json({ success: true });
   } catch (e) {

@@ -2,6 +2,7 @@ import { generateError } from "../lib/utils";
 import Client from "../models/Client";
 import Project, { projectTypes } from "../models/Project";
 import { sendNewClientEmail } from "../lib/email";
+import { sendMessageToSlack } from "../lib/slack";
 
 export async function publicCreateClient(req, res, next) {
   try {
@@ -27,6 +28,10 @@ export async function publicCreateClient(req, res, next) {
     }).save();
 
     sendNewClientEmail(client);
+
+    sendMessageToSlack({
+      message: `Le client ${client.firstname} ${client.lastname} a été ajouté : ${process.env.APP_URL}/clients/${client._id}`,
+    });
 
     if (projectTypes.indexOf(serviceType) !== -1) {
       const project = await Project({
