@@ -485,3 +485,39 @@ export async function addDocumentToProject(req, res, next) {
     next(generateError(e.message));
   }
 }
+
+export async function assignCommercial(req, res, next) {
+  try {
+    const { projectId } = req.params;
+    const { commercialId } = req.body;
+
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    if (project.commercialId) {
+      return next(generateError("Project already assigned", 403));
+    }
+
+    const commercial = await User.findOne({
+      _id: commercialId,
+      roles: "commercial_agent",
+      deactivated: { $ne: true },
+    });
+
+    if (!commercial) {
+      return next(generateError("Commercial not found", 404));
+    }
+
+    await Project.updateOne(
+      { _id: projectId },
+      { $set: { commercialId } }
+    ).exec();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}

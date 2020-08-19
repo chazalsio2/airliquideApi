@@ -37,6 +37,7 @@ import {
   refuseProject,
   acceptProject,
   addDocumentToProject,
+  assignCommercial,
 } from "./controllers/project";
 import {
   createProperty,
@@ -48,7 +49,7 @@ import {
   addFolder,
   addDocumentInFolder,
 } from "./controllers/folder";
-import { getUser } from "./controllers/user";
+import { getUser, getCommercials } from "./controllers/user";
 import {
   getTrainings,
   createTraining,
@@ -123,6 +124,15 @@ export default (app) => {
   );
 
   app.get(
+    "/commercials",
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    getCommercials,
+    errorHandle
+  );
+
+  app.get(
     "/admin/users",
     passport.authenticate("jwt", { session: false }),
     checkAdmin,
@@ -182,6 +192,15 @@ export default (app) => {
     checkAdmin,
     checkAccountDesactivated,
     acceptProject,
+    errorHandle
+  );
+
+  app.post(
+    `/projects/:projectId/assign-commercial`,
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    assignCommercial,
     errorHandle
   );
 

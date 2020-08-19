@@ -18,19 +18,6 @@ export async function createProperty(req, res, next) {
       virtualVisitLink,
       rooms,
     } = req.body;
-    console.log(
-      "createProperty -> req.body",
-      name,
-      description,
-      type,
-      salesPrice,
-      fullAddress,
-      landArea,
-      livingArea,
-      varangueArea,
-      virtualVisitLink,
-      rooms
-    );
 
     if (
       !name ||

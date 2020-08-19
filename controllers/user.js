@@ -24,3 +24,16 @@ export async function getUser(req, res, next) {
     next(generateError(e.message));
   }
 }
+
+export async function getCommercials(req, res, next) {
+  try {
+    const commercials = await User.find({
+      roles: "commercial_agent",
+      deactivated: { $ne: true },
+    }).lean();
+
+    return res.json({ success: true, data: commercials });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
