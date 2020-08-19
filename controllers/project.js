@@ -5,7 +5,10 @@ import Project from "../models/Project";
 import Client from "../models/Client";
 import Document from "../models/Document";
 import ProjectEvent from "../models/ProjectEvent";
-import { sendProjectWaitingValidationEmail } from "../lib/email";
+import {
+  sendProjectWaitingValidationEmail,
+  sendAssignProjectNotification,
+} from "../lib/email";
 import { uploadFile } from "../lib/aws";
 import { sendMessageToSlack } from "../lib/slack";
 
@@ -515,6 +518,8 @@ export async function assignCommercial(req, res, next) {
       { _id: projectId },
       { $set: { commercialId } }
     ).exec();
+
+    sendAssignProjectNotification(commercial, project);
 
     return res.json({ success: true });
   } catch (e) {
