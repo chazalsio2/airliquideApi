@@ -3,6 +3,70 @@ import { uploadPhotos } from "../lib/cloudinary";
 import Property from "../models/Property";
 import { sendMessageToSlack } from "../lib/slack";
 
+export async function editProperty(req, res, next) {
+  try {
+    const {
+      name,
+      description,
+      salesPrice,
+      fullAddress,
+      landArea,
+      livingArea,
+      varangueArea,
+      type,
+      virtualVisitLink,
+      rooms,
+    } = req.body;
+
+    const { propertyId } = req.params;
+
+    if (
+      !name ||
+      !description ||
+      !type ||
+      !salesPrice ||
+      !landArea ||
+      !livingArea
+    ) {
+      return next(generateError("Invalid request", 401));
+    }
+
+    const propertyData = {
+      name,
+      description,
+      type,
+      salesPrice,
+      landArea,
+      livingArea,
+    };
+
+    if (virtualVisitLink) {
+      propertyData.virtualVisitLink = virtualVisitLink;
+    }
+
+    if (fullAddress) {
+      propertyData.fullAddress = fullAddress;
+    }
+
+    if (varangueArea) {
+      propertyData.varangueArea = varangueArea;
+    }
+
+    if (rooms) {
+      propertyData.rooms = rooms;
+    }
+
+    const property = await Property.updateOne(
+      { _id: propertyId },
+      { $set: propertyData }
+    ).exec();
+
+    return res.json({ success: true, data: property });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
 export async function createProperty(req, res, next) {
   try {
     const {

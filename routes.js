@@ -43,6 +43,7 @@ import {
   createProperty,
   getProperties,
   getProperty,
+  editProperty,
 } from "./controllers/property";
 import {
   getFolders,
@@ -183,6 +184,15 @@ export default (app) => {
     checkAdmin,
     checkAccountDesactivated,
     refuseProject,
+    errorHandle
+  );
+
+  app.put(
+    `/properties/:propertyId`,
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    editProperty,
     errorHandle
   );
 
