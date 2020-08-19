@@ -31,6 +31,7 @@ export async function addFolder(req, res, next) {
     }
 
     const allowedRoles = [
+      "admin",
       "commercial_agent",
       "client_search_mandate",
       "client_sales_mandate",
