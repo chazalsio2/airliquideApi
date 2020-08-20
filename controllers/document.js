@@ -1,6 +1,8 @@
 import Folder from "../models/Folder";
 import Document from "../models/Document";
 
+import { deleteFile } from "../lib/aws";
+
 import { generateError, hasRole, isAdmin } from "../lib/utils";
 
 export async function getDocument(req, res, next) {
@@ -78,6 +80,32 @@ export async function getFolder(req, res, next) {
       success: true,
       data: { name: folder.name, folders: [], documents },
     });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+export async function deleteDocument(req, res, next) {
+  try {
+    const { documentId } = req.params;
+
+    const document = await Document.findById(documentId).lean();
+
+    if (!document) {
+      return next(generateError("Document not found", 404));
+    }
+
+    if (document.url) {
+      const filePath = document.folderId
+        ? `folder__${document.folderId}/${documentId}_${document.name}`
+        : `project__${document.projectId}/${documentId}_${document.name}`;
+
+      await deleteFile(filePath);
+    }
+
+    await Document.deleteOne({ _id: documentId }).exec();
+
+    return res.json({ success: true });
   } catch (e) {
     next(generateError(e.message));
   }

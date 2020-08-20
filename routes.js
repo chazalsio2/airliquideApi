@@ -25,7 +25,12 @@ import {
   addProject,
 } from "./controllers/client";
 import { publicCreateClient } from "./controllers/public";
-import { getDocument, getFolder, getRootFolder } from "./controllers/document";
+import {
+  getDocument,
+  getFolder,
+  getRootFolder,
+  deleteDocument,
+} from "./controllers/document";
 import {
   getProject,
   getProjects,
@@ -127,6 +132,15 @@ export default (app) => {
     checkAdmin,
     checkAccountDesactivated,
     addFolder,
+    errorHandle
+  );
+
+  app.delete(
+    "/documents/:documentId",
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    deleteDocument,
     errorHandle
   );
 
