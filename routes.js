@@ -56,12 +56,17 @@ import {
   createTraining,
   getTraining,
 } from "./controllers/training";
+import { handleWebhookDocusign } from "./controllers/webhook";
 
 const checkAdmin = (req, res, next) => checkRoles("admin", req, res, next);
 const checkAdminOrCommercial = (req, res, next) =>
   checkRoles(["admin", "commercial_agent"], req, res, next);
 
 export default (app) => {
+  // webhooks
+
+  app.post("/webhooks/docusign", handleWebhookDocusign, errorHandle);
+
   // Public route
   app.post("/login", login, errorHandle);
   app.post("/users/create-password", createPassword, errorHandle);

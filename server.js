@@ -8,6 +8,7 @@ import passport from "passport";
 import bodyParser from "body-parser";
 
 import createRoutes from "./routes";
+import { listDocumentInEnvelope, listAllEnvelopes } from "./lib/docusign";
 
 if (process.env.NODE_ENV !== "development") {
   Sentry.init({
@@ -57,5 +58,7 @@ mongoose.connection.on("connected", () => {
 app.listen(PORT, () => {
   console.info(`Server in running on port ${PORT}`);
 });
+
+// listAllEnvelopes();
 
 module.exports = app;
