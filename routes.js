@@ -66,6 +66,7 @@ export default (app) => {
   // webhooks
 
   app.post("/webhooks/docusign", handleWebhookDocusign, errorHandle);
+  app.get("/webhooks/docusign", handleWebhookDocusign, errorHandle);
 
   // Public route
   app.post("/login", login, errorHandle);
