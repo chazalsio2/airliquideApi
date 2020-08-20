@@ -62,6 +62,7 @@ import {
   getTraining,
 } from "./controllers/training";
 import { handleWebhookDocusign } from "./controllers/webhook";
+import { getDashboardData } from "./controllers/dashboard";
 
 const checkAdmin = (req, res, next) => checkRoles("admin", req, res, next);
 const checkAdminOrCommercial = (req, res, next) =>
@@ -251,6 +252,15 @@ export default (app) => {
     checkAdminOrCommercial,
     checkAccountDesactivated,
     searchTerm,
+    errorHandle
+  );
+
+  app.get(
+    "/dashboard",
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    checkAccountDesactivated,
+    getDashboardData,
     errorHandle
   );
 

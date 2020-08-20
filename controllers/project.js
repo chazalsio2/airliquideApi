@@ -101,7 +101,7 @@ export async function getProjectsAssigned(req, res, next) {
 export async function getProjectsMissingValidation(req, res, next) {
   try {
     const projects = await Project.find({
-      status: "draft",
+      status: "wait_project_validation",
     }).lean();
 
     const clientEnrichedPromises = projects.map(async (project) => {
@@ -234,7 +234,12 @@ export async function confirmSearchMandate(req, res, next) {
 
     await Project.updateOne(
       { _id: projectId },
-      { $set: { typeOfMandate: readysearchmandate, status: "draft" } }
+      {
+        $set: {
+          typeOfMandate: readysearchmandate,
+          status: "wait_project_validation",
+        },
+      }
     ).exec();
 
     sendProjectWaitingValidationEmail(project);
@@ -375,7 +380,7 @@ export async function refuseProject(req, res, next) {
       return next(generateError("Project not found", 404));
     }
 
-    if (project.status !== "draft") {
+    if (project.status !== "wait_project_validation") {
       return next(generateError("Wrong state", 401));
     }
 
@@ -415,7 +420,7 @@ export async function acceptProject(req, res, next) {
       return next(generateError("Project not found", 404));
     }
 
-    if (project.status !== "draft") {
+    if (project.status !== "wait_project_validation") {
       return next(generateError("Wrong state", 401));
     }
 

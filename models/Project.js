@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import ProjectEvent from "./ProjectEvent";
 
 const citiesList = [
   "Saint-Pierre",
@@ -137,11 +136,13 @@ const schema = new mongoose.Schema(
       default: "missing_information",
       enum: [
         "missing_information",
-        "draft",
+        "wait_project_validation",
         "wait_mandate_signature",
         "wait_offers",
         "wait_sales_agreement",
+        "wait_sales_agreement_validation",
         "wait_sales_deed",
+        "wait_sales_deed_validation",
         "completed",
         "refused",
         "canceled",
@@ -181,7 +182,7 @@ const schema = new mongoose.Schema(
 //     await ProjectEvent({
 //       projectId: this._id,
 //       type: "project_creation",
-//       clientId: 
+//       clientId:
 //     }).save();
 //     next();
 //   } catch (e) {

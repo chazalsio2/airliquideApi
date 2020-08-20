@@ -96,6 +96,15 @@ const schema = new mongoose.Schema(
       type: RoomSchema,
       required: false,
     },
+    status: {
+      type: String,
+      default: "available",
+      enum: ["available", "unavailable"],
+    },
+    public: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
