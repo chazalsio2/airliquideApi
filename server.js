@@ -31,6 +31,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(bodyParser.json({ limit: "50mb" }));
+// app.use(bodyParser.raw({ type: "*/*" }));
 app.use(
   bodyParser.urlencoded({
     limit: "50mb",

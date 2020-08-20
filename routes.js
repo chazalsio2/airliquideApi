@@ -1,4 +1,5 @@
 import passport from "passport";
+import xmlparser from "express-xml-bodyparser";
 
 import {
   createAdmin,
@@ -71,8 +72,18 @@ const checkAdminOrCommercial = (req, res, next) =>
 export default (app) => {
   // webhooks
 
-  app.post("/webhooks/docusign", handleWebhookDocusign, errorHandle);
-  app.get("/webhooks/docusign", handleWebhookDocusign, errorHandle);
+  app.post(
+    "/webhooks/docusign",
+    xmlparser({ trim: false, explicitArray: false }),
+    handleWebhookDocusign,
+    errorHandle
+  );
+  app.get(
+    "/webhooks/docusign",
+    xmlparser({ trim: false, explicitArray: false }),
+    handleWebhookDocusign,
+    errorHandle
+  );
 
   // Public route
   app.post("/login", login, errorHandle);
