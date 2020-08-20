@@ -6,7 +6,6 @@ import { sendMessageToSlack } from "../lib/slack";
 export async function editProperty(req, res, next) {
   try {
     const {
-      name,
       description,
       salesPrice,
       fullAddress,
@@ -20,19 +19,11 @@ export async function editProperty(req, res, next) {
 
     const { propertyId } = req.params;
 
-    if (
-      !name ||
-      !description ||
-      !type ||
-      !salesPrice ||
-      !landArea ||
-      !livingArea
-    ) {
+    if (!description || !type || !salesPrice || !landArea || !livingArea) {
       return next(generateError("Invalid request", 401));
     }
 
     const propertyData = {
-      name,
       description,
       type,
       salesPrice,
@@ -70,7 +61,6 @@ export async function editProperty(req, res, next) {
 export async function createProperty(req, res, next) {
   try {
     const {
-      name,
       description,
       salesPrice,
       fullAddress,
@@ -84,7 +74,6 @@ export async function createProperty(req, res, next) {
     } = req.body;
 
     if (
-      !name ||
       !description ||
       !type ||
       !salesPrice ||
@@ -98,7 +87,6 @@ export async function createProperty(req, res, next) {
     const results = await uploadPhotos(photos);
 
     const propertyData = {
-      name,
       description,
       type,
       salesPrice,

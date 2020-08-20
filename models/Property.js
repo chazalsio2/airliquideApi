@@ -28,9 +28,6 @@ const RoomSchema = new mongoose.Schema({
 
 const schema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-    },
     ref: {
       type: String,
       required: false,
