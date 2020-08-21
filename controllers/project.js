@@ -208,9 +208,9 @@ export async function confirmSearchMandate(req, res, next) {
       return next(generateError("Project not found", 404));
     }
 
-    const { readysearchmandate, allowSaveData, timeslots } = req.body;
+    const { readyToSign, allowSaveData, timeslots } = req.body;
 
-    if (!readysearchmandate) {
+    if (!readyToSign) {
       return next(generateError("Missing argument", 403));
     }
 
@@ -236,7 +236,7 @@ export async function confirmSearchMandate(req, res, next) {
       { _id: projectId },
       {
         $set: {
-          typeOfMandate: readysearchmandate,
+          readyToSign: readyToSign === "yes",
           status: "wait_project_validation",
         },
       }
