@@ -31,6 +31,10 @@ var schema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    clientId: {
+      type: mongoose.Types.ObjectId,
+      required: false,
+    },
     "roles.$": {
       type: String,
       enum: allowedRoles,
