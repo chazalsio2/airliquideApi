@@ -50,6 +50,7 @@ import {
   getProperties,
   getProperty,
   editProperty,
+  updatePropertyVisibility,
 } from "./controllers/property";
 import {
   getFolders,
@@ -207,6 +208,15 @@ export default (app) => {
     checkAdmin,
     checkAccountDesactivated,
     getUser,
+    errorHandle
+  );
+
+  app.post(
+    `/properties/:propertyId/update-visibility`,
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    updatePropertyVisibility,
     errorHandle
   );
 

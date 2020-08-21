@@ -58,6 +58,22 @@ export async function editProperty(req, res, next) {
   }
 }
 
+export async function updatePropertyVisibility(req, res, next) {
+  const { visible } = req.body;
+  const { propertyId } = req.params;
+
+  try {
+    await Property.updateOne(
+      { _id: propertyId },
+      { $set: { public: !!visible } }
+    ).exec();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
 export async function createProperty(req, res, next) {
   try {
     const {

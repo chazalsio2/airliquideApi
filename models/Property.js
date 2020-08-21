@@ -32,6 +32,10 @@ const schema = new mongoose.Schema(
       type: String,
       required: false,
     },
+    classification: {
+      type: String,
+      enum: ["forsale", "hunting"],
+    },
     description: {
       type: String,
     },
