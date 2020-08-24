@@ -46,6 +46,8 @@ import {
   assignCommercial,
   uploadAgreementForProject,
   uploadDeedForProject,
+  refuseAgreement,
+  acceptAgreement,
 } from "./controllers/project";
 import {
   createProperty,
@@ -256,6 +258,24 @@ export default (app) => {
     checkAdmin,
     checkAccountDesactivated,
     assignCommercial,
+    errorHandle
+  );
+
+  app.post(
+    `/projects/:projectId/refuse-agreement`,
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    refuseAgreement,
+    errorHandle
+  );
+
+  app.post(
+    `/projects/:projectId/accept-agreement`,
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    acceptAgreement,
     errorHandle
   );
 
