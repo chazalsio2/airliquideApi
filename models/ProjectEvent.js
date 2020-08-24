@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import User from "./User";
+import Document from "./Document";
 
 const DocumentSubsetSchema = new mongoose.Schema({
   name: String,
@@ -66,7 +67,7 @@ schema.pre("save", async function (next) {
     }
 
     if (this.documentId) {
-      const doc = await Document.findOne({ _id: documentId }).lean();
+      const doc = await Document.findOne({ _id: this.documentId }).lean();
       if (doc) {
         this.document = { name: doc.name, url: doc.url };
       }

@@ -67,6 +67,7 @@ import {
 } from "./controllers/training";
 import { handleWebhookDocusign } from "./controllers/webhook";
 import { getDashboardData } from "./controllers/dashboard";
+import routeNotDefined from "./middlewares/routeNotDefined";
 
 const checkAdmin = (req, res, next) => checkRoles("admin", req, res, next);
 const checkAdminOrCommercial = (req, res, next) =>
@@ -456,4 +457,9 @@ export default (app) => {
   // Management role
 
   // Purchase role
+
+  app.get("*", routeNotDefined, errorHandle);
+  app.put("*", routeNotDefined, errorHandle);
+  app.delete("*", routeNotDefined, errorHandle);
+  app.post("*", routeNotDefined, errorHandle);
 };
