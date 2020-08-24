@@ -48,6 +48,8 @@ import {
   uploadDeedForProject,
   refuseAgreement,
   acceptAgreement,
+  refuseDeed,
+  acceptDeed,
 } from "./controllers/project";
 import {
   createProperty,
@@ -280,6 +282,24 @@ export default (app) => {
   );
 
   app.post(
+    `/projects/:projectId/refuse-deed`,
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    refuseDeed,
+    errorHandle
+  );
+
+  app.post(
+    `/projects/:projectId/accept-deed`,
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    acceptDeed,
+    errorHandle
+  );
+
+  app.post(
     `/folders/:folderId/documents`,
     passport.authenticate("jwt", { session: false }),
     checkAdmin,
@@ -465,7 +485,7 @@ export default (app) => {
   );
 
   app.post(
-    "/projects/:projectId/sales-agreements",
+    "/projects/:projectId/sales-deeds",
     passport.authenticate("jwt", { session: false }),
     checkAccountDesactivated,
     uploadDeedForProject,

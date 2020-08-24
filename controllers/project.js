@@ -47,6 +47,43 @@ export async function getProject(req, res, next) {
   }
 }
 
+export async function refuseDeed(req, res, next) {
+  try {
+    const { projectId } = req.params;
+    const userId = req.user._id;
+    const { reason } = req.body;
+
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    if (project.status !== "wait_sales_deed_validation") {
+      return next(generateError("Wrong state", 403));
+    }
+
+    await Project.updateOne(
+      { _id: projectId },
+      {
+        $set: { status: "wait_sales_deed" },
+        $unset: { salesDeedDocId: "" },
+      }
+    ).exec();
+
+    new ProjectEvent({
+      projectId,
+      type: "sales_deed_refused",
+      authorUserId: userId,
+      reason,
+    }).save();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
 export async function refuseAgreement(req, res, next) {
   try {
     const { projectId } = req.params;
@@ -109,6 +146,46 @@ export async function acceptAgreement(req, res, next) {
     new ProjectEvent({
       projectId,
       type: "sales_agreement_accepted",
+      authorUserId: userId,
+    }).save();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+export async function acceptDeed(req, res, next) {
+  try {
+    const { projectId } = req.params;
+    const userId = req.user._id;
+
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    if (project.status !== "wait_sales_deed_validation") {
+      return next(generateError("Wrong state", 403));
+    }
+
+    await Project.updateOne(
+      { _id: projectId },
+      {
+        $set: { status: "completed" },
+      }
+    ).exec();
+
+    new ProjectEvent({
+      projectId,
+      type: "sales_deed_accepted",
+      authorUserId: userId,
+    }).save();
+
+    new ProjectEvent({
+      projectId,
+      type: "project_completed",
       authorUserId: userId,
     }).save();
 
