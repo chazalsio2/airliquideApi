@@ -392,7 +392,7 @@ export async function refuseProject(req, res, next) {
     await new ProjectEvent({
       projectId,
       type: "project_refused",
-      comment: reason,
+      reason,
       authorUserId: req.user._id,
     }).save();
 
@@ -551,6 +551,7 @@ export async function uploadAgreementForProject(req, res, next) {
       projectId,
       type: "sales_agreement_added",
       authorUserId: req.user._id,
+      documentId: document._id,
     }).save();
 
     return res.json({ success: true });

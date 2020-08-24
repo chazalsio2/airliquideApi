@@ -22,7 +22,7 @@ export async function handleWebhookDocusign(req, res, next) {
           }).lean();
 
           if (project.status !== "wait_mandate_signature") {
-            console.warning(
+            console.warn(
               `Received signature for project ${project._id} with wrong state (${project.status})`
             );
             return;
@@ -87,7 +87,7 @@ export async function handleWebhookDocusign(req, res, next) {
           console.info("Envelope status not handled:", envelope.status);
       }
     } else {
-      console.warning("Pas d'envelope");
+      console.warn("Pas d'envelope");
     }
     return res.json({ success: true });
   } catch (e) {

@@ -1,6 +1,11 @@
 import mongoose from "mongoose";
 import User from "./User";
 
+const DocumentSubsetSchema = new mongoose.Schema({
+  name: String,
+  url: String,
+});
+
 var schema = new mongoose.Schema(
   {
     projectId: {
@@ -32,6 +37,18 @@ var schema = new mongoose.Schema(
       type: String,
       required: false,
     },
+    documentId: {
+      type: mongoose.Types.ObjectId,
+      required: false,
+    },
+    document: {
+      type: DocumentSubsetSchema,
+      required: false,
+    },
+    reason: {
+      type: String,
+      required: false,
+    },
   },
   {
     timestamps: true,
@@ -47,6 +64,14 @@ schema.pre("save", async function (next) {
         this.authorDisplayName = user.displayName;
       }
     }
+
+    if (this.documentId) {
+      const doc = await Document.findOne({ _id: documentId }).lean();
+      if (doc) {
+        this.document = { name: doc.name, url: doc.url };
+      }
+    }
+
     next();
   } catch (e) {
     next(e);

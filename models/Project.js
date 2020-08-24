@@ -138,7 +138,6 @@ const schema = new mongoose.Schema(
         "missing_information",
         "wait_project_validation",
         "wait_mandate_signature",
-        // "wait_offers",
         "wait_sales_agreement",
         "wait_sales_agreement_validation",
         "wait_sales_deed",
