@@ -1,5 +1,6 @@
 import { sendMessageToSlack } from "../lib/slack";
 import Project from "../models/Project";
+import ProjectEvent from "../models/ProjectEvent";
 import Client from "../models/Client";
 import User from "../models/User";
 
@@ -16,10 +17,26 @@ export async function handleWebhookDocusign(req, res, next) {
         }
 
         case "Completed": {
+          const project = Project.findOne({
+            mandateEnvelopeId: envelope.envelopeid,
+          }).lean();
+
+          if (project.status !== "wait_mandate_signature") {
+            console.warning(
+              `Received signature for project ${project._id} with wrong state (${project.status})`
+            );
+            return;
+          }
+
           await Project.updateOne(
-            { mandateEnvelopeId: envelope.envelopeid },
+            { projectId: project._id },
             { $set: { status: "wait_sales_agreement" } }
           ).exec();
+
+          await new ProjectEvent({
+            projectId: project._id,
+            type: "mandate_signature_done",
+          }).save();
 
           sendMessageToSlack(
             `Un mandat a été signé par ${envelope.username} (${envelope.email}) (Envelope ${envelope.envelopeid})`
@@ -29,10 +46,6 @@ export async function handleWebhookDocusign(req, res, next) {
 
           const alreadyUser = await User.findOne({
             clientId: client._id,
-          }).lean();
-
-          const project = Project.findOne({
-            mandateEnvelopeId: envelope.envelopeid,
           }).lean();
 
           let roleToAdd;

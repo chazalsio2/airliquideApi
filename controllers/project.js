@@ -494,6 +494,130 @@ export async function addDocumentToProject(req, res, next) {
   }
 }
 
+export async function uploadAgreementForProject(req, res, next) {
+  try {
+    const { projectId } = req.params;
+    const { fileName, fileData, contentType } = req.body;
+
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    if (!fileName || !fileData || !contentType) {
+      return next(generateError("Invalid request", 403));
+    }
+
+    const isAuthorized =
+      isAdminOrCommercial(req.user) || project.clientId === req.user._id;
+
+    if (!isAuthorized) {
+      return next(generateError("Not authorized", 401));
+    }
+
+    if (project.status !== "wait_sales_agreement") {
+      return next(generateError("Wrong state for project", 403));
+    }
+
+    const document = await new Document({
+      name: fileName,
+      authorUserId: req.user._id,
+      projectId,
+      contentType,
+    }).save();
+
+    const location = await uploadFile(
+      `project__${projectId}/${document._id}_${document.name}`,
+      fileData,
+      contentType
+    );
+    await Document.updateOne(
+      { _id: document._id },
+      { $set: { url: location } }
+    ).exec();
+
+    await Project.updateOne(
+      { _id: projectId },
+      {
+        $set: {
+          salesAgreementDocId: document._id,
+          status: "wait_sales_agreement_validation",
+        },
+      }
+    ).exec();
+
+    await new ProjectEvent({
+      projectId,
+      type: "sales_agreement_added",
+      authorUserId: req.user._id,
+    }).save();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+export async function uploadDeedForProject(req, res, next) {
+  try {
+    const { projectId } = req.params;
+    const { fileName, fileData, contentType } = req.body;
+
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    if (!fileName || !fileData || !contentType) {
+      return next(generateError("Invalid request", 403));
+    }
+
+    const isAuthorized =
+      isAdminOrCommercial(req.user) || project.clientId === req.user._id;
+
+    if (!isAuthorized) {
+      return next(generateError("Not authorized", 401));
+    }
+
+    if (project.status !== "wait_sales_deed") {
+      return next(generateError("Wrong state for project", 403));
+    }
+
+    const document = await new Document({
+      name: fileName,
+      authorUserId: req.user._id,
+      projectId,
+      contentType,
+    }).save();
+
+    const location = await uploadFile(
+      `project__${projectId}/${document._id}_${document.name}`,
+      fileData,
+      contentType
+    );
+    await Document.updateOne(
+      { _id: document._id },
+      { $set: { url: location } }
+    ).exec();
+
+    await Project.updateOne(
+      { _id: projectId },
+      {
+        $set: {
+          salesDeedDocId: document._id,
+          status: "wait_sales_deed_validation",
+        },
+      }
+    ).exec();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
 export async function assignCommercial(req, res, next) {
   try {
     const { projectId } = req.params;

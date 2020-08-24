@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 
 const citiesList = [
   "Saint-Pierre",
@@ -171,27 +171,19 @@ const schema = new mongoose.Schema(
       type: String,
       required: false,
     },
+    salesAgreementDocId: {
+      type: Types.ObjectId,
+      required: false,
+    },
+    salesDeedDocId: {
+      type: Types.ObjectId,
+      required: false,
+    },
   },
   {
     timestamps: true,
     collection: "projects",
   }
 );
-
-// schema.pre("save", async function (next) {
-//   try {
-//     // await Folder({
-//     //   projectId: this._id,
-//     // }).save();
-//     await ProjectEvent({
-//       projectId: this._id,
-//       type: "project_creation",
-//       clientId:
-//     }).save();
-//     next();
-//   } catch (e) {
-//     next(e);
-//   }
-// });
 
 export default mongoose.model("Project", schema);

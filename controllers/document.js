@@ -4,6 +4,7 @@ import Document from "../models/Document";
 import { deleteFile } from "../lib/aws";
 
 import { generateError, hasRole, isAdmin } from "../lib/utils";
+import Project from "../models/Project";
 
 export async function getDocument(req, res, next) {
   try {
@@ -93,6 +94,26 @@ export async function deleteDocument(req, res, next) {
 
     if (!document) {
       return next(generateError("Document not found", 404));
+    }
+
+    const useAsAgreement = await Project.countDocuments({
+      salesAgreementDocId: documentId,
+    }).lean();
+
+    if (useAsAgreement) {
+      return next(
+        generateError("You cannot remove a document used as agreement", 403)
+      );
+    }
+
+    const useAsDeed = await Project.countDocuments({
+      salesDeedDocId: documentId,
+    }).lean();
+
+    if (useAsDeed) {
+      return next(
+        generateError("You cannot remove a document used as sales deed", 403)
+      );
     }
 
     if (document.url) {

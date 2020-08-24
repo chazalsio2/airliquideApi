@@ -44,6 +44,8 @@ import {
   acceptProject,
   addDocumentToProject,
   assignCommercial,
+  uploadAgreementForProject,
+  uploadDeedForProject,
 } from "./controllers/project";
 import {
   createProperty,
@@ -430,6 +432,22 @@ export default (app) => {
     passport.authenticate("jwt", { session: false }),
     checkAccountDesactivated,
     addDocumentToProject,
+    errorHandle
+  );
+
+  app.post(
+    "/projects/:projectId/sales-agreements",
+    passport.authenticate("jwt", { session: false }),
+    checkAccountDesactivated,
+    uploadAgreementForProject,
+    errorHandle
+  );
+
+  app.post(
+    "/projects/:projectId/sales-agreements",
+    passport.authenticate("jwt", { session: false }),
+    checkAccountDesactivated,
+    uploadDeedForProject,
     errorHandle
   );
 
