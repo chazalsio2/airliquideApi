@@ -9,6 +9,7 @@ import bodyParser from "body-parser";
 
 import createRoutes from "./routes";
 import { listDocumentInEnvelope, listAllEnvelopes } from "./lib/docusign";
+import "./cron";
 
 if (process.env.NODE_ENV !== "development") {
   Sentry.init({

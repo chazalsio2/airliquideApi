@@ -1,5 +1,6 @@
 import passport from "passport";
 import xmlparser from "express-xml-bodyparser";
+import cors from "cors";
 
 import {
   createAdmin,
@@ -99,7 +100,7 @@ export default (app) => {
   app.post("/users/forgot-password", forgotPassword, errorHandle);
   app.post("/users/change-password", changePassword, errorHandle);
 
-  app.post("/public/clients", publicCreateClient, errorHandle);
+  app.post("/public/clients", cors(), publicCreateClient, errorHandle);
 
   app.get("/public/projects/:projectId", getProject, errorHandle);
 
