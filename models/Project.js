@@ -59,6 +59,10 @@ const SearchSheet = new mongoose.Schema({
     type: String,
     enum: ["lessthan30", "lessthan90", "morethan90"],
   },
+  additionalInfos: {
+    type: String,
+    required: false,
+  },
   land: {
     type: String,
     enum: ["optional", "priority"],
@@ -131,6 +135,7 @@ const schema = new mongoose.Schema(
       required: false,
       _id: false,
     },
+
     status: {
       type: String,
       default: "missing_information",

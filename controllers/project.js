@@ -304,6 +304,7 @@ export async function saveSearchSheet(req, res, next) {
       propertyArea,
       land,
       landArea,
+      additionalInfos,
       searchSector,
       searchSectorCities,
       swimmingpool,
@@ -320,7 +321,6 @@ export async function saveSearchSheet(req, res, next) {
       !investmentType ||
       !propertySize ||
       !propertyArea ||
-      !land ||
       !searchSector ||
       !swimmingpool ||
       !varangue ||
@@ -342,6 +342,7 @@ export async function saveSearchSheet(req, res, next) {
             investmentType:
               investmentType === "other" ? otherInvestmentType : investmentType,
             propertySize,
+            additionalInfos,
             propertySizeDetail,
             propertyArea,
             land,
