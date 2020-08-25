@@ -44,6 +44,8 @@ export async function handleWebhookDocusign(req, res, next) {
 
           const client = await Client.findOne({ email: envelope.email }).lean();
 
+          sendMandateSignatureConfirmation(client);
+
           const alreadyUser = await User.findOne({
             clientId: client._id,
           }).lean();

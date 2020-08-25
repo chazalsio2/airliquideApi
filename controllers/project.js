@@ -8,6 +8,8 @@ import ProjectEvent from "../models/ProjectEvent";
 import {
   sendProjectWaitingValidationEmail,
   sendAssignProjectNotification,
+  sendAgreementWaitingValidation,
+  sendDeedWaitingValidation,
 } from "../lib/email";
 import { uploadFile } from "../lib/aws";
 import { sendMessageToSlack } from "../lib/slack";
@@ -67,7 +69,7 @@ export async function refuseDeed(req, res, next) {
       { _id: projectId },
       {
         $set: { status: "wait_sales_deed" },
-        $unset: { salesDeedDocId: "" },
+        $unset: { salesDeedDocId: "", salesDeedDoc: "" },
       }
     ).exec();
 
@@ -104,7 +106,7 @@ export async function refuseAgreement(req, res, next) {
       { _id: projectId },
       {
         $set: { status: "wait_sales_agreement" },
-        $unset: { salesAgreementDocId: "" },
+        $unset: { salesAgreementDocId: "", salesAgreementDoc: "" },
       }
     ).exec();
 
@@ -702,6 +704,8 @@ export async function uploadAgreementForProject(req, res, next) {
       documentId: document._id,
     }).save();
 
+    sendAgreementWaitingValidation(project);
+
     return res.json({ success: true });
   } catch (e) {
     next(generateError(e.message));
@@ -760,6 +764,8 @@ export async function uploadDeedForProject(req, res, next) {
         },
       }
     ).exec();
+
+    sendDeedWaitingValidation(project);
 
     return res.json({ success: true });
   } catch (e) {
