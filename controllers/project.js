@@ -162,13 +162,16 @@ export async function acceptAgreement(req, res, next) {
 export async function acceptDeed(req, res, next) {
   try {
     const { projectId } = req.params;
-    const { amount } = req.body;
+    const { commission } = req.body;
     const userId = req.user._id;
+
+    const amount = Number(commission);
+    console.log("acceptDeed -> amount", amount);
 
     const project = await Project.findById(projectId).lean();
 
-    if (!amount || !_.isNumber(amount) || amount < 0) {
-      return next(generateError("Amount invalid", 401));
+    if (!amount || amount < 0) {
+      return next(generateError("Commission invalid", 401));
     }
 
     if (!project) {
@@ -200,7 +203,7 @@ export async function acceptDeed(req, res, next) {
 
     await new Transaction({
       projectId,
-      amount,
+      amount: amount * 100,
       commercialId: project.commercialId,
     }).save();
 
@@ -212,9 +215,13 @@ export async function acceptDeed(req, res, next) {
 
 export async function getProjects(req, res, next) {
   try {
-    const projects = await Project.find({
-      status: { $nin: ["canceled", "refused", "closed"] },
-    }).lean();
+    const projects = await Project.find(
+      {
+        status: { $nin: ["canceled", "refused", "closed"] },
+      },
+      null,
+      { sort: { createdAt: -1 } }
+    ).lean();
 
     const clientEnrichedPromises = projects.map(async (project) => {
       project.client = await Client.findById(project.clientId).lean();
