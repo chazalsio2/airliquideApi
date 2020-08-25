@@ -5,6 +5,7 @@ import Project from "../models/Project";
 import Client from "../models/Client";
 import Document from "../models/Document";
 import ProjectEvent from "../models/ProjectEvent";
+import _ from "underscore";
 import {
   sendProjectWaitingValidationEmail,
   sendAssignProjectNotification,
@@ -13,6 +14,7 @@ import {
 } from "../lib/email";
 import { uploadFile } from "../lib/aws";
 import { sendMessageToSlack } from "../lib/slack";
+import Transaction from "../models/Transaction";
 
 export async function getProject(req, res, next) {
   try {
@@ -160,9 +162,14 @@ export async function acceptAgreement(req, res, next) {
 export async function acceptDeed(req, res, next) {
   try {
     const { projectId } = req.params;
+    const { amount } = req.body;
     const userId = req.user._id;
 
     const project = await Project.findById(projectId).lean();
+
+    if (!amount || !_.isNumber(amount) || amount < 0) {
+      return next(generateError("Amount invalid", 401));
+    }
 
     if (!project) {
       return next(generateError("Project not found", 404));
@@ -189,6 +196,12 @@ export async function acceptDeed(req, res, next) {
       projectId,
       type: "project_completed",
       authorUserId: userId,
+    }).save();
+
+    await new Transaction({
+      projectId,
+      amount,
+      commercialId: project.commercialId,
     }).save();
 
     return res.json({ success: true });

@@ -4,6 +4,8 @@ import Project from "../models/Project";
 import ProjectEvent from "../models/ProjectEvent";
 
 import moment from "moment";
+import _ from "underscore";
+import Transaction from "../models/Transaction";
 
 export async function getDashboardData(req, res, next) {
   try {
@@ -86,7 +88,17 @@ export async function getDashboardData(req, res, next) {
           }
     );
 
-    const commercialCommission = 0;
+    const transactionSelector = isUserAdmin
+      ? { createdAt: { $gt: moment().startOf("month") } }
+      : { createdAt: { $gt: moment().startOf("month") }, commercialId: userId };
+
+    const transactions = await Transaction.find(transactionSelector).lean();
+
+    const commercialCommission = _.reduce(
+      transactions,
+      (memo, transaction) => memo + transaction.amount,
+      0
+    );
 
     return res.json({
       success: true,
@@ -98,7 +110,9 @@ export async function getDashboardData(req, res, next) {
         propertiesClosedCount,
         salesDeedCount,
         salesAgreementCount,
-        commercialCommission,
+        commercialCommission: isUserAdmin
+          ? Math.round(commercialCommission / 100)
+          : Math.round((commercialCommission * 0.6) / 100),
       },
     });
   } catch (e) {
