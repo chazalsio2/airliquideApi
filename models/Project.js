@@ -224,43 +224,4 @@ const schema = new mongoose.Schema(
   }
 );
 
-schema.pre("save", async function (next) {
-  try {
-    if (this.salesAgreementDocId) {
-      const doc = await Document.findById(this.salesAgreementDocId).lean();
-      this.salesAgreementDoc = {
-        name: doc.name,
-        url: doc.url,
-      };
-    }
-
-    if (this.salesDeedDocId) {
-      const doc = await Document.findById(this.salesDeedDocId).lean();
-      this.salesDeedDoc = {
-        name: doc.name,
-        url: doc.url,
-      };
-    }
-
-    if (this.purchaseOfferDocId) {
-      const doc = await Document.findById(this.purchaseOfferDocId).lean();
-      this.purchaseOfferDoc = {
-        name: doc.name,
-        url: doc.url,
-      };
-    }
-
-    if (this.loanOfferDocId) {
-      const doc = await Document.findById(this.loanOfferDocId).lean();
-      this.loanOfferDoc = {
-        name: doc.name,
-        url: doc.url,
-      };
-    }
-    next();
-  } catch (e) {
-    next(e);
-  }
-});
-
 export default mongoose.model("Project", schema);

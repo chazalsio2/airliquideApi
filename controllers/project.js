@@ -857,6 +857,10 @@ export async function uploadLoanOfferForProject(req, res, next) {
       {
         $set: {
           loanOfferDocId: document._id,
+          loanOfferDoc: {
+            name: document.name,
+            url: location,
+          },
           status: "wait_loan_offer_validation",
         },
       }
@@ -925,6 +929,10 @@ export async function uploadPurchaseOfferForProject(req, res, next) {
       {
         $set: {
           purchaseOfferDocId: document._id,
+          purchaseOfferDoc: {
+            name: document.name,
+            url: location,
+          },
           status: "wait_purchase_offer_validation",
         },
       }
@@ -993,6 +1001,10 @@ export async function uploadAgreementForProject(req, res, next) {
       {
         $set: {
           salesAgreementDocId: document._id,
+          salesAgreementDoc: {
+            name: document.name,
+            url: location,
+          },
           status: "wait_sales_agreement_validation",
         },
       }
@@ -1061,12 +1073,23 @@ export async function uploadDeedForProject(req, res, next) {
       {
         $set: {
           salesDeedDocId: document._id,
+          salesDeedDoc: {
+            name: document.name,
+            url: location,
+          },
           status: "wait_sales_deed_validation",
         },
       }
     ).exec();
 
     sendDeedWaitingValidation(project);
+
+    await new ProjectEvent({
+      projectId,
+      type: "sales_deed_added",
+      authorUserId: req.user._id,
+      documentId: document._id,
+    }).save();
 
     return res.json({ success: true });
   } catch (e) {
