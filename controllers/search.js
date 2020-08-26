@@ -4,6 +4,7 @@ import Client from "../models/Client";
 import User from "../models/User";
 import Folder from "../models/Folder";
 import Training from "../models/Training";
+import Property from "../models/Property";
 
 export async function searchTerm(req, res, next) {
   const { t } = req.query;
@@ -32,6 +33,26 @@ export async function searchTerm(req, res, next) {
 
   results.push(...documentsFormatted);
 
+  // Property
+
+  if (isAdminOrCommercial(req.user)) {
+    const properties = await Property.find(
+      {
+        name: { $regex: t, $options: "i" },
+      },
+      null,
+      { limit: 50, sort: { createdAt: -1 } }
+    ).lean();
+
+    const propertiesFormatted = properties.map((doc) => ({
+      _id: doc._id,
+      type: "property",
+      context: "Bien immobilier",
+      name: doc.name,
+    }));
+
+    results.push(...propertiesFormatted);
+  }
   // Trainings
 
   const selector = isAdmin(req.user)

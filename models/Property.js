@@ -26,8 +26,23 @@ const RoomSchema = new mongoose.Schema({
   },
 });
 
+export function getPropertyType(type) {
+  // "apartment", "commercial",   "construction_land",   "home",   "parking",   "building"
+  if (type === "apartment") return "Appartement";
+  if (type === "commercial") return "Local commercial";
+  if (type === "construction_land") return "Terrain de construction";
+  if (type === "home") return "Maison";
+  if (type === "parking") return "Parking / Garage";
+  if (type === "building") return "Immeuble";
+  return "Inconnu";
+}
+
 const schema = new mongoose.Schema(
   {
+    name: {
+      type: String,
+      required: false,
+    },
     ref: {
       type: String,
       required: false,
@@ -118,6 +133,9 @@ schema.pre("save", async function (next) {
     const propertiesCount = await mongoose.models["Document"].countDocuments();
     const refTemps = `00000000${propertiesCount}`;
     this.ref = `${refTemps.substring(propertiesCount.toString().length)}`;
+    this.name = `${getPropertyType(this.type)} ${this.livingArea} m² ${
+      !!this.fullAddress ? `${this.fullAddress.city}` : ""
+    }`;
     next();
   } catch (e) {
     next(e);
