@@ -1,4 +1,5 @@
 import mongoose, { Types } from "mongoose";
+import Document from "./Document";
 
 const citiesList = [
   "Saint-Pierre",
@@ -31,6 +32,11 @@ const citiesList = [
 ];
 
 export const projectTypes = ["management", "sales", "search", "coaching"];
+
+const DocSubset = new mongoose.Schema({
+  name: String,
+  url: String,
+});
 
 const SearchSheet = new mongoose.Schema({
   propertyType: {
@@ -183,11 +189,42 @@ const schema = new mongoose.Schema(
       type: Types.ObjectId,
       required: false,
     },
+    salesDeedDoc: {
+      type: DocSubset,
+      required: false,
+    },
+    salesAgreementDoc: {
+      type: DocSubset,
+      required: false,
+    },
   },
   {
     timestamps: true,
     collection: "projects",
   }
 );
+
+schema.pre("save", async function (next) {
+  try {
+    if (this.salesAgreementDocId) {
+      const doc = await Document.findById(this.salesAgreementDocId).lean();
+      this.salesAgreementDoc = {
+        name: doc.name,
+        url: doc.url,
+      };
+    }
+
+    if (this.salesDeedDocId) {
+      const doc = await Document.findById(this.salesDeedDocId).lean();
+      this.salesDeedDoc = {
+        name: doc.name,
+        url: doc.url,
+      };
+    }
+    next();
+  } catch (e) {
+    next(e);
+  }
+});
 
 export default mongoose.model("Project", schema);
