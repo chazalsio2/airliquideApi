@@ -13,6 +13,11 @@ import {
   sendDeedWaitingValidation,
   sendPurchaseOfferWaitingValidation,
   sendLoanOfferWaitingValidation,
+  sendAcceptPurchaseOfferConfirmation,
+  sendAcceptSalesAgreementConfirmation,
+  sendAcceptLoanOfferConfirmation,
+  sendAcceptSalesDeedConfirmation,
+  sendProductionConfirmation
 } from "../lib/email";
 import { uploadFile } from "../lib/aws";
 import { sendMessageToSlack } from "../lib/slack";
@@ -229,6 +234,10 @@ export async function acceptLoanOffer(req, res, next) {
       authorUserId: userId,
     }).save();
 
+    const client = await Client.findById(project.clientId).lean();
+
+    sendAcceptLoanOfferConfirmation(client);
+
     return res.json({ success: true });
   } catch (e) {
     next(generateError(e.message));
@@ -262,6 +271,10 @@ export async function acceptPurchaseOffer(req, res, next) {
       type: "purchase_offer_accepted",
       authorUserId: userId,
     }).save();
+
+    const client = await Client.findOne({ _id: project.clientId }).lean();
+
+    sendAcceptPurchaseOfferConfirmation(client);
 
     return res.json({ success: true });
   } catch (e) {
@@ -297,6 +310,9 @@ export async function acceptAgreement(req, res, next) {
       authorUserId: userId,
     }).save();
 
+    const client = await Client.findById(project.clientId).lean();
+    sendAcceptSalesAgreementConfirmation(client);
+
     return res.json({ success: true });
   } catch (e) {
     next(generateError(e.message));
@@ -310,7 +326,6 @@ export async function acceptDeed(req, res, next) {
     const userId = req.user._id;
 
     const amount = Number(commission);
-    console.log("acceptDeed -> amount", amount);
 
     const project = await Project.findById(projectId).lean();
 
@@ -350,6 +365,10 @@ export async function acceptDeed(req, res, next) {
       amount: amount * 100,
       commercialId: project.commercialId,
     }).save();
+
+    const client = await Client.findById(project.clientId).lean()
+    sendAcceptSalesDeedConfirmation(client)
+    sendProductionConfirmation(client)
 
     return res.json({ success: true });
   } catch (e) {
