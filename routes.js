@@ -58,6 +58,7 @@ import {
   getProperty,
   editProperty,
   updatePropertyVisibility,
+  updateFinancialPropertyData,
 } from "./controllers/property";
 import {
   getFolders,
@@ -362,6 +363,15 @@ export default (app) => {
     checkAdminOrCommercial,
     checkAccountDesactivated,
     getProperty,
+    errorHandle
+  );
+
+  app.put(
+    "/properties/:propertyId/financial-data",
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    checkAccountDesactivated,
+    updateFinancialPropertyData,
     errorHandle
   );
 

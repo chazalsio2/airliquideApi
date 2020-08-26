@@ -74,6 +74,41 @@ export async function updatePropertyVisibility(req, res, next) {
   }
 }
 
+export async function updateFinancialPropertyData(req, res, next) {
+  const propertyFinancialData = req.body;
+  const { propertyId } = req.params;
+
+  try {
+    await Property.updateOne(
+      { _id: propertyId },
+      {
+        $set: {
+          financialSheet: {
+            typeOfInvestment: propertyFinancialData.typeOfInvestment,
+            rent: Number(propertyFinancialData.rent),
+            coOwnershipCharge: Number(propertyFinancialData.coOwnershipCharge),
+            assurancePNO: Number(propertyFinancialData.assurancePNO),
+            propertyTax: Number(propertyFinancialData.propertyTax),
+            accounting: Number(propertyFinancialData.accounting),
+            cga: Number(propertyFinancialData.cga),
+            divers: Number(propertyFinancialData.divers),
+            propertyPrice: Number(propertyFinancialData.propertyPrice),
+            notaryFees: Number(propertyFinancialData.notaryFees),
+            visionRFees: Number(propertyFinancialData.visionRFees),
+            works: Number(propertyFinancialData.works),
+            financialExpense: Number(propertyFinancialData.financialExpense),
+            equipment: Number(propertyFinancialData.equipment),
+          },
+        },
+      }
+    ).exec();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
 export async function createProperty(req, res, next) {
   try {
     const {

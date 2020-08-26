@@ -1,5 +1,50 @@
 import mongoose from "mongoose";
 
+const FinancialSheet = new mongoose.Schema({
+  typeOfInvestment: {
+    type: String,
+  },
+  rent: {
+    type: Number,
+  },
+  coOwnershipCharge: {
+    type: Number,
+  },
+  assurancePNO: {
+    type: Number,
+  },
+  propertyTax: {
+    type: Number,
+  },
+  accounting: {
+    type: Number,
+  },
+  cga: {
+    type: Number,
+  },
+  divers: {
+    type: Number,
+  },
+  propertyPrice: {
+    type: Number,
+  },
+  notaryFees: {
+    type: Number,
+  },
+  visionRFees: {
+    type: Number,
+  },
+  works: {
+    type: Number,
+  },
+  financialExpense: {
+    type: Number,
+  },
+  equipment: {
+    type: Number,
+  },
+});
+
 const AddressSchema = new mongoose.Schema({
   city: {
     type: String,
@@ -116,6 +161,10 @@ const schema = new mongoose.Schema(
       type: String,
       default: "available",
       enum: ["available", "unavailable"],
+    },
+    financialSheet: {
+      type: FinancialSheet,
+      required: false,
     },
     public: {
       type: Boolean,
