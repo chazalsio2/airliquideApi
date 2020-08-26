@@ -51,6 +51,12 @@ import {
   acceptAgreement,
   refuseDeed,
   acceptDeed,
+  acceptPurchaseOffer,
+  refusePurchaseOffer,
+  uploadPurchaseOfferForProject,
+  acceptLoanOffer,
+  refuseLoanOffer,
+  uploadLoanOfferForProject,
 } from "./controllers/project";
 import {
   createProperty,
@@ -284,6 +290,42 @@ export default (app) => {
   );
 
   app.post(
+    `/projects/:projectId/accept-purchase-offer`,
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    acceptPurchaseOffer,
+    errorHandle
+  );
+
+  app.post(
+    `/projects/:projectId/refuse-purchase-offer`,
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    refusePurchaseOffer,
+    errorHandle
+  );
+
+  app.post(
+    `/projects/:projectId/accept-loan-offer`,
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    acceptLoanOffer,
+    errorHandle
+  );
+
+  app.post(
+    `/projects/:projectId/refuse-loan-offer`,
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    refuseLoanOffer,
+    errorHandle
+  );
+
+  app.post(
     `/projects/:projectId/refuse-deed`,
     passport.authenticate("jwt", { session: false }),
     checkAdmin,
@@ -484,6 +526,22 @@ export default (app) => {
     passport.authenticate("jwt", { session: false }),
     checkAccountDesactivated,
     addDocumentToProject,
+    errorHandle
+  );
+
+  app.post(
+    "/projects/:projectId/purchase-offers",
+    passport.authenticate("jwt", { session: false }),
+    checkAccountDesactivated,
+    uploadPurchaseOfferForProject,
+    errorHandle
+  );
+
+  app.post(
+    "/projects/:projectId/loan-offers",
+    passport.authenticate("jwt", { session: false }),
+    checkAccountDesactivated,
+    uploadLoanOfferForProject,
     errorHandle
   );
 

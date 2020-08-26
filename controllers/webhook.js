@@ -30,7 +30,7 @@ export async function handleWebhookDocusign(req, res, next) {
 
           await Project.updateOne(
             { projectId: project._id },
-            { $set: { status: "wait_sales_agreement" } }
+            { $set: { status: "wait_purchase_offer" } }
           ).exec();
 
           await new ProjectEvent({

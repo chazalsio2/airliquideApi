@@ -149,8 +149,12 @@ const schema = new mongoose.Schema(
         "missing_information",
         "wait_project_validation",
         "wait_mandate_signature",
+        "wait_purchase_offer",
+        "wait_purchase_offer_validation",
         "wait_sales_agreement",
         "wait_sales_agreement_validation",
+        "wait_loan_offer",
+        "wait_loan_offer_validation",
         "wait_sales_deed",
         "wait_sales_deed_validation",
         "completed",
@@ -189,11 +193,27 @@ const schema = new mongoose.Schema(
       type: Types.ObjectId,
       required: false,
     },
+    purchaseOfferDocId: {
+      type: Types.ObjectId,
+      required: false,
+    },
+    loanOfferDocId: {
+      type: Types.ObjectId,
+      required: false,
+    },
     salesDeedDoc: {
       type: DocSubset,
       required: false,
     },
     salesAgreementDoc: {
+      type: DocSubset,
+      required: false,
+    },
+    purchaseOfferDoc: {
+      type: DocSubset,
+      required: false,
+    },
+    loanOfferDoc: {
       type: DocSubset,
       required: false,
     },
@@ -217,6 +237,22 @@ schema.pre("save", async function (next) {
     if (this.salesDeedDocId) {
       const doc = await Document.findById(this.salesDeedDocId).lean();
       this.salesDeedDoc = {
+        name: doc.name,
+        url: doc.url,
+      };
+    }
+
+    if (this.purchaseOfferDocId) {
+      const doc = await Document.findById(this.purchaseOfferDocId).lean();
+      this.purchaseOfferDoc = {
+        name: doc.name,
+        url: doc.url,
+      };
+    }
+
+    if (this.loanOfferDocId) {
+      const doc = await Document.findById(this.loanOfferDocId).lean();
+      this.loanOfferDoc = {
         name: doc.name,
         url: doc.url,
       };

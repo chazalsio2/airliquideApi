@@ -115,6 +115,27 @@ export async function deleteDocument(req, res, next) {
         generateError("You cannot remove a document used as sales deed", 403)
       );
     }
+    const useAsPurchaseOffer = await Project.countDocuments({
+      purchaseOfferDocId: documentId,
+    }).lean();
+
+    if (useAsPurchaseOffer) {
+      return next(
+        generateError(
+          "You cannot remove a document used as purchase offer",
+          403
+        )
+      );
+    }
+    const useAsLoanOffer = await Project.countDocuments({
+      loanOfferDocId: documentId,
+    }).lean();
+
+    if (useAsLoanOffer) {
+      return next(
+        generateError("You cannot remove a document used as loan offer", 403)
+      );
+    }
 
     if (document.url) {
       const filePath = document.folderId

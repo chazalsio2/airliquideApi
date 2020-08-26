@@ -11,6 +11,8 @@ import {
   sendAssignProjectNotification,
   sendAgreementWaitingValidation,
   sendDeedWaitingValidation,
+  sendPurchaseOfferWaitingValidation,
+  sendLoanOfferWaitingValidation,
 } from "../lib/email";
 import { uploadFile } from "../lib/aws";
 import { sendMessageToSlack } from "../lib/slack";
@@ -125,6 +127,148 @@ export async function refuseAgreement(req, res, next) {
   }
 }
 
+export async function refusePurchaseOffer(req, res, next) {
+  try {
+    const { projectId } = req.params;
+    const userId = req.user._id;
+    const { reason } = req.body;
+
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    if (project.status !== "wait_purchase_offer_validation") {
+      return next(generateError("Wrong state", 403));
+    }
+
+    await Project.updateOne(
+      { _id: projectId },
+      {
+        $set: { status: "wait_purchase_offer" },
+        $unset: { purchaseOfferDocId: "", purchaseOfferDoc: "" },
+      }
+    ).exec();
+
+    new ProjectEvent({
+      projectId,
+      type: "purchase_offer_refused",
+      authorUserId: userId,
+      reason,
+    }).save();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+export async function refuseLoanOffer(req, res, next) {
+  try {
+    const { projectId } = req.params;
+    const userId = req.user._id;
+    const { reason } = req.body;
+
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    if (project.status !== "wait_loan_offer_validation") {
+      return next(generateError("Wrong state", 403));
+    }
+
+    await Project.updateOne(
+      { _id: projectId },
+      {
+        $set: { status: "wait_loan_offer" },
+        $unset: { loanOfferDocId: "", loanOfferDoc: "" },
+      }
+    ).exec();
+
+    new ProjectEvent({
+      projectId,
+      type: "purchase_offer_refused",
+      authorUserId: userId,
+      reason,
+    }).save();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+export async function acceptLoanOffer(req, res, next) {
+  try {
+    const { projectId } = req.params;
+    const userId = req.user._id;
+
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    if (project.status !== "wait_loan_offer_validation") {
+      return next(generateError("Wrong state", 403));
+    }
+
+    await Project.updateOne(
+      { _id: projectId },
+      {
+        $set: { status: "wait_sales_deed" },
+      }
+    ).exec();
+
+    new ProjectEvent({
+      projectId,
+      type: "loan_offer_accepted",
+      authorUserId: userId,
+    }).save();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+export async function acceptPurchaseOffer(req, res, next) {
+  try {
+    const { projectId } = req.params;
+    const userId = req.user._id;
+
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    if (project.status !== "wait_purchase_offer_validation") {
+      return next(generateError("Wrong state", 403));
+    }
+
+    await Project.updateOne(
+      { _id: projectId },
+      {
+        $set: { status: "wait_sales_agreement" },
+      }
+    ).exec();
+
+    new ProjectEvent({
+      projectId,
+      type: "purchase_offer_accepted",
+      authorUserId: userId,
+    }).save();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
 export async function acceptAgreement(req, res, next) {
   try {
     const { projectId } = req.params;
@@ -143,7 +287,7 @@ export async function acceptAgreement(req, res, next) {
     await Project.updateOne(
       { _id: projectId },
       {
-        $set: { status: "wait_sales_deed" },
+        $set: { status: "wait_loan_offer" },
       }
     ).exec();
 
@@ -658,6 +802,142 @@ export async function addDocumentToProject(req, res, next) {
       { _id: document._id },
       { $set: { url: location } }
     ).exec();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+export async function uploadLoanOfferForProject(req, res, next) {
+  try {
+    const { projectId } = req.params;
+    const { fileName, fileData, contentType } = req.body;
+
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    if (!fileName || !fileData || !contentType) {
+      return next(generateError("Invalid request", 403));
+    }
+
+    const isAuthorized =
+      isAdminOrCommercial(req.user) || project.clientId === req.user._id;
+
+    if (!isAuthorized) {
+      return next(generateError("Not authorized", 401));
+    }
+
+    if (project.status !== "wait_loan_offer") {
+      return next(generateError("Wrong state for project", 403));
+    }
+
+    const document = await new Document({
+      name: fileName,
+      authorUserId: req.user._id,
+      projectId,
+      contentType,
+    }).save();
+
+    const location = await uploadFile(
+      `project__${projectId}/${document._id}_${document.name}`,
+      fileData,
+      contentType
+    );
+    await Document.updateOne(
+      { _id: document._id },
+      { $set: { url: location } }
+    ).exec();
+
+    await Project.updateOne(
+      { _id: projectId },
+      {
+        $set: {
+          loanOfferDocId: document._id,
+          status: "wait_loan_offer_validation",
+        },
+      }
+    ).exec();
+
+    await new ProjectEvent({
+      projectId,
+      type: "loan_offer_added",
+      authorUserId: req.user._id,
+      documentId: document._id,
+    }).save();
+
+    sendLoanOfferWaitingValidation(project);
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+export async function uploadPurchaseOfferForProject(req, res, next) {
+  try {
+    const { projectId } = req.params;
+    const { fileName, fileData, contentType } = req.body;
+
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    if (!fileName || !fileData || !contentType) {
+      return next(generateError("Invalid request", 403));
+    }
+
+    const isAuthorized =
+      isAdminOrCommercial(req.user) || project.clientId === req.user._id;
+
+    if (!isAuthorized) {
+      return next(generateError("Not authorized", 401));
+    }
+
+    if (project.status !== "wait_purchase_offer") {
+      return next(generateError("Wrong state for project", 403));
+    }
+
+    const document = await new Document({
+      name: fileName,
+      authorUserId: req.user._id,
+      projectId,
+      contentType,
+    }).save();
+
+    const location = await uploadFile(
+      `project__${projectId}/${document._id}_${document.name}`,
+      fileData,
+      contentType
+    );
+    await Document.updateOne(
+      { _id: document._id },
+      { $set: { url: location } }
+    ).exec();
+
+    await Project.updateOne(
+      { _id: projectId },
+      {
+        $set: {
+          purchaseOfferDocId: document._id,
+          status: "wait_purchase_offer_validation",
+        },
+      }
+    ).exec();
+
+    await new ProjectEvent({
+      projectId,
+      type: "purchase_offer_added",
+      authorUserId: req.user._id,
+      documentId: document._id,
+    }).save();
+
+    sendPurchaseOfferWaitingValidation(project);
 
     return res.json({ success: true });
   } catch (e) {
