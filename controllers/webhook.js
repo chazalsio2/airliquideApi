@@ -6,6 +6,7 @@ import User from "../models/User";
 
 export async function handleWebhookDocusign(req, res, next) {
   try {
+    console.log("req.headers", req.headers);
     const envelope = req.body.envelopestatus;
 
     if (envelope) {
