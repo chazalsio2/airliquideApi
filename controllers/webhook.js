@@ -5,9 +5,31 @@ import Client from "../models/Client";
 import User from "../models/User";
 import crypto from "crypto";
 
+function computeHash(payload) {
+  console.log("computeHash -> payload", payload, typeof payload);
+  const hmac = crypto.createHmac("sha256", process.env.DOCUSIGN_CONNECT_SECRET);
+  hmac.write(payload);
+  hmac.end();
+  return hmac.read().toString("base64");
+}
+
 export async function handleWebhookDocusign(req, res, next) {
   try {
     const envelope = req.body.envelopestatus;
+    // console.log("handleWebhookDocusign -> req.body", req.body);
+    // console.log("handleWebhookDocusign -> req.rawBody", req.rawBody);
+
+    const verify = req.headers["x-docusign-signature-1"];
+    console.log("verify", verify);
+    const payload = Buffer.from(req.rawBody, "utf8");
+    const computedHash = computeHash(payload);
+
+    console.log("computedHash", computedHash);
+    if (verify !== computedHash) {
+      console.log(">>>>Ne match pas");
+    } else {
+      console.log("MATCH!!!");
+    }
 
     if (envelope) {
       switch (envelope.status) {
