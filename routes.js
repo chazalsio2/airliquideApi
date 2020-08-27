@@ -80,6 +80,7 @@ import {
 import { handleWebhookDocusign } from "./controllers/webhook";
 import { getDashboardData } from "./controllers/dashboard";
 import routeNotDefined from "./middlewares/routeNotDefined";
+import checkDocusignValidity from "./middlewares/checkDocusignValidity";
 
 const checkAdmin = (req, res, next) => checkRoles("admin", req, res, next);
 const checkAdminOrCommercial = (req, res, next) =>
@@ -90,12 +91,14 @@ export default (app) => {
 
   app.post(
     "/webhooks/docusign",
+    checkDocusignValidity,
     xmlparser({ trim: false, explicitArray: false }),
     handleWebhookDocusign,
     errorHandle
   );
   app.get(
     "/webhooks/docusign",
+    checkDocusignValidity,
     xmlparser({ trim: false, explicitArray: false }),
     handleWebhookDocusign,
     errorHandle

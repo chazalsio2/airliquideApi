@@ -3,10 +3,10 @@ import Project from "../models/Project";
 import ProjectEvent from "../models/ProjectEvent";
 import Client from "../models/Client";
 import User from "../models/User";
+import crypto from "crypto";
 
 export async function handleWebhookDocusign(req, res, next) {
   try {
-    console.log("req.headers", req.headers);
     const envelope = req.body.envelopestatus;
 
     if (envelope) {
