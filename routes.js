@@ -1,6 +1,7 @@
 import passport from "passport";
 import xmlparser from "express-xml-bodyparser";
 import cors from "cors";
+import bodyParser from "body-parser";
 
 import {
   createAdmin,
@@ -91,6 +92,7 @@ export default (app) => {
 
   app.post(
     "/webhooks/docusign",
+    bodyParser.raw({ type: "*/*" }),
     checkDocusignValidity,
     xmlparser({ trim: false, explicitArray: false }),
     handleWebhookDocusign,
@@ -98,6 +100,7 @@ export default (app) => {
   );
   app.get(
     "/webhooks/docusign",
+    bodyParser.raw({ type: "*/*" }),
     checkDocusignValidity,
     xmlparser({ trim: false, explicitArray: false }),
     handleWebhookDocusign,
