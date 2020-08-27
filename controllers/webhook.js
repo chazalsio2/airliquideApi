@@ -4,6 +4,7 @@ import ProjectEvent from "../models/ProjectEvent";
 import Client from "../models/Client";
 import User from "../models/User";
 import crypto from "crypto";
+import { generateError } from "../lib/utils";
 
 function computeHash(payload) {
   // console.log("computeHash -> payload", payload, typeof payload);
@@ -17,10 +18,6 @@ export async function handleWebhookDocusign(req, res, next) {
   try {
     const envelope = (req.body.docusignenvelopeinformation || {})
       .envelopestatus;
-    // console.log("handleWebhookDocusign -> envelope", envelope);
-    // console.log("handleWebhookDocusign -> envelope", req.body);
-    // console.log("handleWebhookDocusign -> req.body", req.body);
-    // console.log("handleWebhookDocusign -> req.rawBody", req.rawBody);
 
     const verify = req.headers["x-docusign-signature-1"];
     console.log("verify", verify);
@@ -37,9 +34,9 @@ export async function handleWebhookDocusign(req, res, next) {
     if (envelope) {
       switch (envelope.status) {
         case "Sent": {
-          sendMessageToSlack(
-            `L'envelope ${envelope.envelopeid} a été envoyé à ${envelope.username} (${envelope.email})`
-          );
+          sendMessageToSlack({
+            message: `L'envelope ${envelope.envelopeid} a été envoyé à ${envelope.username} (${envelope.email})`,
+          });
         }
 
         case "Completed": {
@@ -75,9 +72,9 @@ export async function handleWebhookDocusign(req, res, next) {
             type: "mandate_signature_done",
           }).save();
 
-          sendMessageToSlack(
-            `Un mandat a été signé par ${envelope.username} (${envelope.email}) (Envelope ${envelope.envelopeid})`
-          );
+          sendMessageToSlack({
+            message: `Un mandat a été signé par ${envelope.username} (${envelope.email}) (Envelope ${envelope.envelopeid})`,
+          });
 
           const client = await Client.findOne({ email: envelope.email }).lean();
 
@@ -116,9 +113,9 @@ export async function handleWebhookDocusign(req, res, next) {
               displayName: client.displayName,
               clientId: client._id,
             }).save();
-            sendMessageToSlack(
-              `Un nouvel utilisateur a été ajouté ${user.displayName} (${roleToAdd})`
-            );
+            sendMessageToSlack({
+              message: `Un nouvel utilisateur a été ajouté ${user.displayName} (${roleToAdd})`,
+            });
           }
         }
 
@@ -130,6 +127,7 @@ export async function handleWebhookDocusign(req, res, next) {
     }
     return res.json({ success: true });
   } catch (e) {
+    console.error("Error on webhook", e.message);
     next(generateError(e.message));
   }
 }
