@@ -8,7 +8,10 @@ import passport from "passport";
 import bodyParser from "body-parser";
 
 import createRoutes from "./routes";
-import { listDocumentInEnvelope, listAllEnvelopes } from "./lib/docusign";
+import DocusignManager, {
+  listDocumentInEnvelope,
+  listAllEnvelopes,
+} from "./lib/docusign";
 import "./cron";
 
 if (process.env.NODE_ENV !== "development") {
@@ -62,5 +65,7 @@ app.listen(PORT, () => {
 });
 
 // listAllEnvelopes();
+
+DocusignManager.init();
 
 module.exports = app;
