@@ -6,7 +6,7 @@ import User from "../models/User";
 import crypto from "crypto";
 
 function computeHash(payload) {
-  console.log("computeHash -> payload", payload, typeof payload);
+  // console.log("computeHash -> payload", payload, typeof payload);
   const hmac = crypto.createHmac("sha256", process.env.DOCUSIGN_CONNECT_SECRET);
   hmac.write(payload);
   hmac.end();
@@ -15,7 +15,10 @@ function computeHash(payload) {
 
 export async function handleWebhookDocusign(req, res, next) {
   try {
-    const envelope = req.body.envelopestatus;
+    const envelope = (req.body.docusignenvelopeinformation || {})
+      .envelopestatus;
+    // console.log("handleWebhookDocusign -> envelope", envelope);
+    // console.log("handleWebhookDocusign -> envelope", req.body);
     // console.log("handleWebhookDocusign -> req.body", req.body);
     // console.log("handleWebhookDocusign -> req.rawBody", req.rawBody);
 
@@ -40,15 +43,26 @@ export async function handleWebhookDocusign(req, res, next) {
         }
 
         case "Completed": {
-          const project = Project.findOne({
+          const project = await Project.findOne({
             mandateEnvelopeId: envelope.envelopeid,
           }).lean();
+
+          if (!project) {
+            console.warn(`No project waiting a mandate signature`);
+            return res.json({
+              success: false,
+              reason: "No project waiting a mandate signature",
+            });
+          }
 
           if (project.status !== "wait_mandate_signature") {
             console.warn(
               `Received signature for project ${project._id} with wrong state (${project.status})`
             );
-            return;
+            return res.json({
+              success: false,
+              reason: `Received signature for project ${project._id} with wrong state (${project.status})`,
+            });
           }
 
           await Project.updateOne(

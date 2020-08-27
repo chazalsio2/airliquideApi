@@ -5,6 +5,7 @@ import Project from "../models/Project";
 import Client from "../models/Client";
 import Document from "../models/Document";
 import ProjectEvent from "../models/ProjectEvent";
+import DocusignManager from "../lib/docusign";
 import _ from "underscore";
 import {
   sendProjectWaitingValidationEmail,
@@ -17,7 +18,7 @@ import {
   sendAcceptSalesAgreementConfirmation,
   sendAcceptLoanOfferConfirmation,
   sendAcceptSalesDeedConfirmation,
-  sendProductionConfirmation
+  sendProductionConfirmation,
 } from "../lib/email";
 import { uploadFile } from "../lib/aws";
 import { sendMessageToSlack } from "../lib/slack";
@@ -366,9 +367,9 @@ export async function acceptDeed(req, res, next) {
       commercialId: project.commercialId,
     }).save();
 
-    const client = await Client.findById(project.clientId).lean()
-    sendAcceptSalesDeedConfirmation(client)
-    sendProductionConfirmation(client)
+    const client = await Client.findById(project.clientId).lean();
+    sendAcceptSalesDeedConfirmation(client);
+    sendProductionConfirmation(client);
 
     return res.json({ success: true });
   } catch (e) {
@@ -776,6 +777,8 @@ export async function acceptProject(req, res, next) {
     sendMessageToSlack({
       message: `Le mandat de recherche de ${client.displayName} a été accepté par ${user.displayName} : ${process.env.APP_URL}/projects/${project._id}`,
     });
+
+    DocusignManager.sendSalesMandate(client, project);
 
     return res.json({ success: true });
   } catch (e) {
