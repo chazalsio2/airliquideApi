@@ -9,11 +9,10 @@ function computeHash(payload) {
 }
 
 export default async function (req, res, next) {
-  console.log("req.body", req.body);
-  console.log("req.headers", req.headers);
   const verify = req.headers["x-docusign-signature-1"];
   console.log("verify", verify);
-  const computedHash = computeHash(req.body);
+  const payload = Buffer.from(req.body, "utf8");
+  const computedHash = computeHash(payload);
   console.log("computedHash", computedHash);
   if (verify !== computedHash) {
     console.log(">>>>Ne match pas");
