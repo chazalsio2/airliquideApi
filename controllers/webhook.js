@@ -5,6 +5,7 @@ import Client from "../models/Client";
 import User from "../models/User";
 import crypto from "crypto";
 import { generateError } from "../lib/utils";
+import { sendMandateSignatureConfirmation } from "../lib/email";
 
 function computeHash(payload) {
   // console.log("computeHash -> payload", payload, typeof payload);
