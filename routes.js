@@ -92,7 +92,7 @@ export default (app) => {
 
   app.post(
     "/webhooks/docusign",
-    bodyParser.raw({ type: "*/*" }),
+    bodyParser.text({ type: "*/*" }),
     checkDocusignValidity,
     xmlparser({ trim: false, explicitArray: false }),
     handleWebhookDocusign,
@@ -100,7 +100,7 @@ export default (app) => {
   );
   app.get(
     "/webhooks/docusign",
-    bodyParser.raw({ type: "*/*" }),
+    bodyParser.text({ type: "*/*" }),
     checkDocusignValidity,
     xmlparser({ trim: false, explicitArray: false }),
     handleWebhookDocusign,
