@@ -102,7 +102,7 @@ export async function handleWebhookDocusign(req, res, next) {
           }).save();
 
           sendMessageToSlack({
-            message: `Un mandat a été signé par ${envelope.username} (${envelope.email}) (Envelope ${envelope.envelopeid})`,
+            message: `Un mandat a été signé par ${client.displayName} (${client.email}) (Envelope ${envelope.envelopeid})`,
           });
 
           const client = await Client.findOne({
