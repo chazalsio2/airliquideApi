@@ -33,6 +33,7 @@ export async function handleWebhookDocusign(req, res, next) {
     }
 
     if (envelope) {
+      console.log("handleWebhookDocusign -> envelope", envelope);
       switch (envelope.status) {
         case "Sent": {
           sendMessageToSlack({
