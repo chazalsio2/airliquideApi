@@ -33,11 +33,38 @@ export async function handleWebhookDocusign(req, res, next) {
     }
 
     if (envelope) {
-      console.log("handleWebhookDocusign -> envelope", envelope);
+      console.log(
+        "handleWebhookDocusign -> envelope",
+        envelope.recipientstatuses.recipientstatus
+      );
       switch (envelope.status) {
         case "Sent": {
+          const project = await Project.findOne({
+            mandateEnvelopeId: envelope.envelopeid,
+          }).lean();
+
+          if (!project) {
+            console.warn(`No project waiting a mandate signature`);
+            return res.json({
+              success: false,
+              reason: "No project waiting a mandate signature",
+            });
+          }
+
+          const client = await Client.findOne({
+            email: project.clientId,
+          }).lean();
+
+          if (!client) {
+            console.warn(`No client for this project`);
+            return res.json({
+              success: false,
+              reason: "No client for this project",
+            });
+          }
+
           sendMessageToSlack({
-            message: `L'envelope ${envelope.envelopeid} a été envoyé à ${envelope.username} (${envelope.email})`,
+            message: `L'envelope ${envelope.envelopeid} a été envoyé à ${client.displayName} (${client.email})`,
           });
         }
 
@@ -65,7 +92,7 @@ export async function handleWebhookDocusign(req, res, next) {
           }
 
           await Project.updateOne(
-            { projectId: project._id },
+            { _id: project._id },
             { $set: { status: "wait_purchase_offer" } }
           ).exec();
 
@@ -78,7 +105,17 @@ export async function handleWebhookDocusign(req, res, next) {
             message: `Un mandat a été signé par ${envelope.username} (${envelope.email}) (Envelope ${envelope.envelopeid})`,
           });
 
-          const client = await Client.findOne({ email: envelope.email }).lean();
+          const client = await Client.findOne({
+            email: project.clientId,
+          }).lean();
+
+          if (!client) {
+            console.warn(`No client for this project`);
+            return res.json({
+              success: false,
+              reason: "No client for this project",
+            });
+          }
 
           sendMandateSignatureConfirmation(client);
 
