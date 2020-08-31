@@ -3,6 +3,8 @@ import { uploadPhotos } from "../lib/cloudinary";
 import Property from "../models/Property";
 import { sendMessageToSlack } from "../lib/slack";
 
+const LIMIT_BY_PAGE = 12;
+
 export async function editProperty(req, res, next) {
   try {
     const {
@@ -175,10 +177,30 @@ export async function createProperty(req, res, next) {
 }
 
 export async function getProperties(req, res, next) {
-  // TODO : Handle pagination here
+  const { page = "", type = "" } = req.query;
+  const pageNumber = Number(page) || 1;
+
+  const selector = {};
+  if (type === "hunting") {
+    selector.classification = "hunting";
+  }
+  if (type === "selling") {
+    selector.classification = "selling";
+  }
+
+  const propertiesCount = await Property.countDocuments(selector).exec();
+  const pageCount = Math.ceil(propertiesCount / LIMIT_BY_PAGE);
+
   try {
-    const properties = await Property.find().lean();
-    return res.json({ success: true, data: properties });
+    const properties = await Property.find(selector, null, {
+      sort: { createdAt: -1 },
+      skip: (pageNumber - 1) * LIMIT_BY_PAGE,
+      limit: LIMIT_BY_PAGE,
+    }).lean();
+    return res.json({
+      success: true,
+      data: { properties, pageCount, total: propertiesCount },
+    });
   } catch (e) {
     next(generateError(e.message));
   }

@@ -94,7 +94,7 @@ const schema = new mongoose.Schema(
     },
     classification: {
       type: String,
-      enum: ["forsale", "hunting"],
+      enum: ["selling", "hunting"],
     },
     description: {
       type: String,
