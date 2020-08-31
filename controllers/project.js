@@ -24,6 +24,8 @@ import { uploadFile } from "../lib/aws";
 import { sendMessageToSlack } from "../lib/slack";
 import Transaction from "../models/Transaction";
 
+const LIMIT_BY_PAGE = 10;
+
 export async function getProject(req, res, next) {
   try {
     const { projectId } = req.params;
@@ -379,13 +381,16 @@ export async function acceptDeed(req, res, next) {
 
 export async function getProjects(req, res, next) {
   try {
-    const projects = await Project.find(
-      {
-        status: { $nin: ["canceled", "refused", "closed"] },
-      },
-      null,
-      { sort: { createdAt: -1 } }
-    ).lean();
+    const { page = "" } = req.query;
+    const pageNumber = Number(page) || 1;
+    const selector = {};
+    const projectsCount = await Project.countDocuments(selector).exec();
+    const pageCount = Math.ceil(projectsCount / LIMIT_BY_PAGE);
+    const projects = await Project.find(selector, null, {
+      sort: { createdAt: -1 },
+      skip: (pageNumber - 1) * LIMIT_BY_PAGE,
+      limit: LIMIT_BY_PAGE,
+    }).lean();
 
     const clientEnrichedPromises = projects.map(async (project) => {
       project.client = await Client.findById(project.clientId).lean();
@@ -400,7 +405,10 @@ export async function getProjects(req, res, next) {
 
     const projectsEnriched = await Promise.all(clientEnrichedPromises);
 
-    return res.json({ success: true, data: projectsEnriched });
+    return res.json({
+      success: true,
+      data: { projects: projectsEnriched, total: projectsCount, pageCount },
+    });
   } catch (e) {
     next(generateError(e.message));
   }
@@ -408,9 +416,18 @@ export async function getProjects(req, res, next) {
 
 export async function getProjectsAssigned(req, res, next) {
   try {
-    const projects = await Project.find({
+    const { page = "" } = req.query;
+    const pageNumber = Number(page) || 1;
+    const selector = {
       commercialId: req.user._id,
       status: { $nin: ["canceled", "refused", "closed"] },
+    };
+    const projectsCount = await Project.countDocuments(selector).exec();
+    const pageCount = Math.ceil(projectsCount / LIMIT_BY_PAGE);
+    const projects = await Project.find(selector, null, {
+      sort: { createdAt: -1 },
+      skip: (pageNumber - 1) * LIMIT_BY_PAGE,
+      limit: LIMIT_BY_PAGE,
     }).lean();
 
     const clientEnrichedPromises = projects.map(async (project) => {
@@ -426,7 +443,10 @@ export async function getProjectsAssigned(req, res, next) {
 
     const projectsEnriched = await Promise.all(clientEnrichedPromises);
 
-    return res.json({ success: true, data: projectsEnriched });
+    return res.json({
+      success: true,
+      data: { projects: projectsEnriched, total: projectsCount, pageCount },
+    });
   } catch (e) {
     next(generateError(e.message));
   }
@@ -434,8 +454,33 @@ export async function getProjectsAssigned(req, res, next) {
 
 export async function getProjectsMissingValidation(req, res, next) {
   try {
-    const projects = await Project.find({
-      status: "wait_project_validation",
+    const { page = "" } = req.query;
+    const pageNumber = Number(page) || 1;
+    const selector = {
+      $or: [
+        {
+          status: "wait_project_validation",
+        },
+        {
+          status: "wait_purchase_offer_validation",
+        },
+        {
+          status: "wait_sales_agreement_validation",
+        },
+        {
+          status: "wait_loan_offer_validation",
+        },
+        {
+          status: "wait_sales_deed_validation",
+        },
+      ],
+    };
+    const projectsCount = await Project.countDocuments(selector).exec();
+    const pageCount = Math.ceil(projectsCount / LIMIT_BY_PAGE);
+    const projects = await Project.find(selector, null, {
+      sort: { createdAt: -1 },
+      skip: (pageNumber - 1) * LIMIT_BY_PAGE,
+      limit: LIMIT_BY_PAGE,
     }).lean();
 
     const clientEnrichedPromises = projects.map(async (project) => {
@@ -451,7 +496,10 @@ export async function getProjectsMissingValidation(req, res, next) {
 
     const projectsEnriched = await Promise.all(clientEnrichedPromises);
 
-    return res.json({ success: true, data: projectsEnriched });
+    return res.json({
+      success: true,
+      data: { projects: projectsEnriched, total: projectsCount, pageCount },
+    });
   } catch (e) {
     next(generateError(e.message));
   }
