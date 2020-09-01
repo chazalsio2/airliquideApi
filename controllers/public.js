@@ -33,7 +33,7 @@ export async function publicCreateClient(req, res, next) {
       message: `Le client ${client.firstname} ${client.lastname} a été ajouté : ${process.env.APP_URL}/clients/${client._id}`,
     });
 
-    if (projectTypes.indexOf(serviceType) !== -1) {
+    if (["sales"].indexOf(serviceType) !== -1) {
       const project = await Project({
         clientId: client,
         type: serviceType,
@@ -44,6 +44,22 @@ export async function publicCreateClient(req, res, next) {
         data: {
           projectId: project._id,
           completed: false,
+        },
+      });
+    }
+
+    // the form is completed for others project type
+    if (projectTypes.indexOf(serviceType) !== -1) {
+      const project = await Project({
+        clientId: client,
+        type: serviceType,
+      }).save();
+
+      return res.json({
+        success: true,
+        data: {
+          projectId: project._id,
+          completed: true,
         },
       });
     }
