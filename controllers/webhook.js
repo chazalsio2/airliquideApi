@@ -1,5 +1,6 @@
 import { sendMessageToSlack } from "../lib/slack";
 import Project from "../models/Project";
+import Document from "../models/Document";
 import ProjectEvent from "../models/ProjectEvent";
 import Client from "../models/Client";
 import User from "../models/User";
