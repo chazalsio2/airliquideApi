@@ -37,10 +37,6 @@ export async function handleWebhookDocusign(req, res, next) {
     }
 
     if (envelope) {
-      console.log(
-        "handleWebhookDocusign -> envelope",
-        envelope.recipientstatuses.recipientstatus
-      );
       switch (envelope.status) {
         case "Sent": {
           const project = await Project.findOne({
@@ -106,7 +102,7 @@ export async function handleWebhookDocusign(req, res, next) {
                     name: "Signature mandat de recherche.pdf",
                     projectId: project._id,
                     contentType: "application/pdf",
-                  });
+                  }).save();
                   const location = await uploadFileFromStringData(
                     `project__${project._id}/${mandateDoc._id}_mandat-de-recherche-signature.pdf`,
                     docData,
