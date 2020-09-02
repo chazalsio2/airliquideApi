@@ -1178,9 +1178,9 @@ export async function assignCommercial(req, res, next) {
       return next(generateError("Project not found", 404));
     }
 
-    if (project.commercialId) {
-      return next(generateError("Project already assigned", 403));
-    }
+    // if (project.commercialId) {
+    //   return next(generateError("Project already assigned", 403));
+    // }
 
     const commercial = await User.findOne({
       _id: commercialId,
