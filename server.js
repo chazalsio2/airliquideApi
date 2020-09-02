@@ -64,8 +64,6 @@ app.listen(PORT, () => {
   console.info(`Server in running on port ${PORT}`);
 });
 
-// listAllEnvelopes();
-
 DocusignManager.init();
 
 module.exports = app;

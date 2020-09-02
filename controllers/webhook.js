@@ -6,6 +6,9 @@ import User from "../models/User";
 import crypto from "crypto";
 import { generateError } from "../lib/utils";
 import { sendMandateSignatureConfirmation } from "../lib/email";
+import { uploadFileFromStringData } from "../lib/aws";
+
+import DocusignManager from "../lib/docusign";
 
 function computeHash(payload) {
   // console.log("computeHash -> payload", payload, typeof payload);
@@ -89,6 +92,36 @@ export async function handleWebhookDocusign(req, res, next) {
               success: false,
               reason: `Received signature for project ${project._id} with wrong state (${project.status})`,
             });
+          }
+
+          if (project.type === "sales") {
+            DocusignManager.getEnvelope(
+              envelope.envelopeid,
+              async (err, docData) => {
+                if (err) {
+                  console.error(err);
+                } else {
+                  const mandateDoc = await new Document({
+                    name: "Signature mandat de recherche.pdf",
+                    projectId: project._id,
+                    contentType: "application/pdf",
+                  });
+                  const location = await uploadFileFromStringData(
+                    `project__${project._id}/${mandateDoc._id}_mandat-de-recherche-signature.pdf`,
+                    docData,
+                    "application/pdf"
+                  );
+                  await Document.updateOne(
+                    { _id: mandateDoc._id },
+                    { $set: { url: location } }
+                  ).exec();
+                  await Project.updateOne(
+                    { _id: project._id },
+                    { $set: { mandateDocId: mandateDoc._id } }
+                  ).exec();
+                }
+              }
+            );
           }
 
           await Project.updateOne(

@@ -185,6 +185,10 @@ const schema = new mongoose.Schema(
       type: String,
       required: false,
     },
+    mandateDocId: {
+      type: Types.ObjectId,
+      required: false,
+    },
     salesAgreementDocId: {
       type: Types.ObjectId,
       required: false,
