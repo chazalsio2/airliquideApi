@@ -13,9 +13,11 @@ var schema = new mongoose.Schema(
     },
     authorDisplayName: {
       type: String,
+      required: false,
     },
     authorUserId: {
       type: mongoose.Types.ObjectId,
+      required: false,
     },
     projectId: {
       type: String,

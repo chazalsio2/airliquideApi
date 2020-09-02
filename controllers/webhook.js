@@ -94,7 +94,7 @@ export async function handleWebhookDocusign(req, res, next) {
             });
           }
 
-          if (project.type === "sales") {
+          if (project.type === "search") {
             DocusignManager.getEnvelope(
               envelope.envelopeid,
               async (err, docData) => {
@@ -134,10 +134,6 @@ export async function handleWebhookDocusign(req, res, next) {
             type: "mandate_signature_done",
           }).save();
 
-          sendMessageToSlack({
-            message: `Un mandat a été signé par ${client.displayName} (${client.email}) (Envelope ${envelope.envelopeid})`,
-          });
-
           const client = await Client.findOne({
             email: project.clientId,
           }).lean();
@@ -149,6 +145,9 @@ export async function handleWebhookDocusign(req, res, next) {
               reason: "No client for this project",
             });
           }
+          sendMessageToSlack({
+            message: `Un mandat a été signé par ${client.displayName} (${client.email}) (Envelope ${envelope.envelopeid})`,
+          });
 
           sendMandateSignatureConfirmation(client);
 
