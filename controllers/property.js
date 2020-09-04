@@ -1,4 +1,8 @@
-import { generateError, isSearchClient } from "../lib/utils";
+import {
+  generateError,
+  isSearchClient,
+  isAdminOrCommercial,
+} from "../lib/utils";
 import { uploadPhotos } from "../lib/cloudinary";
 import Property from "../models/Property";
 import { sendMessageToSlack } from "../lib/slack";
@@ -190,9 +194,9 @@ export async function getProperties(req, res, next) {
     selector.classification = "selling";
   }
 
-  // if (isSearchClient(req.user)) {
-  //   selector.classification = "selling";
-  // }
+  if (isSearchClient(req.user) && !isAdminOrCommercial(req.user)) {
+    selector.classification = "hunting";
+  }
 
   const propertiesCount = await Property.countDocuments(selector).exec();
   const pageCount = Math.ceil(propertiesCount / LIMIT_BY_PAGE);
@@ -220,7 +224,13 @@ export async function getProperty(req, res, next) {
       return next(generateError("Invalid request", 401));
     }
 
-    const property = await Property.findById(propertyId).lean();
+    const selector = { _id: propertyId };
+
+    if (isSearchClient(req.user) && !isAdminOrCommercial(req.user)) {
+      selector.classification = "hunting";
+    }
+
+    const property = await Property.findOne(selector).lean();
 
     if (!property) {
       return next(generateError("Property not found", 404));
