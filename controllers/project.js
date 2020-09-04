@@ -43,7 +43,7 @@ export async function getProject(req, res, next) {
     }
 
     const isAuthorized =
-      isAdminOrCommercial(userId) ||
+      isAdminOrCommercial(req.user) ||
       String(req.user.clientId) === String(project.clientId);
 
     if (!isAuthorized) {
