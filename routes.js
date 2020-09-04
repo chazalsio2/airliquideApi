@@ -58,6 +58,7 @@ import {
   acceptLoanOffer,
   refuseLoanOffer,
   uploadLoanOfferForProject,
+  cancelProject,
 } from "./controllers/project";
 import {
   createProperty,
@@ -155,6 +156,15 @@ export default (app) => {
     checkAdmin,
     checkAccountDesactivated,
     addFolder,
+    errorHandle
+  );
+
+  app.post(
+    "/projects/:projectId/cancel-project",
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    cancelProject,
     errorHandle
   );
 

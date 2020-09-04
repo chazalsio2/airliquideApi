@@ -221,6 +221,10 @@ const schema = new mongoose.Schema(
       type: DocSubset,
       required: false,
     },
+    cancellationReason: {
+      type: String,
+      required: false,
+    },
   },
   {
     timestamps: true,

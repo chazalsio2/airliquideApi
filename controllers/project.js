@@ -643,6 +643,41 @@ export async function confirmSearchMandate(req, res, next) {
   }
 }
 
+export async function cancelProject(req, res, next) {
+  try {
+    const { projectId } = req.params;
+    const { reason } = req.body;
+
+    const notCancellableStatus = ["canceled", "refused", "completed"];
+
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    if (notCancellableStatus.indexOf(project.status) !== -1) {
+      return next(generateError("Wrong state", 403));
+    }
+
+    await Project.updateOne(
+      { _id: projectId },
+      { $set: { status: "canceled", cancellationReason: reason } }
+    ).exec();
+
+    await new ProjectEvent({
+      projectId,
+      type: "project_canceled",
+      reason,
+      authorUserId: req.user._id,
+    }).save();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
 export async function savePersonalSituation(req, res, next) {
   try {
     const {
