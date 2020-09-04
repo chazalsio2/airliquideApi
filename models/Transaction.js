@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 
+// Not used anymore
+
 var schema = new mongoose.Schema(
   {
     projectId: {

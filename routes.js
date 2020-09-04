@@ -59,6 +59,9 @@ import {
   refuseLoanOffer,
   uploadLoanOfferForProject,
   cancelProject,
+  acceptMandate,
+  refuseMandate,
+  uploadMandateForProject,
 } from "./controllers/project";
 import {
   createProperty,
@@ -295,6 +298,15 @@ export default (app) => {
   );
 
   app.post(
+    `/projects/:projectId/accept-mandate`,
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    acceptMandate,
+    errorHandle
+  );
+
+  app.post(
     `/projects/:projectId/accept-purchase-offer`,
     passport.authenticate("jwt", { session: false }),
     checkAdmin,
@@ -309,6 +321,15 @@ export default (app) => {
     checkAdmin,
     checkAccountDesactivated,
     refusePurchaseOffer,
+    errorHandle
+  );
+
+  app.post(
+    `/projects/:projectId/refuse-mandate`,
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    refuseMandate,
     errorHandle
   );
 
@@ -547,6 +568,14 @@ export default (app) => {
     passport.authenticate("jwt", { session: false }),
     checkAccountDesactivated,
     uploadLoanOfferForProject,
+    errorHandle
+  );
+
+  app.post(
+    "/projects/:projectId/mandate",
+    passport.authenticate("jwt", { session: false }),
+    checkAccountDesactivated,
+    uploadMandateForProject,
     errorHandle
   );
 

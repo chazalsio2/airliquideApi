@@ -5,6 +5,7 @@ import User from "../models/User";
 import Folder from "../models/Folder";
 import Training from "../models/Training";
 import Property from "../models/Property";
+import Project from "../models/Project";
 
 export async function searchTerm(req, res, next) {
   const { t } = req.query;
@@ -53,8 +54,28 @@ export async function searchTerm(req, res, next) {
 
     results.push(...propertiesFormatted);
   }
-  // Trainings
 
+  // Project
+  // if (isAdminOrCommercial(req.user)) {
+  //   const projects = await Project.find(
+  //     {
+  //       name: { $regex: t, $options: "i" },
+  //     },
+  //     null,
+  //     { limit: 50, sort: { createdAt: -1 } }
+  //   ).lean();
+
+  //   const projectsFormatted = projects.map((doc) => ({
+  //     _id: doc._id,
+  //     type: "property",
+  //     context: "Projet",
+  //     name: doc.name,
+  //   }));
+
+  //   results.push(...propertiesFormatted);
+  // }
+
+  // Trainings
   const selector = isAdmin(req.user)
     ? {
         name: { $regex: t, $options: "i" },

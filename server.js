@@ -8,10 +8,6 @@ import passport from "passport";
 import bodyParser from "body-parser";
 
 import createRoutes from "./routes";
-import DocusignManager, {
-  listDocumentInEnvelope,
-  listAllEnvelopes,
-} from "./lib/docusign";
 import "./cron";
 
 if (process.env.NODE_ENV !== "development") {
@@ -63,7 +59,5 @@ mongoose.connection.on("connected", () => {
 app.listen(PORT, () => {
   console.info(`Server in running on port ${PORT}`);
 });
-
-DocusignManager.init();
 
 module.exports = app;

@@ -111,10 +111,7 @@ const SearchSheet = new mongoose.Schema({
   budget: {
     type: Number,
   },
-  commissionAmount: {
-    type: Number,
-    required: false,
-  },
+  
 });
 
 const SalesSheet = new mongoose.Schema({});
@@ -152,7 +149,9 @@ const schema = new mongoose.Schema(
       enum: [
         "missing_information",
         "wait_project_validation",
-        "wait_mandate_signature",
+        // "wait_mandate_signature",
+        "wait_mandate",
+        "wait_mandate_validation",
         "wait_purchase_offer",
         "wait_purchase_offer_validation",
         "wait_sales_agreement",
@@ -193,6 +192,10 @@ const schema = new mongoose.Schema(
       type: Types.ObjectId,
       required: false,
     },
+    mandateDoc: {
+      type: DocSubset,
+      required: false,
+    },
     salesAgreementDocId: {
       type: Types.ObjectId,
       required: false,
@@ -227,6 +230,10 @@ const schema = new mongoose.Schema(
     },
     cancellationReason: {
       type: String,
+      required: false,
+    },
+    commissionAmount: {
+      type: Number,
       required: false,
     },
   },

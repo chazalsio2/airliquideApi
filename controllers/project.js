@@ -5,7 +5,6 @@ import Project from "../models/Project";
 import Client from "../models/Client";
 import Document from "../models/Document";
 import ProjectEvent from "../models/ProjectEvent";
-import DocusignManager from "../lib/docusign";
 import _ from "underscore";
 import {
   sendProjectWaitingValidationEmail,
@@ -18,7 +17,6 @@ import {
   sendAcceptSalesAgreementConfirmation,
   sendAcceptLoanOfferConfirmation,
   sendAcceptSalesDeedConfirmation,
-  sendProductionConfirmation,
 } from "../lib/email";
 import { uploadFile } from "../lib/aws";
 import { sendMessageToSlack } from "../lib/slack";
@@ -56,6 +54,43 @@ export async function getProject(req, res, next) {
     }
 
     return res.json({ success: true, data: project });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+export async function refuseMandate(req, res, next) {
+  try {
+    const { projectId } = req.params;
+    const userId = req.user._id;
+    const { reason } = req.body;
+
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    if (project.status !== "wait_mandate_validation") {
+      return next(generateError("Wrong state", 403));
+    }
+
+    await Project.updateOne(
+      { _id: projectId },
+      {
+        $set: { status: "wait_mandate" },
+        $unset: { mandateDocId: "", mandateDoc: "" },
+      }
+    ).exec();
+
+    new ProjectEvent({
+      projectId,
+      type: "mandate_refused",
+      authorUserId: userId,
+      reason,
+    }).save();
+
+    return res.json({ success: true });
   } catch (e) {
     next(generateError(e.message));
   }
@@ -247,6 +282,54 @@ export async function acceptLoanOffer(req, res, next) {
   }
 }
 
+export async function acceptMandate(req, res, next) {
+  try {
+    const { projectId } = req.params;
+    const { commission } = req.body;
+    const userId = req.user._id;
+
+    const project = await Project.findById(projectId).lean();
+
+    if (!commission) {
+      throw next(generateError("Commission invalid", 403));
+    }
+    const commissionInt = Number(commission);
+    
+    if (commissionInt < 0) {
+      throw next(generateError("Commission invalid", 403));
+    }
+
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    if (project.status !== "wait_mandate_validation") {
+      return next(generateError("Wrong state", 403));
+    }
+
+    await Project.updateOne(
+      { _id: projectId },
+      {
+        $set: {
+          status: "wait_purchase_offer",
+          commissionAmount: commission * 100,
+        },
+      }
+    ).exec();
+
+    new ProjectEvent({
+      projectId,
+      type: "mandate_accepted",
+      authorUserId: userId,
+    }).save();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
 export async function acceptPurchaseOffer(req, res, next) {
   try {
     const { projectId } = req.params;
@@ -325,16 +408,9 @@ export async function acceptAgreement(req, res, next) {
 export async function acceptDeed(req, res, next) {
   try {
     const { projectId } = req.params;
-    const { commission } = req.body;
     const userId = req.user._id;
 
-    const amount = Number(commission);
-
     const project = await Project.findById(projectId).lean();
-
-    if (!amount || amount < 0) {
-      return next(generateError("Commission invalid", 401));
-    }
 
     if (!project) {
       return next(generateError("Project not found", 404));
@@ -347,7 +423,7 @@ export async function acceptDeed(req, res, next) {
     await Project.updateOne(
       { _id: projectId },
       {
-        $set: { status: "completed", commissionAmount: amount * 100 },
+        $set: { status: "completed" },
       }
     ).exec();
 
@@ -361,12 +437,6 @@ export async function acceptDeed(req, res, next) {
       projectId,
       type: "project_completed",
       authorUserId: userId,
-    }).save();
-
-    await new Transaction({
-      projectId,
-      amount: amount * 100,
-      commercialId: project.commercialId,
     }).save();
 
     const client = await Client.findById(project.clientId).lean();
@@ -460,6 +530,9 @@ export async function getProjectsMissingValidation(req, res, next) {
       $or: [
         {
           status: "wait_project_validation",
+        },
+        {
+          status: "wait_mandate_validation",
         },
         {
           status: "wait_purchase_offer_validation",
@@ -844,7 +917,7 @@ export async function acceptProject(req, res, next) {
 
     await Project.updateOne(
       { _id: projectId },
-      { $set: { status: "wait_mandate_signature" } }
+      { $set: { status: "wait_mandate" } }
     ).exec();
 
     await new ProjectEvent({
@@ -861,7 +934,7 @@ export async function acceptProject(req, res, next) {
       message: `Le mandat de recherche de ${client.displayName} a été accepté par ${user.displayName} : ${process.env.APP_URL}/projects/${project._id}`,
     });
 
-    DocusignManager.sendSalesMandate(client, project);
+    // DocusignManager.sendSalesMandate(client, project);
 
     return res.json({ success: true });
   } catch (e) {
@@ -979,6 +1052,76 @@ export async function uploadLoanOfferForProject(req, res, next) {
     }).save();
 
     sendLoanOfferWaitingValidation(project);
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+export async function uploadMandateForProject(req, res, next) {
+  try {
+    const { projectId } = req.params;
+    const { fileName, fileData, contentType } = req.body;
+
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    if (!fileName || !fileData || !contentType) {
+      return next(generateError("Invalid request", 403));
+    }
+
+    const isAuthorized =
+      isAdminOrCommercial(req.user) || project.clientId === req.user._id;
+
+    if (!isAuthorized) {
+      return next(generateError("Not authorized", 401));
+    }
+
+    if (project.status !== "wait_mandate") {
+      return next(generateError("Wrong state for project", 403));
+    }
+
+    const document = await new Document({
+      name: fileName,
+      authorUserId: req.user._id,
+      projectId,
+      contentType,
+    }).save();
+
+    const location = await uploadFile(
+      `project__${projectId}/${document._id}_${document.name}`,
+      fileData,
+      contentType
+    );
+    await Document.updateOne(
+      { _id: document._id },
+      { $set: { url: location } }
+    ).exec();
+
+    await Project.updateOne(
+      { _id: projectId },
+      {
+        $set: {
+          mandateDocId: document._id,
+          mandateDoc: {
+            name: document.name,
+            url: location,
+          },
+          status: "wait_mandate_validation",
+        },
+      }
+    ).exec();
+
+    await new ProjectEvent({
+      projectId,
+      type: "mandate_added",
+      authorUserId: req.user._id,
+      documentId: document._id,
+    }).save();
 
     return res.json({ success: true });
   } catch (e) {

@@ -96,6 +96,15 @@ export async function deleteDocument(req, res, next) {
       return next(generateError("Document not found", 404));
     }
 
+    const useAsMandate = await Project.countDocuments({
+      mandateDocId: documentId,
+    }).lean();
+
+    if (useAsMandate) {
+      return next(
+        generateError("You cannot remove a document used as mandate", 403)
+      );
+    }
     const useAsAgreement = await Project.countDocuments({
       salesAgreementDocId: documentId,
     }).lean();
