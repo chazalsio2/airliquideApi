@@ -111,6 +111,10 @@ const SearchSheet = new mongoose.Schema({
   budget: {
     type: Number,
   },
+  commissionAmount: {
+    type: Number,
+    required: false,
+  },
 });
 
 const SalesSheet = new mongoose.Schema({});

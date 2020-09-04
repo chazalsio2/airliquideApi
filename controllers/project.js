@@ -347,7 +347,7 @@ export async function acceptDeed(req, res, next) {
     await Project.updateOne(
       { _id: projectId },
       {
-        $set: { status: "completed" },
+        $set: { status: "completed", commissionAmount: amount * 100 },
       }
     ).exec();
 
@@ -371,7 +371,7 @@ export async function acceptDeed(req, res, next) {
 
     const client = await Client.findById(project.clientId).lean();
     sendAcceptSalesDeedConfirmation(client);
-    sendProductionConfirmation(client);
+    // sendProductionConfirmation(client);
 
     return res.json({ success: true });
   } catch (e) {

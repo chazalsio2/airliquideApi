@@ -1,17 +1,22 @@
 import { generateError, isAdmin } from "../lib/utils";
 import Property from "../models/Property";
 import Project from "../models/Project";
-import ProjectEvent from "../models/ProjectEvent";
 
 import moment from "moment";
 import _ from "underscore";
-import Transaction from "../models/Transaction";
 
 export async function getDashboardData(req, res, next) {
   try {
     const userId = req.user._id;
     const isUserAdmin = isAdmin(req.user);
-    // "management", "sales", "search", "coaching"
+
+    function computeCommission(comm) {
+      if (isUserAdmin) {
+        return Math.floor(comm / 100);
+      }
+
+      return Math.floor(((comm - (8.5 * commission) / 100) * 0.6) / 100);
+    }
 
     const activeStatus = [
       "wait_offers",
@@ -57,46 +62,67 @@ export async function getDashboardData(req, res, next) {
       status: "closed",
     }).exec();
 
-    const projectAssigned = await Project.find({
-      commercialId: userId,
-      status: activeStatus,
-    }).lean();
+    const mandateDoneStatus = [
+      "wait_purchase_offer",
+      "wait_purchase_offer_validation",
+      "wait_sales_agreement",
+      "wait_sales_agreement_validation",
+      "wait_loan_offer",
+      "wait_loan_offer_validation",
+      "wait_sales_deed",
+      "wait_sales_deed_validation",
+    ];
 
-    const salesAgreementCount = await ProjectEvent.countDocuments(
+    const salesAgreementCount = await Project.countDocuments(
       isUserAdmin
         ? {
-            createdAt: { $gt: moment().startOf("month") },
-            type: "sales_agreement_validate",
+            createdAt: { $gt: moment().startOf("year") },
+            status: { $in: mandateDoneStatus },
           }
         : {
-            createdAt: { $gt: moment().startOf("month") },
-            type: "sales_agreement_validate",
-            projectId: projectAssigned.map((p) => p._id),
+            createdAt: { $gt: moment().startOf("year") },
+            status: { $in: mandateDoneStatus },
+            commercialId: userId,
           }
     );
 
-    const salesDeedCount = await ProjectEvent.countDocuments(
+    const salesDeedCount = await Project.countDocuments(
       isUserAdmin
         ? {
-            createdAt: { $gt: moment().startOf("month") },
-            type: "sales_deed_validate",
+            createdAt: { $gt: moment().startOf("year") },
+            status: "completed",
           }
         : {
-            createdAt: { $gt: moment().startOf("month") },
-            type: "sales_deed_validate",
-            projectId: projectAssigned.map((p) => p._id),
+            createdAt: { $gt: moment().startOf("year") },
+            status: "completed",
+            commercialId: userId,
           }
     );
 
-    const transactionSelector = isUserAdmin
-      ? { createdAt: { $gt: moment().startOf("month") } }
-      : { createdAt: { $gt: moment().startOf("month") }, commercialId: userId };
+    const projectSelector = isUserAdmin
+      ? { createdAt: { $gt: moment().startOf("year") } }
+      : { createdAt: { $gt: moment().startOf("year") }, commercialId: userId };
 
-    const transactions = await Transaction.find(transactionSelector).lean();
+    const projects = await Project.find(projectSelector).lean();
 
-    const commercialCommission = _.reduce(
-      transactions,
-      (memo, transaction) => memo + transaction.amount,
+    const projectsCompleted = _.filter(
+      projects,
+      (project) => project.status === "completed" && !!project.commissionAmount
+    );
+
+    const projectsNotCompleted = _.filter(
+      projects,
+      (project) => project.status !== "completed" && !!project.commissionAmount
+    );
+
+    const commission = _.reduce(
+      projectsCompleted,
+      (memo, project) => memo + project.commissionAmount,
+      0
+    );
+    const provisionalCommission = _.reduce(
+      projectsNotCompleted,
+      (memo, project) => memo + project.commissionAmount,
       0
     );
 
@@ -110,13 +136,8 @@ export async function getDashboardData(req, res, next) {
         propertiesClosedCount,
         salesDeedCount,
         salesAgreementCount,
-        commercialCommission: isUserAdmin
-          ? Math.floor(commercialCommission / 100)
-          : Math.floor(
-              ((commercialCommission - (8.5 * commercialCommission) / 100) *
-                0.6) /
-                100
-            ),
+        provisionalCommission: computeCommission(provisionalCommission),
+        commission: computeCommission(commission),
       },
     });
   } catch (e) {
