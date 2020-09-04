@@ -140,7 +140,6 @@ const schema = new mongoose.Schema(
       required: false,
       _id: false,
     },
-
     status: {
       type: String,
       default: "missing_information",

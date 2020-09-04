@@ -62,6 +62,7 @@ import {
   acceptMandate,
   refuseMandate,
   uploadMandateForProject,
+  getMyProjects,
 } from "./controllers/project";
 import {
   createProperty,
@@ -497,15 +498,6 @@ export default (app) => {
     errorHandle
   );
 
-  app.get(
-    "/projects/:projectId",
-    passport.authenticate("jwt", { session: false }),
-    checkAdminOrCommercial,
-    checkAccountDesactivated,
-    getProject,
-    errorHandle
-  );
-
   app.post(
     "/clients",
     passport.authenticate("jwt", { session: false }),
@@ -521,6 +513,22 @@ export default (app) => {
     passport.authenticate("jwt", { session: false }),
     checkAccountDesactivated,
     getRootFolder,
+    errorHandle
+  );
+
+  app.get(
+    "/projects/:projectId",
+    passport.authenticate("jwt", { session: false }),
+    checkAccountDesactivated,
+    getProject,
+    errorHandle
+  );
+
+  app.get(
+    "/my-projects",
+    passport.authenticate("jwt", { session: false }),
+    checkAccountDesactivated,
+    getMyProjects,
     errorHandle
   );
 

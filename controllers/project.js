@@ -28,6 +28,7 @@ const LIMIT_BY_PAGE = 10;
 export async function getProject(req, res, next) {
   try {
     const { projectId } = req.params;
+    const userId = req.user._id;
 
     const project = await Project.findById(projectId).lean();
 
@@ -35,17 +36,27 @@ export async function getProject(req, res, next) {
       return next(generateError("Project not found", 404));
     }
 
-    project.client = await Client.findById(project.clientId).lean();
-    project.events = await ProjectEvent.find({ projectId: project._id }, null, {
+    const client = await Client.findOne({ _id: project.clientId }, null).lean();
+
+    if (!client) {
+      return next(generateError("Client not found", 404));
+    }
+
+    const isAuthorized =
+      isAdminOrCommercial(userId) ||
+      String(req.user.clientId) === String(project.clientId);
+
+    if (!isAuthorized) {
+      return next(generateError("Not authorized", 401));
+    }
+
+    project.client = client;
+    project.events = await ProjectEvent.find({ projectId }, null, {
       sort: { createdAt: -1 },
     }).lean();
-    project.documents = await Document.find(
-      { projectId: Types.ObjectId(project._id) }, // do not work i dont know why
-      null,
-      {
-        sort: { createdAt: -1 },
-      }
-    ).lean();
+    project.documents = await Document.find({ projectId }, null, {
+      sort: { createdAt: -1 },
+    }).lean();
 
     if (project.commercialId) {
       project.commercial = await User.findById(
@@ -92,6 +103,41 @@ export async function refuseMandate(req, res, next) {
     }).save();
 
     return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+export async function getMyProjects(req, res, next) {
+  try {
+    const userId = req.user._id;
+    const user = await User.findById(userId).lean();
+
+    if (!user) {
+      throw new Error("User not found", 404);
+    }
+
+    const client = await Client.findById(user.clientId).lean();
+
+    if (!client) {
+      throw new Error("Client not found", 404);
+    }
+
+    const projects = await Project.find(
+      { clientId: client._id },
+      "name status commercialId type"
+    ).lean();
+
+    const enrichProjects = await Promise.all(
+      projects.map(async (project) => {
+        project.commercial = await User.findById(
+          project.commercialId,
+          "displayName"
+        ).lean();
+        return project;
+      })
+    );
+    return res.json({ success: true, data: enrichProjects });
   } catch (e) {
     next(generateError(e.message));
   }
