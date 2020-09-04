@@ -81,7 +81,6 @@ import {
 import { handleWebhookDocusign } from "./controllers/webhook";
 import { getDashboardData } from "./controllers/dashboard";
 import routeNotDefined from "./middlewares/routeNotDefined";
-import checkDocusignValidity from "./middlewares/checkDocusignValidity";
 
 const checkAdmin = (req, res, next) => checkRoles("admin", req, res, next);
 const checkAdminOrCommercial = (req, res, next) =>
@@ -96,15 +95,6 @@ export default (app) => {
     handleWebhookDocusign,
     errorHandle
   );
-
-  // app.get(
-  //   "/webhooks/docusign",
-  //   // bodyParser.text({ type: "*/*" }),
-  //   // checkDocusignValidity,
-  //   xmlparser({ trim: false, explicitArray: false }),
-  //   handleWebhookDocusign,
-  //   errorHandle
-  // );
 
   // Public route
   app.post("/login", login, errorHandle);

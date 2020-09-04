@@ -112,7 +112,11 @@ export async function getDashboardData(req, res, next) {
         salesAgreementCount,
         commercialCommission: isUserAdmin
           ? Math.floor(commercialCommission / 100)
-          : Math.floor((commercialCommission * 0.6) / 100),
+          : Math.floor(
+              ((commercialCommission - (8.5 * commercialCommission) / 100) *
+                0.6) /
+                100
+            ),
       },
     });
   } catch (e) {

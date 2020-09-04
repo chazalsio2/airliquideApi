@@ -12,7 +12,6 @@ import { uploadFileFromStringData } from "../lib/aws";
 import DocusignManager from "../lib/docusign";
 
 function computeHash(payload) {
-  // console.log("computeHash -> payload", payload, typeof payload);
   const hmac = crypto.createHmac("sha256", process.env.DOCUSIGN_CONNECT_SECRET);
   hmac.write(payload);
   hmac.end();
@@ -25,15 +24,13 @@ export async function handleWebhookDocusign(req, res, next) {
       .envelopestatus;
 
     const verify = req.headers["x-docusign-signature-1"];
-    console.log("verify", verify);
     const payload = Buffer.from(req.rawBody, "utf8");
     const computedHash = computeHash(payload);
 
-    console.log("computedHash", computedHash);
     if (verify !== computedHash) {
-      console.log(">>>>Ne match pas");
+      console.info(">>>>Ne match pas");
     } else {
-      console.log("MATCH!!!");
+      console.info("MATCH!!!");
     }
 
     if (envelope) {

@@ -160,7 +160,7 @@ export async function forgotPassword(req, res, next) {
   sendEmail({
     email,
     name: user.displayName,
-    subject: "Change de mot de passe sur iVision-R",
+    subject: "Changement de mot de passe sur iVision-R",
     textPart: `Bonjour ${user.displayName},\r\n\r\nVous avez fait une demande de changement de mot de passe sur iVision-R, pour continuer veuillez cliquez sur le lien ci-dessous :\r\n\r\n ${process.env.APP_URL}/change-password?t=${user.token}\r\n\r\nSi vous n'êtes pas à l'origine de cette demande, veuillez ignorer cet email.\r\n\r\nL'équipe de VISION-R\r\nVotre Startup Immobilière`,
   });
 
