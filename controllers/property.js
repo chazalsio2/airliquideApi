@@ -1,4 +1,4 @@
-import { generateError } from "../lib/utils";
+import { generateError, isSearchClient } from "../lib/utils";
 import { uploadPhotos } from "../lib/cloudinary";
 import Property from "../models/Property";
 import { sendMessageToSlack } from "../lib/slack";
@@ -181,12 +181,18 @@ export async function getProperties(req, res, next) {
   const pageNumber = Number(page) || 1;
 
   const selector = {};
+
   if (type === "hunting") {
     selector.classification = "hunting";
   }
+
   if (type === "selling") {
     selector.classification = "selling";
   }
+
+  // if (isSearchClient(req.user)) {
+  //   selector.classification = "selling";
+  // }
 
   const propertiesCount = await Property.countDocuments(selector).exec();
   const pageCount = Math.ceil(propertiesCount / LIMIT_BY_PAGE);

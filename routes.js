@@ -89,6 +89,13 @@ import routeNotDefined from "./middlewares/routeNotDefined";
 const checkAdmin = (req, res, next) => checkRoles("admin", req, res, next);
 const checkAdminOrCommercial = (req, res, next) =>
   checkRoles(["admin", "commercial_agent"], req, res, next);
+const checkAdminOrCommercialOrSearchClient = (req, res, next) =>
+  checkRoles(
+    ["admin", "commercial_agent", "client_search_mandate"],
+    req,
+    res,
+    next
+  );
 
 export default (app) => {
   // webhooks
@@ -378,6 +385,26 @@ export default (app) => {
     errorHandle
   );
 
+  /** Administrator or Commercial or Search Client */
+
+  app.get(
+    "/properties/:propertyId",
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercialOrSearchClient,
+    checkAccountDesactivated,
+    getProperty,
+    errorHandle
+  );
+
+  app.get(
+    "/properties",
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercialOrSearchClient,
+    checkAccountDesactivated,
+    getProperties,
+    errorHandle
+  );
+
   /** Administrateur or commercial **/
 
   app.get(
@@ -425,15 +452,6 @@ export default (app) => {
     errorHandle
   );
 
-  app.get(
-    "/properties/:propertyId",
-    passport.authenticate("jwt", { session: false }),
-    checkAdminOrCommercial,
-    checkAccountDesactivated,
-    getProperty,
-    errorHandle
-  );
-
   app.put(
     "/properties/:propertyId/financial-data",
     passport.authenticate("jwt", { session: false }),
@@ -449,15 +467,6 @@ export default (app) => {
     checkAdminOrCommercial,
     checkAccountDesactivated,
     createProperty,
-    errorHandle
-  );
-
-  app.get(
-    "/properties",
-    passport.authenticate("jwt", { session: false }),
-    checkAdminOrCommercial,
-    checkAccountDesactivated,
-    getProperties,
     errorHandle
   );
 

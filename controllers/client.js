@@ -146,14 +146,14 @@ export async function addProject(req, res, next) {
       return next(generateError("Client not found", 404));
     }
 
-    await new Project({ clientId, type: projectType }).save();
+    const project = await new Project({ clientId, type: projectType }).save();
 
     await ProjectEvent({
-      projectId: this._id,
+      projectId: project._id,
       type: "project_creation",
     }).save();
 
-    return res.json({ success: true });
+    return res.json({ success: true, data: { projectId: project._id } });
   } catch (e) {
     next(generateError(e.message));
   }
