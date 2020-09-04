@@ -17,10 +17,11 @@ import {
   sendAcceptSalesAgreementConfirmation,
   sendAcceptLoanOfferConfirmation,
   sendAcceptSalesDeedConfirmation,
+  sendMandateSignatureConfirmation,
+  sendWelcomeEmail,
 } from "../lib/email";
 import { uploadFile } from "../lib/aws";
 import { sendMessageToSlack } from "../lib/slack";
-import Transaction from "../models/Transaction";
 
 const LIMIT_BY_PAGE = 10;
 
@@ -294,11 +295,10 @@ export async function acceptMandate(req, res, next) {
       throw next(generateError("Commission invalid", 403));
     }
     const commissionInt = Number(commission);
-    
+
     if (commissionInt < 0) {
       throw next(generateError("Commission invalid", 403));
     }
-
 
     if (!project) {
       return next(generateError("Project not found", 404));
@@ -306,6 +306,12 @@ export async function acceptMandate(req, res, next) {
 
     if (project.status !== "wait_mandate_validation") {
       return next(generateError("Wrong state", 403));
+    }
+
+    const client = await Client.findById(project.clientId).lean();
+
+    if (!client) {
+      return next(generateError("Client not found", 404));
     }
 
     await Project.updateOne(
@@ -323,6 +329,46 @@ export async function acceptMandate(req, res, next) {
       type: "mandate_accepted",
       authorUserId: userId,
     }).save();
+
+    sendMandateSignatureConfirmation(client);
+
+    const alreadyUser = await User.findOne({
+      clientId: client._id,
+    }).lean();
+
+    let roleToAdd;
+
+    if (project.type === "management") {
+      roleToAdd = "client_management_mandate";
+    }
+
+    if (project.type === "sales") {
+      roleToAdd = "client_sales_mandate";
+    }
+
+    if (project.type === "search") {
+      roleToAdd = "client_search_mandate";
+    }
+
+    if (alreadyUser) {
+      await User.updateOne(
+        { _id: alreadyUser._id },
+        {
+          $addToSet: { roles: roleToAdd },
+        }
+      ).exec();
+    } else {
+      const user = await new User({
+        email: client.email,
+        roles: [roleToAdd],
+        displayName: client.displayName,
+        clientId: client._id,
+      }).save();
+      sendMessageToSlack({
+        message: `Un nouvel utilisateur a été ajouté ${user.displayName} (${roleToAdd})`,
+      });
+      sendWelcomeEmail(user);
+    }
 
     return res.json({ success: true });
   } catch (e) {
