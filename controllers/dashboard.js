@@ -19,17 +19,21 @@ export async function getDashboardData(req, res, next) {
     }
 
     const activeStatus = [
-      "wait_offers",
-      "wait_sales_agreement",
-      "wait_sales_agreement_validation",
-      "wait_sales_deed",
-      "wait_sales_deed_validation",
+      "completed",
+      "refused",
+      "canceled",
+      "project_wait_validation",
+      "missing_information",
     ];
 
     const salesMandatesCount = await Project.countDocuments(
       isUserAdmin
-        ? { type: "", type: "sales", status: { $in: activeStatus } }
-        : { commercialId: userId, type: "sales", status: { $in: activeStatus } }
+        ? { type: "", type: "sales", status: { $nin: activeStatus } }
+        : {
+            commercialId: userId,
+            type: "sales",
+            status: { $nin: activeStatus },
+          }
     ).exec();
 
     const managementMandatesCount = await Project.countDocuments(

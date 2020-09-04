@@ -1,5 +1,4 @@
 import mongoose, { Types } from "mongoose";
-import Document from "./Document";
 
 const citiesList = [
   "Saint-Pierre",
@@ -111,7 +110,6 @@ const SearchSheet = new mongoose.Schema({
   budget: {
     type: Number,
   },
-  
 });
 
 const SalesSheet = new mongoose.Schema({});
