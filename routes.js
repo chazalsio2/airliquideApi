@@ -116,8 +116,6 @@ export default (app) => {
 
   app.post("/public/clients", cors(), publicCreateClient, errorHandle);
 
-  app.get("/public/projects/:projectId", getProject, errorHandle);
-
   app.post("/projects/:projectId/search-sheet", saveSearchSheet, errorHandle);
   app.post(
     "/projects/:projectId/personal-situation",
@@ -138,6 +136,13 @@ export default (app) => {
     // We should not check accountsuspended here
     // checkAccountDesactivated,
     getProfile,
+    errorHandle
+  );
+
+  app.get(
+    "/public/projects/:projectId",
+    passport.authenticate("jwt", { session: false }),
+    getProject,
     errorHandle
   );
 
