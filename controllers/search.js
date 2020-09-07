@@ -5,7 +5,6 @@ import User from "../models/User";
 import Folder from "../models/Folder";
 import Training from "../models/Training";
 import Property from "../models/Property";
-import Project from "../models/Project";
 
 export async function searchTerm(req, res, next) {
   const { t } = req.query;

@@ -1,7 +1,6 @@
 import passport from "passport";
 import xmlparser from "express-xml-bodyparser";
 import cors from "cors";
-import bodyParser from "body-parser";
 
 import {
   createAdmin,
@@ -12,6 +11,7 @@ import {
 } from "./controllers/authentification";
 
 import { getUsers, createUser, editUser } from "./controllers/administration";
+import { createSimulation } from "./controllers/simulation";
 
 import {
   checkSuperAdmin,
@@ -136,6 +136,13 @@ export default (app) => {
     // We should not check accountsuspended here
     // checkAccountDesactivated,
     getProfile,
+    errorHandle
+  );
+
+  app.post(
+    "/simulations",
+    passport.authenticate("jwt", { session: false }),
+    createSimulation,
     errorHandle
   );
 
