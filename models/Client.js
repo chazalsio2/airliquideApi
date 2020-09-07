@@ -72,6 +72,9 @@ var schema = new mongoose.Schema(
     email: {
       type: String,
     },
+    birthday: {
+      type: Date,
+    },
     phone: {
       type: String,
     },

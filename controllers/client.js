@@ -1,3 +1,5 @@
+import moment from "moment";
+
 import Client from "../models/Client";
 import { generateError } from "../lib/utils";
 import Project, { projectTypes } from "../models/Project";
@@ -90,6 +92,7 @@ export async function createClient(req, res, next) {
       phone,
       serviceType,
       geographicSector,
+      birthday,
       referral,
     } = req.body;
 
@@ -97,14 +100,20 @@ export async function createClient(req, res, next) {
       return next(generateError("Invalid service", 403));
     }
 
-    const client = await new Client({
+    const clientData = {
       firstname,
       lastname,
       geographicSector,
       email,
       phone,
       referral,
-    }).save();
+    };
+
+    if (birthday) {
+      clientData.birthday = moment(birthday);
+    }
+
+    const client = await new Client(clientData).save();
 
     if (projectTypes.indexOf(serviceType) !== -1) {
       const project = await new Project({
