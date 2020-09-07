@@ -719,6 +719,7 @@ export async function saveSearchSheet(req, res, next) {
             investmentType:
               investmentType === "other" ? otherInvestmentType : investmentType,
             propertySize,
+            propertyType,
             additionalInfos,
             propertySizeDetail,
             propertyArea,
