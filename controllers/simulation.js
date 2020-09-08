@@ -3,13 +3,21 @@ import {
   isAdminOrCommercial,
   isSearchClient,
 } from "../lib/utils";
+import _ from "underscore";
 import Simulation from "../models/Simulation";
+
+function getStringOrNumber(value) {
+  const res = _.isString(value) ? Number(value.replace(",", ".")) : value;
+  return res;
+}
 
 export async function getSimulations(req, res, next) {
   try {
     const userId = req.user._id;
 
-    const simulations = await Simulation.find({ userId }).lean();
+    const simulations = await Simulation.find({ userId }, null, {
+      sort: { createdAt: -1 },
+    }).lean();
 
     return res.json({ success: true, data: simulations });
   } catch (e) {
@@ -20,6 +28,7 @@ export async function getSimulations(req, res, next) {
 export async function createSimulation(req, res, next) {
   try {
     const userId = req.user._id;
+    console.log("req.body", req.body);
     const {
       title,
       propertyPrice,
@@ -89,35 +98,33 @@ export async function createSimulation(req, res, next) {
 
     await new Simulation({
       title,
-      propertyPrice: Number(propertyPrice.replace(",", ".")) * 100,
-      agencyFees: Number(agencyFees.replace(",", ".")) * 100,
-      visionRFees: Number(visionRFees.replace(",", ".")) * 100,
-      notaryFees: Number(notaryFees.replace(",", ".")) * 100,
-      additionalWorks: Number(additionalWorks.replace(",", ".")) * 100,
-      furnishing: Number(furnishing.replace(",", ".")) * 100,
-      bankDepositFees: Number(bankDepositFees.replace(",", ".")) * 100,
-      bankingFees: Number(bankingFees.replace(",", ".")) * 100,
-      contributionAmount: Number(contributionAmount.replace(",", ".")) * 100,
-      durationInMonths: Number(durationInMonths.replace(",", ".")),
-      creditRate: Number(creditRate.replace(",", ".")),
-      creditInsuranceRate: Number(creditInsuranceRate.replace(",", ".")),
-      monthlyLoanPayment: Number(monthlyLoanPayment.replace(",", ".")) * 100,
-      monthlyRentalIncome: Number(monthlyRentalIncome.replace(",", ".")) * 100,
-      monthlyInsurancePayment:
-        Number(monthlyInsurancePayment.replace(",", ".")) * 100,
+      propertyPrice: getStringOrNumber(propertyPrice) * 100,
+      agencyFees: getStringOrNumber(agencyFees) * 100,
+      visionRFees: getStringOrNumber(visionRFees) * 100,
+      notaryFees: getStringOrNumber(notaryFees) * 100,
+      additionalWorks: getStringOrNumber(additionalWorks) * 100,
+      furnishing: getStringOrNumber(furnishing) * 100,
+      bankDepositFees: getStringOrNumber(bankDepositFees) * 100,
+      bankingFees: getStringOrNumber(bankingFees) * 100,
+      contributionAmount: getStringOrNumber(contributionAmount) * 100,
+      durationInMonths: getStringOrNumber(durationInMonths),
+      creditRate: getStringOrNumber(creditRate),
+      creditInsuranceRate: getStringOrNumber(creditInsuranceRate),
+      monthlyLoanPayment: getStringOrNumber(monthlyLoanPayment) * 100,
+      monthlyRentalIncome: getStringOrNumber(monthlyRentalIncome) * 100,
+      monthlyInsurancePayment: getStringOrNumber(monthlyInsurancePayment) * 100,
       rentalGuaranteeInsurance:
-        Number(rentalGuaranteeInsurance.replace(",", ".")) * 100,
-      totalCoOwnershipCharges:
-        Number(totalCoOwnershipCharges.replace(",", ".")) * 100,
-      propertyTax: Number(propertyTax.replace(",", ".")) * 100,
-      PNOInsurance: Number(PNOInsurance.replace(",", ".")) * 100,
+        getStringOrNumber(rentalGuaranteeInsurance) * 100,
+      totalCoOwnershipCharges: getStringOrNumber(totalCoOwnershipCharges) * 100,
+      propertyTax: getStringOrNumber(propertyTax) * 100,
+      PNOInsurance: getStringOrNumber(PNOInsurance) * 100,
       approvedManagementCenter:
-        Number(approvedManagementCenter.replace(",", ".")) * 100,
-      accounting: Number(accounting.replace(",", ".")) * 100,
-      electricity: Number(electricity.replace(",", ".")) * 100,
-      water: Number(water.replace(",", ".")) * 100,
-      internet: Number(internet.replace(",", ".")) * 100,
-      others: Number(others.replace(",", ".")) * 100,
+        getStringOrNumber(approvedManagementCenter) * 100,
+      accounting: getStringOrNumber(accounting) * 100,
+      electricity: getStringOrNumber(electricity) * 100,
+      water: getStringOrNumber(water) * 100,
+      internet: getStringOrNumber(internet) * 100,
+      others: getStringOrNumber(others) * 100,
       userId,
     }).save();
 
