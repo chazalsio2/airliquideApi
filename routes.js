@@ -36,6 +36,7 @@ import {
 } from "./controllers/document";
 import {
   getProject,
+  getPublicProject,
   getProjects,
   getProjectsAssigned,
   getProjectsMissingValidation,
@@ -153,12 +154,7 @@ export default (app) => {
     errorHandle
   );
 
-  app.get(
-    "/public/projects/:projectId",
-    passport.authenticate("jwt", { session: false }),
-    getProject,
-    errorHandle
-  );
+  app.get("/public/projects/:projectId", getPublicProject, errorHandle);
 
   app.get(
     "/trainings",

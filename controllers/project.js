@@ -25,10 +25,46 @@ import { sendMessageToSlack } from "../lib/slack";
 
 const LIMIT_BY_PAGE = 10;
 
+export async function getPublicProject(req, res, next) {
+  try {
+    const { projectId } = req.params;
+
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    const client = await Client.findOne({ _id: project.clientId }, null).lean();
+
+    if (!client) {
+      return next(generateError("Client not found", 404));
+    }
+
+    project.client = client;
+    project.events = await ProjectEvent.find({ projectId }, null, {
+      sort: { createdAt: -1 },
+    }).lean();
+    project.documents = await Document.find({ projectId }, null, {
+      sort: { createdAt: -1 },
+    }).lean();
+
+    if (project.commercialId) {
+      project.commercial = await User.findById(
+        project.commercialId,
+        "displayName"
+      ).lean();
+    }
+
+    return res.json({ success: true, data: project });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
 export async function getProject(req, res, next) {
   try {
     const { projectId } = req.params;
-    const userId = req.user._id;
 
     const project = await Project.findById(projectId).lean();
 
