@@ -5,6 +5,18 @@ import {
 } from "../lib/utils";
 import Simulation from "../models/Simulation";
 
+export async function getSimulations(req, res, next) {
+  try {
+    const userId = req.user._id;
+
+    const simulations = await Simulation.find({ userId }).lean();
+
+    return res.json({ success: true, data: simulations });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
 export async function createSimulation(req, res, next) {
   try {
     const userId = req.user._id;
@@ -29,6 +41,7 @@ export async function createSimulation(req, res, next) {
       totalCoOwnershipCharges,
       propertyTax,
       PNOInsurance,
+      approvedManagementCenter,
       accounting,
       electricity,
       internet,
@@ -55,6 +68,7 @@ export async function createSimulation(req, res, next) {
       !monthlyInsurancePayment ||
       !rentalGuaranteeInsurance ||
       !totalCoOwnershipCharges ||
+      !approvedManagementCenter ||
       !propertyTax ||
       !PNOInsurance ||
       !accounting ||
@@ -85,7 +99,7 @@ export async function createSimulation(req, res, next) {
       bankingFees: Number(bankingFees.replace(",", ".")) * 100,
       contributionAmount: Number(contributionAmount.replace(",", ".")) * 100,
       loanAmount: Number(loanAmount.replace(",", ".")) * 100,
-      durationInMonths: Number(durationInMonths.replace(",", ".")) * 100,
+      durationInMonths: Number(durationInMonths.replace(",", ".")),
       creditRate: Number(creditRate.replace(",", ".")),
       creditInsuranceRate: Number(creditInsuranceRate.replace(",", ".")),
       monthlyLoanPayment: Number(monthlyLoanPayment.replace(",", ".")) * 100,
@@ -97,6 +111,8 @@ export async function createSimulation(req, res, next) {
         Number(totalCoOwnershipCharges.replace(",", ".")) * 100,
       propertyTax: Number(propertyTax.replace(",", ".")) * 100,
       PNOInsurance: Number(PNOInsurance.replace(",", ".")) * 100,
+      approvedManagementCenter:
+        Number(approvedManagementCenter.replace(",", ".")) * 100,
       accounting: Number(accounting.replace(",", ".")) * 100,
       electricity: Number(electricity.replace(",", ".")) * 100,
       water: Number(water.replace(",", ".")) * 100,

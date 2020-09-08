@@ -11,7 +11,7 @@ import {
 } from "./controllers/authentification";
 
 import { getUsers, createUser, editUser } from "./controllers/administration";
-import { createSimulation } from "./controllers/simulation";
+import { createSimulation, getSimulations } from "./controllers/simulation";
 
 import {
   checkSuperAdmin,
@@ -143,6 +143,13 @@ export default (app) => {
     "/simulations",
     passport.authenticate("jwt", { session: false }),
     createSimulation,
+    errorHandle
+  );
+
+  app.get(
+    "/simulations",
+    passport.authenticate("jwt", { session: false }),
+    getSimulations,
     errorHandle
   );
 
