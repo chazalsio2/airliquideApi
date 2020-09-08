@@ -31,11 +31,11 @@ export async function createSimulation(req, res, next) {
       bankDepositFees,
       bankingFees,
       contributionAmount,
-      loanAmount,
       durationInMonths,
       creditRate,
       creditInsuranceRate,
       monthlyLoanPayment,
+      monthlyRentalIncome,
       monthlyInsurancePayment,
       rentalGuaranteeInsurance,
       totalCoOwnershipCharges,
@@ -60,10 +60,10 @@ export async function createSimulation(req, res, next) {
       !bankDepositFees ||
       !bankingFees ||
       !contributionAmount ||
-      !loanAmount ||
       !durationInMonths ||
       !creditRate ||
       !creditInsuranceRate ||
+      !monthlyRentalIncome ||
       !monthlyLoanPayment ||
       !monthlyInsurancePayment ||
       !rentalGuaranteeInsurance ||
@@ -98,11 +98,11 @@ export async function createSimulation(req, res, next) {
       bankDepositFees: Number(bankDepositFees.replace(",", ".")) * 100,
       bankingFees: Number(bankingFees.replace(",", ".")) * 100,
       contributionAmount: Number(contributionAmount.replace(",", ".")) * 100,
-      loanAmount: Number(loanAmount.replace(",", ".")) * 100,
       durationInMonths: Number(durationInMonths.replace(",", ".")),
       creditRate: Number(creditRate.replace(",", ".")),
       creditInsuranceRate: Number(creditInsuranceRate.replace(",", ".")),
       monthlyLoanPayment: Number(monthlyLoanPayment.replace(",", ".")) * 100,
+      monthlyRentalIncome: Number(monthlyRentalIncome.replace(",", ".")) * 100,
       monthlyInsurancePayment:
         Number(monthlyInsurancePayment.replace(",", ".")) * 100,
       rentalGuaranteeInsurance:

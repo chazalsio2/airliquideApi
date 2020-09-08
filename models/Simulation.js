@@ -44,10 +44,6 @@ var schema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    loanAmount: {
-      type: Number,
-      default: 0,
-    },
     durationInMonths: {
       type: Number,
       default: 0,
@@ -61,6 +57,10 @@ var schema = new mongoose.Schema(
       default: 0,
     },
     monthlyLoanPayment: {
+      type: Number,
+      default: 0,
+    },
+    monthlyRentalIncome: {
       type: Number,
       default: 0,
     },
