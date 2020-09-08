@@ -78,10 +78,6 @@ var schema = new mongoose.Schema(
     phone: {
       type: String,
     },
-    birthday: {
-      type: String,
-      required: false,
-    },
     geographicSector: {
       type: String,
       enum: ["north", "east", "west", "south"],

@@ -1,4 +1,4 @@
-import { Types } from "mongoose";
+import moment from "moment";
 import { generateError, isAdminOrCommercial } from "../lib/utils";
 import User from "../models/User";
 import Project from "../models/Project";
@@ -913,6 +913,7 @@ export async function savePersonalSituation(req, res, next) {
       spouseincome,
       spouseindustry,
       spouseseniority,
+      birthday,
     } = req.body;
 
     const { projectId } = req.params;
@@ -956,6 +957,10 @@ export async function savePersonalSituation(req, res, next) {
       situation: personalsituation,
       status: personalstatus,
     };
+
+    if (birthday) {
+      clientModifier.birthday = moment(birthday);
+    }
 
     if (investalone === "couple") {
       clientModifier.spouse = {

@@ -92,7 +92,6 @@ export async function createClient(req, res, next) {
       phone,
       serviceType,
       geographicSector,
-      birthday,
       referral,
     } = req.body;
 
@@ -108,10 +107,6 @@ export async function createClient(req, res, next) {
       phone,
       referral,
     };
-
-    if (birthday) {
-      clientData.birthday = moment(birthday);
-    }
 
     const client = await new Client(clientData).save();
 

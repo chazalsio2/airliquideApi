@@ -15,7 +15,6 @@ export async function publicCreateClient(req, res, next) {
       phone,
       serviceType,
       geographicSector,
-      birthday,
     } = req.body;
 
     if (projectTypes.indexOf(serviceType) === -1) {
@@ -29,10 +28,6 @@ export async function publicCreateClient(req, res, next) {
       email,
       phone,
     };
-
-    if (birthday) {
-      newClientData.birthday = moment(birthday);
-    }
 
     const client = await new Client(newClientData).save();
 
