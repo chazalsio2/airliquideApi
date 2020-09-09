@@ -6,6 +6,8 @@ import {
 import _ from "underscore";
 import Simulation from "../models/Simulation";
 
+const LIMIT_BY_PAGE = 4;
+
 function getStringOrNumber(value) {
   const res = _.isString(value) ? Number(value.replace(",", ".")) : value;
   return res;
@@ -13,13 +15,24 @@ function getStringOrNumber(value) {
 
 export async function getSimulations(req, res, next) {
   try {
+    const { page = "" } = req.query;
+    const pageNumber = Number(page) || 1;
     const userId = req.user._id;
 
-    const simulations = await Simulation.find({ userId }, null, {
+    const selector = { userId };
+    const simulationCount = await Simulation.countDocuments(selector).exec();
+    const pageCount = Math.ceil(simulationCount / LIMIT_BY_PAGE);
+
+    const simulations = await Simulation.find(selector, null, {
       sort: { createdAt: -1 },
+      skip: (pageNumber - 1) * LIMIT_BY_PAGE,
+      limit: LIMIT_BY_PAGE,
     }).lean();
 
-    return res.json({ success: true, data: simulations });
+    return res.json({
+      success: true,
+      data: { simulations, pageCount, total: simulationCount },
+    });
   } catch (e) {
     next(generateError(e.message));
   }
