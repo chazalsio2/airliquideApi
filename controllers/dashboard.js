@@ -38,21 +38,21 @@ export async function getDashboardData(req, res, next) {
 
     const managementMandatesCount = await Project.countDocuments(
       isUserAdmin
-        ? { status: { $in: activeStatus }, type: "management" }
+        ? { status: { $nin: activeStatus }, type: "management" }
         : {
             commercialId: userId,
             type: "management",
-            status: { $in: activeStatus },
+            status: { $nin: activeStatus },
           }
     ).exec();
 
     const searchMandatesCount = await Project.countDocuments(
       isUserAdmin
-        ? { status: { $in: activeStatus }, type: "search" }
+        ? { status: { $nin: activeStatus }, type: "search" }
         : {
             commercialId: userId,
             type: "search",
-            status: { $in: activeStatus },
+            status: { $nin: activeStatus },
           }
     ).exec();
 
