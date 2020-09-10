@@ -18,7 +18,7 @@ export async function getDashboardData(req, res, next) {
       return Math.floor(((comm - (8.5 * commission) / 100) * 0.6) / 100);
     }
 
-    const activeStatus = [
+    const notActiveState = [
       "completed",
       "refused",
       "canceled",
@@ -28,31 +28,31 @@ export async function getDashboardData(req, res, next) {
 
     const salesMandatesCount = await Project.countDocuments(
       isUserAdmin
-        ? { type: "", type: "sales", status: { $nin: activeStatus } }
+        ? { type: "", type: "sales", status: { $nin: notActiveState } }
         : {
             commercialId: userId,
             type: "sales",
-            status: { $nin: activeStatus },
+            status: { $nin: notActiveState },
           }
     ).exec();
 
     const managementMandatesCount = await Project.countDocuments(
       isUserAdmin
-        ? { status: { $nin: activeStatus }, type: "management" }
+        ? { status: { $nin: notActiveState }, type: "management" }
         : {
             commercialId: userId,
             type: "management",
-            status: { $nin: activeStatus },
+            status: { $nin: notActiveState },
           }
     ).exec();
 
     const searchMandatesCount = await Project.countDocuments(
       isUserAdmin
-        ? { status: { $nin: activeStatus }, type: "search" }
+        ? { status: { $nin: notActiveState }, type: "search" }
         : {
             commercialId: userId,
             type: "search",
-            status: { $nin: activeStatus },
+            status: { $nin: notActiveState },
           }
     ).exec();
 
