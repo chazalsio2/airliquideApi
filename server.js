@@ -3,8 +3,12 @@ import * as Sentry from "@sentry/node";
 import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
+import configureAuthStrategy from "./lib/configure-auth-strategy";
+import passport from "passport";
+import bodyParser from "body-parser";
 
 import createRoutes from "./routes";
+import "./cron";
 
 if (process.env.NODE_ENV !== "development") {
   Sentry.init({
@@ -23,7 +27,20 @@ app.options(
 );
 
 app.use(cors());
+app.use(passport.initialize());
+app.use(passport.session());
 
+app.use(bodyParser.json({ limit: "50mb" }));
+// app.use(bodyParser.raw({ type: "*/*" }));
+app.use(
+  bodyParser.urlencoded({
+    limit: "50mb",
+    extended: true,
+    parameterLimit: 100000,
+  })
+);
+
+configureAuthStrategy(passport);
 createRoutes(app);
 
 const PORT = process.env.PORT || 3001;
@@ -36,11 +53,11 @@ mongoose.connect(process.env.MONGO_URI, {
 });
 
 mongoose.connection.on("connected", () => {
-  console.log("Connection with mongo ok");
+  console.info("Connection with mongo ok");
 });
 
 app.listen(PORT, () => {
-  console.log(`Server in running on port ${PORT}`);
+  console.info(`Server in running on port ${PORT}`);
 });
 
 module.exports = app;
