@@ -24,6 +24,7 @@ export async function getDashboardData(req, res, next) {
       "canceled",
       "project_wait_validation",
       "missing_information",
+      "wait_mandate",
     ];
 
     const salesMandatesCount = await Project.countDocuments(
