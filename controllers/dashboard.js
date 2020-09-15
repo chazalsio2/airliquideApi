@@ -22,7 +22,7 @@ export async function getDashboardData(req, res, next) {
       "completed",
       "refused",
       "canceled",
-      "project_wait_validation",
+      "wait_project_validation",
       "missing_information",
       "wait_mandate",
     ];
