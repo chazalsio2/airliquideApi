@@ -68,8 +68,6 @@ export async function getDashboardData(req, res, next) {
     }).exec();
 
     const mandateDoneStatus = [
-      "wait_purchase_offer",
-      "wait_purchase_offer_validation",
       "wait_sales_agreement",
       "wait_sales_agreement_validation",
       "wait_loan_offer",
