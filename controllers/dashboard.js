@@ -15,7 +15,7 @@ export async function getDashboardData(req, res, next) {
         return Math.floor(comm / 100);
       }
 
-      return Math.floor(((comm - (8.5 * commission) / 100) * 0.6) / 100);
+      return Math.floor(((comm - (8.5 * comm) / 100) * 0.6) / 100);
     }
 
     const notActiveState = [
