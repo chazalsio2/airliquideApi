@@ -67,9 +67,7 @@ export async function getDashboardData(req, res, next) {
       status: "closed",
     }).exec();
 
-    const mandateDoneStatus = [
-      "wait_sales_agreement",
-      "wait_sales_agreement_validation",
+    const salesAgreementStatus = [
       "wait_loan_offer",
       "wait_loan_offer_validation",
       "wait_sales_deed",
@@ -80,11 +78,11 @@ export async function getDashboardData(req, res, next) {
       isUserAdmin
         ? {
             createdAt: { $gt: moment().startOf("year") },
-            status: { $in: mandateDoneStatus },
+            status: { $in: salesAgreementStatus },
           }
         : {
             createdAt: { $gt: moment().startOf("year") },
-            status: { $in: mandateDoneStatus },
+            status: { $in: salesAgreementStatus },
             commercialId: userId,
           }
     );
