@@ -402,19 +402,9 @@ export async function acceptLoanOffer(req, res, next) {
 export async function acceptMandate(req, res, next) {
   try {
     const { projectId } = req.params;
-    const { commission } = req.body;
     const userId = req.user._id;
 
     const project = await Project.findById(projectId).lean();
-
-    if (!commission) {
-      throw next(generateError("Commission invalid", 403));
-    }
-    const commissionInt = Number(commission);
-
-    if (commissionInt < 0) {
-      throw next(generateError("Commission invalid", 403));
-    }
 
     if (!project) {
       return next(generateError("Project not found", 404));
@@ -435,7 +425,6 @@ export async function acceptMandate(req, res, next) {
       {
         $set: {
           status: "wait_purchase_offer",
-          commissionAmount: commission * 100,
         },
       }
     ).exec();
@@ -535,6 +524,8 @@ export async function acceptAgreement(req, res, next) {
     const { projectId } = req.params;
     const userId = req.user._id;
 
+    const { commission, commercialPourcentage } = req.body;
+
     const project = await Project.findById(projectId).lean();
 
     if (!project) {
@@ -545,10 +536,18 @@ export async function acceptAgreement(req, res, next) {
       return next(generateError("Wrong state", 403));
     }
 
+    if (!commission || !commercialPourcentage) {
+      return next(generateError("Missing fields", 401));
+    }
+
     await Project.updateOne(
       { _id: projectId },
       {
-        $set: { status: "wait_loan_offer" },
+        $set: {
+          status: "wait_loan_offer",
+          commission: Number(commission) * 100,
+          commercialPourcentage: Number(commercialPourcentage),
+        },
       }
     ).exec();
 

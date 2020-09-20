@@ -237,6 +237,12 @@ const schema = new mongoose.Schema(
       type: String,
       required: false,
     },
+    commercialPourcentage: {
+      type: Number,
+      required: false,
+      min: 0,
+      max: 100,
+    },
   },
   {
     timestamps: true,
