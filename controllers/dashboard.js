@@ -10,12 +10,16 @@ export async function getDashboardData(req, res, next) {
     const userId = req.user._id;
     const isUserAdmin = isAdmin(req.user);
 
-    function computeCommission(comm) {
+    function computeCommission(comm, pourcentage = 50) {
       if (isUserAdmin) {
         return Math.floor(comm / 100);
       }
 
-      return Math.floor(((comm - (8.5 * comm) / 100) * 0.6) / 100);
+      if (!pourcentage) {
+        return 0;
+      }
+
+      return Math.floor((comm / 1.085) * pourcentage);
     }
 
     const notActiveState = [
@@ -118,12 +122,22 @@ export async function getDashboardData(req, res, next) {
 
     const commission = _.reduce(
       projectsCompleted,
-      (memo, project) => memo + project.commissionAmount,
+      (memo, project) =>
+        memo +
+        computeCommission(
+          project.commissionAmount,
+          project.commercialPourcentage
+        ),
       0
     );
     const provisionalCommission = _.reduce(
       projectsNotCompleted,
-      (memo, project) => memo + project.commissionAmount,
+      (memo, project) =>
+        memo +
+        computeCommission(
+          project.commissionAmount,
+          project.commercialPourcentage
+        ),
       0
     );
 
@@ -137,8 +151,8 @@ export async function getDashboardData(req, res, next) {
         propertiesClosedCount,
         salesDeedCount,
         salesAgreementCount,
-        provisionalCommission: computeCommission(provisionalCommission),
-        commission: computeCommission(commission),
+        provisionalCommission,
+        commission,
       },
     });
   } catch (e) {
