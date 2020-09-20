@@ -162,3 +162,36 @@ export async function addProject(req, res, next) {
     next(generateError(e.message));
   }
 }
+
+export async function editClient(req, res, next) {
+  try {
+   const {
+      firstname,
+      lastname,
+      phone,
+      geographicSector,
+    } = req.body;
+
+    const { clientId } = req.params;
+
+    if (!firstname || !lastname || !phone || !geographicSector) {
+      return next(generateError("Invalid request", 401));
+    }
+
+    const clientData = {
+      firstname,
+      lastname,
+      geographicSector,
+      phone,
+    };
+
+    const client = await Client.updateOne(
+      { _id: clientId },
+      { $set: req.body }
+    ).exec();
+
+    return res.json({ success: true, data: client });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}

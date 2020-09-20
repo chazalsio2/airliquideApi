@@ -26,6 +26,7 @@ import {
   getClient,
   createClient,
   addProject,
+  editClient,
 } from "./controllers/client";
 import { publicCreateClient } from "./controllers/public";
 import {
@@ -519,6 +520,15 @@ export default (app) => {
     checkAdminOrCommercial,
     checkAccountDesactivated,
     createClient,
+    errorHandle
+  );
+
+  app.put(
+    "/clients/:clientId",
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    editClient,
     errorHandle
   );
 

@@ -1,0 +1,3 @@
+GET http://localhost:3001/clients HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1ZjY2MGJjOGM1NWVlNzEzNWUzOGQ0OGUiLCJyb2xlcyI6WyJhZG1pbiJdLCJpYXQiOjE2MDA1MjQxNzB9.z7ssI10qHzpgUPHym3MTSlHrWVLdRPJ2QDckam9aqZY
