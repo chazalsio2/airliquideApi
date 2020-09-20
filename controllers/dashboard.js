@@ -19,7 +19,7 @@ export async function getDashboardData(req, res, next) {
         return 0;
       }
 
-      return Math.floor((comm / 1.085) * pourcentage);
+      return Math.floor((comm / 100 / 1.085) * pourcentage) / 100;
     }
 
     const notActiveState = [

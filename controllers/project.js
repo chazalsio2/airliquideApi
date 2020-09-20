@@ -545,7 +545,7 @@ export async function acceptAgreement(req, res, next) {
       {
         $set: {
           status: "wait_loan_offer",
-          commission: Number(commission) * 100,
+          commissionAmount: Number(commission) * 100,
           commercialPourcentage: Number(commercialPourcentage),
         },
       }
