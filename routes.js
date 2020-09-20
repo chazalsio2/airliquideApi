@@ -65,6 +65,7 @@ import {
   refuseMandate,
   uploadMandateForProject,
   getMyProjects,
+  editNote,
 } from "./controllers/project";
 import {
   createProperty,
@@ -423,6 +424,15 @@ export default (app) => {
   );
 
   /** Administrateur or commercial **/
+
+  app.put(
+    "/projects/:projectId/note",
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    checkAccountDesactivated,
+    editNote,
+    errorHandle
+  );
 
   app.get(
     "/search",

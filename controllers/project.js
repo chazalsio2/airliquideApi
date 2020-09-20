@@ -27,7 +27,8 @@ const LIMIT_BY_PAGE = 10;
 
 export async function editNote(req, res, next) {
   try {
-    const { projectId, note } = req.params;
+    const { projectId } = req.params;
+    const { note } = req.body;
 
     if (!projectId || !note) {
       return next(generateError("Wrong arguments", 401));
@@ -46,7 +47,7 @@ export async function editNote(req, res, next) {
       return next(generateError("Not authorized", 401));
     }
 
-    await Project.updateOne({ _id: projectId }, { $set: note }).exec();
+    await Project.updateOne({ _id: projectId }, { $set: { note } }).exec();
 
     return res.json({ success: true });
   } catch (e) {
@@ -107,9 +108,9 @@ export async function getProject(req, res, next) {
       return next(generateError("Client not found", 404));
     }
 
-    const isAuthorized =
-      isAdminOrCommercial(req.user) ||
-      String(req.user.clientId) === String(project.clientId);
+    const isOwner = String(req.user.clientId) === String(project.clientId);
+
+    const isAuthorized = isAdminOrCommercial(req.user) || isOwner;
 
     if (!isAuthorized) {
       return next(generateError("Not authorized", 401));
@@ -130,7 +131,11 @@ export async function getProject(req, res, next) {
       ).lean();
     }
 
-    return res.json({ success: true, data: project });
+    if (isAdminOrCommercial(req.user)) {
+      return res.json({ success: true, data: project });
+    } else {
+      return res.json({ success: true, data: _.omit(project, "note") });
+    }
   } catch (e) {
     next(generateError(e.message));
   }
