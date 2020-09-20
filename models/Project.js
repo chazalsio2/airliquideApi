@@ -233,6 +233,10 @@ const schema = new mongoose.Schema(
       type: Number,
       required: false,
     },
+    note: {
+      type: String,
+      required: false,
+    },
   },
   {
     timestamps: true,

@@ -1,5 +1,5 @@
 import moment from "moment";
-import { generateError, isAdminOrCommercial } from "../lib/utils";
+import { generateError, isAdmin, isAdminOrCommercial } from "../lib/utils";
 import User from "../models/User";
 import Project from "../models/Project";
 import Client from "../models/Client";
@@ -24,6 +24,35 @@ import { uploadFile } from "../lib/aws";
 import { sendMessageToSlack } from "../lib/slack";
 
 const LIMIT_BY_PAGE = 10;
+
+export async function editNote(req, res, next) {
+  try {
+    const { projectId, note } = req.params;
+
+    if (!projectId || !note) {
+      return next(generateError("Wrong arguments", 401));
+    }
+
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    const isAuthorized =
+      isAdmin(req.user) || project.commercialId === req.user._id;
+
+    if (!isAuthorized) {
+      return next(generateError("Not authorized", 401));
+    }
+
+    await Project.updateOne({ _id: projectId }, { $set: note }).exec();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
 
 export async function getPublicProject(req, res, next) {
   try {
