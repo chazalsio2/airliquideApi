@@ -165,29 +165,22 @@ export async function addProject(req, res, next) {
 
 export async function editClient(req, res, next) {
   try {
-   const {
-      firstname,
-      lastname,
-      phone,
-      geographicSector,
-    } = req.body;
-
-    const { clientId } = req.params;
-
-    if (!firstname || !lastname || !phone || !geographicSector) {
-      return next(generateError("Invalid request", 401));
+    const {
+      email,
+      createdAt,
+      updatedAt,
+      projects,
+      referral,
+    } = req.body
+    if (email || createdAt || updatedAt || projects || referral) {
+      return next(generateError("Cannot update some fields", 403));
     }
-
-    const clientData = {
-      firstname,
-      lastname,
-      geographicSector,
-      phone,
-    };
-
+    const { clientId } = req.params;
+    const opts = { runValidators: true };
     const client = await Client.updateOne(
       { _id: clientId },
-      { $set: req.body }
+      { $set: req.body },
+      opts
     ).exec();
 
     return res.json({ success: true, data: client });

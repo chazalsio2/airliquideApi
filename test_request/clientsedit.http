@@ -6,7 +6,9 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1ZjY2M
     "firstname": "boom",
     "lastname": "fdsea",
     "phone": "0693614508",
-    "geographicSector": "north"
+    "geographicSector": "north",
+    "displayName": "test boom",
+    "address": "chemin carbon"
 }
 
 
