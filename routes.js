@@ -70,6 +70,7 @@ import {
   uploadMandateForProject,
   getMyProjects,
   editNote,
+  sendCompletedProjectEmail,
 } from "./controllers/project";
 import {
   createProperty,
@@ -195,6 +196,15 @@ export default (app) => {
     checkAdmin,
     checkAccountDesactivated,
     addFolder,
+    errorHandle
+  );
+
+  app.post(
+    "/projects/:projectId/send-email",
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    sendCompletedProjectEmail,
     errorHandle
   );
 

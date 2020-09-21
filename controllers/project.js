@@ -399,6 +399,48 @@ export async function acceptLoanOffer(req, res, next) {
   }
 }
 
+export async function sendCompletedProjectEmail(req, res, next) {
+  try {
+    const { projectId } = req.params;
+    const { emailNumber } = req.body;
+    const project = await Project.findById(projectId).exec();
+
+    if (!project) {
+      throw new Error("Project not found", 404);
+    }
+
+    if (project.status !== "completed") {
+      throw new Error("Wrong state", 403);
+    }
+
+    if (!emailNumber) {
+      throw new Error("Missing arguments", 403);
+    }
+
+    if (emailNumber !== 5 && emailNumber !== 6) {
+      throw new Error("Wrong arguments", 403);
+    }
+
+    const client = await Client.findById(project.clientId).lean();
+
+    if (!client) {
+      throw new Error("Client not found", 404);
+    }
+
+    if (emailNumber === 5) {
+      sendAcceptSalesDeedConfirmation(client);
+    }
+
+    if (emailNumber === 6) {
+      sendProductionConfirmation(client);
+    }
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
 export async function acceptMandate(req, res, next) {
   try {
     const { projectId } = req.params;
@@ -599,10 +641,6 @@ export async function acceptDeed(req, res, next) {
       type: "project_completed",
       authorUserId: userId,
     }).save();
-
-    const client = await Client.findById(project.clientId).lean();
-    sendAcceptSalesDeedConfirmation(client);
-    // sendProductionConfirmation(client);
 
     return res.json({ success: true });
   } catch (e) {
