@@ -79,6 +79,8 @@ import {
   editProperty,
   updatePropertyVisibility,
   updateFinancialPropertyData,
+  getPublicProperties,
+  getPublicProperty,
 } from "./controllers/property";
 import {
   getFolders,
@@ -123,6 +125,14 @@ export default (app) => {
   app.post("/users/change-password", changePassword, errorHandle);
 
   app.post("/public/clients", cors(), publicCreateClient, errorHandle);
+
+  app.get("/public/properties", cors(), getPublicProperties, errorHandle);
+  app.get(
+    "/public/properties/:propertyId",
+    cors(),
+    getPublicProperty,
+    errorHandle
+  );
 
   app.post("/projects/:projectId/search-sheet", saveSearchSheet, errorHandle);
   app.post(

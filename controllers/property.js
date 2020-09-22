@@ -240,3 +240,62 @@ export async function getProperty(req, res, next) {
     next(generateError(e.message));
   }
 }
+
+const propertiesPublicFields =
+  "ref name description fullAddress type yearOfConstruction landArea livingArea salesPrice varangueArea photos virtualVisitLink financialSheet";
+
+export async function getPublicProperties(req, res, next) {
+  try {
+    const { page = "", type = "" } = req.query;
+    const selector = { classification: "selling", public: true };
+    const pageNumber = Number(page) || 1;
+
+    const propertiesCount = await Property.countDocuments(selector).exec();
+    const pageCount = Math.ceil(propertiesCount / LIMIT_BY_PAGE);
+
+    const properties = await Property.find(selector, propertiesPublicFields, {
+      sort: { createdAt: -1 },
+      limit: LIMIT_BY_PAGE,
+      skip: (pageNumber - 1) * LIMIT_BY_PAGE,
+    }).lean();
+
+    return res.json({
+      success: true,
+      data: {
+        properties,
+        pageCount,
+        total: propertiesCount,
+      },
+    });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+export async function getPublicProperty(req, res, next) {
+  try {
+    const { propertyId } = req.params;
+
+    if (!propertyId) {
+      return next(generateError("Invalid request", 401));
+    }
+
+    const selector = {
+      _id: propertyId,
+      classification: "selling",
+      public: true,
+    };
+
+    const property = await Property.findOne(
+      selector,
+      propertiesPublicFields
+    ).lean();
+
+    if (!property) {
+      return next(generateError("Property not found", 404));
+    }
+    return res.json({ success: true, data: property });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
