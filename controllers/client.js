@@ -166,6 +166,7 @@ export async function addProject(req, res, next) {
 export async function editClient(req, res, next) {
   try {
     const {
+      birthday,
       email,
       createdAt,
       updatedAt,
@@ -174,6 +175,10 @@ export async function editClient(req, res, next) {
     } = req.body
     if (email || createdAt || updatedAt || projects || referral) {
       return next(generateError("Cannot update some fields", 403));
+    }
+
+    if (birthday) {
+      req.body.birthday = moment(birthday, 'DD/MM/YYYY');
     }
     const { clientId } = req.params;
     const opts = { runValidators: true };

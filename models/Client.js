@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const allowedSituationValues = [
+const allowedStatusValues = [
   "employeefixedcontract",
   "employeepermanentcontract",
   "entrepreneur",
@@ -10,7 +10,7 @@ const allowedSituationValues = [
   "unemployed",
 ];
 
-const allowedStatusValues = [
+const allowedSituationValues = [
   "single",
   "married",
   "separationofproperty",
@@ -169,6 +169,11 @@ var schema = new mongoose.Schema(
     },
     savings: {
       type: Number,
+      required: false,
+    },
+    desiredGrossYield: {
+      type: String,
+      enum: ["4to6", "6to8", "8to10", "greaterthan10"],
       required: false,
     },
     rentAmount: {
