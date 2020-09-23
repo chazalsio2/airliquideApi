@@ -441,7 +441,7 @@ export async function sendCompletedProjectEmail(req, res, next) {
     if (emailNumber === 6) {
       sendProductionConfirmation(client);
       await new ProjectEvent({
-        type: "project_completed_email_5",
+        type: "project_completed_email_6",
         projectId,
         authorUserId: req.user._id
       }).save();
