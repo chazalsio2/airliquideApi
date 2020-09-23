@@ -31,7 +31,8 @@ export async function getDashboardData(req, res, next) {
       "canceled",
       "wait_project_validation",
       "missing_information",
-      "wait_mandate"
+      "wait_mandate",
+      "wait_mandate_validation"
     ];
 
     const salesMandatesCount = await Project.countDocuments(
@@ -120,7 +121,10 @@ export async function getDashboardData(req, res, next) {
 
     const projectsNotCompleted = _.filter(
       projects,
-      (project) => project.status !== "completed" && !!project.commissionAmount
+      (project) =>
+        project.status !== "completed" &&
+        project.status !== "canceled" &&
+        !!project.commissionAmount
     );
 
     const commission = _.reduce(

@@ -431,10 +431,20 @@ export async function sendCompletedProjectEmail(req, res, next) {
 
     if (emailNumber === 5) {
       sendAcceptSalesDeedConfirmation(client);
+      await new ProjectEvent({
+        type: "project_completed_email_5",
+        projectId,
+        authorUserId: req.user._id
+      }).save();
     }
 
     if (emailNumber === 6) {
       sendProductionConfirmation(client);
+      await new ProjectEvent({
+        type: "project_completed_email_5",
+        projectId,
+        authorUserId: req.user._id
+      }).save();
     }
 
     return res.json({ success: true });

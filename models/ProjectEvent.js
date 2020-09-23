@@ -4,13 +4,13 @@ import Document from "./Document";
 
 const DocumentSubsetSchema = new mongoose.Schema({
   name: String,
-  url: String,
+  url: String
 });
 
 var schema = new mongoose.Schema(
   {
     projectId: {
-      type: mongoose.Types.ObjectId,
+      type: mongoose.Types.ObjectId
     },
     type: {
       type: String,
@@ -37,32 +37,34 @@ var schema = new mongoose.Schema(
         "purchase_offer_refused",
         "project_completed",
         "project_canceled",
-      ],
+        "project_completed_email_5",
+        "project_completed_email_6"
+      ]
     },
     authorUserId: {
       type: mongoose.Types.ObjectId,
-      required: false,
+      required: false
     },
     authorDisplayName: {
       type: String,
-      required: false,
+      required: false
     },
     documentId: {
       type: mongoose.Types.ObjectId,
-      required: false,
+      required: false
     },
     document: {
       type: DocumentSubsetSchema,
-      required: false,
+      required: false
     },
     reason: {
       type: String,
-      required: false,
-    },
+      required: false
+    }
   },
   {
     timestamps: true,
-    collection: "project_events",
+    collection: "project_events"
   }
 );
 
