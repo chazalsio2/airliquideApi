@@ -2,73 +2,74 @@ import mongoose from "mongoose";
 
 const FinancialSheet = new mongoose.Schema({
   typeOfInvestment: {
-    type: String,
+    type: String
   },
   rent: {
-    type: Number,
+    type: Number
   },
   coOwnershipCharge: {
-    type: Number,
+    type: Number
   },
   assurancePNO: {
-    type: Number,
+    type: Number
   },
   propertyTax: {
-    type: Number,
+    type: Number
   },
   accounting: {
-    type: Number,
+    type: Number
   },
   cga: {
-    type: Number,
+    type: Number
   },
   divers: {
-    type: Number,
+    type: Number
   },
   propertyPrice: {
-    type: Number,
+    type: Number
   },
   notaryFees: {
-    type: Number,
+    type: Number
   },
   visionRFees: {
-    type: Number,
+    type: Number
   },
   works: {
-    type: Number,
+    type: Number
   },
   financialExpense: {
-    type: Number,
+    type: Number
   },
   equipment: {
-    type: Number,
-  },
+    type: Number
+  }
+  // TODO where is agencyFees
 });
 
 const AddressSchema = new mongoose.Schema({
   city: {
-    type: String,
+    type: String
   },
   zipcode: {
-    type: String,
+    type: String
   },
   address: {
-    type: String,
-  },
+    type: String
+  }
 });
 
 const RoomSchema = new mongoose.Schema({
   area: {
     type: Number,
-    required: false,
+    required: false
   },
   name: {
-    type: Number,
+    type: Number
   },
   note: {
     type: String,
-    required: false,
-  },
+    required: false
+  }
 });
 
 export function getPropertyType(type) {
@@ -86,22 +87,22 @@ const schema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: false,
+      required: false
     },
     ref: {
       type: String,
-      required: false,
+      required: false
     },
     classification: {
       type: String,
-      enum: ["selling", "hunting"],
+      enum: ["selling", "hunting"]
     },
     description: {
-      type: String,
+      type: String
     },
     fullAddress: {
       type: AddressSchema,
-      required: false,
+      required: false
     },
     type: {
       type: String,
@@ -111,69 +112,69 @@ const schema = new mongoose.Schema(
         "construction_land",
         "home",
         "parking",
-        "building",
-      ],
+        "building"
+      ]
     },
     yearOfConstruction: {
       type: Number,
-      required: false,
+      required: false
     },
     landArea: {
       type: Number,
-      required: false,
+      required: false
     },
     livingArea: {
       type: Number,
-      required: false,
+      required: false
     },
     salesPrice: {
       type: Number,
-      required: false,
+      required: false
     },
     varangueArea: {
       type: Number,
-      required: false,
+      required: false
     },
     photos: {
       type: Array,
-      default: [],
+      default: []
     },
     "photos.$": {
-      type: String,
+      type: String
     },
     virtualVisitLink: {
       type: String,
-      required: false,
+      required: false
     },
     public: {
       type: Boolean,
-      default: false,
+      default: false
     },
     rooms: {
       type: Array,
-      required: false,
+      required: false
     },
     "rooms.$": {
       type: RoomSchema,
-      required: false,
+      required: false
     },
     status: {
       type: String,
       default: "available",
-      enum: ["available", "unavailable"],
+      enum: ["available", "unavailable"]
     },
     financialSheet: {
       type: FinancialSheet,
-      required: false,
+      required: false
     },
     public: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   {
     timestamps: true,
-    collection: "properties",
+    collection: "properties"
   }
 );
 

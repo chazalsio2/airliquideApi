@@ -1,7 +1,7 @@
 import {
   generateError,
   isSearchClient,
-  isAdminOrCommercial,
+  isAdminOrCommercial
 } from "../lib/utils";
 import { uploadPhotos } from "../lib/cloudinary";
 import Property from "../models/Property";
@@ -20,7 +20,7 @@ export async function editProperty(req, res, next) {
       varangueArea,
       type,
       virtualVisitLink,
-      rooms,
+      rooms
     } = req.body;
 
     const { propertyId } = req.params;
@@ -34,7 +34,7 @@ export async function editProperty(req, res, next) {
       type,
       salesPrice,
       landArea,
-      livingArea,
+      livingArea
     };
 
     if (virtualVisitLink) {
@@ -103,9 +103,9 @@ export async function updateFinancialPropertyData(req, res, next) {
             visionRFees: Number(propertyFinancialData.visionRFees),
             works: Number(propertyFinancialData.works),
             financialExpense: Number(propertyFinancialData.financialExpense),
-            equipment: Number(propertyFinancialData.equipment),
-          },
-        },
+            equipment: Number(propertyFinancialData.equipment)
+          }
+        }
       }
     ).exec();
 
@@ -127,7 +127,7 @@ export async function createProperty(req, res, next) {
       photos,
       type,
       virtualVisitLink,
-      rooms,
+      rooms
     } = req.body;
 
     if (
@@ -149,7 +149,7 @@ export async function createProperty(req, res, next) {
       salesPrice,
       landArea,
       livingArea,
-      photos: results.map((r) => r.url),
+      photos: results.map((r) => r.url)
     };
 
     if (virtualVisitLink) {
@@ -205,11 +205,11 @@ export async function getProperties(req, res, next) {
     const properties = await Property.find(selector, null, {
       sort: { createdAt: -1 },
       skip: (pageNumber - 1) * LIMIT_BY_PAGE,
-      limit: LIMIT_BY_PAGE,
+      limit: LIMIT_BY_PAGE
     }).lean();
     return res.json({
       success: true,
-      data: { properties, pageCount, total: propertiesCount },
+      data: { properties, pageCount, total: propertiesCount }
     });
   } catch (e) {
     next(generateError(e.message));
@@ -242,7 +242,7 @@ export async function getProperty(req, res, next) {
 }
 
 const propertiesPublicFields =
-  "ref name description fullAddress type yearOfConstruction landArea livingArea salesPrice varangueArea photos virtualVisitLink financialSheet";
+  "ref name description fullAddress type yearOfConstruction landArea livingArea salesPrice varangueArea photos virtualVisitLink financialSheet coOwnershipCharge assurancePNO propertyTax accounting cga divers propertyPrice notaryFees works financialExpense equipment";
 
 export async function getPublicProperties(req, res, next) {
   try {
@@ -253,19 +253,23 @@ export async function getPublicProperties(req, res, next) {
     const propertiesCount = await Property.countDocuments(selector).exec();
     const pageCount = Math.ceil(propertiesCount / LIMIT_BY_PAGE);
 
-    const properties = await Property.find(selector, propertiesPublicFields, {
-      sort: { createdAt: -1 },
-      limit: LIMIT_BY_PAGE,
-      skip: (pageNumber - 1) * LIMIT_BY_PAGE,
-    }).lean();
+    const properties = await Property.find(
+      selector,
+      "name description photos",
+      {
+        sort: { createdAt: -1 },
+        limit: LIMIT_BY_PAGE,
+        skip: (pageNumber - 1) * LIMIT_BY_PAGE
+      }
+    ).lean();
 
     return res.json({
       success: true,
       data: {
         properties,
         pageCount,
-        total: propertiesCount,
-      },
+        total: propertiesCount
+      }
     });
   } catch (e) {
     next(generateError(e.message));
@@ -283,7 +287,7 @@ export async function getPublicProperty(req, res, next) {
     const selector = {
       _id: propertyId,
       classification: "selling",
-      public: true,
+      public: true
     };
 
     const property = await Property.findOne(
