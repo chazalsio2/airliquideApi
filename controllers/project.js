@@ -1015,6 +1015,7 @@ export async function savePersonalSituation(req, res, next) {
       savings,
       loans,
       crd,
+      desiredGrossYield: desiredgrossyield,
       typesOfIncome: typeofincome,
       othersTypesOfIncome: othertypeofincome,
       typesOfRentalIncome: typeofrentalincome,
