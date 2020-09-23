@@ -19,7 +19,10 @@ export async function getDashboardData(req, res, next) {
         return 0;
       }
 
-      return Math.floor((comm / 100 / 1.085) * pourcentage) / 100;
+      const result = Math.floor((comm / 100 / 1.085) * pourcentage) / 100;
+      console.log("computeCommission -> result", result);
+
+      return result;
     }
 
     const notActiveState = [
@@ -28,7 +31,7 @@ export async function getDashboardData(req, res, next) {
       "canceled",
       "wait_project_validation",
       "missing_information",
-      "wait_mandate",
+      "wait_mandate"
     ];
 
     const salesMandatesCount = await Project.countDocuments(
@@ -37,7 +40,7 @@ export async function getDashboardData(req, res, next) {
         : {
             commercialId: userId,
             type: "sales",
-            status: { $nin: notActiveState },
+            status: { $nin: notActiveState }
           }
     ).exec();
 
@@ -47,7 +50,7 @@ export async function getDashboardData(req, res, next) {
         : {
             commercialId: userId,
             type: "management",
-            status: { $nin: notActiveState },
+            status: { $nin: notActiveState }
           }
     ).exec();
 
@@ -57,37 +60,37 @@ export async function getDashboardData(req, res, next) {
         : {
             commercialId: userId,
             type: "search",
-            status: { $nin: notActiveState },
+            status: { $nin: notActiveState }
           }
     ).exec();
 
     const propertiesPublishedCount = await Property.countDocuments({
       status: "available",
-      public: true,
+      public: true
     }).exec();
 
     // TODO: do not work
     const propertiesClosedCount = await Property.countDocuments({
-      status: "closed",
+      status: "closed"
     }).exec();
 
     const salesAgreementStatus = [
       "wait_loan_offer",
       "wait_loan_offer_validation",
       "wait_sales_deed",
-      "wait_sales_deed_validation",
+      "wait_sales_deed_validation"
     ];
 
     const salesAgreementCount = await Project.countDocuments(
       isUserAdmin
         ? {
             createdAt: { $gt: moment().startOf("year") },
-            status: { $in: salesAgreementStatus },
+            status: { $in: salesAgreementStatus }
           }
         : {
             createdAt: { $gt: moment().startOf("year") },
             status: { $in: salesAgreementStatus },
-            commercialId: userId,
+            commercialId: userId
           }
     );
 
@@ -95,12 +98,12 @@ export async function getDashboardData(req, res, next) {
       isUserAdmin
         ? {
             createdAt: { $gt: moment().startOf("year") },
-            status: "completed",
+            status: "completed"
           }
         : {
             createdAt: { $gt: moment().startOf("year") },
             status: "completed",
-            commercialId: userId,
+            commercialId: userId
           }
     );
 
@@ -152,8 +155,8 @@ export async function getDashboardData(req, res, next) {
         salesDeedCount,
         salesAgreementCount,
         provisionalCommission,
-        commission,
-      },
+        commission
+      }
     });
   } catch (e) {
     next(generateError(e.message));
