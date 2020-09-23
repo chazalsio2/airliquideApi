@@ -18,7 +18,7 @@ import {
   sendAcceptLoanOfferConfirmation,
   sendAcceptSalesDeedConfirmation,
   sendMandateSignatureConfirmation,
-  sendWelcomeEmail,
+  sendWelcomeEmail
 } from "../lib/email";
 import { uploadFile } from "../lib/aws";
 import { sendMessageToSlack } from "../lib/slack";
@@ -73,10 +73,10 @@ export async function getPublicProject(req, res, next) {
 
     project.client = client;
     project.events = await ProjectEvent.find({ projectId }, null, {
-      sort: { createdAt: -1 },
+      sort: { createdAt: -1 }
     }).lean();
     project.documents = await Document.find({ projectId }, null, {
-      sort: { createdAt: -1 },
+      sort: { createdAt: -1 }
     }).lean();
 
     if (project.commercialId) {
@@ -118,10 +118,10 @@ export async function getProject(req, res, next) {
 
     project.client = client;
     project.events = await ProjectEvent.find({ projectId }, null, {
-      sort: { createdAt: -1 },
+      sort: { createdAt: -1 }
     }).lean();
     project.documents = await Document.find({ projectId }, null, {
-      sort: { createdAt: -1 },
+      sort: { createdAt: -1 }
     }).lean();
 
     if (project.commercialId) {
@@ -161,7 +161,7 @@ export async function refuseMandate(req, res, next) {
       { _id: projectId },
       {
         $set: { status: "wait_mandate" },
-        $unset: { mandateDocId: "", mandateDoc: "" },
+        $unset: { mandateDocId: "", mandateDoc: "" }
       }
     ).exec();
 
@@ -169,7 +169,7 @@ export async function refuseMandate(req, res, next) {
       projectId,
       type: "mandate_refused",
       authorUserId: userId,
-      reason,
+      reason
     }).save();
 
     return res.json({ success: true });
@@ -233,7 +233,7 @@ export async function refuseDeed(req, res, next) {
       { _id: projectId },
       {
         $set: { status: "wait_sales_deed" },
-        $unset: { salesDeedDocId: "", salesDeedDoc: "" },
+        $unset: { salesDeedDocId: "", salesDeedDoc: "" }
       }
     ).exec();
 
@@ -241,7 +241,7 @@ export async function refuseDeed(req, res, next) {
       projectId,
       type: "sales_deed_refused",
       authorUserId: userId,
-      reason,
+      reason
     }).save();
 
     return res.json({ success: true });
@@ -270,7 +270,7 @@ export async function refuseAgreement(req, res, next) {
       { _id: projectId },
       {
         $set: { status: "wait_sales_agreement" },
-        $unset: { salesAgreementDocId: "", salesAgreementDoc: "" },
+        $unset: { salesAgreementDocId: "", salesAgreementDoc: "" }
       }
     ).exec();
 
@@ -278,7 +278,7 @@ export async function refuseAgreement(req, res, next) {
       projectId,
       type: "sales_agreement_refused",
       authorUserId: userId,
-      reason,
+      reason
     }).save();
 
     return res.json({ success: true });
@@ -307,7 +307,7 @@ export async function refusePurchaseOffer(req, res, next) {
       { _id: projectId },
       {
         $set: { status: "wait_purchase_offer" },
-        $unset: { purchaseOfferDocId: "", purchaseOfferDoc: "" },
+        $unset: { purchaseOfferDocId: "", purchaseOfferDoc: "" }
       }
     ).exec();
 
@@ -315,7 +315,7 @@ export async function refusePurchaseOffer(req, res, next) {
       projectId,
       type: "purchase_offer_refused",
       authorUserId: userId,
-      reason,
+      reason
     }).save();
 
     return res.json({ success: true });
@@ -344,7 +344,7 @@ export async function refuseLoanOffer(req, res, next) {
       { _id: projectId },
       {
         $set: { status: "wait_loan_offer" },
-        $unset: { loanOfferDocId: "", loanOfferDoc: "" },
+        $unset: { loanOfferDocId: "", loanOfferDoc: "" }
       }
     ).exec();
 
@@ -352,7 +352,7 @@ export async function refuseLoanOffer(req, res, next) {
       projectId,
       type: "purchase_offer_refused",
       authorUserId: userId,
-      reason,
+      reason
     }).save();
 
     return res.json({ success: true });
@@ -379,14 +379,14 @@ export async function acceptLoanOffer(req, res, next) {
     await Project.updateOne(
       { _id: projectId },
       {
-        $set: { status: "wait_sales_deed" },
+        $set: { status: "wait_sales_deed" }
       }
     ).exec();
 
     new ProjectEvent({
       projectId,
       type: "loan_offer_accepted",
-      authorUserId: userId,
+      authorUserId: userId
     }).save();
 
     const client = await Client.findById(project.clientId).lean();
@@ -466,21 +466,21 @@ export async function acceptMandate(req, res, next) {
       { _id: projectId },
       {
         $set: {
-          status: "wait_purchase_offer",
-        },
+          status: "wait_purchase_offer"
+        }
       }
     ).exec();
 
     new ProjectEvent({
       projectId,
       type: "mandate_accepted",
-      authorUserId: userId,
+      authorUserId: userId
     }).save();
 
     sendMandateSignatureConfirmation(client);
 
     const alreadyUser = await User.findOne({
-      clientId: client._id,
+      clientId: client._id
     }).lean();
 
     let roleToAdd;
@@ -501,7 +501,7 @@ export async function acceptMandate(req, res, next) {
       await User.updateOne(
         { _id: alreadyUser._id },
         {
-          $addToSet: { roles: roleToAdd },
+          $addToSet: { roles: roleToAdd }
         }
       ).exec();
     } else {
@@ -509,10 +509,10 @@ export async function acceptMandate(req, res, next) {
         email: client.email,
         roles: [roleToAdd],
         displayName: client.displayName,
-        clientId: client._id,
+        clientId: client._id
       }).save();
       sendMessageToSlack({
-        message: `Un nouvel utilisateur a été ajouté ${user.displayName} (${roleToAdd})`,
+        message: `Un nouvel utilisateur a été ajouté ${user.displayName} (${roleToAdd})`
       });
       sendWelcomeEmail(user);
     }
@@ -541,14 +541,14 @@ export async function acceptPurchaseOffer(req, res, next) {
     await Project.updateOne(
       { _id: projectId },
       {
-        $set: { status: "wait_sales_agreement" },
+        $set: { status: "wait_sales_agreement" }
       }
     ).exec();
 
     new ProjectEvent({
       projectId,
       type: "purchase_offer_accepted",
-      authorUserId: userId,
+      authorUserId: userId
     }).save();
 
     const client = await Client.findOne({ _id: project.clientId }).lean();
@@ -588,15 +588,15 @@ export async function acceptAgreement(req, res, next) {
         $set: {
           status: "wait_loan_offer",
           commissionAmount: Number(commission) * 100,
-          commercialPourcentage: Number(commercialPourcentage),
-        },
+          commercialPourcentage: Number(commercialPourcentage)
+        }
       }
     ).exec();
 
     new ProjectEvent({
       projectId,
       type: "sales_agreement_accepted",
-      authorUserId: userId,
+      authorUserId: userId
     }).save();
 
     const client = await Client.findById(project.clientId).lean();
@@ -626,20 +626,20 @@ export async function acceptDeed(req, res, next) {
     await Project.updateOne(
       { _id: projectId },
       {
-        $set: { status: "completed" },
+        $set: { status: "completed" }
       }
     ).exec();
 
     new ProjectEvent({
       projectId,
       type: "sales_deed_accepted",
-      authorUserId: userId,
+      authorUserId: userId
     }).save();
 
     new ProjectEvent({
       projectId,
       type: "project_completed",
-      authorUserId: userId,
+      authorUserId: userId
     }).save();
 
     return res.json({ success: true });
@@ -650,15 +650,24 @@ export async function acceptDeed(req, res, next) {
 
 export async function getProjects(req, res, next) {
   try {
-    const { page = "" } = req.query;
+    const { page = "", mandate = "", order = "desc" } = req.query;
     const pageNumber = Number(page) || 1;
     const selector = {};
+
+    if (mandate === "sales") {
+      selector.type = "sales";
+    }
+
+    if (mandate === "search") {
+      selector.type = "search";
+    }
     const projectsCount = await Project.countDocuments(selector).exec();
     const pageCount = Math.ceil(projectsCount / LIMIT_BY_PAGE);
+    const orderCreatedAt = order === "desc" ? -1 : 1;
     const projects = await Project.find(selector, null, {
-      sort: { createdAt: -1 },
+      sort: { createdAt: orderCreatedAt },
       skip: (pageNumber - 1) * LIMIT_BY_PAGE,
-      limit: LIMIT_BY_PAGE,
+      limit: LIMIT_BY_PAGE
     }).lean();
 
     const clientEnrichedPromises = projects.map(async (project) => {
@@ -676,7 +685,7 @@ export async function getProjects(req, res, next) {
 
     return res.json({
       success: true,
-      data: { projects: projectsEnriched, total: projectsCount, pageCount },
+      data: { projects: projectsEnriched, total: projectsCount, pageCount }
     });
   } catch (e) {
     next(generateError(e.message));
@@ -689,14 +698,14 @@ export async function getProjectsAssigned(req, res, next) {
     const pageNumber = Number(page) || 1;
     const selector = {
       commercialId: req.user._id,
-      status: { $nin: ["canceled", "refused", "closed"] },
+      status: { $nin: ["canceled", "refused", "closed"] }
     };
     const projectsCount = await Project.countDocuments(selector).exec();
     const pageCount = Math.ceil(projectsCount / LIMIT_BY_PAGE);
     const projects = await Project.find(selector, null, {
       sort: { createdAt: -1 },
       skip: (pageNumber - 1) * LIMIT_BY_PAGE,
-      limit: LIMIT_BY_PAGE,
+      limit: LIMIT_BY_PAGE
     }).lean();
 
     const clientEnrichedPromises = projects.map(async (project) => {
@@ -714,7 +723,7 @@ export async function getProjectsAssigned(req, res, next) {
 
     return res.json({
       success: true,
-      data: { projects: projectsEnriched, total: projectsCount, pageCount },
+      data: { projects: projectsEnriched, total: projectsCount, pageCount }
     });
   } catch (e) {
     next(generateError(e.message));
@@ -728,31 +737,31 @@ export async function getProjectsMissingValidation(req, res, next) {
     const selector = {
       $or: [
         {
-          status: "wait_project_validation",
+          status: "wait_project_validation"
         },
         {
-          status: "wait_mandate_validation",
+          status: "wait_mandate_validation"
         },
         {
-          status: "wait_purchase_offer_validation",
+          status: "wait_purchase_offer_validation"
         },
         {
-          status: "wait_sales_agreement_validation",
+          status: "wait_sales_agreement_validation"
         },
         {
-          status: "wait_loan_offer_validation",
+          status: "wait_loan_offer_validation"
         },
         {
-          status: "wait_sales_deed_validation",
-        },
-      ],
+          status: "wait_sales_deed_validation"
+        }
+      ]
     };
     const projectsCount = await Project.countDocuments(selector).exec();
     const pageCount = Math.ceil(projectsCount / LIMIT_BY_PAGE);
     const projects = await Project.find(selector, null, {
       sort: { createdAt: -1 },
       skip: (pageNumber - 1) * LIMIT_BY_PAGE,
-      limit: LIMIT_BY_PAGE,
+      limit: LIMIT_BY_PAGE
     }).lean();
 
     const clientEnrichedPromises = projects.map(async (project) => {
@@ -770,7 +779,7 @@ export async function getProjectsMissingValidation(req, res, next) {
 
     return res.json({
       success: true,
-      data: { projects: projectsEnriched, total: projectsCount, pageCount },
+      data: { projects: projectsEnriched, total: projectsCount, pageCount }
     });
   } catch (e) {
     next(generateError(e.message));
@@ -794,7 +803,7 @@ export async function saveSearchSheet(req, res, next) {
       swimmingpool,
       varangue,
       delay,
-      budget,
+      budget
     } = req.body;
 
     const { projectId } = req.params;
@@ -837,16 +846,16 @@ export async function saveSearchSheet(req, res, next) {
             varangue,
             delay,
             budget,
-            searchSectorCities: searchSectorCities || [],
-          },
-        },
+            searchSectorCities: searchSectorCities || []
+          }
+        }
       }
     ).exec();
 
     const client = await Client.findById(project.clientId).lean();
 
     sendMessageToSlack({
-      message: `${client.displayName} à compléter sa fiche de recherche : ${process.env.APP_URL}/clients/${client._id}`,
+      message: `${client.displayName} à compléter sa fiche de recherche : ${process.env.APP_URL}/clients/${client._id}`
     });
 
     return res.json({ success: true });
@@ -878,13 +887,13 @@ export async function confirmSearchMandate(req, res, next) {
 
     await Client.updateOne(
       {
-        _id: project.clientId,
+        _id: project.clientId
       },
       {
         $set: {
           availabilities: timeslots,
-          allowSaveData,
-        },
+          allowSaveData
+        }
       }
     ).exec();
 
@@ -893,8 +902,8 @@ export async function confirmSearchMandate(req, res, next) {
       {
         $set: {
           readyToSign: readyToSign === "yes",
-          status: "wait_project_validation",
-        },
+          status: "wait_project_validation"
+        }
       }
     ).exec();
 
@@ -903,11 +912,11 @@ export async function confirmSearchMandate(req, res, next) {
     await new ProjectEvent({
       projectId: project._id,
       type: "form_completion",
-      authorUserId: project.clientId,
+      authorUserId: project.clientId
     }).save();
 
     sendMessageToSlack({
-      message: `Le mandat de recherche pour le client ${client.displayName} est en attente de validation : ${process.env.APP_URL}/projects/${projectId}`,
+      message: `Le mandat de recherche pour le client ${client.displayName} est en attente de validation : ${process.env.APP_URL}/projects/${projectId}`
     });
 
     return res.json({ success: true });
@@ -942,7 +951,7 @@ export async function cancelProject(req, res, next) {
       projectId,
       type: "project_canceled",
       reason,
-      authorUserId: req.user._id,
+      authorUserId: req.user._id
     }).save();
 
     return res.json({ success: true });
@@ -984,7 +993,7 @@ export async function savePersonalSituation(req, res, next) {
       spouseincome,
       spouseindustry,
       spouseseniority,
-      birthday,
+      birthday
     } = req.body;
 
     const { projectId } = req.params;
@@ -1027,7 +1036,7 @@ export async function savePersonalSituation(req, res, next) {
       industry: personalindustry,
       seniority: personalseniority,
       situation: personalsituation,
-      status: personalstatus,
+      status: personalstatus
     };
 
     if (birthday) {
@@ -1043,21 +1052,21 @@ export async function savePersonalSituation(req, res, next) {
         situation: spousesituation,
         income: spouseincome,
         industry: spouseindustry,
-        seniority: spouseseniority,
+        seniority: spouseseniority
       };
     }
 
     await Client.updateOne(
       { _id: project.clientId },
       {
-        $set: clientModifier,
+        $set: clientModifier
       }
     ).exec();
 
     const client = await Client.findById(project.clientId).lean();
 
     sendMessageToSlack({
-      message: `${client.displayName} à renseigné sa situation personnelle : ${process.env.APP_URL}/clients/${client._id}`,
+      message: `${client.displayName} à renseigné sa situation personnelle : ${process.env.APP_URL}/clients/${client._id}`
     });
 
     return res.json({ success: true });
@@ -1090,7 +1099,7 @@ export async function refuseProject(req, res, next) {
       projectId,
       type: "project_refused",
       reason,
-      authorUserId: req.user._id,
+      authorUserId: req.user._id
     }).save();
 
     const client = await Client.findById(project.clientId).lean();
@@ -1098,7 +1107,7 @@ export async function refuseProject(req, res, next) {
     const user = await User.findById(req.user._id).lean();
 
     sendMessageToSlack({
-      message: `Le mandat de recherche de ${client.displayName} a été refusé par ${user.displayName} : ${process.env.APP_URL}/projects/${project._id}`,
+      message: `Le mandat de recherche de ${client.displayName} a été refusé par ${user.displayName} : ${process.env.APP_URL}/projects/${project._id}`
     });
 
     return res.json({ success: true });
@@ -1129,7 +1138,7 @@ export async function acceptProject(req, res, next) {
     await new ProjectEvent({
       projectId,
       type: "project_accepted",
-      authorUserId: req.user._id,
+      authorUserId: req.user._id
     }).save();
 
     const client = await Client.findById(project.clientId).lean();
@@ -1137,7 +1146,7 @@ export async function acceptProject(req, res, next) {
     const user = await User.findById(req.user._id).lean();
 
     sendMessageToSlack({
-      message: `Le mandat de recherche de ${client.displayName} a été accepté par ${user.displayName} : ${process.env.APP_URL}/projects/${project._id}`,
+      message: `Le mandat de recherche de ${client.displayName} a été accepté par ${user.displayName} : ${process.env.APP_URL}/projects/${project._id}`
     });
 
     // DocusignManager.sendSalesMandate(client, project);
@@ -1174,7 +1183,7 @@ export async function addDocumentToProject(req, res, next) {
       name: fileName,
       authorUserId: req.user._id,
       projectId,
-      contentType,
+      contentType
     }).save();
 
     const location = await uploadFile(
@@ -1223,7 +1232,7 @@ export async function uploadLoanOfferForProject(req, res, next) {
       name: fileName,
       authorUserId: req.user._id,
       projectId,
-      contentType,
+      contentType
     }).save();
 
     const location = await uploadFile(
@@ -1243,10 +1252,10 @@ export async function uploadLoanOfferForProject(req, res, next) {
           loanOfferDocId: document._id,
           loanOfferDoc: {
             name: document.name,
-            url: location,
+            url: location
           },
-          status: "wait_loan_offer_validation",
-        },
+          status: "wait_loan_offer_validation"
+        }
       }
     ).exec();
 
@@ -1254,7 +1263,7 @@ export async function uploadLoanOfferForProject(req, res, next) {
       projectId,
       type: "loan_offer_added",
       authorUserId: req.user._id,
-      documentId: document._id,
+      documentId: document._id
     }).save();
 
     sendLoanOfferWaitingValidation(project);
@@ -1295,7 +1304,7 @@ export async function uploadMandateForProject(req, res, next) {
       name: fileName,
       authorUserId: req.user._id,
       projectId,
-      contentType,
+      contentType
     }).save();
 
     const location = await uploadFile(
@@ -1315,10 +1324,10 @@ export async function uploadMandateForProject(req, res, next) {
           mandateDocId: document._id,
           mandateDoc: {
             name: document.name,
-            url: location,
+            url: location
           },
-          status: "wait_mandate_validation",
-        },
+          status: "wait_mandate_validation"
+        }
       }
     ).exec();
 
@@ -1326,7 +1335,7 @@ export async function uploadMandateForProject(req, res, next) {
       projectId,
       type: "mandate_added",
       authorUserId: req.user._id,
-      documentId: document._id,
+      documentId: document._id
     }).save();
 
     return res.json({ success: true });
@@ -1365,7 +1374,7 @@ export async function uploadPurchaseOfferForProject(req, res, next) {
       name: fileName,
       authorUserId: req.user._id,
       projectId,
-      contentType,
+      contentType
     }).save();
 
     const location = await uploadFile(
@@ -1385,10 +1394,10 @@ export async function uploadPurchaseOfferForProject(req, res, next) {
           purchaseOfferDocId: document._id,
           purchaseOfferDoc: {
             name: document.name,
-            url: location,
+            url: location
           },
-          status: "wait_purchase_offer_validation",
-        },
+          status: "wait_purchase_offer_validation"
+        }
       }
     ).exec();
 
@@ -1396,7 +1405,7 @@ export async function uploadPurchaseOfferForProject(req, res, next) {
       projectId,
       type: "purchase_offer_added",
       authorUserId: req.user._id,
-      documentId: document._id,
+      documentId: document._id
     }).save();
 
     sendPurchaseOfferWaitingValidation(project);
@@ -1437,7 +1446,7 @@ export async function uploadAgreementForProject(req, res, next) {
       name: fileName,
       authorUserId: req.user._id,
       projectId,
-      contentType,
+      contentType
     }).save();
 
     const location = await uploadFile(
@@ -1457,10 +1466,10 @@ export async function uploadAgreementForProject(req, res, next) {
           salesAgreementDocId: document._id,
           salesAgreementDoc: {
             name: document.name,
-            url: location,
+            url: location
           },
-          status: "wait_sales_agreement_validation",
-        },
+          status: "wait_sales_agreement_validation"
+        }
       }
     ).exec();
 
@@ -1468,7 +1477,7 @@ export async function uploadAgreementForProject(req, res, next) {
       projectId,
       type: "sales_agreement_added",
       authorUserId: req.user._id,
-      documentId: document._id,
+      documentId: document._id
     }).save();
 
     sendAgreementWaitingValidation(project);
@@ -1509,7 +1518,7 @@ export async function uploadDeedForProject(req, res, next) {
       name: fileName,
       authorUserId: req.user._id,
       projectId,
-      contentType,
+      contentType
     }).save();
 
     const location = await uploadFile(
@@ -1529,10 +1538,10 @@ export async function uploadDeedForProject(req, res, next) {
           salesDeedDocId: document._id,
           salesDeedDoc: {
             name: document.name,
-            url: location,
+            url: location
           },
-          status: "wait_sales_deed_validation",
-        },
+          status: "wait_sales_deed_validation"
+        }
       }
     ).exec();
 
@@ -1542,7 +1551,7 @@ export async function uploadDeedForProject(req, res, next) {
       projectId,
       type: "sales_deed_added",
       authorUserId: req.user._id,
-      documentId: document._id,
+      documentId: document._id
     }).save();
 
     return res.json({ success: true });
@@ -1569,7 +1578,7 @@ export async function assignCommercial(req, res, next) {
     const commercial = await User.findOne({
       _id: commercialId,
       roles: "commercial_agent",
-      deactivated: { $ne: true },
+      deactivated: { $ne: true }
     });
 
     if (!commercial) {
