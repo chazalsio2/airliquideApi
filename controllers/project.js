@@ -18,7 +18,8 @@ import {
   sendAcceptLoanOfferConfirmation,
   sendAcceptSalesDeedConfirmation,
   sendMandateSignatureConfirmation,
-  sendWelcomeEmail
+  sendWelcomeEmail,
+  sendProductionConfirmation
 } from "../lib/email";
 import { uploadFile } from "../lib/aws";
 import { sendMessageToSlack } from "../lib/slack";
