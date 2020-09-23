@@ -40,8 +40,10 @@ export async function editNote(req, res, next) {
       return next(generateError("Project not found", 404));
     }
 
-    const isAuthorized =
-      isAdmin(req.user) || project.commercialId === req.user._id;
+    // const isAuthorized =
+    //   isAdmin(req.user) || project.commercialId === req.user._id;
+
+    const isAuthorized = isAdminOrCommercial(req.user);
 
     if (!isAuthorized) {
       return next(generateError("Not authorized", 401));
