@@ -20,6 +20,13 @@ export async function getDashboardData(req, res, next) {
       }
 
       const result = Math.floor((comm / 100 / 1.085) * pourcentage) / 100;
+      // Debugging
+      console.info(
+        "computeCommission -> computeCommission",
+        com,
+        pourcentage,
+        result
+      );
 
       return result;
     }
