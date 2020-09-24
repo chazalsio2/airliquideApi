@@ -7,7 +7,7 @@ const allowedStatusValues = [
   "freelance",
   "investor",
   "retired",
-  "unemployed",
+  "unemployed"
 ];
 
 const allowedSituationValues = [
@@ -16,44 +16,44 @@ const allowedSituationValues = [
   "separationofproperty",
   "legalcommunity",
   "jointpossession",
-  "company",
+  "company"
 ];
 
 const allowedTypesOfIncome = [
   "income",
   "dividends",
   "movablecapital",
-  "others",
+  "others"
 ];
 
 const allowedTypesOfRentalIncome = ["naked", "furnished", "seasonal", "others"];
 
 const SpouseSchema = new mongoose.Schema({
   firstname: {
-    type: String,
+    type: String
   },
   lastname: {
-    type: String,
+    type: String
   },
   address: {
-    type: String,
+    type: String
   },
   email: {
-    type: String,
+    type: String
   },
   situation: {
     type: String,
-    enum: allowedSituationValues,
-  },
+    enum: allowedSituationValues
+  }
 });
 
 const ClientAvailability = new mongoose.Schema({
   day: {
-    type: String,
+    type: String
   },
   slotNum: {
-    type: Number,
-  },
+    type: Number
+  }
 });
 
 var schema = new mongoose.Schema(
@@ -61,162 +61,162 @@ var schema = new mongoose.Schema(
     civility: {
       type: String,
       required: false,
-      enum: ["mister", "miss", ""],
+      enum: ["mister", "miss", ""]
     },
     firstname: {
-      type: String,
+      type: String
     },
     lastname: {
-      type: String,
+      type: String
     },
     email: {
-      type: String,
+      type: String
     },
     birthday: {
-      type: Date,
+      type: Date
     },
     phone: {
-      type: String,
+      type: String
     },
     geographicSector: {
       type: String,
-      enum: ["north", "east", "west", "south"],
+      enum: ["north", "east", "west", "south"]
     },
     address: {
       type: String,
-      required: false,
+      required: false
     },
     zipcode: {
       type: String,
-      required: false,
+      required: false
     },
     city: {
       type: String,
-      required: false,
+      required: false
     },
     userId: {
       type: mongoose.Types.ObjectId,
-      required: false,
+      required: false
     },
     referral: {
       type: String,
-      enum: ["other", "socialmedia", "wordofmouth", "website"],
+      enum: ["other", "socialmedia", "wordofmouth", "website"]
     },
     displayName: {
       type: String,
-      required: false,
+      required: false
     },
     spouse: {
       type: SpouseSchema,
-      required: false,
+      required: false
     },
     address: {
       type: String,
-      required: false,
+      required: false
     },
     principalResidence: {
       type: String,
       required: false,
-      enum: ["tenant", "owner"],
+      enum: ["tenant", "owner", "freeofcharge"]
     },
     typesOfIncome: {
       type: Array,
-      required: false,
+      required: false
     },
     "typesOfIncome.$": {
       type: String,
       required: false,
-      enum: allowedTypesOfIncome,
+      enum: allowedTypesOfIncome
     },
     othersTypesOfIncome: {
       type: String,
-      required: false,
+      required: false
     },
     typesOfRentalIncome: {
       type: Array,
-      required: false,
+      required: false
     },
     "typesOfRentalIncome.$": {
       type: String,
       required: false,
-      enum: allowedTypesOfRentalIncome,
+      enum: allowedTypesOfRentalIncome
     },
     othersTypesOfRentalIncome: {
       type: String,
-      required: false,
+      required: false
     },
     income: {
       type: Number,
-      required: false,
+      required: false
     },
     industry: {
       type: String,
-      required: false,
+      required: false
     },
     seniority: {
       type: Number,
-      required: false,
+      required: false
     },
     situation: {
       type: String,
       required: false,
-      enum: allowedSituationValues,
+      enum: allowedSituationValues
     },
     status: {
       type: String,
       required: false,
-      enum: allowedStatusValues,
+      enum: allowedStatusValues
     },
     savings: {
       type: Number,
-      required: false,
+      required: false
     },
     desiredGrossYield: {
       type: String,
       enum: ["4to6", "6to8", "8to10", "greaterthan10"],
-      required: false,
+      required: false
     },
     rentAmount: {
       type: Number,
-      required: false,
+      required: false
     },
     creditAmount: {
       type: Number,
-      required: false,
+      required: false
     },
     crd: {
       type: Number,
-      required: false,
+      required: false
     },
     loans: {
       type: Number,
-      required: false,
+      required: false
     },
     income: {
-      type: Number,
+      type: Number
     },
     industry: {
-      type: String,
+      type: String
     },
     seniority: {
-      type: Number,
+      type: Number
     },
     availabilities: {
       type: Array,
-      required: false,
+      required: false
     },
     "availabilities.$": {
       type: ClientAvailability,
-      required: false,
+      required: false
     },
     allowSaveData: {
       type: Boolean,
-      required: false,
-    },
+      required: false
+    }
   },
   {
     timestamps: true,
-    collection: "clients",
+    collection: "clients"
   }
 );
 
