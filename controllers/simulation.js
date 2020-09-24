@@ -116,7 +116,7 @@ export async function editSimulation(req, res, next) {
       throw new Error("Not authorized");
     }
 
-    if (simulation.userId !== userId) {
+    if (simulation.userId.toString() !== userId.toString()) {
       throw new Error("Not authorized");
     }
 
@@ -181,7 +181,7 @@ export async function deleteSimulation(req, res, next) {
       throw new Error("Not authorized");
     }
 
-    if (simulation.userId !== userId) {
+    if (simulation.userId.toString() !== userId.toString()) {
       throw new Error("Not authorized");
     }
 
