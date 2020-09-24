@@ -1584,9 +1584,20 @@ export async function assignCommercial(req, res, next) {
       return next(generateError("Project not found", 404));
     }
 
-    // if (project.commercialId) {
-    //   return next(generateError("Project already assigned", 403));
-    // }
+    const allowedStatus = [
+      "missing_information",
+      "wait_project_validation",
+      "wait_mandate",
+      "wait_mandate_validation",
+      "wait_purchase_offer",
+      "wait_purchase_offer_validation",
+      "wait_sales_agreement",
+      "wait_sales_agreement_validation"
+    ];
+
+    if (allowedStatus.indexOf(project.status) === -1) {
+      throw new Error("Wrong state");
+    }
 
     const commercial = await User.findOne({
       _id: commercialId,

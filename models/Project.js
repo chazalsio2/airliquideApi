@@ -146,7 +146,6 @@ const schema = new mongoose.Schema(
       enum: [
         "missing_information",
         "wait_project_validation",
-        // "wait_mandate_signature",
         "wait_mandate",
         "wait_mandate_validation",
         "wait_purchase_offer",
