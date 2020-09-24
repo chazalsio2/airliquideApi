@@ -5,45 +5,61 @@ const FinancialSheet = new mongoose.Schema({
     type: String
   },
   rent: {
-    type: Number
+    type: Number,
+    default: 0
   },
   coOwnershipCharge: {
-    type: Number
+    type: Number,
+    default: 0
   },
   assurancePNO: {
-    type: Number
+    type: Number,
+    default: 0
   },
   propertyTax: {
-    type: Number
+    type: Number,
+    default: 0
   },
   accounting: {
-    type: Number
+    type: Number,
+    default: 0
   },
   cga: {
-    type: Number
+    type: Number,
+    default: 0
   },
   divers: {
-    type: Number
+    type: Number,
+    default: 0
   },
   propertyPrice: {
-    type: Number
+    type: Number,
+    default: 0
   },
   notaryFees: {
-    type: Number
+    type: Number,
+    default: 0
   },
   visionRFees: {
-    type: Number
+    type: Number,
+    default: 0
+  },
+  agencyFees: {
+    type: Number,
+    default: 0
   },
   works: {
-    type: Number
+    type: Number,
+    default: 0
   },
   financialExpense: {
-    type: Number
+    type: Number,
+    default: 0
   },
   equipment: {
-    type: Number
+    type: Number,
+    default: 0
   }
-  // TODO where is agencyFees
 });
 
 const AddressSchema = new mongoose.Schema({
@@ -170,6 +186,9 @@ const schema = new mongoose.Schema(
     public: {
       type: Boolean,
       default: false
+    },
+    city: {
+      type: String
     }
   },
   {
@@ -186,6 +205,10 @@ schema.pre("save", async function (next) {
     this.name = `${getPropertyType(this.type)} ${this.livingArea} m² ${
       !!this.fullAddress ? `${this.fullAddress.city}` : ""
     }`;
+
+    if (this.fullAddress) {
+      this.city = this.fullAddress.city;
+    }
     next();
   } catch (e) {
     next(e);

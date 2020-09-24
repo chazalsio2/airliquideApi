@@ -103,7 +103,8 @@ export async function updateFinancialPropertyData(req, res, next) {
             visionRFees: Number(propertyFinancialData.visionRFees),
             works: Number(propertyFinancialData.works),
             financialExpense: Number(propertyFinancialData.financialExpense),
-            equipment: Number(propertyFinancialData.equipment)
+            equipment: Number(propertyFinancialData.equipment),
+            agencyFees: Number(propertyFinancialData.agencyFees)
           }
         }
       }
@@ -242,7 +243,7 @@ export async function getProperty(req, res, next) {
 }
 
 const propertiesPublicFields =
-  "ref name description fullAddress type yearOfConstruction landArea livingArea salesPrice varangueArea photos virtualVisitLink financialSheet coOwnershipCharge assurancePNO propertyTax accounting cga divers propertyPrice notaryFees works financialExpense equipment";
+  "ref name description type yearOfConstruction landArea livingArea salesPrice varangueArea photos virtualVisitLink financialSheet coOwnershipCharge assurancePNO propertyTax accounting cga divers propertyPrice notaryFees works financialExpense equipment financialSheet";
 
 export async function getPublicProperties(req, res, next) {
   try {
@@ -255,7 +256,7 @@ export async function getPublicProperties(req, res, next) {
 
     const properties = await Property.find(
       selector,
-      "name description photos",
+      "name description photos salesPrice",
       {
         sort: { createdAt: -1 },
         limit: LIMIT_BY_PAGE,
