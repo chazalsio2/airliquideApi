@@ -1,7 +1,7 @@
 import {
   generateError,
   isAdminOrCommercial,
-  isSearchClient,
+  isSearchClient
 } from "../lib/utils";
 import _ from "underscore";
 import Simulation from "../models/Simulation";
@@ -26,12 +26,12 @@ export async function getSimulations(req, res, next) {
     const simulations = await Simulation.find(selector, null, {
       sort: { createdAt: -1 },
       skip: (pageNumber - 1) * LIMIT_BY_PAGE,
-      limit: LIMIT_BY_PAGE,
+      limit: LIMIT_BY_PAGE
     }).lean();
 
     return res.json({
       success: true,
-      data: { simulations, pageCount, total: simulationCount },
+      data: { simulations, pageCount, total: simulationCount }
     });
   } catch (e) {
     next(generateError(e.message));
@@ -75,7 +75,7 @@ export async function editSimulation(req, res, next) {
       electricity,
       internet,
       water,
-      others,
+      others
     } = req.body;
 
     if (
@@ -116,6 +116,10 @@ export async function editSimulation(req, res, next) {
       throw new Error("Not authorized");
     }
 
+    if (simulation.userId !== userId) {
+      throw new Error("Not authorized");
+    }
+
     await Simulation.updateOne(
       { _id: simulationId },
       {
@@ -149,9 +153,39 @@ export async function editSimulation(req, res, next) {
         water: getStringOrNumber(water) * 100,
         internet: getStringOrNumber(internet) * 100,
         others: getStringOrNumber(others) * 100,
-        userId,
+        userId
       }
     ).exec();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+export async function deleteSimulation(req, res, next) {
+  try {
+    const userId = req.user._id;
+    const { simulationId } = req.params;
+
+    const simulation = await Simulation.findById(simulationId).exec();
+
+    if (!simulation) {
+      throw new Error("Simulation not found");
+    }
+
+    const isAuthorized =
+      isAdminOrCommercial(req.user) || isSearchClient(req.user);
+
+    if (!isAuthorized) {
+      throw new Error("Not authorized");
+    }
+
+    if (simulation.userId !== userId) {
+      throw new Error("Not authorized");
+    }
+
+    await Simulation.deleteOne({ _id: simulationId }).exec();
 
     return res.json({ success: true });
   } catch (e) {
@@ -188,7 +222,7 @@ export async function createSimulation(req, res, next) {
       electricity,
       internet,
       water,
-      others,
+      others
     } = req.body;
 
     if (
@@ -258,7 +292,7 @@ export async function createSimulation(req, res, next) {
       water: getStringOrNumber(water) * 100,
       internet: getStringOrNumber(internet) * 100,
       others: getStringOrNumber(others) * 100,
-      userId,
+      userId
     }).save();
 
     return res.json({ success: true });

@@ -7,21 +7,22 @@ import {
   login,
   createPassword,
   forgotPassword,
-  changePassword,
+  changePassword
 } from "./controllers/authentification";
 
 import { getUsers, createUser, editUser } from "./controllers/administration";
 import {
   createSimulation,
+  deleteSimulation,
   editSimulation,
-  getSimulations,
+  getSimulations
 } from "./controllers/simulation";
 
 import {
   checkSuperAdmin,
   errorHandle,
   checkRoles,
-  checkAccountDesactivated,
+  checkAccountDesactivated
 } from "./middlewares";
 import { getProfile } from "./controllers/account";
 import { searchTerm } from "./controllers/search";
@@ -30,14 +31,14 @@ import {
   getClient,
   createClient,
   addProject,
-  editClient,
+  editClient
 } from "./controllers/client";
 import { publicCreateClient } from "./controllers/public";
 import {
   getDocument,
   getFolder,
   getRootFolder,
-  deleteDocument,
+  deleteDocument
 } from "./controllers/document";
 import {
   getProject,
@@ -70,7 +71,7 @@ import {
   uploadMandateForProject,
   getMyProjects,
   editNote,
-  sendCompletedProjectEmail,
+  sendCompletedProjectEmail
 } from "./controllers/project";
 import {
   createProperty,
@@ -80,18 +81,18 @@ import {
   updatePropertyVisibility,
   updateFinancialPropertyData,
   getPublicProperties,
-  getPublicProperty,
+  getPublicProperty
 } from "./controllers/property";
 import {
   getFolders,
   addFolder,
-  addDocumentInFolder,
+  addDocumentInFolder
 } from "./controllers/folder";
 import { getUser, getCommercials } from "./controllers/user";
 import {
   getTrainings,
   createTraining,
-  getTraining,
+  getTraining
 } from "./controllers/training";
 import { handleWebhookDocusign } from "./controllers/webhook";
 import { getDashboardData } from "./controllers/dashboard";
@@ -168,6 +169,13 @@ export default (app) => {
     "/simulations/:simulationId",
     passport.authenticate("jwt", { session: false }),
     editSimulation,
+    errorHandle
+  );
+
+  app.delete(
+    "/simulations/:simulationId",
+    passport.authenticate("jwt", { session: false }),
+    deleteSimulation,
     errorHandle
   );
 
