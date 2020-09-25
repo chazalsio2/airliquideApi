@@ -68,9 +68,9 @@ export async function getDashboardData(req, res, next) {
     }).exec();
 
     // TODO: do not work
-    const propertiesClosedCount = await Property.countDocuments({
-      status: "closed"
-    }).exec();
+    // const propertiesClosedCount = await Property.countDocuments({
+    //   status: "closed"
+    // }).exec();
 
     const salesAgreementStatus = [
       "wait_loan_offer",
@@ -152,7 +152,7 @@ export async function getDashboardData(req, res, next) {
         managementMandatesCount,
         searchMandatesCount,
         propertiesPublishedCount,
-        propertiesClosedCount,
+        // propertiesClosedCount,
         salesDeedCount,
         salesAgreementCount,
         provisionalCommission: Math.round(provisionalCommission * 100) / 100,
