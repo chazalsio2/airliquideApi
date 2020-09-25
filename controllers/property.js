@@ -20,7 +20,7 @@ export async function editProperty(req, res, next) {
       varangueArea,
       type,
       virtualVisitLink,
-      rooms
+      salesMandate
     } = req.body;
 
     const { propertyId } = req.params;
@@ -34,7 +34,8 @@ export async function editProperty(req, res, next) {
       type,
       salesPrice,
       landArea,
-      livingArea
+      livingArea,
+      salesMandate
     };
 
     if (virtualVisitLink) {
@@ -47,10 +48,6 @@ export async function editProperty(req, res, next) {
 
     if (varangueArea) {
       propertyData.varangueArea = varangueArea;
-    }
-
-    if (rooms) {
-      propertyData.rooms = rooms;
     }
 
     const property = await Property.updateOne(
@@ -128,7 +125,7 @@ export async function createProperty(req, res, next) {
       photos,
       type,
       virtualVisitLink,
-      rooms
+      salesMandate
     } = req.body;
 
     if (
@@ -150,6 +147,7 @@ export async function createProperty(req, res, next) {
       salesPrice,
       landArea,
       livingArea,
+      salesMandate,
       photos: results.map((r) => r.url)
     };
 
@@ -187,16 +185,12 @@ export async function getProperties(req, res, next) {
 
   const selector = {};
 
-  if (type === "hunting") {
-    selector.classification = "hunting";
-  }
-
-  if (type === "selling") {
-    selector.classification = "selling";
+  if (type === "sales") {
+    selector.salesMandate = true;
   }
 
   if (isSearchClient(req.user) && !isAdminOrCommercial(req.user)) {
-    selector.classification = "hunting";
+    selector.salesMandate = false;
   }
 
   const propertiesCount = await Property.countDocuments(selector).exec();
@@ -228,7 +222,7 @@ export async function getProperty(req, res, next) {
     const selector = { _id: propertyId };
 
     if (isSearchClient(req.user) && !isAdminOrCommercial(req.user)) {
-      selector.classification = "hunting";
+      selector.salesMandate = false;
     }
 
     const property = await Property.findOne(selector).lean();
@@ -248,7 +242,7 @@ const propertiesPublicFields =
 export async function getPublicProperties(req, res, next) {
   try {
     const { page = "", type = "" } = req.query;
-    const selector = { classification: "selling", public: true };
+    const selector = { salesMandate: true, public: true };
     const pageNumber = Number(page) || 1;
 
     const propertiesCount = await Property.countDocuments(selector).exec();
@@ -287,7 +281,7 @@ export async function getPublicProperty(req, res, next) {
 
     const selector = {
       _id: propertyId,
-      classification: "selling",
+      salesMandate: true,
       public: true
     };
 

@@ -109,10 +109,6 @@ const schema = new mongoose.Schema(
       type: String,
       required: false
     },
-    classification: {
-      type: String,
-      enum: ["selling", "hunting"]
-    },
     description: {
       type: String
     },
@@ -166,14 +162,6 @@ const schema = new mongoose.Schema(
       type: Boolean,
       default: false
     },
-    rooms: {
-      type: Array,
-      required: false
-    },
-    "rooms.$": {
-      type: RoomSchema,
-      required: false
-    },
     status: {
       type: String,
       default: "available",
@@ -184,6 +172,10 @@ const schema = new mongoose.Schema(
       required: false
     },
     public: {
+      type: Boolean,
+      default: false
+    },
+    salesMandate: {
       type: Boolean,
       default: false
     },
