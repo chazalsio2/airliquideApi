@@ -12,21 +12,14 @@ export async function getDashboardData(req, res, next) {
 
     function computeCommission(comm, pourcentage = 50) {
       if (isUserAdmin) {
-        return Math.floor(comm / 100);
+        return Math.round(comm / 100);
       }
 
       if (!pourcentage) {
         return 0;
       }
 
-      const result = Math.floor((comm / 100 / 1.085) * pourcentage) / 100;
-
-      console.info(
-        "computeCommission -> comm, pourcentage",
-        comm,
-        pourcentage,
-        info
-      );
+      const result = Math.round((comm / 100 / 1.085) * pourcentage) / 100;
       return result;
     }
 
@@ -163,8 +156,8 @@ export async function getDashboardData(req, res, next) {
         propertiesClosedCount,
         salesDeedCount,
         salesAgreementCount,
-        provisionalCommission,
-        commission
+        provisionalCommission: Math.round(provisionalCommission * 100) / 100,
+        commission: Math.round(commission * 100) / 100
       }
     });
   } catch (e) {
