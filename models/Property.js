@@ -62,32 +62,6 @@ const FinancialSheet = new mongoose.Schema({
   }
 });
 
-const AddressSchema = new mongoose.Schema({
-  city: {
-    type: String
-  },
-  zipcode: {
-    type: String
-  },
-  address: {
-    type: String
-  }
-});
-
-const RoomSchema = new mongoose.Schema({
-  area: {
-    type: Number,
-    required: false
-  },
-  name: {
-    type: Number
-  },
-  note: {
-    type: String,
-    required: false
-  }
-});
-
 export function getPropertyType(type) {
   // "apartment", "commercial",   "construction_land",   "home",   "parking",   "building"
   if (type === "apartment") return "Appartement";
@@ -111,10 +85,6 @@ const schema = new mongoose.Schema(
     },
     description: {
       type: String
-    },
-    fullAddress: {
-      type: AddressSchema,
-      required: false
     },
     type: {
       type: String,
@@ -181,6 +151,9 @@ const schema = new mongoose.Schema(
     },
     city: {
       type: String
+    },
+    address: {
+      type: String
     }
   },
   {
@@ -195,12 +168,8 @@ schema.pre("save", async function (next) {
     const refTemps = `00000000${propertiesCount}`;
     this.ref = `${refTemps.substring(propertiesCount.toString().length)}`;
     this.name = `${getPropertyType(this.type)} ${this.livingArea} m² ${
-      !!this.fullAddress ? `${this.fullAddress.city}` : ""
+      this.city
     }`;
-
-    if (this.fullAddress) {
-      this.city = this.fullAddress.city;
-    }
     next();
   } catch (e) {
     next(e);

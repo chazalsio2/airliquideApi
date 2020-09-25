@@ -14,7 +14,8 @@ export async function editProperty(req, res, next) {
     const {
       description,
       salesPrice,
-      fullAddress,
+      city,
+      address,
       landArea,
       livingArea,
       varangueArea,
@@ -42,8 +43,8 @@ export async function editProperty(req, res, next) {
       propertyData.virtualVisitLink = virtualVisitLink;
     }
 
-    if (fullAddress) {
-      propertyData.fullAddress = fullAddress;
+    if (address) {
+      propertyData.address = address;
     }
 
     if (varangueArea) {
@@ -118,14 +119,15 @@ export async function createProperty(req, res, next) {
     const {
       description,
       salesPrice,
-      fullAddress,
       landArea,
       livingArea,
       varangueArea,
       photos,
       type,
       virtualVisitLink,
-      salesMandate
+      salesMandate,
+      city,
+      address
     } = req.body;
 
     if (
@@ -155,16 +157,15 @@ export async function createProperty(req, res, next) {
       propertyData.virtualVisitLink = virtualVisitLink;
     }
 
-    if (fullAddress) {
-      propertyData.fullAddress = fullAddress;
+    if (address) {
+      propertyData.address = address;
+    }
+    if (city) {
+      propertyData.city = city;
     }
 
     if (varangueArea) {
       propertyData.varangueArea = varangueArea;
-    }
-
-    if (rooms) {
-      propertyData.rooms = rooms;
     }
 
     const property = await new Property(propertyData).save();
