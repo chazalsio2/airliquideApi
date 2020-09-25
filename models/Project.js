@@ -27,56 +27,55 @@ const citiesList = [
   "Sans-Soucis",
   "Le Volcan/Pas de Bellecombe",
   "Plaine des Cafres",
-  "Plaine des Palmistes",
+  "Plaine des Palmistes"
 ];
 
 export const projectTypes = ["management", "sales", "search", "coaching"];
 
 const DocSubset = new mongoose.Schema({
   name: String,
-  url: String,
+  url: String
 });
 
 const SearchSheet = new mongoose.Schema({
   propertyType: {
     type: String,
     enum: [
-      "appartment",
+      "apartment",
       "home",
       "constructionground",
       "commercial",
       "building",
-      "parking",
-    ],
+      "parking"
+    ]
   },
   investmentType: {
-    type: String,
+    type: String
   },
   propertySize: {
     type: String,
-    enum: ["studio", "T2", "T3", "T4", "bigger"],
+    enum: ["studio", "T2", "T3", "T4", "bigger"]
   },
   propertySizeDetail: {
     type: String,
-    required: false,
+    required: false
   },
   propertyArea: {
     type: String,
-    enum: ["lessthan30", "lessthan90", "morethan90"],
+    enum: ["lessthan30", "lessthan90", "morethan90"]
   },
   additionalInfos: {
     type: String,
-    required: false,
+    required: false
   },
   land: {
     type: String,
-    enum: ["optional", "priority"],
+    enum: ["optional", "priority"]
   },
   landArea: {
     type: Number,
-    required: false,
+    required: false
   },
-
   searchSector: {
     type: String,
     enum: [
@@ -84,32 +83,32 @@ const SearchSheet = new mongoose.Schema({
       "tourismsector",
       "nearschool",
       "downtown",
-      "specificcities",
-    ],
+      "specificcities"
+    ]
   },
   searchSectorCities: {
     type: Array,
-    required: false,
+    required: false
   },
   "searchSectorCities.$": {
     type: String,
-    enum: citiesList,
+    enum: citiesList
   },
   swimmingpool: {
     type: String,
-    enum: ["optional", "priority"],
+    enum: ["optional", "priority"]
   },
   varangue: {
     type: String,
-    enum: ["optional", "priority"],
+    enum: ["optional", "priority"]
   },
   delay: {
     type: String,
-    enum: ["soonaspossible", "lessthan6", "morethan6"],
+    enum: ["soonaspossible", "lessthan6", "morethan6"]
   },
   budget: {
-    type: Number,
-  },
+    type: Number
+  }
 });
 
 const SalesSheet = new mongoose.Schema({});
@@ -117,28 +116,34 @@ const SalesSheet = new mongoose.Schema({});
 const schema = new mongoose.Schema(
   {
     name: {
-      type: String,
+      type: String
     },
     clientId: {
-      type: mongoose.Types.ObjectId,
+      type: mongoose.Types.ObjectId
     },
     commercialId: {
       type: mongoose.Types.ObjectId,
-      required: false,
+      required: false
     },
     type: {
       type: String,
-      enum: projectTypes,
+      enum: projectTypes
     },
     searchSheet: {
       type: SearchSheet,
       required: false,
-      _id: false,
+      _id: false
+    },
+    matchedProperties: {
+      type: Array
+    },
+    "matchedProperties.$": {
+      type: Types.ObjectId
     },
     salesSheet: {
       type: SalesSheet,
       required: false,
-      _id: false,
+      _id: false
     },
     status: {
       type: String,
@@ -158,94 +163,94 @@ const schema = new mongoose.Schema(
         "wait_sales_deed_validation",
         "completed",
         "refused",
-        "canceled",
-      ],
+        "canceled"
+      ]
     },
     investAlone: {
       type: String,
       enum: ["alone", "couple"],
-      required: false,
+      required: false
     },
     desiredGrossYield: {
       type: String,
       enum: ["4to6", "6to8", "8to10", "greaterthan10"],
-      required: false,
+      required: false
     },
     readyToSign: {
       type: Boolean,
       required: false,
-      default: false,
+      default: false
     },
     refusalReason: {
       type: String,
-      required: false,
+      required: false
     },
     mandateEnvelopeId: {
       type: String,
-      required: false,
+      required: false
     },
     mandateDocId: {
       type: Types.ObjectId,
-      required: false,
+      required: false
     },
     mandateDoc: {
       type: DocSubset,
-      required: false,
+      required: false
     },
     salesAgreementDocId: {
       type: Types.ObjectId,
-      required: false,
+      required: false
     },
     salesDeedDocId: {
       type: Types.ObjectId,
-      required: false,
+      required: false
     },
     purchaseOfferDocId: {
       type: Types.ObjectId,
-      required: false,
+      required: false
     },
     loanOfferDocId: {
       type: Types.ObjectId,
-      required: false,
+      required: false
     },
     salesDeedDoc: {
       type: DocSubset,
-      required: false,
+      required: false
     },
     salesAgreementDoc: {
       type: DocSubset,
-      required: false,
+      required: false
     },
     purchaseOfferDoc: {
       type: DocSubset,
-      required: false,
+      required: false
     },
     loanOfferDoc: {
       type: DocSubset,
-      required: false,
+      required: false
     },
     cancellationReason: {
       type: String,
-      required: false,
+      required: false
     },
     commissionAmount: {
       type: Number,
-      required: false,
+      required: false
     },
     note: {
       type: String,
-      required: false,
+      required: false
     },
     commercialPourcentage: {
       type: Number,
       required: false,
       min: 0,
-      max: 100,
-    },
+      max: 100
+    }
   },
   {
     timestamps: true,
-    collection: "projects",
+    collection: "projects"
   }
 );
 

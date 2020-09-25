@@ -23,6 +23,7 @@ import {
 } from "../lib/email";
 import { uploadFile } from "../lib/aws";
 import { sendMessageToSlack } from "../lib/slack";
+import { matchPropertiesForSearchMandate } from "../lib/matching";
 
 const LIMIT_BY_PAGE = 10;
 
@@ -1164,7 +1165,9 @@ export async function acceptProject(req, res, next) {
       message: `Le mandat de recherche de ${client.displayName} a été accepté par ${user.displayName} : ${process.env.APP_URL}/projects/${project._id}`
     });
 
-    // DocusignManager.sendSalesMandate(client, project);
+    if (project.type === "search") {
+      await matchPropertiesForSearchMandate(project._id);
+    }
 
     return res.json({ success: true });
   } catch (e) {

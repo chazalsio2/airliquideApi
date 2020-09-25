@@ -120,7 +120,8 @@ var schema = new mongoose.Schema(
     },
     spouse: {
       type: SpouseSchema,
-      required: false
+      required: false,
+      _id: false
     },
     address: {
       type: String,

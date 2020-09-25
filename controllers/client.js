@@ -4,6 +4,8 @@ import Client from "../models/Client";
 import { generateError } from "../lib/utils";
 import Project, { projectTypes } from "../models/Project";
 import ProjectEvent from "../models/ProjectEvent";
+import { matchPropertiesForSearchMandate } from "../lib/matching";
+import { sendMatchPropertiesEmail } from "../lib/email";
 
 export async function getClients(req, res, next) {
   try {
@@ -13,32 +15,32 @@ export async function getClients(req, res, next) {
     const selector = {
       $or: [
         {
-          firstname: { $regex: filter, $options: "i" },
+          firstname: { $regex: filter, $options: "i" }
         },
         {
-          lastname: { $regex: filter, $options: "i" },
+          lastname: { $regex: filter, $options: "i" }
         },
         {
-          displayName: { $regex: filter, $options: "i" },
+          displayName: { $regex: filter, $options: "i" }
         },
         {
-          email: { $regex: filter, $options: "i" },
-        },
-      ],
+          email: { $regex: filter, $options: "i" }
+        }
+      ]
     };
     const clientCount = await Client.countDocuments(selector).exec();
 
     const clients = await Client.find(selector, null, {
       limit: LIMIT_BY_PAGE,
       skip: (pageNumber - 1) * LIMIT_BY_PAGE,
-      sort: { createdAt: -1 },
+      sort: { createdAt: -1 }
     }).lean();
 
     const clientsWithProjects = await Promise.all(
       clients.map(async (client) => {
         const projects = await Project.find({
           clientId: client._id,
-          status: { $nin: ["canceled", "completed"] },
+          status: { $nin: ["canceled", "completed"] }
         }).lean();
         client.projects = projects;
         return client;
@@ -49,7 +51,7 @@ export async function getClients(req, res, next) {
 
     return res.json({
       success: true,
-      data: { clients: clientsWithProjects, pageCount, total: clientCount },
+      data: { clients: clientsWithProjects, pageCount, total: clientCount }
     });
   } catch (e) {
     return next(generateError(e.message));
@@ -68,7 +70,7 @@ export async function getClient(req, res, next) {
     client.projects = await Project.find(
       {
         clientId: client._id,
-        status: { $nin: ["canceled", "completed"] },
+        status: { $nin: ["canceled", "completed"] }
       },
       null,
       { sort: { createdAt: -1 } }
@@ -76,7 +78,7 @@ export async function getClient(req, res, next) {
 
     return res.json({
       success: true,
-      data: client,
+      data: client
     });
   } catch (e) {
     return res.status(500).json({ success: false });
@@ -92,7 +94,7 @@ export async function createClient(req, res, next) {
       phone,
       serviceType,
       geographicSector,
-      referral,
+      referral
     } = req.body;
 
     if (projectTypes.indexOf(serviceType) === -1) {
@@ -105,7 +107,7 @@ export async function createClient(req, res, next) {
       geographicSector,
       email,
       phone,
-      referral,
+      referral
     };
 
     const client = await new Client(clientData).save();
@@ -113,15 +115,15 @@ export async function createClient(req, res, next) {
     if (projectTypes.indexOf(serviceType) !== -1) {
       const project = await new Project({
         clientId: client,
-        type: serviceType,
+        type: serviceType
       }).save();
 
       return res.json({
         success: true,
         data: {
           projectId: project._id,
-          completed: false,
-        },
+          completed: false
+        }
       });
     }
 
@@ -154,7 +156,7 @@ export async function addProject(req, res, next) {
 
     await ProjectEvent({
       projectId: project._id,
-      type: "project_creation",
+      type: "project_creation"
     }).save();
 
     return res.json({ success: true, data: { projectId: project._id } });
@@ -171,14 +173,14 @@ export async function editClient(req, res, next) {
       createdAt,
       updatedAt,
       projects,
-      referral,
-    } = req.body
+      referral
+    } = req.body;
     if (email || createdAt || updatedAt || projects || referral) {
       return next(generateError("Cannot update some fields", 403));
     }
 
     if (birthday) {
-      req.body.birthday = moment(birthday, 'DD/MM/YYYY');
+      req.body.birthday = moment(birthday, "DD/MM/YYYY");
     }
     const { clientId } = req.params;
     const opts = { runValidators: true };
