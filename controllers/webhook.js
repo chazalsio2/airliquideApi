@@ -28,53 +28,53 @@ export async function handleWebhookDocusign(req, res, next) {
     const computedHash = computeHash(payload);
 
     if (verify !== computedHash) {
-      console.info(">>>>Ne match pas");
+      //
     } else {
-      console.info("MATCH!!!");
+      //
     }
 
     if (envelope) {
       switch (envelope.status) {
         case "Sent": {
           const project = await Project.findOne({
-            mandateEnvelopeId: envelope.envelopeid,
+            mandateEnvelopeId: envelope.envelopeid
           }).lean();
 
           if (!project) {
             console.warn(`No project waiting a mandate signature`);
             return res.json({
               success: false,
-              reason: "No project waiting a mandate signature",
+              reason: "No project waiting a mandate signature"
             });
           }
 
           const client = await Client.findOne({
-            email: project.clientId,
+            email: project.clientId
           }).lean();
 
           if (!client) {
             console.warn(`No client for this project`);
             return res.json({
               success: false,
-              reason: "No client for this project",
+              reason: "No client for this project"
             });
           }
 
           sendMessageToSlack({
-            message: `L'envelope ${envelope.envelopeid} a été envoyé à ${client.displayName} (${client.email})`,
+            message: `L'envelope ${envelope.envelopeid} a été envoyé à ${client.displayName} (${client.email})`
           });
         }
 
         case "Completed": {
           const project = await Project.findOne({
-            mandateEnvelopeId: envelope.envelopeid,
+            mandateEnvelopeId: envelope.envelopeid
           }).lean();
 
           if (!project) {
             console.warn(`No project waiting a mandate signature`);
             return res.json({
               success: false,
-              reason: "No project waiting a mandate signature",
+              reason: "No project waiting a mandate signature"
             });
           }
 
@@ -84,7 +84,7 @@ export async function handleWebhookDocusign(req, res, next) {
             );
             return res.json({
               success: false,
-              reason: `Received signature for project ${project._id} with wrong state (${project.status})`,
+              reason: `Received signature for project ${project._id} with wrong state (${project.status})`
             });
           }
 
@@ -98,7 +98,7 @@ export async function handleWebhookDocusign(req, res, next) {
                   const mandateDoc = await new Document({
                     name: "Signature mandat de recherche.pdf",
                     projectId: project._id,
-                    contentType: "application/pdf",
+                    contentType: "application/pdf"
                   }).save();
                   const location = await uploadFileFromStringData(
                     `project__${project._id}/${mandateDoc._id}_mandat-de-recherche-signature.pdf`,
@@ -125,28 +125,28 @@ export async function handleWebhookDocusign(req, res, next) {
 
           await new ProjectEvent({
             projectId: project._id,
-            type: "mandate_signature_done",
+            type: "mandate_signature_done"
           }).save();
 
           const client = await Client.findOne({
-            email: project.clientId,
+            email: project.clientId
           }).lean();
 
           if (!client) {
             console.warn(`No client for this project`);
             return res.json({
               success: false,
-              reason: "No client for this project",
+              reason: "No client for this project"
             });
           }
           sendMessageToSlack({
-            message: `Un mandat a été signé par ${client.displayName} (${client.email}) (Envelope ${envelope.envelopeid})`,
+            message: `Un mandat a été signé par ${client.displayName} (${client.email}) (Envelope ${envelope.envelopeid})`
           });
 
           sendMandateSignatureConfirmation(client);
 
           const alreadyUser = await User.findOne({
-            clientId: client._id,
+            clientId: client._id
           }).lean();
 
           let roleToAdd;
@@ -168,7 +168,7 @@ export async function handleWebhookDocusign(req, res, next) {
               { _id: alreadyUser._id },
               {
                 $addToSet: { roles: roleToAdd },
-                $set: { clientId: client._id },
+                $set: { clientId: client._id }
               }
             ).exec();
           } else {
@@ -176,10 +176,10 @@ export async function handleWebhookDocusign(req, res, next) {
               email: envelope.email,
               roles: [roleToAdd],
               displayName: client.displayName,
-              clientId: client._id,
+              clientId: client._id
             }).save();
             sendMessageToSlack({
-              message: `Un nouvel utilisateur a été ajouté ${user.displayName} (${roleToAdd})`,
+              message: `Un nouvel utilisateur a été ajouté ${user.displayName} (${roleToAdd})`
             });
           }
         }

@@ -1006,6 +1006,7 @@ export async function savePersonalSituation(req, res, next) {
       spouseincome,
       spouseindustry,
       spouseseniority,
+      spousephone,
       birthday
     } = req.body;
 
@@ -1065,7 +1066,8 @@ export async function savePersonalSituation(req, res, next) {
         situation: spousesituation,
         income: spouseincome,
         industry: spouseindustry,
-        seniority: spouseseniority
+        seniority: spouseseniority,
+        phone: spousephone
       };
     }
 

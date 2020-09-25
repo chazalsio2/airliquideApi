@@ -41,9 +41,21 @@ const SpouseSchema = new mongoose.Schema({
   email: {
     type: String
   },
+  phone: {
+    type: String
+  },
   situation: {
     type: String,
     enum: allowedSituationValues
+  },
+  income: {
+    type: String
+  },
+  industry: {
+    type: String
+  },
+  seniority: {
+    type: String
   }
 });
 
