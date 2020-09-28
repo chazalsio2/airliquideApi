@@ -6,6 +6,7 @@ import {
 import { uploadPhotos } from "../lib/cloudinary";
 import Property from "../models/Property";
 import { sendMessageToSlack } from "../lib/slack";
+import { checkMatchingForProperty } from "../lib/matching";
 
 const LIMIT_BY_PAGE = 12;
 
@@ -173,6 +174,12 @@ export async function createProperty(req, res, next) {
     const slackMessage = `Un nouveau bien a été ajouté (${property.name}) : ${process.env.APP_URL}/biens-immobiliers/${property._id}`;
 
     sendMessageToSlack({ message: slackMessage, copyToCommercial: true });
+
+    try {
+      checkMatchingForProperty(property._id);
+    } catch (e) {
+      console.error(e);
+    }
 
     return res.json({ success: true, data: property });
   } catch (e) {
