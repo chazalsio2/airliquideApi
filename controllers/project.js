@@ -24,6 +24,7 @@ import {
 import { uploadFile } from "../lib/aws";
 import { sendMessageToSlack } from "../lib/slack";
 import { matchPropertiesForSearchMandate } from "../lib/matching";
+import Property from "../models/Property";
 
 const LIMIT_BY_PAGE = 10;
 
@@ -135,10 +136,23 @@ export async function getProject(req, res, next) {
       ).lean();
     }
 
+    if (project.matchedProperties) {
+      const properties = await Promise.all(
+        project.matchedProperties.map(async (propertyId) => {
+          return await Property.findById(propertyId, "name _id photos").lean();
+        })
+      );
+
+      project.matchedProperties = properties;
+    }
+
     if (isAdminOrCommercial(req.user)) {
       return res.json({ success: true, data: project });
     } else {
-      return res.json({ success: true, data: _.omit(project, "note") });
+      return res.json({
+        success: true,
+        data: _.omit(project, "note")
+      });
     }
   } catch (e) {
     next(generateError(e.message));
