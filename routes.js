@@ -97,7 +97,12 @@ import {
 import { handleWebhookDocusign } from "./controllers/webhook";
 import { getDashboardData } from "./controllers/dashboard";
 import routeNotDefined from "./middlewares/routeNotDefined";
-import { getContactCategories, getContacts } from "./controllers/contact";
+import {
+  createContact,
+  createContactCategory,
+  getContactCategories,
+  getContacts
+} from "./controllers/contact";
 
 const checkAdmin = (req, res, next) => checkRoles("admin", req, res, next);
 const checkAdminOrCommercial = (req, res, next) =>
@@ -223,6 +228,24 @@ export default (app) => {
   app.post("/users/admin", checkSuperAdmin, createAdmin, errorHandle);
 
   // Administrators
+  app.post(
+    "/contacts",
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    createContact,
+    errorHandle
+  );
+
+  app.post(
+    "/contact-categories",
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    createContactCategory,
+    errorHandle
+  );
+
   app.post(
     "/folders",
     passport.authenticate("jwt", { session: false }),

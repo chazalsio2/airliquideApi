@@ -1,6 +1,7 @@
-import _, { isArray } from "underscore";
+import _ from "underscore";
 
 import ContactCategory from "../models/ContactCategory";
+import { allowedRoles } from "../models/User";
 import Contact from "../models/Contact";
 import { generateError, isAdmin } from "../lib/utils";
 
@@ -66,6 +67,53 @@ export async function getContactCategories(req, res, next) {
     }).lean();
 
     return res.json({ success: true, data: authorizedContactCategories });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+export async function createContact(req, res, next) {
+  try {
+    const { firstname, lastname, phone, contactCategoryId } = req.body;
+
+    if (!firstname || !lastname || !phone || !contactCategoryId) {
+      throw new Error("Missing fields");
+    }
+
+    const contactCategory = await ContactCategory.findById(
+      contactCategoryId
+    ).lean();
+
+    if (!contactCategory) {
+      throw new Error("Contact category not found");
+    }
+
+    await new Contact({ firstname, lastname, phone, contactCategoryId }).save();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+export async function createContactCategory(req, res, next) {
+  try {
+    const { name, description, roles } = req.body;
+
+    if (!name || !roles) {
+      throw new Error("Missing fields");
+    }
+
+    if (
+      !roles.length ||
+      !_.every(roles, (role) => allowedRoles.indexOf(role) !== -1)
+    ) {
+      throw new Error("Invalid roles");
+    }
+
+    await new ContactCategory({ name, description, roles }).save();
+
+    return res.json({ success: true });
   } catch (e) {
     next(generateError(e.message));
   }
