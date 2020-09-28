@@ -76,7 +76,6 @@ const SearchSheet = new mongoose.Schema({
     type: Number,
     required: false
   },
-
   searchSector: {
     type: String,
     enum: [
@@ -135,6 +134,12 @@ const schema = new mongoose.Schema(
       required: false,
       _id: false
     },
+    matchedProperties: {
+      type: Array
+    },
+    "matchedProperties.$": {
+      type: Types.ObjectId
+    },
     salesSheet: {
       type: SalesSheet,
       required: false,
@@ -146,7 +151,6 @@ const schema = new mongoose.Schema(
       enum: [
         "missing_information",
         "wait_project_validation",
-        // "wait_mandate_signature",
         "wait_mandate",
         "wait_mandate_validation",
         "wait_purchase_offer",

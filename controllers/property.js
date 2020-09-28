@@ -6,6 +6,7 @@ import {
 import { uploadPhotos } from "../lib/cloudinary";
 import Property from "../models/Property";
 import { sendMessageToSlack } from "../lib/slack";
+import { checkMatchingForProperty } from "../lib/matching";
 
 const LIMIT_BY_PAGE = 12;
 
@@ -14,13 +15,14 @@ export async function editProperty(req, res, next) {
     const {
       description,
       salesPrice,
-      fullAddress,
+      city,
+      address,
       landArea,
       livingArea,
       varangueArea,
       type,
       virtualVisitLink,
-      rooms
+      salesMandate
     } = req.body;
 
     const { propertyId } = req.params;
@@ -34,23 +36,20 @@ export async function editProperty(req, res, next) {
       type,
       salesPrice,
       landArea,
-      livingArea
+      livingArea,
+      salesMandate
     };
 
     if (virtualVisitLink) {
       propertyData.virtualVisitLink = virtualVisitLink;
     }
 
-    if (fullAddress) {
-      propertyData.fullAddress = fullAddress;
+    if (address) {
+      propertyData.address = address;
     }
 
     if (varangueArea) {
       propertyData.varangueArea = varangueArea;
-    }
-
-    if (rooms) {
-      propertyData.rooms = rooms;
     }
 
     const property = await Property.updateOne(
@@ -103,7 +102,8 @@ export async function updateFinancialPropertyData(req, res, next) {
             visionRFees: Number(propertyFinancialData.visionRFees),
             works: Number(propertyFinancialData.works),
             financialExpense: Number(propertyFinancialData.financialExpense),
-            equipment: Number(propertyFinancialData.equipment)
+            equipment: Number(propertyFinancialData.equipment),
+            agencyFees: Number(propertyFinancialData.agencyFees)
           }
         }
       }
@@ -120,14 +120,15 @@ export async function createProperty(req, res, next) {
     const {
       description,
       salesPrice,
-      fullAddress,
       landArea,
       livingArea,
       varangueArea,
       photos,
       type,
       virtualVisitLink,
-      rooms
+      salesMandate,
+      city,
+      address
     } = req.body;
 
     if (
@@ -149,6 +150,7 @@ export async function createProperty(req, res, next) {
       salesPrice,
       landArea,
       livingArea,
+      salesMandate,
       photos: results.map((r) => r.url)
     };
 
@@ -156,16 +158,15 @@ export async function createProperty(req, res, next) {
       propertyData.virtualVisitLink = virtualVisitLink;
     }
 
-    if (fullAddress) {
-      propertyData.fullAddress = fullAddress;
+    if (address) {
+      propertyData.address = address;
+    }
+    if (city) {
+      propertyData.city = city;
     }
 
     if (varangueArea) {
       propertyData.varangueArea = varangueArea;
-    }
-
-    if (rooms) {
-      propertyData.rooms = rooms;
     }
 
     const property = await new Property(propertyData).save();
@@ -173,6 +174,12 @@ export async function createProperty(req, res, next) {
     const slackMessage = `Un nouveau bien a été ajouté (${property.name}) : ${process.env.APP_URL}/biens-immobiliers/${property._id}`;
 
     sendMessageToSlack({ message: slackMessage, copyToCommercial: true });
+
+    try {
+      checkMatchingForProperty(property._id);
+    } catch (e) {
+      console.error(e);
+    }
 
     return res.json({ success: true, data: property });
   } catch (e) {
@@ -186,16 +193,12 @@ export async function getProperties(req, res, next) {
 
   const selector = {};
 
-  if (type === "hunting") {
-    selector.classification = "hunting";
-  }
-
-  if (type === "selling") {
-    selector.classification = "selling";
+  if (type === "sales") {
+    selector.salesMandate = true;
   }
 
   if (isSearchClient(req.user) && !isAdminOrCommercial(req.user)) {
-    selector.classification = "hunting";
+    selector.salesMandate = false;
   }
 
   const propertiesCount = await Property.countDocuments(selector).exec();
@@ -227,7 +230,7 @@ export async function getProperty(req, res, next) {
     const selector = { _id: propertyId };
 
     if (isSearchClient(req.user) && !isAdminOrCommercial(req.user)) {
-      selector.classification = "hunting";
+      selector.salesMandate = false;
     }
 
     const property = await Property.findOne(selector).lean();
@@ -242,12 +245,12 @@ export async function getProperty(req, res, next) {
 }
 
 const propertiesPublicFields =
-  "ref name description fullAddress type yearOfConstruction landArea livingArea salesPrice varangueArea photos virtualVisitLink financialSheet coOwnershipCharge assurancePNO propertyTax accounting cga divers propertyPrice notaryFees works financialExpense equipment";
+  "ref name description type yearOfConstruction landArea livingArea salesPrice varangueArea photos virtualVisitLink financialSheet coOwnershipCharge assurancePNO propertyTax accounting cga divers propertyPrice notaryFees works financialExpense equipment financialSheet";
 
 export async function getPublicProperties(req, res, next) {
   try {
     const { page = "", type = "" } = req.query;
-    const selector = { classification: "selling", public: true };
+    const selector = { salesMandate: true, public: true };
     const pageNumber = Number(page) || 1;
 
     const propertiesCount = await Property.countDocuments(selector).exec();
@@ -255,7 +258,7 @@ export async function getPublicProperties(req, res, next) {
 
     const properties = await Property.find(
       selector,
-      "name description photos",
+      "name description photos salesPrice",
       {
         sort: { createdAt: -1 },
         limit: LIMIT_BY_PAGE,
@@ -286,7 +289,7 @@ export async function getPublicProperty(req, res, next) {
 
     const selector = {
       _id: propertyId,
-      classification: "selling",
+      salesMandate: true,
       public: true
     };
 

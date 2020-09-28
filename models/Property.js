@@ -5,70 +5,60 @@ const FinancialSheet = new mongoose.Schema({
     type: String
   },
   rent: {
-    type: Number
+    type: Number,
+    default: 0
   },
   coOwnershipCharge: {
-    type: Number
+    type: Number,
+    default: 0
   },
   assurancePNO: {
-    type: Number
+    type: Number,
+    default: 0
   },
   propertyTax: {
-    type: Number
+    type: Number,
+    default: 0
   },
   accounting: {
-    type: Number
+    type: Number,
+    default: 0
   },
   cga: {
-    type: Number
+    type: Number,
+    default: 0
   },
   divers: {
-    type: Number
+    type: Number,
+    default: 0
   },
   propertyPrice: {
-    type: Number
+    type: Number,
+    default: 0
   },
   notaryFees: {
-    type: Number
+    type: Number,
+    default: 0
   },
   visionRFees: {
-    type: Number
+    type: Number,
+    default: 0
+  },
+  agencyFees: {
+    type: Number,
+    default: 0
   },
   works: {
-    type: Number
+    type: Number,
+    default: 0
   },
   financialExpense: {
-    type: Number
+    type: Number,
+    default: 0
   },
   equipment: {
-    type: Number
-  }
-  // TODO where is agencyFees
-});
-
-const AddressSchema = new mongoose.Schema({
-  city: {
-    type: String
-  },
-  zipcode: {
-    type: String
-  },
-  address: {
-    type: String
-  }
-});
-
-const RoomSchema = new mongoose.Schema({
-  area: {
     type: Number,
-    required: false
-  },
-  name: {
-    type: Number
-  },
-  note: {
-    type: String,
-    required: false
+    default: 0
   }
 });
 
@@ -93,16 +83,8 @@ const schema = new mongoose.Schema(
       type: String,
       required: false
     },
-    classification: {
-      type: String,
-      enum: ["selling", "hunting"]
-    },
     description: {
       type: String
-    },
-    fullAddress: {
-      type: AddressSchema,
-      required: false
     },
     type: {
       type: String,
@@ -150,14 +132,6 @@ const schema = new mongoose.Schema(
       type: Boolean,
       default: false
     },
-    rooms: {
-      type: Array,
-      required: false
-    },
-    "rooms.$": {
-      type: RoomSchema,
-      required: false
-    },
     status: {
       type: String,
       default: "available",
@@ -170,6 +144,16 @@ const schema = new mongoose.Schema(
     public: {
       type: Boolean,
       default: false
+    },
+    salesMandate: {
+      type: Boolean,
+      default: false
+    },
+    city: {
+      type: String
+    },
+    address: {
+      type: String
     }
   },
   {
@@ -184,7 +168,7 @@ schema.pre("save", async function (next) {
     const refTemps = `00000000${propertiesCount}`;
     this.ref = `${refTemps.substring(propertiesCount.toString().length)}`;
     this.name = `${getPropertyType(this.type)} ${this.livingArea} m² ${
-      !!this.fullAddress ? `${this.fullAddress.city}` : ""
+      this.city
     }`;
     next();
   } catch (e) {

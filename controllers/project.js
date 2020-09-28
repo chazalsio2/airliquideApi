@@ -23,6 +23,8 @@ import {
 } from "../lib/email";
 import { uploadFile } from "../lib/aws";
 import { sendMessageToSlack } from "../lib/slack";
+import { matchPropertiesForSearchMandate } from "../lib/matching";
+import Property from "../models/Property";
 
 const LIMIT_BY_PAGE = 10;
 
@@ -134,10 +136,23 @@ export async function getProject(req, res, next) {
       ).lean();
     }
 
+    if (project.matchedProperties) {
+      const properties = await Promise.all(
+        project.matchedProperties.map(async (propertyId) => {
+          return await Property.findById(propertyId, "name _id photos").lean();
+        })
+      );
+
+      project.matchedProperties = properties;
+    }
+
     if (isAdminOrCommercial(req.user)) {
       return res.json({ success: true, data: project });
     } else {
-      return res.json({ success: true, data: _.omit(project, "note") });
+      return res.json({
+        success: true,
+        data: _.omit(project, "note")
+      });
     }
   } catch (e) {
     next(generateError(e.message));
@@ -1164,7 +1179,9 @@ export async function acceptProject(req, res, next) {
       message: `Le mandat de recherche de ${client.displayName} a été accepté par ${user.displayName} : ${process.env.APP_URL}/projects/${project._id}`
     });
 
-    // DocusignManager.sendSalesMandate(client, project);
+    if (project.type === "search") {
+      await matchPropertiesForSearchMandate(project._id);
+    }
 
     return res.json({ success: true });
   } catch (e) {
@@ -1586,9 +1603,20 @@ export async function assignCommercial(req, res, next) {
       return next(generateError("Project not found", 404));
     }
 
-    // if (project.commercialId) {
-    //   return next(generateError("Project already assigned", 403));
-    // }
+    const allowedStatus = [
+      "missing_information",
+      "wait_project_validation",
+      "wait_mandate",
+      "wait_mandate_validation",
+      "wait_purchase_offer",
+      "wait_purchase_offer_validation",
+      "wait_sales_agreement",
+      "wait_sales_agreement_validation"
+    ];
+
+    if (allowedStatus.indexOf(project.status) === -1) {
+      throw new Error("Wrong state");
+    }
 
     const commercial = await User.findOne({
       _id: commercialId,

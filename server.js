@@ -13,7 +13,7 @@ import "./cron";
 if (process.env.NODE_ENV !== "development") {
   Sentry.init({
     dsn: process.env.SENTRY_DSN,
-    environment: process.env.NODE_ENV,
+    environment: process.env.NODE_ENV
   });
 }
 
@@ -22,7 +22,7 @@ const app = express();
 app.options(
   "*",
   cors({
-    origin: "*",
+    origin: "*"
   })
 );
 
@@ -36,7 +36,7 @@ app.use(
   bodyParser.urlencoded({
     limit: "50mb",
     extended: true,
-    parameterLimit: 100000,
+    parameterLimit: 100000
   })
 );
 
@@ -48,7 +48,7 @@ const PORT = process.env.PORT || 3001;
 // mongoose connection
 mongoose.Promise = global.Promise;
 mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
+  useNewUrlParser: true
   // useUnifiedTopology: true // Error Server selection timed out after 30000 ms if activated
 });
 
