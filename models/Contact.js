@@ -14,8 +14,8 @@ var schema = new mongoose.Schema(
     description: {
       type: String
     },
-    contactCategoryId: {
-      type: mongoose.Types.ObjectId
+    contactCategory: {
+      type: String
     }
   },
   {

@@ -97,6 +97,7 @@ import {
 import { handleWebhookDocusign } from "./controllers/webhook";
 import { getDashboardData } from "./controllers/dashboard";
 import routeNotDefined from "./middlewares/routeNotDefined";
+import { getContactCategories, getContacts } from "./controllers/contact";
 
 const checkAdmin = (req, res, next) => checkRoles("admin", req, res, next);
 const checkAdminOrCommercial = (req, res, next) =>
@@ -155,6 +156,20 @@ export default (app) => {
     // We should not check accountsuspended here
     // checkAccountDesactivated,
     getProfile,
+    errorHandle
+  );
+
+  app.get(
+    "/contacts",
+    passport.authenticate("jwt", { session: false }),
+    getContacts,
+    errorHandle
+  );
+
+  app.get(
+    "/contact-categories",
+    passport.authenticate("jwt", { session: false }),
+    getContactCategories,
     errorHandle
   );
 
