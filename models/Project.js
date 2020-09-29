@@ -48,15 +48,7 @@ const DocSubset = new mongoose.Schema({
 
 const SalesSheet = new mongoose.Schema({
   propertyType: {
-    type: String,
-    enum: [
-      "apartment",
-      "home",
-      "constructionground",
-      "commercial",
-      "building",
-      "parking"
-    ]
+    type: String
   },
   propertySize: {
     type: String

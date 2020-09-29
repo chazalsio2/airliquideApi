@@ -220,7 +220,8 @@ export async function saveSalesSheet(req, res, next) {
       readyToSign,
       nextAvailabilities,
       workEstimate,
-      priceEstimate
+      priceEstimate,
+      fullAddress
     } = req.body;
 
     if (
@@ -234,7 +235,8 @@ export async function saveSalesSheet(req, res, next) {
       !readyToSign ||
       !nextAvailabilities ||
       !workEstimate ||
-      !priceEstimate
+      !priceEstimate ||
+      !fullAddress
     ) {
       throw new Error("Missing fields");
     }
@@ -254,7 +256,8 @@ export async function saveSalesSheet(req, res, next) {
             readyToSign,
             nextAvailabilities,
             priceEstimate,
-            workEstimate
+            workEstimate,
+            fullAddress
           }
         }
       }
