@@ -1,7 +1,7 @@
 import moment from "moment";
 import { generateError, isAdmin, isAdminOrCommercial } from "../lib/utils";
 import User from "../models/User";
-import Project from "../models/Project";
+import Project, { projectTypes } from "../models/Project";
 import Client from "../models/Client";
 import Document from "../models/Document";
 import ProjectEvent from "../models/ProjectEvent";
@@ -25,6 +25,7 @@ import { uploadFile } from "../lib/aws";
 import { sendMessageToSlack } from "../lib/slack";
 import { matchPropertiesForSearchMandate } from "../lib/matching";
 import Property from "../models/Property";
+import { Mongoose } from "mongoose";
 
 const LIMIT_BY_PAGE = 10;
 
@@ -145,6 +146,9 @@ export async function getProject(req, res, next) {
 
       project.matchedProperties = properties;
     }
+
+    project.isCommercial =
+      String(req.user._id) === String(project.commercialId);
 
     if (isAdminOrCommercial(req.user)) {
       return res.json({ success: true, data: project });
