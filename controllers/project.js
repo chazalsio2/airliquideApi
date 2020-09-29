@@ -196,6 +196,76 @@ export async function refuseMandate(req, res, next) {
   }
 }
 
+export async function saveSalesSheet(req, res, next) {
+  try {
+    const { projectId } = req.params;
+
+    const project = await Project.find({
+      type: "sales",
+      _id: projectId
+    }).lean();
+
+    if (!project) {
+      throw new Error("Project not found");
+    }
+
+    const {
+      propertyType,
+      propertySize,
+      livingArea,
+      landArea,
+      workNeeded,
+      reasonForTheSale,
+      delay,
+      readyToSign,
+      nextAvailabilities,
+      workEstimate,
+      priceEstimate
+    } = req.body;
+
+    if (
+      !propertyType ||
+      !propertySize ||
+      !livingArea ||
+      !landArea ||
+      !workNeeded ||
+      !reasonForTheSale ||
+      !delay ||
+      !readyToSign ||
+      !nextAvailabilities ||
+      !workEstimate ||
+      !priceEstimate
+    ) {
+      throw new Error("Missing fields");
+    }
+
+    await Project.updateOne(
+      { _id: projectId },
+      {
+        $set: {
+          salesSheet: {
+            propertyType,
+            propertySize,
+            livingArea,
+            landArea,
+            workNeeded,
+            reasonForTheSale,
+            delay,
+            readyToSign,
+            nextAvailabilities,
+            priceEstimate,
+            workEstimate
+          }
+        }
+      }
+    ).exec();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
 export async function getMyProjects(req, res, next) {
   try {
     const userId = req.user._id;

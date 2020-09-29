@@ -71,7 +71,8 @@ import {
   uploadMandateForProject,
   getMyProjects,
   editNote,
-  sendCompletedProjectEmail
+  sendCompletedProjectEmail,
+  saveSalesSheet
 } from "./controllers/project";
 import {
   createProperty,
@@ -142,6 +143,8 @@ export default (app) => {
   );
 
   app.post("/projects/:projectId/search-sheet", saveSearchSheet, errorHandle);
+  app.post("/projects/:projectId/sales-sheet", saveSalesSheet, errorHandle);
+
   app.post(
     "/projects/:projectId/personal-situation",
     savePersonalSituation,
