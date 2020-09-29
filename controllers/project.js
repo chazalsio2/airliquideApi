@@ -918,7 +918,6 @@ export async function saveSearchSheet(req, res, next) {
     if (
       !propertyType ||
       !investmentType ||
-      !propertySize ||
       !propertyArea ||
       !searchSector ||
       !swimmingpool ||
@@ -1158,11 +1157,6 @@ export async function savePersonalSituationForSalesMandate(req, res, next) {
       seniority: spouseseniority,
       phone: spousephone
     };
-    console.log(
-      "savePersonalSituationForSalesMandate -> clientModifier",
-      clientModifier,
-      project
-    );
 
     const clientUpdate = await Client.updateOne(
       { _id: project.clientId },
