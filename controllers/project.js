@@ -6,6 +6,7 @@ import Client from "../models/Client";
 import Document from "../models/Document";
 import ProjectEvent from "../models/ProjectEvent";
 import _ from "underscore";
+import mongoose from "mongoose";
 import {
   sendProjectWaitingValidationEmail,
   sendAssignProjectNotification,
@@ -193,6 +194,79 @@ export async function refuseMandate(req, res, next) {
       authorUserId: userId,
       reason
     }).save();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+export async function saveSalesSheet(req, res, next) {
+  try {
+    const { projectId } = req.params;
+
+    const project = await Project.find({
+      type: "sales",
+      _id: projectId
+    }).lean();
+
+    if (!project) {
+      throw new Error("Project not found");
+    }
+
+    const {
+      propertyType,
+      propertySize,
+      livingArea,
+      landArea,
+      workNeeded,
+      reasonForTheSale,
+      delay,
+      readyToSign,
+      nextAvailabilities,
+      workEstimate,
+      priceEstimate,
+      fullAddress
+    } = req.body;
+
+    if (
+      !propertyType ||
+      !propertySize ||
+      !livingArea ||
+      !landArea ||
+      !workNeeded ||
+      !reasonForTheSale ||
+      !delay ||
+      !readyToSign ||
+      !nextAvailabilities ||
+      !workEstimate ||
+      !priceEstimate ||
+      !fullAddress
+    ) {
+      throw new Error("Missing fields");
+    }
+
+    await Project.updateOne(
+      { _id: projectId },
+      {
+        $set: {
+          salesSheet: {
+            propertyType,
+            propertySize,
+            livingArea,
+            landArea,
+            workNeeded,
+            reasonForTheSale,
+            delay,
+            readyToSign,
+            nextAvailabilities,
+            priceEstimate,
+            workEstimate,
+            fullAddress
+          }
+        }
+      }
+    ).exec();
 
     return res.json({ success: true });
   } catch (e) {
@@ -992,6 +1066,127 @@ export async function cancelProject(req, res, next) {
   }
 }
 
+export async function savePersonalSituationForSalesMandate(req, res, next) {
+  try {
+    const {
+      industry,
+      principalResidence,
+      rentamount,
+      creditamount,
+      hascreditonsalesproperty,
+      crd,
+      firstname,
+      lastname,
+      birthday,
+      address,
+      phone,
+      email,
+      spousefirstname,
+      spouselastname,
+      spouseaddress,
+      spousephone,
+      spouseemail,
+      spousesituation,
+      spouseincome,
+      spouseindustry,
+      spouseseniority
+    } = req.body;
+
+    const { projectId } = req.params;
+
+    const project = await Project.findOne({
+      _id: projectId,
+      type: "sales"
+    }).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    const clientModifier = {};
+
+    if (industry) {
+      clientModifier.industry = industry;
+    }
+
+    if (principalResidence) {
+      clientModifier.principalResidence = principalResidence;
+    }
+
+    if (rentamount) {
+      clientModifier.rentamount = rentamount;
+    }
+
+    if (creditamount) {
+      clientModifier.creditamount = creditamount;
+    }
+    if (crd) {
+      clientModifier.crd = Number(crd);
+    }
+
+    if (firstname) {
+      clientModifier.firstname = firstname;
+    }
+
+    if (lastname) {
+      clientModifier.lastname = lastname;
+    }
+
+    if (birthday) {
+      clientModifier.birthday = moment(birthday);
+    }
+    if (address) {
+      clientModifier.address = address;
+    }
+
+    if (phone) {
+      clientModifier.phone = phone;
+    }
+
+    if (email) {
+      clientModifier.email = email;
+    }
+
+    clientModifier.spouse = {
+      firstname: spousefirstname,
+      lastname: spouselastname,
+      address: spouseaddress,
+      email: spouseemail,
+      situation: spousesituation,
+      income: spouseincome,
+      industry: spouseindustry,
+      seniority: spouseseniority,
+      phone: spousephone
+    };
+    console.log(
+      "savePersonalSituationForSalesMandate -> clientModifier",
+      clientModifier,
+      project
+    );
+
+    const clientUpdate = await Client.updateOne(
+      { _id: project.clientId },
+      {
+        $set: clientModifier
+      }
+    ).exec();
+
+    await Project.updateOne(
+      { _id: projectId },
+      {
+        $set: {
+          "salesSheet.hasCreditOnSalesProperty": hascreditonsalesproperty,
+          status: "wait_project_validation"
+        }
+      }
+    ).exec();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
 export async function savePersonalSituation(req, res, next) {
   try {
     const {
@@ -1097,11 +1292,11 @@ export async function savePersonalSituation(req, res, next) {
       }
     ).exec();
 
-    const client = await Client.findById(project.clientId).lean();
+    // const client = await Client.findById(project.clientId).lean();
 
-    sendMessageToSlack({
-      message: `${client.displayName} à renseigné sa situation personnelle : ${process.env.APP_URL}/clients/${client._id}`
-    });
+    // sendMessageToSlack({
+    //   message: `${client.displayName} à renseigné sa situation personnelle : ${process.env.APP_URL}/clients/${client._id}`
+    // });
 
     return res.json({ success: true });
   } catch (e) {

@@ -1,5 +1,14 @@
 import mongoose, { Types } from "mongoose";
 
+const ClientAvailability = new mongoose.Schema({
+  day: {
+    type: String
+  },
+  slotNum: {
+    type: Number
+  }
+});
+
 const citiesList = [
   "Saint-Pierre",
   "Le Tampon",
@@ -35,6 +44,51 @@ export const projectTypes = ["management", "sales", "search", "coaching"];
 const DocSubset = new mongoose.Schema({
   name: String,
   url: String
+});
+
+const SalesSheet = new mongoose.Schema({
+  hasCreditOnSalesProperty: {
+    type: String
+  },
+  propertyType: {
+    type: String
+  },
+  propertySize: {
+    type: String
+  },
+  livingArea: {
+    type: Number
+  },
+  landArea: {
+    type: Number
+  },
+  fullAddress: {
+    type: String
+  },
+  workEstimate: {
+    type: String
+  },
+  priceEstimate: {
+    type: String
+  },
+  workNeeded: {
+    type: String
+  },
+  reasonForTheSale: {
+    type: String
+  },
+  delay: {
+    type: String
+  },
+  readyToSign: {
+    type: String
+  },
+  nextAvailabilities: {
+    type: Array
+  },
+  "nextAvailabilities.$": {
+    type: ClientAvailability
+  }
 });
 
 const SearchSheet = new mongoose.Schema({
@@ -110,8 +164,6 @@ const SearchSheet = new mongoose.Schema({
     type: Number
   }
 });
-
-const SalesSheet = new mongoose.Schema({});
 
 const schema = new mongoose.Schema(
   {
