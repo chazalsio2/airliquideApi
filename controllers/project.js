@@ -6,6 +6,7 @@ import Client from "../models/Client";
 import Document from "../models/Document";
 import ProjectEvent from "../models/ProjectEvent";
 import _ from "underscore";
+import mongoose from "mongoose";
 import {
   sendProjectWaitingValidationEmail,
   sendAssignProjectNotification,
@@ -1089,7 +1090,7 @@ export async function savePersonalSituationForSalesMandate(req, res, next) {
 
     const { projectId } = req.params;
 
-    const project = await Project.find({
+    const project = await Project.findOne({
       _id: projectId,
       type: "sales"
     }).lean();
@@ -1097,8 +1098,6 @@ export async function savePersonalSituationForSalesMandate(req, res, next) {
     if (!project) {
       return next(generateError("Project not found", 404));
     }
-
-   
 
     const clientModifier = {};
 
@@ -1118,7 +1117,7 @@ export async function savePersonalSituationForSalesMandate(req, res, next) {
       clientModifier.creditamount = creditamount;
     }
     if (crd) {
-      clientModifier.crd = crd;
+      clientModifier.crd = Number(crd);
     }
 
     if (firstname) {
@@ -1155,23 +1154,28 @@ export async function savePersonalSituationForSalesMandate(req, res, next) {
       seniority: spouseseniority,
       phone: spousephone
     };
+    console.log(
+      "savePersonalSituationForSalesMandate -> clientModifier",
+      clientModifier,
+      project
+    );
 
-    await Client.updateOne(
+    const clientUpdate = await Client.updateOne(
       { _id: project.clientId },
       {
         $set: clientModifier
       }
     ).exec();
 
-     await Project.updateOne(
-       { _id: projectId },
-       {
-         $set: {
-           "salesSheet.hasCreditOnSalesProperty": hascreditonsalesproperty,
-           status: "wait_project_validation"
-         }
-       }
-     ).exec();
+    await Project.updateOne(
+      { _id: projectId },
+      {
+        $set: {
+          "salesSheet.hasCreditOnSalesProperty": hascreditonsalesproperty,
+          status: "wait_project_validation"
+        }
+      }
+    ).exec();
 
     return res.json({ success: true });
   } catch (e) {
