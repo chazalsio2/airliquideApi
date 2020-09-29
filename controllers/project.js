@@ -1061,6 +1061,124 @@ export async function cancelProject(req, res, next) {
   }
 }
 
+export async function savePersonalSituationForSalesMandate(req, res, next) {
+  try {
+    const {
+      industry,
+      principalResidence,
+      rentamount,
+      creditamount,
+      hascreditonsalesproperty,
+      crd,
+      firstname,
+      lastname,
+      birthday,
+      address,
+      phone,
+      email,
+      spousefirstname,
+      spouselastname,
+      spouseaddress,
+      spousephone,
+      spouseemail,
+      spousesituation,
+      spouseincome,
+      spouseindustry,
+      spouseseniority
+    } = req.body;
+
+    const { projectId } = req.params;
+
+    const project = await Project.find({
+      _id: projectId,
+      type: "sales"
+    }).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+   
+
+    const clientModifier = {};
+
+    if (industry) {
+      clientModifier.industry = industry;
+    }
+
+    if (principalResidence) {
+      clientModifier.principalResidence = principalResidence;
+    }
+
+    if (rentamount) {
+      clientModifier.rentamount = rentamount;
+    }
+
+    if (creditamount) {
+      clientModifier.creditamount = creditamount;
+    }
+    if (crd) {
+      clientModifier.crd = crd;
+    }
+
+    if (firstname) {
+      clientModifier.firstname = firstname;
+    }
+
+    if (lastname) {
+      clientModifier.lastname = lastname;
+    }
+
+    if (birthday) {
+      clientModifier.birthday = moment(birthday);
+    }
+    if (address) {
+      clientModifier.address = address;
+    }
+
+    if (phone) {
+      clientModifier.phone = phone;
+    }
+
+    if (email) {
+      clientModifier.email = email;
+    }
+
+    clientModifier.spouse = {
+      firstname: spousefirstname,
+      lastname: spouselastname,
+      address: spouseaddress,
+      email: spouseemail,
+      situation: spousesituation,
+      income: spouseincome,
+      industry: spouseindustry,
+      seniority: spouseseniority,
+      phone: spousephone
+    };
+
+    await Client.updateOne(
+      { _id: project.clientId },
+      {
+        $set: clientModifier
+      }
+    ).exec();
+
+     await Project.updateOne(
+       { _id: projectId },
+       {
+         $set: {
+           "salesSheet.hasCreditOnSalesProperty": hascreditonsalesproperty,
+           status: "wait_project_validation"
+         }
+       }
+     ).exec();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
 export async function savePersonalSituation(req, res, next) {
   try {
     const {
@@ -1166,11 +1284,11 @@ export async function savePersonalSituation(req, res, next) {
       }
     ).exec();
 
-    const client = await Client.findById(project.clientId).lean();
+    // const client = await Client.findById(project.clientId).lean();
 
-    sendMessageToSlack({
-      message: `${client.displayName} à renseigné sa situation personnelle : ${process.env.APP_URL}/clients/${client._id}`
-    });
+    // sendMessageToSlack({
+    //   message: `${client.displayName} à renseigné sa situation personnelle : ${process.env.APP_URL}/clients/${client._id}`
+    // });
 
     return res.json({ success: true });
   } catch (e) {

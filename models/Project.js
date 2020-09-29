@@ -47,6 +47,9 @@ const DocSubset = new mongoose.Schema({
 });
 
 const SalesSheet = new mongoose.Schema({
+  hasCreditOnSalesProperty: {
+    type: String
+  },
   propertyType: {
     type: String
   },

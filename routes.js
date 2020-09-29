@@ -72,7 +72,8 @@ import {
   getMyProjects,
   editNote,
   sendCompletedProjectEmail,
-  saveSalesSheet
+  saveSalesSheet,
+  savePersonalSituationForSalesMandate
 } from "./controllers/project";
 import {
   createProperty,
@@ -148,6 +149,11 @@ export default (app) => {
   app.post(
     "/projects/:projectId/personal-situation",
     savePersonalSituation,
+    errorHandle
+  );
+  app.post(
+    "/projects/:projectId/personal-situation-for-sales-mandate",
+    savePersonalSituationForSalesMandate,
     errorHandle
   );
 
