@@ -121,8 +121,7 @@ export async function createClient(req, res, next) {
       return res.json({
         success: true,
         data: {
-          projectId: project._id,
-          completed: false
+          projectId: project._id
         }
       });
     }
