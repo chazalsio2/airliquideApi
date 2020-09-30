@@ -166,6 +166,7 @@ export async function addProject(req, res, next) {
 
 export async function editClient(req, res, next) {
   try {
+    const modifier = req.body;
     const {
       birthday,
       email,
@@ -173,19 +174,19 @@ export async function editClient(req, res, next) {
       updatedAt,
       projects,
       referral
-    } = req.body;
+    } = modifier;
     if (email || createdAt || updatedAt || projects || referral) {
       return next(generateError("Cannot update some fields", 403));
     }
 
     if (birthday) {
-      req.body.birthday = moment(birthday, "DD/MM/YYYY");
+      modifier.birthday = moment(birthday, "YYYY-MM-DD");
     }
     const { clientId } = req.params;
     const opts = { runValidators: true };
     const client = await Client.updateOne(
       { _id: clientId },
-      { $set: req.body },
+      { $set: modifier },
       opts
     ).exec();
 
