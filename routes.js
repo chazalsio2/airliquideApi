@@ -73,7 +73,8 @@ import {
   editNote,
   sendCompletedProjectEmail,
   saveSalesSheet,
-  savePersonalSituationForSalesMandate, editSearchProject
+  savePersonalSituationForSalesMandate,
+  editSearchProject
 } from "./controllers/project";
 import {
   createProperty,
@@ -173,6 +174,14 @@ export default (app) => {
     errorHandle
   );
 
+  app.post(
+    "/projects/:projectId/send-email",
+    passport.authenticate("jwt", { session: false }),
+    checkAccountDesactivated,
+    sendCompletedProjectEmail,
+    errorHandle
+  );
+
   app.get(
     "/contacts",
     passport.authenticate("jwt", { session: false }),
@@ -261,15 +270,6 @@ export default (app) => {
     checkAdmin,
     checkAccountDesactivated,
     addFolder,
-    errorHandle
-  );
-
-  app.post(
-    "/projects/:projectId/send-email",
-    passport.authenticate("jwt", { session: false }),
-    checkAdmin,
-    checkAccountDesactivated,
-    sendCompletedProjectEmail,
     errorHandle
   );
 

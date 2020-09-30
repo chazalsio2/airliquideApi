@@ -517,6 +517,13 @@ export async function sendCompletedProjectEmail(req, res, next) {
       throw new Error("Wrong arguments", 403);
     }
 
+    const isAuthorized =
+      isAdmin(req.user) || project.commercialId === req.user._id;
+
+    if (!isAuthorized) {
+      throw new Error("Not authorized");
+    }
+  
     const client = await Client.findById(project.clientId).lean();
 
     if (!client) {
