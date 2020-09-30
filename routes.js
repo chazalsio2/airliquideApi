@@ -73,7 +73,7 @@ import {
   editNote,
   sendCompletedProjectEmail,
   saveSalesSheet,
-  savePersonalSituationForSalesMandate
+  savePersonalSituationForSalesMandate, editSearchProject
 } from "./controllers/project";
 import {
   createProperty,
@@ -625,6 +625,15 @@ export default (app) => {
     checkAdmin,
     checkAccountDesactivated,
     editClient,
+    errorHandle
+  );
+
+  app.put(
+    "/projects/:projectId/search-sheet",
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    editSearchProject,
     errorHandle
   );
 

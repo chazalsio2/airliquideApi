@@ -957,11 +957,69 @@ export async function saveSearchSheet(req, res, next) {
       }
     ).exec();
 
-    const client = await Client.findById(project.clientId).lean();
+    // const client = await Client.findById(project.clientId).lean();
 
-    sendMessageToSlack({
-      message: `${client.displayName} à compléter sa fiche de recherche : ${process.env.APP_URL}/clients/${client._id}`
-    });
+    // sendMessageToSlack({
+    //   message: `${client.displayName} à compléter sa fiche de recherche : ${process.env.APP_URL}/clients/${client._id}`
+    // });
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+export async function editSearchProject(req, res, next) {
+  try {
+    const {
+      propertyType,
+      investmentType,
+      otherInvestmentType,
+      propertySize,
+      propertySizeDetail,
+      propertyArea,
+      land,
+      landArea,
+      additionalInfos,
+      searchSector,
+      searchSectorCities,
+      swimmingpool,
+      varangue,
+      delay,
+      budget
+    } = req.body;
+
+    const { projectId } = req.params;
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    await Project.updateOne(
+      { _id: projectId },
+      {
+        $set: {
+          searchSheet: {
+            investmentType:
+              investmentType === "other" ? otherInvestmentType : investmentType,
+            propertySize,
+            propertyType,
+            additionalInfos,
+            propertySizeDetail,
+            propertyArea,
+            land,
+            landArea,
+            searchSector,
+            swimmingpool,
+            varangue,
+            delay,
+            budget,
+            searchSectorCities: searchSectorCities || []
+          }
+        }
+      }
+    ).exec();
 
     return res.json({ success: true });
   } catch (e) {
