@@ -1228,10 +1228,6 @@ export async function savePersonalSituation(req, res, next) {
 
     const projectModifier = { investAlone: investalone };
 
-    if (desiredgrossyield) {
-      projectModifier.desiredGrossYield = desiredgrossyield;
-    }
-
     await Project.updateOne(
       { _id: projectId },
       { $set: projectModifier }
@@ -1246,7 +1242,6 @@ export async function savePersonalSituation(req, res, next) {
       savings,
       loans,
       crd,
-      desiredGrossYield: desiredgrossyield,
       typesOfIncome: typeofincome,
       othersTypesOfIncome: othertypeofincome,
       typesOfRentalIncome: typeofrentalincome,

@@ -173,15 +173,78 @@ export async function editClient(req, res, next) {
       createdAt,
       updatedAt,
       projects,
-      referral
+      referral,
+      typeofincome,
+      othertypeofincome,
+      typeofrentalincome,
+      othertypeofrentalincome,
+      principalresidence,
+      rentamount,
+      creditamount,
+      personalincome,
+      personalindustry,
+      personalseniority,
+      personalsituation,
+      personalstatus
     } = modifier;
+
     if (email || createdAt || updatedAt || projects || referral) {
       return next(generateError("Cannot update some fields", 403));
     }
 
     if (birthday) {
-      modifier.birthday = moment(birthday, "YYYY-MM-DD");
+      modifier.birthday = moment(birthday).toDate();
     }
+
+    if (typeofincome) {
+      modifier.typesOfIncome = typeofincome;
+      delete modifier.typeofincome;
+    }
+    if (othertypeofincome) {
+      modifier.othersTypesOfIncome = othertypeofincome;
+      delete modifier.othertypeofincome;
+    }
+    if (typeofrentalincome) {
+      modifier.typesOfRentalIncome = typeofrentalincome;
+      delete modifier.typeofrentalincome;
+    }
+    if (othertypeofrentalincome) {
+      modifier.othersTypesOfRentalIncome = othertypeofrentalincome;
+      delete modifier.othertypeofrentalincome;
+    }
+    if (principalresidence) {
+      modifier.principalResidence = principalresidence;
+      delete modifier.principalresidence;
+    }
+    if (rentamount) {
+      modifier.rentAmount = rentamount;
+      delete modifier.rentamount;
+    }
+    if (creditamount) {
+      modifier.creditAmount = creditamount;
+      delete modifier.creditamount;
+    }
+    if (personalincome) {
+      modifier.income = personalincome;
+      delete modifier.personalincome;
+    }
+    if (personalindustry) {
+      modifier.industry = personalindustry;
+      delete modifier.personalindustry;
+    }
+    if (personalseniority) {
+      modifier.seniority = personalseniority;
+      delete modifier.personalseniority;
+    }
+    if (personalsituation) {
+      modifier.situation = personalsituation;
+      delete modifier.personalsituation;
+    }
+    if (personalstatus) {
+      modifier.status = personalstatus;
+      delete modifier.personalstatus;
+    }
+
     const { clientId } = req.params;
     const opts = { runValidators: true };
     const client = await Client.updateOne(
