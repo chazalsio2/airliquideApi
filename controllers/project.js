@@ -201,11 +201,83 @@ export async function refuseMandate(req, res, next) {
   }
 }
 
+export async function editSalesSheet(req, res, next) {
+  try {
+    const { projectId } = req.params;
+
+    const project = await Project.findOne({
+      type: "sales",
+      _id: projectId
+    }).lean();
+
+    if (!project) {
+      throw new Error("Project not found");
+    }
+
+    const {
+      propertyType,
+      propertySize,
+      livingArea,
+      landArea,
+      workNeeded,
+      reasonForTheSale,
+      delay,
+      readyToSign,
+      workEstimate,
+      priceEstimate,
+      fullAddress
+    } = req.body;
+
+    if (
+      !propertyType ||
+      !propertySize ||
+      !livingArea ||
+      !landArea ||
+      !workNeeded ||
+      !reasonForTheSale ||
+      !delay ||
+      !readyToSign ||
+      !workEstimate ||
+      !priceEstimate ||
+      !fullAddress
+    ) {
+      throw new Error("Missing fields");
+    }
+
+    const newSalesSheet = _.defaults(project.salesSheet, {
+      propertyType,
+      propertySize,
+      livingArea,
+      landArea,
+      workNeeded,
+      reasonForTheSale,
+      delay,
+      readyToSign,
+      priceEstimate,
+      workEstimate,
+      fullAddress
+    });
+
+    await Project.updateOne(
+      { _id: projectId },
+      {
+        $set: {
+          salesSheet: newSalesSheet
+        }
+      }
+    ).exec();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
 export async function saveSalesSheet(req, res, next) {
   try {
     const { projectId } = req.params;
 
-    const project = await Project.find({
+    const project = await Project.findOne({
       type: "sales",
       _id: projectId
     }).lean();
@@ -523,7 +595,7 @@ export async function sendCompletedProjectEmail(req, res, next) {
     if (!isAuthorized) {
       throw new Error("Not authorized");
     }
-  
+
     const client = await Client.findById(project.clientId).lean();
 
     if (!client) {

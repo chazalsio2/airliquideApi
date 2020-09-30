@@ -74,7 +74,8 @@ import {
   sendCompletedProjectEmail,
   saveSalesSheet,
   savePersonalSituationForSalesMandate,
-  editSearchProject
+  editSearchProject,
+  editSalesSheet
 } from "./controllers/project";
 import {
   createProperty,
@@ -634,6 +635,15 @@ export default (app) => {
     checkAdmin,
     checkAccountDesactivated,
     editSearchProject,
+    errorHandle
+  );
+
+  app.put(
+    "/projects/:projectId/sales-sheet",
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    editSalesSheet,
     errorHandle
   );
 
