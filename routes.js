@@ -90,7 +90,8 @@ import {
 import {
   getFolders,
   addFolder,
-  addDocumentInFolder
+  addDocumentInFolder,
+  removeFolder
 } from "./controllers/folder";
 import { getUser, getCommercials } from "./controllers/user";
 import {
@@ -271,6 +272,15 @@ export default (app) => {
     checkAdmin,
     checkAccountDesactivated,
     addFolder,
+    errorHandle
+  );
+
+  app.delete(
+    "/folders/:folderId",
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    removeFolder,
     errorHandle
   );
 

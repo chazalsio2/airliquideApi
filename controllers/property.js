@@ -183,7 +183,6 @@ export async function createProperty(req, res, next) {
 
     return res.json({ success: true, data: property });
   } catch (e) {
-    console.log("createProperty -> e", e);
     next(generateError(e.message));
   }
 }

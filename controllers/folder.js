@@ -3,7 +3,21 @@ import _ from "underscore";
 import { generateError } from "../lib/utils";
 import Folder from "../models/Folder";
 import Document from "../models/Document";
-import { uploadFile } from "../lib/aws";
+import { deleteFile, uploadFile } from "../lib/aws";
+
+const removeDocument = async (documentId) => {
+  try {
+    const document = await Document.findOne(documentId).lean();
+    if (!document) return null;
+    await Document.deleteOne({ _id: documentId }).exec();
+    await deleteFile(
+      `folder__${document.folderId}/${documentId}_${document.name}`
+    );
+    return null;
+  } catch (e) {
+    console.error(e);
+  }
+};
 
 export async function getFolders(req, res, next) {
   try {
@@ -12,7 +26,7 @@ export async function getFolders(req, res, next) {
     const selector = isAdmin
       ? {}
       : {
-          allowedRoles: { $in: currentRoles },
+          allowedRoles: { $in: currentRoles }
         };
     const folders = await Folder.find(selector).lean();
 
@@ -35,7 +49,7 @@ export async function addFolder(req, res, next) {
       "commercial_agent",
       "client_search_mandate",
       "client_sales_mandate",
-      "client_management_mandate",
+      "client_management_mandate"
     ];
 
     if (!_.every(roles, (role) => allowedRoles.indexOf(role) !== -1)) {
@@ -43,6 +57,66 @@ export async function addFolder(req, res, next) {
     }
 
     await new Folder({ name, allowedRoles: roles }).save();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+export async function removeFolder(req, res, next) {
+  try {
+    const { folderId } = req.params;
+
+    if (!folderId) {
+      return next(generateError("Invalid request", 403));
+    }
+
+    const folder = await Folder.findById(folderId).lean();
+
+    if (!folder) {
+      return next(generateError("Folder not found", 404));
+    }
+
+    await Folder.deleteOne({ _id: folderId }).exec();
+
+    const documents = await Document.find({ folderId }).lean();
+
+    await Promise.all(
+      documents.map(async (document) => await removeDocument(document._id))
+    );
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+// no used
+export async function removeDocumentInFolder(req, res, next) {
+  try {
+    const { documentId } = req.body;
+    const { folderId } = req.params;
+
+    if (!documentId || !folderId) {
+      return next(generateError("Invalid request", 403));
+    }
+
+    const folder = await Folder.findById(folderId).lean();
+
+    if (!folder) {
+      return next(generateError("Folder not found", 404));
+    }
+
+    const document = await Document.findOne({
+      _id: documentId,
+      folderId
+    }).lean();
+
+    if (!document) {
+      return next(generateError("Document not found", 404));
+    }
+
+    await removeDocument(documentId);
 
     return res.json({ success: true });
   } catch (e) {
@@ -69,7 +143,7 @@ export async function addDocumentInFolder(req, res, next) {
       name: fileName,
       authorUserId: req.user._id,
       folderId,
-      contentType,
+      contentType
     }).save();
 
     const location = await uploadFile(
