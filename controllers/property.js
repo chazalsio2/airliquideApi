@@ -27,7 +27,7 @@ export async function editProperty(req, res, next) {
 
     const { propertyId } = req.params;
 
-    if (!description || !type || !salesPrice || !landArea || !livingArea) {
+    if (!description || !type || !salesPrice) {
       return next(generateError("Invalid request", 401));
     }
 
