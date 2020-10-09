@@ -1065,6 +1065,8 @@ export async function editSearchProject(req, res, next) {
       swimmingpool,
       varangue,
       delay,
+      investalone,
+      desiredgrossyield,
       budget
     } = req.body;
 
@@ -1075,28 +1077,38 @@ export async function editSearchProject(req, res, next) {
       return next(generateError("Project not found", 404));
     }
 
+    const modifier = {
+      searchSheet: {
+        investmentType:
+          investmentType === "other" ? otherInvestmentType : investmentType,
+        propertySize,
+        propertyType,
+        additionalInfos,
+        propertySizeDetail,
+        propertyArea,
+        land,
+        landArea,
+        searchSector,
+        swimmingpool,
+        varangue,
+        delay,
+        budget,
+        searchSectorCities: searchSectorCities || []
+      }
+    };
+
+    if (!_.isUndefined(investalone)) {
+      modifier.investAlone = investalone;
+    }
+
+    if (desiredgrossyield) {
+      modifier.desiredGrossYield = desiredgrossyield;
+    }
+
     await Project.updateOne(
       { _id: projectId },
       {
-        $set: {
-          searchSheet: {
-            investmentType:
-              investmentType === "other" ? otherInvestmentType : investmentType,
-            propertySize,
-            propertyType,
-            additionalInfos,
-            propertySizeDetail,
-            propertyArea,
-            land,
-            landArea,
-            searchSector,
-            swimmingpool,
-            varangue,
-            delay,
-            budget,
-            searchSectorCities: searchSectorCities || []
-          }
-        }
+        $set: modifier
       }
     ).exec();
 

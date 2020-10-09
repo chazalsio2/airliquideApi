@@ -188,6 +188,32 @@ export async function editClient(req, res, next) {
       personalstatus
     } = modifier;
 
+    const {
+      spousefirstname,
+      spouseaddress,
+      spouseemail,
+      spouseincome,
+      spouseindustry,
+      spouselastname,
+      spousephone,
+      spouseseniority,
+      spousesituation
+    } = req.body;
+
+    if (spousefirstname) {
+      modifier.spouse = {
+        firstname: spousefirstname,
+        lastname: spouselastname,
+        email: spouseemail,
+        income: spouseincome,
+        industry: spouseindustry,
+        phone: spousephone,
+        address: spouseaddress,
+        seniority: spouseseniority,
+        situation: spousesituation
+      };
+    }
+
     if (email || createdAt || updatedAt || projects || referral) {
       return next(generateError("Cannot update some fields", 403));
     }

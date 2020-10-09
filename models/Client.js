@@ -46,7 +46,7 @@ const SpouseSchema = new mongoose.Schema({
   },
   situation: {
     type: String,
-    enum: allowedSituationValues
+    enum: allowedStatusValues
   },
   income: {
     type: String
