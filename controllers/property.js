@@ -205,7 +205,7 @@ export async function getProperties(req, res, next) {
   const pageCount = Math.ceil(propertiesCount / LIMIT_BY_PAGE);
 
   try {
-    const properties = await Property.find(selector, null, {
+    const properties = await Property.find(selector, "photos name ref description city", {
       sort: { createdAt: -1 },
       skip: (pageNumber - 1) * LIMIT_BY_PAGE,
       limit: LIMIT_BY_PAGE
@@ -238,6 +238,11 @@ export async function getProperty(req, res, next) {
     if (!property) {
       return next(generateError("Property not found", 404));
     }
+
+    if (!isAdminOrCommercial(req.user)) {
+      delete property.address;
+    }
+
     return res.json({ success: true, data: property });
   } catch (e) {
     next(generateError(e.message));
