@@ -52,6 +52,10 @@ export async function editProperty(req, res, next) {
       propertyData.varangueArea = varangueArea;
     }
 
+    if (city) {
+      propertyData.city = city;
+    }
+
     const property = await Property.updateOne(
       { _id: propertyId },
       { $set: propertyData }
@@ -205,11 +209,15 @@ export async function getProperties(req, res, next) {
   const pageCount = Math.ceil(propertiesCount / LIMIT_BY_PAGE);
 
   try {
-    const properties = await Property.find(selector, "photos name ref description city", {
-      sort: { createdAt: -1 },
-      skip: (pageNumber - 1) * LIMIT_BY_PAGE,
-      limit: LIMIT_BY_PAGE
-    }).lean();
+    const properties = await Property.find(
+      selector,
+      "photos name ref description city",
+      {
+        sort: { createdAt: -1 },
+        skip: (pageNumber - 1) * LIMIT_BY_PAGE,
+        limit: LIMIT_BY_PAGE
+      }
+    ).lean();
     return res.json({
       success: true,
       data: { properties, pageCount, total: propertiesCount }
