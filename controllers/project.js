@@ -244,19 +244,22 @@ export async function editSalesSheet(req, res, next) {
       throw new Error("Missing fields");
     }
 
-    const newSalesSheet = _.defaults(project.salesSheet, {
-      propertyType,
-      propertySize,
-      livingArea,
-      landArea,
-      workNeeded,
-      reasonForTheSale,
-      delay,
-      readyToSign,
-      priceEstimate,
-      workEstimate,
-      fullAddress
-    });
+    const newSalesSheet = _.defaults(
+      {
+        propertyType,
+        propertySize,
+        livingArea,
+        landArea,
+        workNeeded,
+        reasonForTheSale,
+        delay,
+        readyToSign,
+        priceEstimate,
+        workEstimate,
+        fullAddress
+      },
+      project.salesSheet
+  );
 
     await Project.updateOne(
       { _id: projectId },
