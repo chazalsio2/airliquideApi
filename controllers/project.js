@@ -24,7 +24,8 @@ import {
   sendSalesMandateSigned,
   sendSalesAgreementAcceptedForSalesProject,
   sendPurchaseOfferAcceptedForSalesProject,
-  sendLoanOfferAcceptedForSalesProject
+  sendLoanOfferAcceptedForSalesProject,
+  sendDeedAcceptedForSalesProject
 } from "../lib/email";
 import { uploadFile } from "../lib/aws";
 import { sendMessageToSlack } from "../lib/slack";
@@ -850,6 +851,11 @@ export async function acceptDeed(req, res, next) {
       type: "project_completed",
       authorUserId: userId
     }).save();
+
+    const client = await Client.findById(project.clientId).lean();
+    if (project.type === 'sales') {
+      sendDeedAcceptedForSalesProject(client)
+    }
 
     return res.json({ success: true });
   } catch (e) {
