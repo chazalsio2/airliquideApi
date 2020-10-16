@@ -23,7 +23,8 @@ import {
   sendProductionConfirmation,
   sendSalesMandateSigned,
   sendSalesAgreementAcceptedForSalesProject,
-  sendPurchaseOfferAcceptedForSalesProject
+  sendPurchaseOfferAcceptedForSalesProject,
+  sendLoanOfferAcceptedForSalesProject
 } from "../lib/email";
 import { uploadFile } from "../lib/aws";
 import { sendMessageToSlack } from "../lib/slack";
@@ -565,7 +566,11 @@ export async function acceptLoanOffer(req, res, next) {
 
     const client = await Client.findById(project.clientId).lean();
 
-    sendAcceptLoanOfferConfirmation(client);
+    if (project.type === "sales") {
+      sendLoanOfferAcceptedForSalesProject(client);
+    } else {
+      sendAcceptLoanOfferConfirmation(client);
+    }
 
     return res.json({ success: true });
   } catch (e) {
