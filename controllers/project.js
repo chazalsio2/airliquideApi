@@ -20,7 +20,9 @@ import {
   sendAcceptSalesDeedConfirmation,
   sendMandateSignatureConfirmation,
   sendWelcomeEmail,
-  sendProductionConfirmation
+  sendProductionConfirmation,
+  sendSalesMandateSigned,
+  sendPurchaseOfferAcceptedForSalesProject
 } from "../lib/email";
 import { uploadFile } from "../lib/aws";
 import { sendMessageToSlack } from "../lib/slack";
@@ -665,7 +667,13 @@ export async function acceptMandate(req, res, next) {
       authorUserId: userId
     }).save();
 
-    sendMandateSignatureConfirmation(client);
+    if (project.type === 'sales') {
+      sendMandateSignedForSalesProject(client)
+    } else {
+      sendMandateSignatureConfirmation(client);
+
+    }
+
 
     const alreadyUser = await User.findOne({
       clientId: client._id
@@ -741,7 +749,12 @@ export async function acceptPurchaseOffer(req, res, next) {
 
     const client = await Client.findOne({ _id: project.clientId }).lean();
 
-    sendAcceptPurchaseOfferConfirmation(client);
+    if (project.type === 'sales') {
+      sendPurchaseOfferAcceptedForSalesProject(client)
+    } else {
+      sendAcceptPurchaseOfferConfirmation(client);
+    }
+
 
     return res.json({ success: true });
   } catch (e) {
