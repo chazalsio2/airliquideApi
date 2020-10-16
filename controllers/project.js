@@ -22,6 +22,7 @@ import {
   sendWelcomeEmail,
   sendProductionConfirmation,
   sendSalesMandateSigned,
+  sendSalesAgreementAcceptedForSalesProject,
   sendPurchaseOfferAcceptedForSalesProject
 } from "../lib/email";
 import { uploadFile } from "../lib/aws";
@@ -261,7 +262,7 @@ export async function editSalesSheet(req, res, next) {
         fullAddress
       },
       project.salesSheet
-  );
+    );
 
     await Project.updateOne(
       { _id: projectId },
@@ -667,13 +668,11 @@ export async function acceptMandate(req, res, next) {
       authorUserId: userId
     }).save();
 
-    if (project.type === 'sales') {
-      sendMandateSignedForSalesProject(client)
+    if (project.type === "sales") {
+      sendMandateSignedForSalesProject(client);
     } else {
       sendMandateSignatureConfirmation(client);
-
     }
-
 
     const alreadyUser = await User.findOne({
       clientId: client._id
@@ -749,12 +748,11 @@ export async function acceptPurchaseOffer(req, res, next) {
 
     const client = await Client.findOne({ _id: project.clientId }).lean();
 
-    if (project.type === 'sales') {
-      sendPurchaseOfferAcceptedForSalesProject(client)
+    if (project.type === "sales") {
+      sendPurchaseOfferAcceptedForSalesProject(client);
     } else {
       sendAcceptPurchaseOfferConfirmation(client);
     }
-
 
     return res.json({ success: true });
   } catch (e) {
@@ -801,7 +799,12 @@ export async function acceptAgreement(req, res, next) {
     }).save();
 
     const client = await Client.findById(project.clientId).lean();
-    sendAcceptSalesAgreementConfirmation(client);
+
+    if (project.type === "sales") {
+      sendSalesAgreementAcceptedForSalesProject(client);
+    } else {
+      sendAcceptSalesAgreementConfirmation(client);
+    }
 
     return res.json({ success: true });
   } catch (e) {
