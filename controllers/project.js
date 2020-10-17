@@ -20,6 +20,7 @@ import {
   sendAcceptSalesDeedConfirmation,
   sendMandateSignatureConfirmation,
   sendWelcomeEmail,
+  sendMandateSignedForSalesProject,
   sendProductionConfirmation,
   sendSalesMandateSigned,
   sendSalesAgreementAcceptedForSalesProject,
@@ -242,27 +243,29 @@ export async function editSalesSheet(req, res, next) {
       !delay ||
       !readyToSign ||
       !workEstimate ||
-      !priceEstimate ||
       !fullAddress
     ) {
       throw new Error("Missing fields");
     }
 
     const newSalesSheetEdited = {
-        propertyType,
-        propertySize,
-        livingArea,
-        landArea,
-        reasonForTheSale,
-        delay,
-        readyToSign,
-        priceEstimate,
-        workEstimate,
-        fullAddress
+      propertyType,
+      propertySize,
+      livingArea,
+      landArea,
+      reasonForTheSale,
+      delay,
+      readyToSign,
+      workEstimate,
+      fullAddress
+    };
+
+    if (priceEstimate) {
+      newSalesSheetEdited.priceEstimate = priceEstimate;
     }
-    
+
     if (workNeeded) {
-      newSalesSheetEdited.workNeeded = workNeeded
+      newSalesSheetEdited.workNeeded = workNeeded;
     }
 
     const newSalesSheet = _.defaults(newSalesSheetEdited, project.salesSheet);
@@ -318,7 +321,6 @@ export async function saveSalesSheet(req, res, next) {
       !delay ||
       !readyToSign ||
       !nextAvailabilities ||
-      !priceEstimate ||
       !fullAddress
     ) {
       throw new Error("Missing fields");
@@ -333,12 +335,15 @@ export async function saveSalesSheet(req, res, next) {
       delay,
       readyToSign,
       nextAvailabilities,
-      priceEstimate,
       fullAddress
     };
 
     if (workEstimate) {
       salesSheet.workEstimate = workEstimate;
+    }
+
+    if (priceEstimate) {
+      salesSheet.priceEstimate = priceEstimate;
     }
 
     if (reasonForTheSale) {
@@ -1210,7 +1215,11 @@ export async function confirmSearchMandate(req, res, next) {
     }).save();
 
     sendMessageToSlack({
-      message: `Le mandat de recherche pour le client ${client.displayName} est en attente de validation : ${process.env.APP_URL}/projects/${projectId}`
+      message: `Le mandat de ${
+        project.type === "search" ? "recherche" : "vente"
+      } pour le client ${client.displayName} est en attente de validation : ${
+        process.env.APP_URL
+      }/projects/${projectId}`
     });
 
     return res.json({ success: true });
@@ -1514,7 +1523,11 @@ export async function refuseProject(req, res, next) {
     const user = await User.findById(req.user._id).lean();
 
     sendMessageToSlack({
-      message: `Le mandat de recherche de ${client.displayName} a été refusé par ${user.displayName} : ${process.env.APP_URL}/projects/${project._id}`
+      message: `Le mandat de ${
+        project.type === "search" ? "recherche" : "vente"
+      } de ${client.displayName} a été refusé par ${user.displayName} : ${
+        process.env.APP_URL
+      }/projects/${project._id}`
     });
 
     return res.json({ success: true });
@@ -1553,7 +1566,11 @@ export async function acceptProject(req, res, next) {
     const user = await User.findById(req.user._id).lean();
 
     sendMessageToSlack({
-      message: `Le mandat de recherche de ${client.displayName} a été accepté par ${user.displayName} : ${process.env.APP_URL}/projects/${project._id}`
+      message: `Le mandat de ${
+        project.type === "search" ? "recherche" : "vente"
+      } de ${client.displayName} a été accepté par ${user.displayName} : ${
+        process.env.APP_URL
+      }/projects/${project._id}`
     });
 
     if (project.type === "search") {
