@@ -238,7 +238,6 @@ export async function editSalesSheet(req, res, next) {
       !propertySize ||
       !livingArea ||
       !landArea ||
-      !workNeeded ||
       !reasonForTheSale ||
       !delay ||
       !readyToSign ||
@@ -249,22 +248,24 @@ export async function editSalesSheet(req, res, next) {
       throw new Error("Missing fields");
     }
 
-    const newSalesSheet = _.defaults(
-      {
+    const newSalesSheetEdited = {
         propertyType,
         propertySize,
         livingArea,
         landArea,
-        workNeeded,
         reasonForTheSale,
         delay,
         readyToSign,
         priceEstimate,
         workEstimate,
         fullAddress
-      },
-      project.salesSheet
-    );
+    }
+    
+    if (workNeeded) {
+      newSalesSheetEdited.workNeeded = workNeeded
+    }
+
+    const newSalesSheet = _.defaults(newSalesSheetEdited, project.salesSheet);
 
     await Project.updateOne(
       { _id: projectId },
@@ -314,36 +315,45 @@ export async function saveSalesSheet(req, res, next) {
       !propertySize ||
       !livingArea ||
       !landArea ||
-      !workNeeded ||
-      !reasonForTheSale ||
       !delay ||
       !readyToSign ||
       !nextAvailabilities ||
-      !workEstimate ||
       !priceEstimate ||
       !fullAddress
     ) {
       throw new Error("Missing fields");
     }
 
+    const salesSheet = {
+      propertyType,
+      propertySize,
+      livingArea,
+      landArea,
+      workNeeded,
+      delay,
+      readyToSign,
+      nextAvailabilities,
+      priceEstimate,
+      fullAddress
+    };
+
+    if (workEstimate) {
+      salesSheet.workEstimate = workEstimate;
+    }
+
+    if (reasonForTheSale) {
+      salesSheet.reasonForTheSale = reasonForTheSale;
+    }
+
+    if (workNeeded) {
+      salesSheet.workNeeded = workNeeded;
+    }
+
     await Project.updateOne(
       { _id: projectId },
       {
         $set: {
-          salesSheet: {
-            propertyType,
-            propertySize,
-            livingArea,
-            landArea,
-            workNeeded,
-            reasonForTheSale,
-            delay,
-            readyToSign,
-            nextAvailabilities,
-            priceEstimate,
-            workEstimate,
-            fullAddress
-          }
+          salesSheet
         }
       }
     ).exec();
@@ -853,8 +863,8 @@ export async function acceptDeed(req, res, next) {
     }).save();
 
     const client = await Client.findById(project.clientId).lean();
-    if (project.type === 'sales') {
-      sendDeedAcceptedForSalesProject(client)
+    if (project.type === "sales") {
+      sendDeedAcceptedForSalesProject(client);
     }
 
     return res.json({ success: true });
