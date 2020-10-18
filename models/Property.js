@@ -103,6 +103,34 @@ const schema = new mongoose.Schema(
       type: String,
       required: false
     },
+    view: {
+      type: String,
+      required: false
+    },
+    sanitation: {
+      type: String,
+      required: false
+    },
+    doubleGlazing: {
+      type: String,
+      required: false
+    },
+    hotWater: {
+      type: String,
+      required: false
+    },
+    airConditioner: {
+      type: String,
+      required: false
+    },
+    equippedKitchen: {
+      type: String,
+      required: false
+    },
+    electricRollerShutters: {
+      type: String,
+      required: false
+    },
     room1Area: {
       type: Number,
       required: false

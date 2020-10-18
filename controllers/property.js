@@ -36,7 +36,14 @@ export async function editProperty(req, res, next) {
       secureEntrance,
       intercom,
       commercialName,
-      commercialPhoneNumber
+      commercialPhoneNumber,
+      view,
+      sanitation,
+      doubleGlazing,
+      electricRollerShutters,
+      hotWater,
+      airConditioner,
+      equippedKitchen
     } = req.body;
 
     const { propertyId } = req.params;
@@ -76,6 +83,33 @@ export async function editProperty(req, res, next) {
 
     if (swimmingPool) {
       propertyData.swimmingPool = swimmingPool;
+    }
+
+    if (view) {
+      propertyData.view = view;
+    }
+
+    if (sanitation) {
+      propertyData.sanitation = sanitation;
+    }
+
+    if (doubleGlazing) {
+      propertyData.doubleGlazing = doubleGlazing;
+    }
+    if (electricRollerShutters) {
+      propertyData.electricRollerShutters = electricRollerShutters;
+    }
+
+    if (hotWater) {
+      propertyData.hotWater = hotWater;
+    }
+
+    if (airConditioner) {
+      propertyData.airConditioner = airConditioner;
+    }
+
+    if (equippedKitchen) {
+      propertyData.equippedKitchen = equippedKitchen;
     }
 
     if (secureEntrance) {
@@ -216,7 +250,14 @@ export async function createProperty(req, res, next) {
       secureEntrance,
       intercom,
       commercialName,
-      commercialPhoneNumber
+      commercialPhoneNumber,
+      view,
+      sanitation,
+      doubleGlazing,
+      electricRollerShutters,
+      hotWater,
+      airConditioner,
+      equippedKitchen
     } = req.body;
 
     if (
@@ -246,6 +287,28 @@ export async function createProperty(req, res, next) {
       propertyData.yearOfConstruction = yearOfConstruction;
     }
 
+    if (view) {
+      propertyData.view = view;
+    }
+    if (sanitation) {
+      propertyData.sanitation = sanitation;
+    }
+    if (doubleGlazing) {
+      propertyData.doubleGlazing = doubleGlazing;
+    }
+    if (electricRollerShutters) {
+      propertyData.electricRollerShutters = electricRollerShutters;
+    }
+    if (hotWater) {
+      propertyData.hotWater = hotWater;
+    }
+    if (airConditioner) {
+      propertyData.airConditioner = airConditioner;
+    }
+    if (equippedKitchen) {
+      propertyData.equippedKitchen = equippedKitchen;
+    }
+
     if (virtualVisitLink) {
       propertyData.virtualVisitLink = virtualVisitLink;
     }
@@ -270,8 +333,6 @@ export async function createProperty(req, res, next) {
     if (intercom) {
       propertyData.intercom = intercom;
     }
-
-    // room1Area, room2Area, kitchenArea, bathroomArea, numberOfRooms;
 
     if (room1Area) {
       propertyData.room1Area = Number(room1Area);
@@ -397,7 +458,7 @@ export async function getProperty(req, res, next) {
 }
 
 const propertiesPublicFields =
-  "ref name description type yearOfConstruction landArea livingArea salesPrice varangueArea photos virtualVisitLink financialSheet coOwnershipCharge assurancePNO propertyTax accounting cga divers propertyPrice notaryFees works financialExpense equipment financialSheet numberOfRooms kitchenArea room1Area room2Area bathroomArea floor outdoorParking coveredParking swimmingPool secureEntrance intercom commercialName commercialPhoneNumber";
+  "ref name description type yearOfConstruction landArea livingArea salesPrice varangueArea photos virtualVisitLink financialSheet coOwnershipCharge assurancePNO propertyTax accounting cga divers propertyPrice notaryFees works financialExpense equipment financialSheet numberOfRooms kitchenArea room1Area room2Area bathroomArea floor outdoorParking coveredParking swimmingPool secureEntrance intercom commercialName commercialPhoneNumber sanitation hotWater doubleGlazing electricRollerShutters airConditioner view equippedKitchen";
 
 export async function getPublicProperties(req, res, next) {
   try {
