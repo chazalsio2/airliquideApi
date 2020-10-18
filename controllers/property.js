@@ -22,7 +22,8 @@ export async function editProperty(req, res, next) {
       varangueArea,
       type,
       virtualVisitLink,
-      salesMandate
+      salesMandate,
+      yearOfConstruction
     } = req.body;
 
     const { propertyId } = req.params;
@@ -42,6 +43,10 @@ export async function editProperty(req, res, next) {
 
     if (virtualVisitLink) {
       propertyData.virtualVisitLink = virtualVisitLink;
+    }
+
+    if (yearOfConstruction) {
+      propertyData.yearOfConstruction = yearOfConstruction;
     }
 
     if (address) {
@@ -131,6 +136,7 @@ export async function createProperty(req, res, next) {
       type,
       virtualVisitLink,
       salesMandate,
+      yearOfConstruction,
       city,
       address
     } = req.body;
@@ -157,6 +163,10 @@ export async function createProperty(req, res, next) {
       salesMandate,
       photos: results.map((r) => r.url)
     };
+
+    if (yearOfConstruction) {
+      propertyData.yearOfConstruction = yearOfConstruction;
+    }
 
     if (virtualVisitLink) {
       propertyData.virtualVisitLink = virtualVisitLink;
