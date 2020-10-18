@@ -43,7 +43,8 @@ export async function editProperty(req, res, next) {
       electricRollerShutters,
       hotWater,
       airConditioner,
-      equippedKitchen
+      equippedKitchen,
+      DPE
     } = req.body;
 
     const { propertyId } = req.params;
@@ -63,6 +64,9 @@ export async function editProperty(req, res, next) {
 
     if (floor) {
       propertyData.floor = floor;
+    }
+    if (DPE) {
+      propertyData.DPE = DPE === "Soumis";
     }
 
     if (outdoorParking) {
@@ -257,7 +261,8 @@ export async function createProperty(req, res, next) {
       electricRollerShutters,
       hotWater,
       airConditioner,
-      equippedKitchen
+      equippedKitchen,
+      DPE
     } = req.body;
 
     if (
@@ -289,6 +294,9 @@ export async function createProperty(req, res, next) {
 
     if (view) {
       propertyData.view = view;
+    }
+    if (DPE) {
+      propertyData.DPE = DPE === "Soumis";
     }
     if (sanitation) {
       propertyData.sanitation = sanitation;
@@ -458,7 +466,7 @@ export async function getProperty(req, res, next) {
 }
 
 const propertiesPublicFields =
-  "ref name description type yearOfConstruction landArea livingArea salesPrice varangueArea photos virtualVisitLink financialSheet coOwnershipCharge assurancePNO propertyTax accounting cga divers propertyPrice notaryFees works financialExpense equipment financialSheet numberOfRooms kitchenArea room1Area room2Area bathroomArea floor outdoorParking coveredParking swimmingPool secureEntrance intercom commercialName commercialPhoneNumber sanitation hotWater doubleGlazing electricRollerShutters airConditioner view equippedKitchen";
+  "ref name description type yearOfConstruction landArea livingArea salesPrice varangueArea photos virtualVisitLink financialSheet coOwnershipCharge assurancePNO propertyTax accounting cga divers propertyPrice notaryFees works financialExpense equipment financialSheet numberOfRooms kitchenArea room1Area room2Area bathroomArea floor outdoorParking coveredParking swimmingPool secureEntrance intercom commercialName commercialPhoneNumber sanitation hotWater doubleGlazing electricRollerShutters airConditioner view equippedKitchen DPE";
 
 export async function getPublicProperties(req, res, next) {
   try {
