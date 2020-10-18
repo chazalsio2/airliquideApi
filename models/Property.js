@@ -79,6 +79,50 @@ const schema = new mongoose.Schema(
       type: String,
       required: false
     },
+    floor: {
+      type: String,
+      required: false
+    },
+    outdoorParking: {
+      type: String,
+      required: false
+    },
+    coveredParking: {
+      type: String,
+      required: false
+    },
+    swimmingPool: {
+      type: String,
+      required: false
+    },
+    secureEntrance: {
+      type: String,
+      required: false
+    },
+    intercom: {
+      type: String,
+      required: false
+    },
+    room1Area: {
+      type: Number,
+      required: false
+    },
+    room2Area: {
+      type: Number,
+      required: false
+    },
+    kitchenArea: {
+      type: Number,
+      required: false
+    },
+    bathroomArea: {
+      type: Number,
+      required: false
+    },
+    numberOfRooms: {
+      type: Number,
+      required: false
+    },
     ref: {
       type: String,
       required: false

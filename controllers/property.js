@@ -23,7 +23,18 @@ export async function editProperty(req, res, next) {
       type,
       virtualVisitLink,
       salesMandate,
-      yearOfConstruction
+      yearOfConstruction,
+      room1Area,
+      room2Area,
+      kitchenArea,
+      bathroomArea,
+      numberOfRooms,
+      floor,
+      outdoorParking,
+      coveredParking,
+      swimmingPool,
+      secureEntrance,
+      intercom
     } = req.body;
 
     const { propertyId } = req.params;
@@ -40,6 +51,30 @@ export async function editProperty(req, res, next) {
       livingArea,
       salesMandate
     };
+
+    if (floor) {
+      propertyData.floor = floor;
+    }
+
+    if (outdoorParking) {
+      propertyData.outdoorParking = outdoorParking;
+    }
+
+    if (coveredParking) {
+      propertyData.coveredParking = coveredParking;
+    }
+
+    if (swimmingPool) {
+      propertyData.swimmingPool = swimmingPool;
+    }
+
+    if (secureEntrance) {
+      propertyData.secureEntrance = secureEntrance;
+    }
+
+    if (intercom) {
+      propertyData.intercom = intercom;
+    }
 
     if (virtualVisitLink) {
       propertyData.virtualVisitLink = virtualVisitLink;
@@ -59,6 +94,26 @@ export async function editProperty(req, res, next) {
 
     if (city) {
       propertyData.city = city;
+    }
+
+    if (room1Area) {
+      propertyData.room1Area = Number(room1Area);
+    }
+
+    if (room2Area) {
+      propertyData.room2Area = Number(room2Area);
+    }
+
+    if (kitchenArea) {
+      propertyData.kitchenArea = Number(kitchenArea);
+    }
+
+    if (bathroomArea) {
+      propertyData.bathroomArea = Number(bathroomArea);
+    }
+
+    if (numberOfRooms) {
+      propertyData.numberOfRooms = Number(numberOfRooms);
     }
 
     const property = await Property.updateOne(
@@ -138,7 +193,18 @@ export async function createProperty(req, res, next) {
       salesMandate,
       yearOfConstruction,
       city,
-      address
+      address,
+      room1Area,
+      room2Area,
+      kitchenArea,
+      bathroomArea,
+      numberOfRooms,
+      floor,
+      outdoorParking,
+      coveredParking,
+      swimmingPool,
+      secureEntrance,
+      intercom
     } = req.body;
 
     if (
@@ -170,6 +236,49 @@ export async function createProperty(req, res, next) {
 
     if (virtualVisitLink) {
       propertyData.virtualVisitLink = virtualVisitLink;
+    }
+
+    if (floor) {
+      propertyData.floor = floor;
+    }
+    if (outdoorParking) {
+      propertyData.outdoorParking = outdoorParking;
+    }
+    if (coveredParking) {
+      propertyData.coveredParking = coveredParking;
+    }
+    if (swimmingPool) {
+      propertyData.swimmingPool = swimmingPool;
+    }
+
+    if (secureEntrance) {
+      propertyData.secureEntrance = secureEntrance;
+    }
+
+    if (intercom) {
+      propertyData.intercom = intercom;
+    }
+
+    // room1Area, room2Area, kitchenArea, bathroomArea, numberOfRooms;
+
+    if (room1Area) {
+      propertyData.room1Area = Number(room1Area);
+    }
+
+    if (room2Area) {
+      propertyData.room2Area = Number(room2Area);
+    }
+
+    if (kitchenArea) {
+      propertyData.kitchenArea = Number(kitchenArea);
+    }
+
+    if (bathroomArea) {
+      propertyData.bathroomArea = Number(bathroomArea);
+    }
+
+    if (numberOfRooms) {
+      propertyData.numberOfRooms = Number(numberOfRooms);
     }
 
     if (address) {
@@ -268,7 +377,7 @@ export async function getProperty(req, res, next) {
 }
 
 const propertiesPublicFields =
-  "ref name description type yearOfConstruction landArea livingArea salesPrice varangueArea photos virtualVisitLink financialSheet coOwnershipCharge assurancePNO propertyTax accounting cga divers propertyPrice notaryFees works financialExpense equipment financialSheet";
+  "ref name description type yearOfConstruction landArea livingArea salesPrice varangueArea photos virtualVisitLink financialSheet coOwnershipCharge assurancePNO propertyTax accounting cga divers propertyPrice notaryFees works financialExpense equipment financialSheet numberOfRooms kitchenArea room1Area room2Area bathroomArea floor outdoorParking coveredParking swimmingPool secureEntrance intercom";
 
 export async function getPublicProperties(req, res, next) {
   try {
