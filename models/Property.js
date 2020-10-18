@@ -123,6 +123,18 @@ const schema = new mongoose.Schema(
       type: String,
       required: false
     },
+    numberOfCoOwnershipLots: {
+      type: Number,
+      required: false
+    },
+    procedureInProgress: {
+      type: Boolean,
+      required: false
+    },
+    rentalInProgress: {
+      type: Boolean,
+      required: false
+    },
     DPE: {
       type: Boolean,
       required: false

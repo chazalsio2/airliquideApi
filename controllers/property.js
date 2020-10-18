@@ -44,7 +44,10 @@ export async function editProperty(req, res, next) {
       hotWater,
       airConditioner,
       equippedKitchen,
-      DPE
+      DPE,
+      procedureInProgress,
+      rentalInProgress,
+      numberOfCoOwnershipLots
     } = req.body;
 
     const { propertyId } = req.params;
@@ -67,6 +70,17 @@ export async function editProperty(req, res, next) {
     }
     if (DPE) {
       propertyData.DPE = DPE === "Soumis";
+    }
+    if (numberOfCoOwnershipLots) {
+      propertyData.numberOfCoOwnershipLots = Number(numberOfCoOwnershipLots);
+    }
+
+    if (rentalInProgress) {
+      propertyData.rentalInProgress = rentalInProgress === "Oui";
+    }
+
+    if (procedureInProgress) {
+      propertyData.procedureInProgress = procedureInProgress === "Oui";
     }
 
     if (outdoorParking) {
@@ -262,7 +276,10 @@ export async function createProperty(req, res, next) {
       hotWater,
       airConditioner,
       equippedKitchen,
-      DPE
+      DPE,
+      numberOfCoOwnershipLots,
+      procedureInProgress,
+      rentalInProgress
     } = req.body;
 
     if (
@@ -312,6 +329,15 @@ export async function createProperty(req, res, next) {
     }
     if (airConditioner) {
       propertyData.airConditioner = airConditioner;
+    }
+    if (numberOfCoOwnershipLots) {
+      propertyData.numberOfCoOwnershipLots = Number(numberOfCoOwnershipLots);
+    }
+    if (procedureInProgress) {
+      propertyData.procedureInProgress = procedureInProgress === "Oui";
+    }
+    if (rentalInProgress) {
+      propertyData.rentalInProgress = rentalInProgress === "Oui";
     }
     if (equippedKitchen) {
       propertyData.equippedKitchen = equippedKitchen;
@@ -466,7 +492,7 @@ export async function getProperty(req, res, next) {
 }
 
 const propertiesPublicFields =
-  "ref name description type yearOfConstruction landArea livingArea salesPrice varangueArea photos virtualVisitLink financialSheet coOwnershipCharge assurancePNO propertyTax accounting cga divers propertyPrice notaryFees works financialExpense equipment financialSheet numberOfRooms kitchenArea room1Area room2Area bathroomArea floor outdoorParking coveredParking swimmingPool secureEntrance intercom commercialName commercialPhoneNumber sanitation hotWater doubleGlazing electricRollerShutters airConditioner view equippedKitchen DPE";
+  "ref name description type yearOfConstruction landArea livingArea salesPrice varangueArea photos virtualVisitLink financialSheet coOwnershipCharge assurancePNO propertyTax accounting cga divers propertyPrice notaryFees works financialExpense equipment financialSheet numberOfRooms kitchenArea room1Area room2Area bathroomArea floor outdoorParking coveredParking swimmingPool secureEntrance intercom commercialName commercialPhoneNumber sanitation hotWater doubleGlazing electricRollerShutters airConditioner view equippedKitchen DPE rentalInProgress procedureInProgress numberOfCoOwnershipLots";
 
 export async function getPublicProperties(req, res, next) {
   try {
