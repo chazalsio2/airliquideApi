@@ -1044,8 +1044,6 @@ export async function saveSearchSheet(req, res, next) {
       !investmentType ||
       !propertyArea ||
       !searchSector ||
-      !swimmingpool ||
-      !varangue ||
       !delay ||
       !budget
     ) {
@@ -1056,27 +1054,35 @@ export async function saveSearchSheet(req, res, next) {
       return next(generateError("Project not found", 404));
     }
 
+    const searchSheet = {
+      investmentType:
+        investmentType === "other" ? otherInvestmentType : investmentType,
+      propertySize,
+      propertyType,
+      additionalInfos,
+      propertySizeDetail,
+      propertyArea,
+      land,
+      landArea,
+      searchSector,
+      delay,
+      budget,
+      searchSectorCities: searchSectorCities || []
+    };
+
+    if (swimmingpool) {
+      searchSheet.swimmingpool = swimmingpool;
+    }
+
+    if (varangue) {
+      searchSheet.varangue = varangue;
+    }
+
     await Project.updateOne(
       { _id: projectId },
       {
         $set: {
-          searchSheet: {
-            investmentType:
-              investmentType === "other" ? otherInvestmentType : investmentType,
-            propertySize,
-            propertyType,
-            additionalInfos,
-            propertySizeDetail,
-            propertyArea,
-            land,
-            landArea,
-            searchSector,
-            swimmingpool,
-            varangue,
-            delay,
-            budget,
-            searchSectorCities: searchSectorCities || []
-          }
+          searchSheet
         }
       }
     ).exec();
@@ -1134,8 +1140,6 @@ export async function editSearchProject(req, res, next) {
         land,
         landArea,
         searchSector,
-        swimmingpool,
-        varangue,
         delay,
         budget,
         searchSectorCities: searchSectorCities || []
@@ -1148,6 +1152,14 @@ export async function editSearchProject(req, res, next) {
 
     if (desiredgrossyield) {
       modifier.desiredGrossYield = desiredgrossyield;
+    }
+
+    if (varangue) {
+      modifier.varangue = varangue;
+    }
+
+    if (swimmingpool) {
+      modifier.swimmingpool = swimmingpool;
     }
 
     await Project.updateOne(
