@@ -34,7 +34,9 @@ export async function editProperty(req, res, next) {
       coveredParking,
       swimmingPool,
       secureEntrance,
-      intercom
+      intercom,
+      commercialName,
+      commercialPhoneNumber
     } = req.body;
 
     const { propertyId } = req.params;
@@ -58,6 +60,14 @@ export async function editProperty(req, res, next) {
 
     if (outdoorParking) {
       propertyData.outdoorParking = outdoorParking;
+    }
+
+    if (commercialName) {
+      propertyData.commercialName = commercialName;
+    }
+
+    if (commercialPhoneNumber) {
+      propertyData.commercialPhoneNumber = commercialPhoneNumber;
     }
 
     if (coveredParking) {
@@ -204,7 +214,9 @@ export async function createProperty(req, res, next) {
       coveredParking,
       swimmingPool,
       secureEntrance,
-      intercom
+      intercom,
+      commercialName,
+      commercialPhoneNumber
     } = req.body;
 
     if (
@@ -292,6 +304,14 @@ export async function createProperty(req, res, next) {
       propertyData.varangueArea = varangueArea;
     }
 
+    if (commercialName) {
+      propertyData.commercialName = commercialName;
+    }
+
+    if (commercialPhoneNumber) {
+      propertyData.commercialPhoneNumber = commercialPhoneNumber;
+    }
+
     const property = await new Property(propertyData).save();
 
     const slackMessage = `Un nouveau bien a été ajouté (${property.name}) : ${process.env.APP_URL}/biens-immobiliers/${property._id}`;
@@ -377,7 +397,7 @@ export async function getProperty(req, res, next) {
 }
 
 const propertiesPublicFields =
-  "ref name description type yearOfConstruction landArea livingArea salesPrice varangueArea photos virtualVisitLink financialSheet coOwnershipCharge assurancePNO propertyTax accounting cga divers propertyPrice notaryFees works financialExpense equipment financialSheet numberOfRooms kitchenArea room1Area room2Area bathroomArea floor outdoorParking coveredParking swimmingPool secureEntrance intercom";
+  "ref name description type yearOfConstruction landArea livingArea salesPrice varangueArea photos virtualVisitLink financialSheet coOwnershipCharge assurancePNO propertyTax accounting cga divers propertyPrice notaryFees works financialExpense equipment financialSheet numberOfRooms kitchenArea room1Area room2Area bathroomArea floor outdoorParking coveredParking swimmingPool secureEntrance intercom commercialName commercialPhoneNumber";
 
 export async function getPublicProperties(req, res, next) {
   try {

@@ -111,6 +111,12 @@ const schema = new mongoose.Schema(
       type: Number,
       required: false
     },
+    commercialName: {
+      type: String
+    },
+    commercialPhoneNumber: {
+      type: String
+    },
     kitchenArea: {
       type: Number,
       required: false
