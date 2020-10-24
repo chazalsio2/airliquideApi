@@ -1,12 +1,11 @@
 import moment from "moment";
 import { generateError, isAdmin, isAdminOrCommercial } from "../lib/utils";
 import User from "../models/User";
-import Project, { projectTypes } from "../models/Project";
+import Project from "../models/Project";
 import Client from "../models/Client";
 import Document from "../models/Document";
 import ProjectEvent from "../models/ProjectEvent";
 import _ from "underscore";
-import mongoose from "mongoose";
 import {
   sendProjectWaitingValidationEmail,
   sendAssignProjectNotification,
@@ -22,7 +21,6 @@ import {
   sendWelcomeEmail,
   sendMandateSignedForSalesProject,
   sendProductionConfirmation,
-  sendSalesMandateSigned,
   sendSalesAgreementAcceptedForSalesProject,
   sendPurchaseOfferAcceptedForSalesProject,
   sendLoanOfferAcceptedForSalesProject,
@@ -32,7 +30,6 @@ import { uploadFile } from "../lib/aws";
 import { sendMessageToSlack } from "../lib/slack";
 import { matchPropertiesForSearchMandate } from "../lib/matching";
 import Property from "../models/Property";
-import { Mongoose } from "mongoose";
 
 const LIMIT_BY_PAGE = 10;
 
@@ -1226,14 +1223,6 @@ export async function confirmSearchMandate(req, res, next) {
       authorUserId: project.clientId
     }).save();
 
-    sendMessageToSlack({
-      message: `Le mandat de ${
-        project.type === "search" ? "recherche" : "vente"
-      } pour le client ${client.displayName} est en attente de validation : ${
-        process.env.APP_URL
-      }/projects/${projectId}`
-    });
-
     return res.json({ success: true });
   } catch (e) {
     next(generateError(e.message));
@@ -1697,6 +1686,14 @@ export async function uploadLoanOfferForProject(req, res, next) {
       }
     ).exec();
 
+    sendMessageToSlack({
+      message: `L'offre de prêt pour mandat de ${
+        project.type === "search" ? "recherche" : "vente"
+      } du client ${client.displayName} est en attente d'acceptation : ${
+        process.env.APP_URL
+      }/projects/${project._id}`
+    });
+
     await new ProjectEvent({
       projectId,
       type: "loan_offer_added",
@@ -1769,6 +1766,15 @@ export async function uploadMandateForProject(req, res, next) {
       }
     ).exec();
 
+    const client = await Client.findById(project.clientId).lean();
+    sendMessageToSlack({
+      message: `Le mandat de ${
+        project.type === "search" ? "recherche" : "vente"
+      } pour le client ${client.displayName} est en attente de validation : ${
+        process.env.APP_URL
+      }/projects/${projectId}`
+    });
+
     await new ProjectEvent({
       projectId,
       type: "mandate_added",
@@ -1838,6 +1844,15 @@ export async function uploadPurchaseOfferForProject(req, res, next) {
         }
       }
     ).exec();
+
+    const client = await Client.findById(project.clientId).lean();
+    sendMessageToSlack({
+      message: `L'offre d'achat pour le mandat de ${
+        project.type === "search" ? "recherche" : "vente"
+      } du client ${client.displayName} est en attente de validation : ${
+        process.env.APP_URL
+      }/projects/${projectId}`
+    });
 
     await new ProjectEvent({
       projectId,
@@ -1918,6 +1933,15 @@ export async function uploadAgreementForProject(req, res, next) {
       documentId: document._id
     }).save();
 
+    const client = await Client.findById(project.clientId).lean();
+    sendMessageToSlack({
+      message: `Le compromis de vente pour le mandat de ${
+        project.type === "search" ? "recherche" : "vente"
+      } du client ${client.displayName} est en attente de validation : ${
+        process.env.APP_URL
+      }/projects/${projectId}`
+    });
+
     sendAgreementWaitingValidation(project);
 
     return res.json({ success: true });
@@ -1982,6 +2006,15 @@ export async function uploadDeedForProject(req, res, next) {
         }
       }
     ).exec();
+
+    const client = await Client.findById(project.clientId).lean();
+    sendMessageToSlack({
+      message: `L'acte authentique pour le mandat de ${
+        project.type === "search" ? "recherche" : "vente"
+      } du client ${client.displayName} est en attente de validation : ${
+        process.env.APP_URL
+      }/projects/${projectId}`
+    });
 
     sendDeedWaitingValidation(project);
 
