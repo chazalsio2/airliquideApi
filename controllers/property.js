@@ -47,7 +47,8 @@ export async function editProperty(req, res, next) {
       DPE,
       procedureInProgress,
       rentalInProgress,
-      numberOfCoOwnershipLots
+      numberOfCoOwnershipLots,
+      photos
     } = req.body;
 
     const { propertyId } = req.params;
@@ -55,6 +56,8 @@ export async function editProperty(req, res, next) {
     if (!description || !type || !salesPrice) {
       return next(generateError("Invalid request", 401));
     }
+
+    const property = await Property.findById(propertyId).lean();
 
     const propertyData = {
       description,
@@ -64,6 +67,12 @@ export async function editProperty(req, res, next) {
       livingArea,
       salesMandate
     };
+
+    if (photos && photos.length) {
+      const results = await uploadPhotos(photos);
+
+      propertyData.photos = results.map((r) => r.url).concat(property.photos);
+    }
 
     if (floor) {
       propertyData.floor = floor;
@@ -178,12 +187,12 @@ export async function editProperty(req, res, next) {
       propertyData.numberOfRooms = Number(numberOfRooms);
     }
 
-    const property = await Property.updateOne(
+    const propertyEdited = await Property.updateOne(
       { _id: propertyId },
       { $set: propertyData }
     ).exec();
 
-    return res.json({ success: true, data: property });
+    return res.json({ success: true, data: propertyEdited });
   } catch (e) {
     next(generateError(e.message));
   }
@@ -197,6 +206,22 @@ export async function updatePropertyVisibility(req, res, next) {
     await Property.updateOne(
       { _id: propertyId },
       { $set: { public: !!visible } }
+    ).exec();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+export async function deletePhoto(req, res, next) {
+  const { photo } = req.body;
+  const { propertyId } = req.params;
+
+  try {
+    await Property.updateOne(
+      { _id: propertyId },
+      { $pull: { photos: photo } }
     ).exec();
 
     return res.json({ success: true });

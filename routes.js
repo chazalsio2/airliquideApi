@@ -85,7 +85,8 @@ import {
   updatePropertyVisibility,
   updateFinancialPropertyData,
   getPublicProperties,
-  getPublicProperty
+  getPublicProperty,
+  deletePhoto
 } from "./controllers/property";
 import {
   getFolders,
@@ -380,6 +381,15 @@ export default (app) => {
     checkAdmin,
     checkAccountDesactivated,
     editProperty,
+    errorHandle
+  );
+
+  app.delete(
+    `/properties/:propertyId/photos`,
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    deletePhoto,
     errorHandle
   );
 
