@@ -1686,6 +1686,8 @@ export async function uploadLoanOfferForProject(req, res, next) {
       }
     ).exec();
 
+    const client = await Client.findById(project.clientId).lean();
+
     sendMessageToSlack({
       message: `L'offre de prêt pour mandat de ${
         project.type === "search" ? "recherche" : "vente"
