@@ -261,8 +261,8 @@ schema.pre("save", async function (next) {
     const propertiesCount = await mongoose.models["Document"].countDocuments();
     const refTemps = `00000000${propertiesCount}`;
     this.ref = `${refTemps.substring(propertiesCount.toString().length)}`;
-    this.name = `${getPropertyType(this.type)} ${this.livingArea} m² ${
-      this.city
+    this.name = `${getPropertyType(this.type) || ""} ${this.livingArea} m² ${
+      this.city || ""
     }`;
     next();
   } catch (e) {
