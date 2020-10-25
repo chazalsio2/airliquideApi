@@ -24,8 +24,6 @@ export async function editProperty(req, res, next) {
       virtualVisitLink,
       propertyStatus,
       yearOfConstruction,
-      room1Area,
-      room2Area,
       kitchenArea,
       bathroomArea,
       numberOfRooms,
@@ -60,6 +58,7 @@ export async function editProperty(req, res, next) {
       notaryFees,
       visionRFees,
       works,
+      roomDescription,
       financialExpense,
       equipment,
       agencyFees
@@ -224,12 +223,8 @@ export async function editProperty(req, res, next) {
       propertyData.city = city;
     }
 
-    if (room1Area) {
-      propertyData.room1Area = Number(room1Area);
-    }
-
-    if (room2Area) {
-      propertyData.room2Area = Number(room2Area);
+    if (roomDescription) {
+      propertyData.roomDescription = roomDescription;
     }
 
     if (kitchenArea) {
@@ -302,8 +297,7 @@ export async function createProperty(req, res, next) {
       yearOfConstruction,
       city,
       address,
-      room1Area,
-      room2Area,
+      roomDescription,
       kitchenArea,
       bathroomArea,
       numberOfRooms,
@@ -476,12 +470,8 @@ export async function createProperty(req, res, next) {
       propertyData.intercom = intercom;
     }
 
-    if (room1Area) {
-      propertyData.room1Area = Number(room1Area);
-    }
-
-    if (room2Area) {
-      propertyData.room2Area = Number(room2Area);
+    if (roomDescription) {
+      propertyData.roomDescription = roomDescription;
     }
 
     if (kitchenArea) {
@@ -603,7 +593,7 @@ export async function getProperty(req, res, next) {
 }
 
 const propertiesPublicFields =
-  "ref name description type yearOfConstruction landArea livingArea salesPrice varangueArea photos virtualVisitLink financialSheet coOwnershipCharge assurancePNO propertyTax accounting cga divers propertyPrice notaryFees works financialExpense equipment financialSheet numberOfRooms kitchenArea room1Area room2Area bathroomArea floor outdoorParking coveredParking swimmingPool secureEntrance intercom commercialName commercialPhoneNumber sanitation hotWater doubleGlazing electricRollerShutters airConditioner view equippedKitchen DPE rentalInProgress procedureInProgress numberOfCoOwnershipLots typeOfInvestment rent coOwnershipCharge assurancePNO propertyTax accounting cga divers notaryFees visionRFees works financialExpense equipment agencyFees";
+  "ref name description type yearOfConstruction landArea livingArea salesPrice varangueArea photos virtualVisitLink financialSheet coOwnershipCharge assurancePNO propertyTax accounting cga divers propertyPrice notaryFees works financialExpense equipment financialSheet numberOfRooms kitchenArea roomDescription bathroomArea floor outdoorParking coveredParking swimmingPool secureEntrance intercom commercialName commercialPhoneNumber sanitation hotWater doubleGlazing electricRollerShutters airConditioner view equippedKitchen DPE rentalInProgress procedureInProgress numberOfCoOwnershipLots typeOfInvestment rent coOwnershipCharge assurancePNO propertyTax accounting cga divers notaryFees visionRFees works financialExpense equipment agencyFees";
 
 export async function getPublicProperties(req, res, next) {
   try {

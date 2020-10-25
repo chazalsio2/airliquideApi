@@ -85,12 +85,8 @@ const schema = new mongoose.Schema(
       type: String,
       required: false
     },
-    room1Area: {
-      type: Number,
-      required: false
-    },
-    room2Area: {
-      type: Number,
+    roomDescription: {
+      type: String,
       required: false
     },
     commercialName: {
