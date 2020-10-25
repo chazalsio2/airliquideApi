@@ -22,7 +22,7 @@ export async function editProperty(req, res, next) {
       varangueArea,
       type,
       virtualVisitLink,
-      salesMandate,
+      propertyStatus,
       yearOfConstruction,
       room1Area,
       room2Area,
@@ -65,7 +65,7 @@ export async function editProperty(req, res, next) {
       salesPrice,
       landArea,
       livingArea,
-      salesMandate
+      propertyStatus
     };
 
     if (photos && photos.length) {
@@ -270,6 +270,7 @@ export async function createProperty(req, res, next) {
   try {
     const {
       description,
+      propertyStatus,
       salesPrice,
       landArea,
       livingArea,
@@ -277,7 +278,6 @@ export async function createProperty(req, res, next) {
       photos,
       type,
       virtualVisitLink,
-      salesMandate,
       yearOfConstruction,
       city,
       address,
@@ -326,7 +326,7 @@ export async function createProperty(req, res, next) {
       salesPrice,
       landArea,
       livingArea,
-      salesMandate,
+      propertyStatus,
       photos: results.map((r) => r.url)
     };
 
@@ -456,12 +456,15 @@ export async function getProperties(req, res, next) {
 
   const selector = {};
 
-  if (type === "sales") {
-    selector.salesMandate = true;
+  if (type === "forsale") {
+    selector.propertyStatus = "forsale";
   }
 
-  if (isSearchClient(req.user) && !isAdminOrCommercial(req.user)) {
-    selector.salesMandate = false;
+  if (
+    type === "hunting" ||
+    (isSearchClient(req.user) && !isAdminOrCommercial(req.user))
+  ) {
+    selector.propertyStatus = "hunting";
   }
 
   const propertiesCount = await Property.countDocuments(selector).exec();

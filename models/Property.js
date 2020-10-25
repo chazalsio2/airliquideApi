@@ -180,6 +180,10 @@ const schema = new mongoose.Schema(
     description: {
       type: String
     },
+    propertyStatus: {
+      type: String,
+      enum: ["hunting", "forsale"]
+    },
     type: {
       type: String,
       enum: [
@@ -236,10 +240,6 @@ const schema = new mongoose.Schema(
       required: false
     },
     public: {
-      type: Boolean,
-      default: false
-    },
-    salesMandate: {
       type: Boolean,
       default: false
     },
