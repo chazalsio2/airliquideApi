@@ -48,7 +48,21 @@ export async function editProperty(req, res, next) {
       procedureInProgress,
       rentalInProgress,
       numberOfCoOwnershipLots,
-      photos
+      photos,
+      typeOfInvestment,
+      rent,
+      coOwnershipCharge,
+      assurancePNO,
+      propertyTax,
+      accounting,
+      cga,
+      divers,
+      notaryFees,
+      visionRFees,
+      works,
+      financialExpense,
+      equipment,
+      agencyFees
     } = req.body;
 
     const { propertyId } = req.params;
@@ -67,6 +81,49 @@ export async function editProperty(req, res, next) {
       livingArea,
       propertyStatus
     };
+
+    if (typeOfInvestment) {
+      propertyData.typeOfInvestment = typeOfInvestment;
+    }
+    if (rent) {
+      propertyData.rent = Number(rent);
+    }
+    if (coOwnershipCharge) {
+      propertyData.coOwnershipCharge = Number(coOwnershipCharge);
+    }
+    if (assurancePNO) {
+      propertyData.assurancePNO = Number(assurancePNO);
+    }
+    if (propertyTax) {
+      propertyData.propertyTax = Number(propertyTax);
+    }
+    if (accounting) {
+      propertyData.accounting = Number(accounting);
+    }
+    if (cga) {
+      propertyData.cga = Number(cga);
+    }
+    if (divers) {
+      propertyData.divers = Number(divers);
+    }
+    if (notaryFees) {
+      propertyData.notaryFees = Number(notaryFees);
+    }
+    if (visionRFees) {
+      propertyData.visionRFees = Number(visionRFees);
+    }
+    if (works) {
+      propertyData.works = Number(works);
+    }
+    if (financialExpense) {
+      propertyData.financialExpense = Number(financialExpense);
+    }
+    if (equipment) {
+      propertyData.equipment = Number(equipment);
+    }
+    if (agencyFees) {
+      propertyData.agencyFees = Number(agencyFees);
+    }
 
     if (photos && photos.length) {
       const results = await uploadPhotos(photos);
@@ -230,42 +287,6 @@ export async function deletePhoto(req, res, next) {
   }
 }
 
-export async function updateFinancialPropertyData(req, res, next) {
-  const propertyFinancialData = req.body;
-  const { propertyId } = req.params;
-
-  try {
-    await Property.updateOne(
-      { _id: propertyId },
-      {
-        $set: {
-          financialSheet: {
-            typeOfInvestment: propertyFinancialData.typeOfInvestment,
-            rent: Number(propertyFinancialData.rent),
-            coOwnershipCharge: Number(propertyFinancialData.coOwnershipCharge),
-            assurancePNO: Number(propertyFinancialData.assurancePNO),
-            propertyTax: Number(propertyFinancialData.propertyTax),
-            accounting: Number(propertyFinancialData.accounting),
-            cga: Number(propertyFinancialData.cga),
-            divers: Number(propertyFinancialData.divers),
-            propertyPrice: Number(propertyFinancialData.propertyPrice),
-            notaryFees: Number(propertyFinancialData.notaryFees),
-            visionRFees: Number(propertyFinancialData.visionRFees),
-            works: Number(propertyFinancialData.works),
-            financialExpense: Number(propertyFinancialData.financialExpense),
-            equipment: Number(propertyFinancialData.equipment),
-            agencyFees: Number(propertyFinancialData.agencyFees)
-          }
-        }
-      }
-    ).exec();
-
-    return res.json({ success: true });
-  } catch (e) {
-    next(generateError(e.message));
-  }
-}
-
 export async function createProperty(req, res, next) {
   try {
     const {
@@ -304,7 +325,22 @@ export async function createProperty(req, res, next) {
       DPE,
       numberOfCoOwnershipLots,
       procedureInProgress,
-      rentalInProgress
+      rentalInProgress,
+      typeOfInvestment,
+      rent,
+      coOwnershipCharge,
+      assurancePNO,
+      propertyTax,
+      accounting,
+      cga,
+      divers,
+      propertyPrice,
+      notaryFees,
+      visionRFees,
+      works,
+      financialExpense,
+      equipment,
+      agencyFees
     } = req.body;
 
     if (
@@ -329,6 +365,54 @@ export async function createProperty(req, res, next) {
       propertyStatus,
       photos: results.map((r) => r.url)
     };
+
+    if (typeOfInvestment) {
+      propertyData.typeOfInvestment = typeOfInvestment;
+    }
+    if (rent) {
+      propertyData.rent = Number(rent);
+    }
+    if (coOwnershipCharge) {
+      propertyData.coOwnershipCharge = Number(coOwnershipCharge);
+    }
+    if (assurancePNO) {
+      propertyData.assurancePNO = Number(assurancePNO);
+    }
+    if (propertyTax) {
+      propertyData.propertyTax = Number(propertyTax);
+    }
+    if (accounting) {
+      propertyData.accounting = Number(accounting);
+    }
+    if (cga) {
+      propertyData.cga = Number(cga);
+    }
+    if (divers) {
+      propertyData.divers = Number(divers);
+    }
+    if (notaryFees) {
+      propertyData.notaryFees = Number(notaryFees);
+    }
+    if (visionRFees) {
+      propertyData.visionRFees = Number(visionRFees);
+    }
+    if (works) {
+      propertyData.works = Number(works);
+    }
+    if (financialExpense) {
+      propertyData.financialExpense = Number(financialExpense);
+    }
+    if (equipment) {
+      propertyData.equipment = Number(equipment);
+    }
+    if (agencyFees) {
+      propertyData.agencyFees = Number(agencyFees);
+    }
+
+    // to remove (use SalesPrice)
+    // if (propertyPrice) {
+    //   propertyData.propertyPrice = Number(propertyPrice);
+    // }
 
     if (yearOfConstruction) {
       propertyData.yearOfConstruction = yearOfConstruction;

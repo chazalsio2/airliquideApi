@@ -83,7 +83,6 @@ import {
   getProperty,
   editProperty,
   updatePropertyVisibility,
-  updateFinancialPropertyData,
   getPublicProperties,
   getPublicProperty,
   deletePhoto
@@ -583,15 +582,6 @@ export default (app) => {
     checkAdmin,
     checkAccountDesactivated,
     getProjectsMissingValidation,
-    errorHandle
-  );
-
-  app.put(
-    "/properties/:propertyId/financial-data",
-    passport.authenticate("jwt", { session: false }),
-    checkAdminOrCommercial,
-    checkAccountDesactivated,
-    updateFinancialPropertyData,
     errorHandle
   );
 

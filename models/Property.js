@@ -1,67 +1,5 @@
 import mongoose from "mongoose";
 
-const FinancialSheet = new mongoose.Schema({
-  typeOfInvestment: {
-    type: String
-  },
-  rent: {
-    type: Number,
-    default: 0
-  },
-  coOwnershipCharge: {
-    type: Number,
-    default: 0
-  },
-  assurancePNO: {
-    type: Number,
-    default: 0
-  },
-  propertyTax: {
-    type: Number,
-    default: 0
-  },
-  accounting: {
-    type: Number,
-    default: 0
-  },
-  cga: {
-    type: Number,
-    default: 0
-  },
-  divers: {
-    type: Number,
-    default: 0
-  },
-  propertyPrice: {
-    type: Number,
-    default: 0
-  },
-  notaryFees: {
-    type: Number,
-    default: 0
-  },
-  visionRFees: {
-    type: Number,
-    default: 0
-  },
-  agencyFees: {
-    type: Number,
-    default: 0
-  },
-  works: {
-    type: Number,
-    default: 0
-  },
-  financialExpense: {
-    type: Number,
-    default: 0
-  },
-  equipment: {
-    type: Number,
-    default: 0
-  }
-});
-
 export function getPropertyType(type) {
   // "apartment", "commercial",   "construction_land",   "home",   "parking",   "building"
   if (type === "apartment") return "Appartement";
@@ -235,10 +173,6 @@ const schema = new mongoose.Schema(
       default: "available",
       enum: ["available", "unavailable"]
     },
-    financialSheet: {
-      type: FinancialSheet,
-      required: false
-    },
     public: {
       type: Boolean,
       default: false
@@ -248,6 +182,66 @@ const schema = new mongoose.Schema(
     },
     address: {
       type: String
+    },
+
+    typeOfInvestment: {
+      type: String
+    },
+    rent: {
+      type: Number,
+      default: 0
+    },
+    coOwnershipCharge: {
+      type: Number,
+      default: 0
+    },
+    assurancePNO: {
+      type: Number,
+      default: 0
+    },
+    propertyTax: {
+      type: Number,
+      default: 0
+    },
+    accounting: {
+      type: Number,
+      default: 0
+    },
+    cga: {
+      type: Number,
+      default: 0
+    },
+    divers: {
+      type: Number,
+      default: 0
+    },
+    // propertyPrice: {
+    //   type: Number,
+    //   default: 0
+    // },
+    notaryFees: {
+      type: Number,
+      default: 0
+    },
+    visionRFees: {
+      type: Number,
+      default: 0
+    },
+    agencyFees: {
+      type: Number,
+      default: 0
+    },
+    works: {
+      type: Number,
+      default: 0
+    },
+    financialExpense: {
+      type: Number,
+      default: 0
+    },
+    equipment: {
+      type: Number,
+      default: 0
     }
   },
   {
