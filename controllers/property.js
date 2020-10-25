@@ -500,7 +500,7 @@ export async function getProperty(req, res, next) {
     const selector = { _id: propertyId };
 
     if (isSearchClient(req.user) && !isAdminOrCommercial(req.user)) {
-      selector.salesMandate = false;
+      selector.propertyStatus = "hunting";
     }
 
     const property = await Property.findOne(selector).lean();
@@ -525,7 +525,7 @@ const propertiesPublicFields =
 export async function getPublicProperties(req, res, next) {
   try {
     const { page = "", type = "" } = req.query;
-    const selector = { salesMandate: true, public: true };
+    const selector = { propertyStatus: "forsale", public: true };
     const pageNumber = Number(page) || 1;
 
     const propertiesCount = await Property.countDocuments(selector).exec();
@@ -564,7 +564,7 @@ export async function getPublicProperty(req, res, next) {
 
     const selector = {
       _id: propertyId,
-      salesMandate: true,
+      propertyStatus: "forsale",
       public: true
     };
 
