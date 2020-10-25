@@ -334,7 +334,6 @@ export async function createProperty(req, res, next) {
       accounting,
       cga,
       divers,
-      propertyPrice,
       notaryFees,
       visionRFees,
       works,
@@ -604,7 +603,7 @@ export async function getProperty(req, res, next) {
 }
 
 const propertiesPublicFields =
-  "ref name description type yearOfConstruction landArea livingArea salesPrice varangueArea photos virtualVisitLink financialSheet coOwnershipCharge assurancePNO propertyTax accounting cga divers propertyPrice notaryFees works financialExpense equipment financialSheet numberOfRooms kitchenArea room1Area room2Area bathroomArea floor outdoorParking coveredParking swimmingPool secureEntrance intercom commercialName commercialPhoneNumber sanitation hotWater doubleGlazing electricRollerShutters airConditioner view equippedKitchen DPE rentalInProgress procedureInProgress numberOfCoOwnershipLots";
+  "ref name description type yearOfConstruction landArea livingArea salesPrice varangueArea photos virtualVisitLink financialSheet coOwnershipCharge assurancePNO propertyTax accounting cga divers propertyPrice notaryFees works financialExpense equipment financialSheet numberOfRooms kitchenArea room1Area room2Area bathroomArea floor outdoorParking coveredParking swimmingPool secureEntrance intercom commercialName commercialPhoneNumber sanitation hotWater doubleGlazing electricRollerShutters airConditioner view equippedKitchen DPE rentalInProgress procedureInProgress numberOfCoOwnershipLots typeOfInvestment rent coOwnershipCharge assurancePNO propertyTax accounting cga divers notaryFees visionRFees works financialExpense equipment agencyFees";
 
 export async function getPublicProperties(req, res, next) {
   try {
