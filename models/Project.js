@@ -1,4 +1,5 @@
 import mongoose, { Types } from "mongoose";
+import cities from '../data/cities.json'
 
 const ClientAvailability = new mongoose.Schema({
   day: {
@@ -9,35 +10,7 @@ const ClientAvailability = new mongoose.Schema({
   }
 });
 
-const citiesList = [
-  "Saint-Pierre",
-  "Le Tampon",
-  "Saint-Louis",
-  "Saint-Joseph",
-  "Saint-Philippe",
-  "Sainte-Rose",
-  "Petite-île",
-  "Saint-Denis",
-  "Sainte-Marie",
-  "Sainte-Suzanne",
-  "Saint-Paul",
-  "Saint-Gilles les Bains",
-  "Le Port",
-  "La Possession",
-  "Saint-Leu",
-  "Etang-Salé",
-  "Les Avirons",
-  "Saint-André",
-  "Saint-Benoit",
-  "Cilaos",
-  "Salazie",
-  "Maïdo",
-  "Dos d'Ane",
-  "Sans-Soucis",
-  "Le Volcan/Pas de Bellecombe",
-  "Plaine des Cafres",
-  "Plaine des Palmistes"
-];
+const citiesList = cities.map(c => `${c["COMMUNE"]} (${c["CODE POSTAL"]})`)
 
 export const projectTypes = ["management", "sales", "search", "coaching"];
 
