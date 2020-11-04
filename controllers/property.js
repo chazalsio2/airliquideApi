@@ -76,6 +76,7 @@ export async function editProperty(req, res, next) {
       description,
       type,
       salesPrice,
+      city,
       // landArea,
       // livingArea,
       propertyStatus
@@ -225,9 +226,9 @@ export async function editProperty(req, res, next) {
       propertyData.varangueArea = varangueArea;
     }
 
-    if (city) {
-      propertyData.city = city;
-    }
+    // if (city) {
+    //   propertyData.city = city;
+    // }
 
     if (roomDescription) {
       propertyData.roomDescription = roomDescription;
@@ -346,6 +347,7 @@ export async function createProperty(req, res, next) {
       !description ||
       !type ||
       !salesPrice ||
+      !city ||
       // !landArea ||
       // !livingArea ||
       !photos
@@ -359,6 +361,7 @@ export async function createProperty(req, res, next) {
       description,
       type,
       salesPrice,
+      city,
       // landArea,
       // livingArea,
       propertyStatus,
@@ -501,9 +504,10 @@ export async function createProperty(req, res, next) {
     if (address) {
       propertyData.address = address;
     }
-    if (city) {
-      propertyData.city = city;
-    }
+    
+    // if (city) {
+    //   propertyData.city = city;
+    // }
 
     if (varangueArea) {
       propertyData.varangueArea = varangueArea;
