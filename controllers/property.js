@@ -76,11 +76,17 @@ export async function editProperty(req, res, next) {
       description,
       type,
       salesPrice,
-      landArea,
-      livingArea,
+      // landArea,
+      // livingArea,
       propertyStatus
     };
 
+    if (landArea) {
+      propertyData.landArea = landArea;
+    }
+    if (livingArea) {
+      propertyData.livingArea = livingArea;
+    }
     if (typeOfInvestment) {
       propertyData.typeOfInvestment = typeOfInvestment;
     }
@@ -340,8 +346,8 @@ export async function createProperty(req, res, next) {
       !description ||
       !type ||
       !salesPrice ||
-      !landArea ||
-      !livingArea ||
+      // !landArea ||
+      // !livingArea ||
       !photos
     ) {
       return next(generateError("Invalid request", 401));
@@ -353,12 +359,18 @@ export async function createProperty(req, res, next) {
       description,
       type,
       salesPrice,
-      landArea,
-      livingArea,
+      // landArea,
+      // livingArea,
       propertyStatus,
       photos: results.map((r) => r.url)
     };
 
+    if (landArea) {
+      propertyData.landArea = landArea;
+    }
+    if (livingArea) {
+      propertyData.livingArea = livingArea;
+    }
     if (typeOfInvestment) {
       propertyData.typeOfInvestment = typeOfInvestment;
     }
