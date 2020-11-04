@@ -4,7 +4,7 @@ import {
   isAdminOrCommercial
 } from "../lib/utils";
 import { uploadPhotos } from "../lib/cloudinary";
-import Property from "../models/Property";
+import Property, { getPropertyType } from "../models/Property";
 import { sendMessageToSlack } from "../lib/slack";
 import { checkMatchingForProperty } from "../lib/matching";
 
@@ -245,6 +245,8 @@ export async function editProperty(req, res, next) {
     if (numberOfRooms) {
       propertyData.numberOfRooms = Number(numberOfRooms);
     }
+
+    propertyData.name = `${getPropertyType(propertyData.type) || ""} ${propertyData.livingArea} m² ${propertyData.city || ""}`
 
     const propertyEdited = await Property.updateOne(
       { _id: propertyId },
@@ -504,7 +506,7 @@ export async function createProperty(req, res, next) {
     if (address) {
       propertyData.address = address;
     }
-    
+
     // if (city) {
     //   propertyData.city = city;
     // }

@@ -248,6 +248,7 @@ const schema = new mongoose.Schema(
 
 schema.pre("save", async function (next) {
   try {
+    console.log("Pre save running")
     const propertiesCount = await mongoose.models["Document"].countDocuments();
     const refTemps = `00000000${propertiesCount}`;
     this.ref = `${refTemps.substring(propertiesCount.toString().length)}`;
@@ -259,5 +260,26 @@ schema.pre("save", async function (next) {
     next(e);
   }
 });
+
+// schema.post("updateOne", async function (next) {
+//   try {
+//     console.log("Pre updateOne running", this)
+
+//     const docToUpdate = await this.model.findOne(this.getQuery());
+//   console.log(docToUpdate); // The document that `findOneAndUpdate()` will modify
+    
+//     const newName = `${getPropertyType(docToUpdate.type) || ""} ${docToUpdate.livingArea} m² ${
+//       docToUpdate.city || ""
+//     }`;
+//     console.log("newName", newName)
+
+//     this.name = newName;
+//     this.save()
+//     // next();
+//   } catch (e) {
+//     console.log("e", e)
+//     // next(e);
+//   }
+// });
 
 export default mongoose.model("Property", schema);
