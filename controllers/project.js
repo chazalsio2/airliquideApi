@@ -693,7 +693,7 @@ export async function acceptMandate(req, res, next) {
     }
 
     const alreadyUser = await User.findOne({
-      clientId: client._id
+      email: client.email
     }).lean();
 
     let roleToAdd;
