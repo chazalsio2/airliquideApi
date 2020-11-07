@@ -356,14 +356,14 @@ export default (app) => {
     errorHandle
   );
 
-  app.post(
-    `/properties/:propertyId/update-visibility`,
-    passport.authenticate("jwt", { session: false }),
-    checkAdmin,
-    checkAccountDesactivated,
-    updatePropertyVisibility,
-    errorHandle
-  );
+  // app.post(
+  //   `/properties/:propertyId/update-visibility`,
+  //   passport.authenticate("jwt", { session: false }),
+  //   checkAdmin,
+  //   checkAccountDesactivated,
+  //   updatePropertyVisibility,
+  //   errorHandle
+  // );
 
   app.post(
     `/projects/:projectId/refuse`,

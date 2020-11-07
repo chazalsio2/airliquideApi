@@ -246,7 +246,9 @@ export async function editProperty(req, res, next) {
       propertyData.numberOfRooms = Number(numberOfRooms);
     }
 
-    propertyData.name = `${getPropertyType(propertyData.type) || ""} ${propertyData.livingArea} m² ${propertyData.city || ""}`
+    propertyData.name = `${getPropertyType(propertyData.type) || ""} ${
+      propertyData.livingArea
+    } m² ${propertyData.city || ""}`;
 
     const propertyEdited = await Property.updateOne(
       { _id: propertyId },
@@ -259,21 +261,21 @@ export async function editProperty(req, res, next) {
   }
 }
 
-export async function updatePropertyVisibility(req, res, next) {
-  const { visible } = req.body;
-  const { propertyId } = req.params;
+// export async function updatePropertyVisibility(req, res, next) {
+//   const { visible } = req.body;
+//   const { propertyId } = req.params;
 
-  try {
-    await Property.updateOne(
-      { _id: propertyId },
-      { $set: { public: !!visible } }
-    ).exec();
+//   try {
+//     await Property.updateOne(
+//       { _id: propertyId },
+//       { $set: { public: !!visible } }
+//     ).exec();
 
-    return res.json({ success: true });
-  } catch (e) {
-    next(generateError(e.message));
-  }
-}
+//     return res.json({ success: true });
+//   } catch (e) {
+//     next(generateError(e.message));
+//   }
+// }
 
 export async function deletePhoto(req, res, next) {
   const { photo } = req.body;
@@ -616,7 +618,10 @@ const propertiesPublicFields =
 export async function getPublicProperties(req, res, next) {
   try {
     const { page = "", type = "" } = req.query;
-    const selector = { propertyStatus: "forsale", public: true };
+    const selector = {
+      propertyStatus: "forsale"
+      // public: true
+    };
     const pageNumber = Number(page) || 1;
 
     const propertiesCount = await Property.countDocuments(selector).exec();
@@ -655,8 +660,8 @@ export async function getPublicProperty(req, res, next) {
 
     const selector = {
       _id: propertyId,
-      propertyStatus: "forsale",
-      public: true
+      propertyStatus: "forsale"
+      // public: true,
     };
 
     const property = await Property.findOne(

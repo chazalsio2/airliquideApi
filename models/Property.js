@@ -160,18 +160,14 @@ const schema = new mongoose.Schema(
       type: String,
       required: false
     },
-    public: {
-      type: Boolean,
-      default: false
-    },
+    // public: {
+    //   type: Boolean,
+    //   default: false
+    // },
     status: {
       type: String,
       default: "available",
       enum: ["available", "unavailable"]
-    },
-    public: {
-      type: Boolean,
-      default: false
     },
     city: {
       type: String
@@ -248,7 +244,7 @@ const schema = new mongoose.Schema(
 
 schema.pre("save", async function (next) {
   try {
-    console.log("Pre save running")
+    console.log("Pre save running");
     const propertiesCount = await mongoose.models["Document"].countDocuments();
     const refTemps = `00000000${propertiesCount}`;
     this.ref = `${refTemps.substring(propertiesCount.toString().length)}`;
@@ -267,7 +263,7 @@ schema.pre("save", async function (next) {
 
 //     const docToUpdate = await this.model.findOne(this.getQuery());
 //   console.log(docToUpdate); // The document that `findOneAndUpdate()` will modify
-    
+
 //     const newName = `${getPropertyType(docToUpdate.type) || ""} ${docToUpdate.livingArea} m² ${
 //       docToUpdate.city || ""
 //     }`;

@@ -64,7 +64,8 @@ export async function getDashboardData(req, res, next) {
 
     const propertiesPublishedCount = await Property.countDocuments({
       status: "available",
-      public: true
+      propertyStatus: "forsale"
+      // public: true
     }).exec();
 
     // TODO: do not work
