@@ -70,7 +70,7 @@ export async function getClient(req, res, next) {
     client.projects = await Project.find(
       {
         clientId: client._id,
-        status: { $nin: ["canceled", "completed"] }
+        // status: { $nin: ["canceled", "completed"] }
       },
       null,
       { sort: { createdAt: -1 } }
