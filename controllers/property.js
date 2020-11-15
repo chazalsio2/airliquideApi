@@ -616,10 +616,10 @@ const propertiesPublicFields =
 
 export async function getPublicProperties(req, res, next) {
   try {
-    const { page = "", type = "" } = req.query;
+    const { page = "" } = req.query;
     const selector = {
-      propertyStatus: "forsale"
-      // public: true
+      propertyStatus: "forsale",
+      public: true
     };
     const pageNumber = Number(page) || 1;
 
@@ -659,8 +659,8 @@ export async function getPublicProperty(req, res, next) {
 
     const selector = {
       _id: propertyId,
-      propertyStatus: "forsale"
-      // public: true,
+      propertyStatus: "forsale",
+      public: true
     };
 
     const property = await Property.findOne(
