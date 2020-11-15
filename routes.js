@@ -97,7 +97,8 @@ import { getUser, getCommercials } from "./controllers/user";
 import {
   getTrainings,
   createTraining,
-  getTraining
+  getTraining,
+  removeTraining
 } from "./controllers/training";
 import { handleWebhookDocusign } from "./controllers/webhook";
 import { getDashboardData } from "./controllers/dashboard";
@@ -344,6 +345,15 @@ export default (app) => {
     checkAdmin,
     checkAccountDesactivated,
     createTraining,
+    errorHandle
+  );
+
+  app.delete(
+    "/trainings/:trainingId",
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    removeTraining,
     errorHandle
   );
 
