@@ -261,21 +261,20 @@ export async function editProperty(req, res, next) {
   }
 }
 
-// export async function updatePropertyVisibility(req, res, next) {
-//   const { visible } = req.body;
-//   const { propertyId } = req.params;
+export async function updatePropertyVisibility(req, res, next) {
+  const { propertyId } = req.params;
 
-//   try {
-//     await Property.updateOne(
-//       { _id: propertyId },
-//       { $set: { public: !!visible } }
-//     ).exec();
+  try {
+    await Property.updateOne(
+      { _id: propertyId },
+      { $set: { public: !!req.body.public } }
+    ).exec();
 
-//     return res.json({ success: true });
-//   } catch (e) {
-//     next(generateError(e.message));
-//   }
-// }
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
 
 export async function deletePhoto(req, res, next) {
   const { photo } = req.body;

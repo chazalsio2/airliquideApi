@@ -160,10 +160,10 @@ const schema = new mongoose.Schema(
       type: String,
       required: false
     },
-    // public: {
-    //   type: Boolean,
-    //   default: false
-    // },
+    public: {
+      type: Boolean,
+      default: false
+    },
     status: {
       type: String,
       default: "available",
