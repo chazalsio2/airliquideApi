@@ -265,10 +265,24 @@ export async function updatePropertyVisibility(req, res, next) {
   const { propertyId } = req.params;
 
   try {
+    const property = await Property.findOne({ _id: propertyId }).lean();
+
+    if (!property) {
+      throw new Error("Property not found");
+    }
+
     await Property.updateOne(
       { _id: propertyId },
       { $set: { public: !!req.body.public } }
     ).exec();
+
+    if (req.body.public && property.propertyStatus === "forsale") {
+      try {
+        checkMatchingForProperty(property._id);
+      } catch (e) {
+        console.error(e);
+      }
+    }
 
     return res.json({ success: true });
   } catch (e) {
@@ -529,12 +543,6 @@ export async function createProperty(req, res, next) {
     const slackMessage = `Un nouveau bien a été ajouté (${property.name}) : ${process.env.APP_URL}/biens-immobiliers/${property._id}`;
 
     sendMessageToSlack({ message: slackMessage, copyToCommercial: true });
-
-    try {
-      checkMatchingForProperty(property._id);
-    } catch (e) {
-      console.error(e);
-    }
 
     return res.json({ success: true, data: property });
   } catch (e) {
