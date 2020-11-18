@@ -234,8 +234,6 @@ export async function editSalesSheet(req, res, next) {
     if (
       !propertyType ||
       !propertySize ||
-      !livingArea ||
-      !landArea ||
       !reasonForTheSale ||
       !delay ||
       !readyToSign ||
@@ -248,14 +246,22 @@ export async function editSalesSheet(req, res, next) {
     const newSalesSheetEdited = {
       propertyType,
       propertySize,
-      livingArea,
-      landArea,
+      // livingArea,
+      // landArea,
       reasonForTheSale,
       delay,
       readyToSign,
       workEstimate,
       fullAddress
     };
+
+    if (livingArea) {
+      newSalesSheetEdited.livingArea = livingArea;
+    }
+
+    if (landArea) {
+      newSalesSheetEdited.landArea = landArea;
+    }
 
     if (priceEstimate) {
       newSalesSheetEdited.priceEstimate = priceEstimate;
@@ -313,8 +319,8 @@ export async function saveSalesSheet(req, res, next) {
     if (
       !propertyType ||
       !propertySize ||
-      !livingArea ||
-      !landArea ||
+      // !livingArea ||
+      // !landArea ||
       !delay ||
       !readyToSign ||
       !nextAvailabilities ||
@@ -326,8 +332,8 @@ export async function saveSalesSheet(req, res, next) {
     const salesSheet = {
       propertyType,
       propertySize,
-      livingArea,
-      landArea,
+      // livingArea,
+      // landArea,
       workNeeded,
       delay,
       readyToSign,
@@ -337,6 +343,14 @@ export async function saveSalesSheet(req, res, next) {
 
     if (workEstimate) {
       salesSheet.workEstimate = workEstimate;
+    }
+
+    if (landArea) {
+      salesSheet.landArea = landArea;
+    }
+
+    if (livingArea) {
+      salesSheet.livingArea = livingArea;
     }
 
     if (priceEstimate) {
