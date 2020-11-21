@@ -35,6 +35,7 @@ export async function editProperty(req, res, next) {
       intercom,
       commercialName,
       commercialPhoneNumber,
+      commercialEmail,
       view,
       sanitation,
       doubleGlazing,
@@ -161,6 +162,10 @@ export async function editProperty(req, res, next) {
 
     if (commercialName) {
       propertyData.commercialName = commercialName;
+    }
+
+    if (commercialEmail) {
+      propertyData.commercialEmail = commercialEmail;
     }
 
     if (commercialPhoneNumber) {
@@ -332,6 +337,7 @@ export async function createProperty(req, res, next) {
       secureEntrance,
       intercom,
       commercialName,
+      commercialEmail,
       commercialPhoneNumber,
       view,
       sanitation,
@@ -532,6 +538,10 @@ export async function createProperty(req, res, next) {
 
     if (commercialName) {
       propertyData.commercialName = commercialName;
+    }
+
+    if (commercialEmail) {
+      propertyData.commercialEmail = commercialEmail;
     }
 
     if (commercialPhoneNumber) {

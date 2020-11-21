@@ -92,6 +92,9 @@ const schema = new mongoose.Schema(
     commercialName: {
       type: String
     },
+    commercialEmail: {
+      type: String
+    },
     commercialPhoneNumber: {
       type: String
     },
