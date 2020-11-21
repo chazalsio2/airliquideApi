@@ -7,7 +7,6 @@ import { allowedRoles } from "../models/User";
 export async function getTrainings(req, res, next) {
   try {
     const isAdmin = req.user.roles.indexOf("admin") !== -1;
-    console.log("getTrainings -> req.user.roles", req.user.roles);
 
     if (isAdmin) {
       const trainings = await Training.find().lean();

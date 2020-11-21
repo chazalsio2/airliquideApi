@@ -244,7 +244,6 @@ const schema = new mongoose.Schema(
 
 schema.pre("save", async function (next) {
   try {
-    console.log("Pre save running");
     const propertiesCount = await mongoose.models["Document"].countDocuments();
     const refTemps = `00000000${propertiesCount}`;
     this.ref = `${refTemps.substring(propertiesCount.toString().length)}`;
