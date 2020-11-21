@@ -43,7 +43,7 @@ export async function editProperty(req, res, next) {
       hotWater,
       airConditioner,
       equippedKitchen,
-      DPE,
+      // DPE,
       procedureInProgress,
       rentalInProgress,
       numberOfCoOwnershipLots,
@@ -141,9 +141,9 @@ export async function editProperty(req, res, next) {
     if (floor) {
       propertyData.floor = floor;
     }
-    if (DPE) {
-      propertyData.DPE = DPE === "Soumis";
-    }
+    // if (DPE) {
+    //   propertyData.DPE = DPE === "Soumis";
+    // }
     if (numberOfCoOwnershipLots) {
       propertyData.numberOfCoOwnershipLots = Number(numberOfCoOwnershipLots);
     }
@@ -336,9 +336,9 @@ export async function createProperty(req, res, next) {
       swimmingPool,
       secureEntrance,
       intercom,
-      commercialName,
-      commercialEmail,
-      commercialPhoneNumber,
+      // commercialName,
+      // commercialEmail,
+      // commercialPhoneNumber,
       view,
       sanitation,
       doubleGlazing,
@@ -346,7 +346,7 @@ export async function createProperty(req, res, next) {
       hotWater,
       airConditioner,
       equippedKitchen,
-      DPE,
+      // DPE,
       numberOfCoOwnershipLots,
       procedureInProgress,
       rentalInProgress,
@@ -452,9 +452,9 @@ export async function createProperty(req, res, next) {
     if (view) {
       propertyData.view = view;
     }
-    if (DPE) {
-      propertyData.DPE = DPE === "Soumis";
-    }
+    // if (DPE) {
+    //   propertyData.DPE = DPE === "Soumis";
+    // }
     if (sanitation) {
       propertyData.sanitation = sanitation;
     }
@@ -536,17 +536,21 @@ export async function createProperty(req, res, next) {
       propertyData.varangueArea = varangueArea;
     }
 
-    if (commercialName) {
-      propertyData.commercialName = commercialName;
-    }
+    // if (commercialName) {
+    //   propertyData.commercialName = commercialName;
+    // }
 
-    if (commercialEmail) {
-      propertyData.commercialEmail = commercialEmail;
-    }
+    // if (commercialEmail) {
+    //   propertyData.commercialEmail = commercialEmail;
+    // }
 
-    if (commercialPhoneNumber) {
-      propertyData.commercialPhoneNumber = commercialPhoneNumber;
-    }
+    // if (commercialPhoneNumber) {
+    //   propertyData.commercialPhoneNumber = commercialPhoneNumber;
+    // }
+
+    propertyData.commercialEmail = req.user.email;
+    propertyData.commercialName = req.user.displayName;
+    propertyData.commercialPhoneNumber = req.user.phoneNumber;
 
     const property = await new Property(propertyData).save();
 
@@ -630,7 +634,7 @@ export async function getProperty(req, res, next) {
 }
 
 const propertiesPublicFields =
-  "ref name description type yearOfConstruction landArea livingArea salesPrice varangueArea photos virtualVisitLink financialSheet coOwnershipCharge assurancePNO propertyTax accounting cga divers propertyPrice notaryFees works financialExpense equipment financialSheet numberOfRooms kitchenArea roomDescription bathroomArea floor outdoorParking coveredParking swimmingPool secureEntrance intercom commercialName commercialPhoneNumber sanitation hotWater doubleGlazing electricRollerShutters airConditioner view equippedKitchen DPE rentalInProgress procedureInProgress numberOfCoOwnershipLots typeOfInvestment rent coOwnershipCharge assurancePNO propertyTax accounting cga divers notaryFees visionRFees works financialExpense equipment agencyFees";
+  "ref name description type yearOfConstruction landArea livingArea salesPrice varangueArea photos virtualVisitLink financialSheet coOwnershipCharge assurancePNO propertyTax accounting cga divers propertyPrice notaryFees works financialExpense equipment financialSheet numberOfRooms kitchenArea roomDescription bathroomArea floor outdoorParking coveredParking swimmingPool secureEntrance intercom commercialName commercialPhoneNumber sanitation hotWater doubleGlazing electricRollerShutters airConditioner view equippedKitchen rentalInProgress procedureInProgress numberOfCoOwnershipLots typeOfInvestment rent coOwnershipCharge assurancePNO propertyTax accounting cga divers notaryFees visionRFees works financialExpense equipment agencyFees";
 
 export async function getPublicProperties(req, res, next) {
   try {

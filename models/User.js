@@ -6,47 +6,51 @@ export const allowedRoles = [
   "commercial_agent",
   "client_sales_mandate",
   "client_management_mandate",
-  "client_search_mandate",
+  "client_search_mandate"
 ];
 
 var schema = new mongoose.Schema(
   {
     displayName: {
-      type: String,
+      type: String
     },
     email: {
-      type: String,
+      type: String
     },
     password: {
-      type: String,
+      type: String
     },
     roles: {
-      type: Array,
+      type: Array
     },
     token: {
       type: String,
-      default: () => uuidv4(),
+      default: () => uuidv4()
     },
     active: {
       type: Boolean,
-      default: false,
+      default: false
     },
     clientId: {
       type: mongoose.Types.ObjectId,
-      required: false,
+      required: false
+    },
+    phoneNumber: {
+      type: String,
+      required: false
     },
     "roles.$": {
       type: String,
-      enum: allowedRoles,
+      enum: allowedRoles
     },
     deactivated: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   {
     timestamps: true,
-    collection: "users",
+    collection: "users"
   }
 );
 

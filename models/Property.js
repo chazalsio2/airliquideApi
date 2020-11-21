@@ -73,10 +73,10 @@ const schema = new mongoose.Schema(
       type: Boolean,
       required: false
     },
-    DPE: {
-      type: Boolean,
-      required: false
-    },
+    // DPE: {
+    //   type: Boolean,
+    //   required: false
+    // },
     equippedKitchen: {
       type: String,
       required: false
