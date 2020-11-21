@@ -1,38 +1,13 @@
 [
   {
-    "CODE INSEE": 974482,
-    "CODE POSTAL": 97410,
-    "COMMUNE": "Basse Terre"
-  },
-  {
-    "CODE INSEE": 974476,
-    "CODE POSTAL": 97442,
-    "COMMUNE": "Basse Vallee"
-  },
-  {
-    "CODE INSEE": 974438,
-    "CODE POSTAL": 97470,
-    "COMMUNE": "Beaufonds"
-  },
-  {
-    "CODE INSEE": 974475,
+    "CODE INSEE": 974411,
     "CODE POSTAL": 97400,
-    "COMMUNE": "Belle Pierre"
+    "COMMUNE": "Saint Denis"
   },
   {
-    "CODE INSEE": 974460,
-    "CODE POSTAL": 97460,
-    "COMMUNE": "Bellemene"
-  },
-  {
-    "CODE INSEE": 974477,
-    "CODE POSTAL": 97435,
-    "COMMUNE": "Bernica"
-  },
-  {
-    "CODE INSEE": 974473,
-    "CODE POSTAL": 97490,
-    "COMMUNE": "Bois de Nefles"
+    "CODE INSEE": 974416,
+    "CODE POSTAL": 97410,
+    "COMMUNE": "Saint Pierre"
   },
   {
     "CODE INSEE": 974440,
@@ -45,11 +20,6 @@
     "COMMUNE": "Bras Panon"
   },
   {
-    "CODE INSEE": 974461,
-    "CODE POSTAL": 97440,
-    "COMMUNE": "Cambuston"
-  },
-  {
     "CODE INSEE": 974424,
     "CODE POSTAL": 97413,
     "COMMUNE": "Cilaos"
@@ -60,54 +30,9 @@
     "COMMUNE": "Entre Deux"
   },
   {
-    "CODE INSEE": 974479,
-    "CODE POSTAL": 97438,
-    "COMMUNE": "Gillot"
-  },
-  {
-    "CODE INSEE": 974462,
-    "CODE POSTAL": 97410,
-    "COMMUNE": "Grand Bois"
-  },
-  {
-    "CODE INSEE": 974446,
-    "CODE POSTAL": 97433,
-    "COMMUNE": "Hell Bourg"
-  },
-  {
-    "CODE INSEE": 974432,
-    "CODE POSTAL": 97480,
-    "COMMUNE": "Jean Petit"
-  },
-  {
-    "CODE INSEE": 974404,
-    "CODE POSTAL": 97427,
-    "COMMUNE": "L Etang Sale"
-  },
-  {
-    "CODE INSEE": 974468,
-    "CODE POSTAL": 97427,
-    "COMMUNE": "L Etang Sale les Bains"
-  },
-  {
-    "CODE INSEE": 974499,
-    "CODE POSTAL": 97490,
-    "COMMUNE": "La Bretagne"
-  },
-  {
     "CODE INSEE": 974443,
     "CODE POSTAL": 97416,
     "COMMUNE": "La Chaloupe"
-  },
-  {
-    "CODE INSEE": 974494,
-    "CODE POSTAL": 97440,
-    "COMMUNE": "La Cressonniere"
-  },
-  {
-    "CODE INSEE": 974441,
-    "CODE POSTAL": 97438,
-    "COMMUNE": "La Grande Montee"
   },
   {
     "CODE INSEE": 974447,
@@ -115,19 +40,9 @@
     "COMMUNE": "La Montagne"
   },
   {
-    "CODE INSEE": 974439,
-    "CODE POSTAL": 97428,
-    "COMMUNE": "La Nouvelle"
-  },
-  {
     "CODE INSEE": 974449,
     "CODE POSTAL": 97418,
     "COMMUNE": "La Plaine des Cafres"
-  },
-  {
-    "CODE INSEE": 974406,
-    "CODE POSTAL": 97431,
-    "COMMUNE": "La Plaine des Palmistes"
   },
   {
     "CODE INSEE": 974408,
@@ -135,34 +50,19 @@
     "COMMUNE": "La Possession"
   },
   {
+    "CODE INSEE": 974407,
+    "CODE POSTAL": 97420,
+    "COMMUNE": "Le Port"
+  },
+  {
     "CODE INSEE": 974452,
     "CODE POSTAL": 97421,
     "COMMUNE": "La Riviere"
   },
   {
-    "CODE INSEE": 974463,
-    "CODE POSTAL": 97419,
-    "COMMUNE": "La Riviere des Galets"
-  },
-  {
     "CODE INSEE": 974458,
     "CODE POSTAL": 97422,
     "COMMUNE": "La Saline"
-  },
-  {
-    "CODE INSEE": 974496,
-    "CODE POSTAL": 97434,
-    "COMMUNE": "La Saline les Bains"
-  },
-  {
-    "CODE INSEE": 974464,
-    "CODE POSTAL": 97400,
-    "COMMUNE": "Le Brule"
-  },
-  {
-    "CODE INSEE": 974465,
-    "CODE POSTAL": 97419,
-    "COMMUNE": "Le Dos d'Ane"
   },
   {
     "CODE INSEE": 974457,
@@ -175,59 +75,9 @@
     "COMMUNE": "Le Piton Saint Leu"
   },
   {
-    "CODE INSEE": 974466,
-    "CODE POSTAL": 97439,
-    "COMMUNE": "Le Piton Sainte Rose"
-  },
-  {
-    "CODE INSEE": 974480,
-    "CODE POSTAL": 97424,
-    "COMMUNE": "Le Plate"
-  },
-  {
-    "CODE INSEE": 974407,
-    "CODE POSTAL": 97420,
-    "COMMUNE": "Le Port"
-  },
-  {
-    "CODE INSEE": 974444,
-    "CODE POSTAL": 97420,
-    "COMMUNE": "Le Port Marine"
-  },
-  {
-    "CODE INSEE": 974434,
-    "CODE POSTAL": 97420,
-    "COMMUNE": "Le Port Zup"
-  },
-  {
-    "CODE INSEE": 974450,
-    "CODE POSTAL": 97430,
-    "COMMUNE": "Le Quatorzieme"
-  },
-  {
-    "CODE INSEE": 974422,
-    "CODE POSTAL": 97418,
-    "COMMUNE": "Le Tampon"
-  },
-  {
-    "CODE INSEE": 974422,
-    "CODE POSTAL": 97430,
-    "COMMUNE": "Le Tampon"
-  },
-  {
     "CODE INSEE": 974401,
     "CODE POSTAL": 97425,
     "COMMUNE": "Les Avirons"
-  },
-  {
-    "CODE INSEE": 974467,
-    "CODE POSTAL": 97480,
-    "COMMUNE": "Les Lianes"
-  },
-  {
-    "CODE INSEE": 974497,
-    "CODE POSTAL": 97421,
-    "COMMUNE": "Les Makes"
   },
   {
     "CODE INSEE": 974423,
@@ -235,29 +85,14 @@
     "COMMUNE": "Les Trois Bassins"
   },
   {
-    "CODE INSEE": 974423,
-    "CODE POSTAL": 97434,
-    "COMMUNE": "Les Trois Bassins"
+    "CODE INSEE": 974404,
+    "CODE POSTAL": 97427,
+    "COMMUNE": "L Etang Sale"
   },
   {
-    "CODE INSEE": 974487,
-    "CODE POSTAL": 97430,
-    "COMMUNE": "Les Trois Mares"
-  },
-  {
-    "CODE INSEE": 974469,
-    "CODE POSTAL": 97410,
-    "COMMUNE": "Mont Vert"
-  },
-  {
-    "CODE INSEE": 974489,
-    "CODE POSTAL": 97490,
-    "COMMUNE": "Moufia"
-  },
-  {
-    "CODE INSEE": 974484,
-    "CODE POSTAL": 97413,
-    "COMMUNE": "Palmiste Rouge"
+    "CODE INSEE": 974439,
+    "CODE POSTAL": 97428,
+    "COMMUNE": "La Nouvelle"
   },
   {
     "CODE INSEE": 974405,
@@ -265,24 +100,14 @@
     "COMMUNE": "Petite Ile"
   },
   {
-    "CODE INSEE": 974431,
-    "CODE POSTAL": 97429,
-    "COMMUNE": "Piton Goyaves"
-  },
-  {
-    "CODE INSEE": 974436,
-    "CODE POSTAL": 97460,
-    "COMMUNE": "Plateau Cailloux"
-  },
-  {
-    "CODE INSEE": 974483,
+    "CODE INSEE": 974422,
     "CODE POSTAL": 97430,
-    "COMMUNE": "Pont d'Yves"
+    "COMMUNE": "Le Tampon"
   },
   {
-    "CODE INSEE": 974437,
-    "CODE POSTAL": 97410,
-    "COMMUNE": "Ravine Blanche"
+    "CODE INSEE": 974406,
+    "CODE POSTAL": 97431,
+    "COMMUNE": "La Plaine des Palmistes"
   },
   {
     "CODE INSEE": 974451,
@@ -290,69 +115,9 @@
     "COMMUNE": "Ravine des Cabris"
   },
   {
-    "CODE INSEE": 974498,
-    "CODE POSTAL": 97438,
-    "COMMUNE": "Riviere des Pluies"
-  },
-  {
-    "CODE INSEE": 974481,
-    "CODE POSTAL": 97412,
-    "COMMUNE": "Riviere du Mat"
-  },
-  {
-    "CODE INSEE": 974409,
-    "CODE POSTAL": 97440,
-    "COMMUNE": "Saint Andre"
-  },
-  {
-    "CODE INSEE": 974410,
-    "CODE POSTAL": 97437,
-    "COMMUNE": "Saint Benoit"
-  },
-  {
-    "CODE INSEE": 974410,
-    "CODE POSTAL": 97470,
-    "COMMUNE": "Saint Benoit"
-  },
-  {
-    "CODE INSEE": 974442,
-    "CODE POSTAL": 97417,
-    "COMMUNE": "Saint Bernard"
-  },
-  {
-    "CODE INSEE": 974411,
-    "CODE POSTAL": 97400,
-    "COMMUNE": "Saint Denis"
-  },
-  {
-    "CODE INSEE": 974411,
-    "CODE POSTAL": 97417,
-    "COMMUNE": "Saint Denis"
-  },
-  {
-    "CODE INSEE": 974411,
-    "CODE POSTAL": 97490,
-    "COMMUNE": "Saint Denis"
-  },
-  {
-    "CODE INSEE": 974445,
-    "CODE POSTAL": 97400,
-    "COMMUNE": "Saint Denis Camelias"
-  },
-  {
-    "CODE INSEE": 974459,
-    "CODE POSTAL": 97490,
-    "COMMUNE": "Saint Denis Chaudron"
-  },
-  {
-    "CODE INSEE": 974425,
-    "CODE POSTAL": 97400,
-    "COMMUNE": "Saint Denis Tadar"
-  },
-  {
-    "CODE INSEE": 974470,
-    "CODE POSTAL": 97400,
-    "COMMUNE": "Saint Francois"
+    "CODE INSEE": 974421,
+    "CODE POSTAL": 97433,
+    "COMMUNE": "Salazie"
   },
   {
     "CODE INSEE": 974455,
@@ -365,89 +130,14 @@
     "COMMUNE": "Saint Gilles les Hauts"
   },
   {
-    "CODE INSEE": 974412,
-    "CODE POSTAL": 97480,
-    "COMMUNE": "Saint Joseph"
-  },
-  {
-    "CODE INSEE": 974413,
-    "CODE POSTAL": 97416,
-    "COMMUNE": "Saint Leu"
-  },
-  {
-    "CODE INSEE": 974413,
-    "CODE POSTAL": 97424,
-    "COMMUNE": "Saint Leu"
-  },
-  {
     "CODE INSEE": 974413,
     "CODE POSTAL": 97436,
     "COMMUNE": "Saint Leu"
   },
   {
-    "CODE INSEE": 974414,
-    "CODE POSTAL": 97421,
-    "COMMUNE": "Saint Louis"
-  },
-  {
-    "CODE INSEE": 974414,
-    "CODE POSTAL": 97450,
-    "COMMUNE": "Saint Louis"
-  },
-  {
-    "CODE INSEE": 974415,
-    "CODE POSTAL": 97411,
-    "COMMUNE": "Saint Paul"
-  },
-  {
-    "CODE INSEE": 974415,
-    "CODE POSTAL": 97422,
-    "COMMUNE": "Saint Paul"
-  },
-  {
-    "CODE INSEE": 974415,
-    "CODE POSTAL": 97423,
-    "COMMUNE": "Saint Paul"
-  },
-  {
-    "CODE INSEE": 974415,
-    "CODE POSTAL": 97434,
-    "COMMUNE": "Saint Paul"
-  },
-  {
-    "CODE INSEE": 974415,
-    "CODE POSTAL": 97435,
-    "COMMUNE": "Saint Paul"
-  },
-  {
-    "CODE INSEE": 974415,
-    "CODE POSTAL": 97460,
-    "COMMUNE": "Saint Paul"
-  },
-  {
-    "CODE INSEE": 974417,
-    "CODE POSTAL": 97442,
-    "COMMUNE": "Saint Philippe"
-  },
-  {
-    "CODE INSEE": 974416,
-    "CODE POSTAL": 97410,
-    "COMMUNE": "Saint Pierre"
-  },
-  {
-    "CODE INSEE": 974416,
-    "CODE POSTAL": 97432,
-    "COMMUNE": "Saint Pierre"
-  },
-  {
     "CODE INSEE": 974453,
     "CODE POSTAL": 97437,
     "COMMUNE": "Sainte Anne"
-  },
-  {
-    "CODE INSEE": 974454,
-    "CODE POSTAL": 97490,
-    "COMMUNE": "Sainte Clotilde"
   },
   {
     "CODE INSEE": 974418,
@@ -460,43 +150,43 @@
     "COMMUNE": "Sainte Rose"
   },
   {
+    "CODE INSEE": 974409,
+    "CODE POSTAL": 97440,
+    "COMMUNE": "Saint Andre"
+  },
+  {
     "CODE INSEE": 974420,
     "CODE POSTAL": 97441,
     "COMMUNE": "Sainte Suzanne"
   },
   {
-    "CODE INSEE": 974486,
-    "CODE POSTAL": 97419,
-    "COMMUNE": "Sainte Therese"
+    "CODE INSEE": 974417,
+    "CODE POSTAL": 97442,
+    "COMMUNE": "Saint Philippe"
   },
   {
-    "CODE INSEE": 974421,
-    "CODE POSTAL": 97433,
-    "COMMUNE": "Salazie"
+    "CODE INSEE": 974414,
+    "CODE POSTAL": 97450,
+    "COMMUNE": "Saint Louis"
   },
   {
-    "CODE INSEE": 974430,
-    "CODE POSTAL": 97430,
-    "COMMUNE": "Tampon 17Eme Km"
+    "CODE INSEE": 974415,
+    "CODE POSTAL": 97460,
+    "COMMUNE": "Saint Paul"
   },
   {
-    "CODE INSEE": 974478,
-    "CODE POSTAL": 97435,
-    "COMMUNE": "Tan Rouge"
+    "CODE INSEE": 974410,
+    "CODE POSTAL": 97470,
+    "COMMUNE": "Saint Benoit"
   },
   {
-    "CODE INSEE": 974471,
-    "CODE POSTAL": 97410,
-    "COMMUNE": "Terre Ste"
-  },
-  {
-    "CODE INSEE": 974495,
-    "CODE POSTAL": 97425,
-    "COMMUNE": "Tevelave"
-  },
-  {
-    "CODE INSEE": 974472,
+    "CODE INSEE": 974412,
     "CODE POSTAL": 97480,
-    "COMMUNE": "Vincendo"
+    "COMMUNE": "Saint Joseph"
+  },
+  {
+    "CODE INSEE": 974454,
+    "CODE POSTAL": 97490,
+    "COMMUNE": "Sainte Clotilde"
   }
 ]
