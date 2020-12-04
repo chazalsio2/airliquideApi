@@ -45,7 +45,7 @@ export async function editProperty(req, res, next) {
       equippedKitchen,
       // DPE,
       procedureInProgress,
-      rentalInProgress,
+      freeOfOccupation,
       numberOfCoOwnershipLots,
       photos,
       typeOfInvestment,
@@ -148,8 +148,8 @@ export async function editProperty(req, res, next) {
       propertyData.numberOfCoOwnershipLots = Number(numberOfCoOwnershipLots);
     }
 
-    if (rentalInProgress) {
-      propertyData.rentalInProgress = rentalInProgress === "Oui";
+    if (freeOfOccupation) {
+      propertyData.freeOfOccupation = freeOfOccupation === "Oui";
     }
 
     if (procedureInProgress) {
@@ -349,7 +349,7 @@ export async function createProperty(req, res, next) {
       // DPE,
       numberOfCoOwnershipLots,
       procedureInProgress,
-      rentalInProgress,
+      freeOfOccupation,
       typeOfInvestment,
       rent,
       coOwnershipCharge,
@@ -476,8 +476,8 @@ export async function createProperty(req, res, next) {
     if (procedureInProgress) {
       propertyData.procedureInProgress = procedureInProgress === "Oui";
     }
-    if (rentalInProgress) {
-      propertyData.rentalInProgress = rentalInProgress === "Oui";
+    if (freeOfOccupation) {
+      propertyData.freeOfOccupation = freeOfOccupation === "Oui";
     }
     if (equippedKitchen) {
       propertyData.equippedKitchen = equippedKitchen;
@@ -634,7 +634,7 @@ export async function getProperty(req, res, next) {
 }
 
 const propertiesPublicFields =
-  "ref name description type yearOfConstruction landArea livingArea salesPrice varangueArea photos virtualVisitLink financialSheet coOwnershipCharge assurancePNO propertyTax accounting cga divers propertyPrice notaryFees works financialExpense equipment financialSheet numberOfRooms kitchenArea roomDescription bathroomArea floor outdoorParking coveredParking swimmingPool secureEntrance intercom commercialName commercialPhoneNumber sanitation hotWater doubleGlazing electricRollerShutters airConditioner view equippedKitchen rentalInProgress procedureInProgress numberOfCoOwnershipLots typeOfInvestment rent coOwnershipCharge assurancePNO propertyTax accounting cga divers notaryFees visionRFees works financialExpense equipment agencyFees";
+  "ref name description type yearOfConstruction landArea livingArea salesPrice varangueArea photos virtualVisitLink financialSheet coOwnershipCharge assurancePNO propertyTax accounting cga divers propertyPrice notaryFees works financialExpense equipment financialSheet numberOfRooms kitchenArea roomDescription bathroomArea floor outdoorParking coveredParking swimmingPool secureEntrance intercom commercialName commercialPhoneNumber sanitation hotWater doubleGlazing electricRollerShutters airConditioner view equippedKitchen freeOfOccupation procedureInProgress numberOfCoOwnershipLots typeOfInvestment rent coOwnershipCharge assurancePNO propertyTax accounting cga divers notaryFees visionRFees works financialExpense equipment agencyFees";
 
 export async function getPublicProperties(req, res, next) {
   try {

@@ -69,7 +69,7 @@ const schema = new mongoose.Schema(
       type: Boolean,
       required: false
     },
-    rentalInProgress: {
+    freeOfOccupation: {
       type: Boolean,
       required: false
     },
