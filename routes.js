@@ -107,7 +107,8 @@ import {
   createContact,
   createContactCategory,
   getContactCategories,
-  getContacts
+  getContacts,
+  removeContact
 } from "./controllers/contact";
 
 const checkAdmin = (req, res, next) => checkRoles("admin", req, res, next);
@@ -188,7 +189,17 @@ export default (app) => {
   app.get(
     "/contacts",
     passport.authenticate("jwt", { session: false }),
+    checkAccountDesactivated,
     getContacts,
+    errorHandle
+  );
+
+  app.delete(
+    "/contacts/:contactId",
+    passport.authenticate("jwt", { session: false }),
+    checkAccountDesactivated,
+    checkAdmin,
+    removeContact,
     errorHandle
   );
 

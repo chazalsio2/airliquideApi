@@ -5,6 +5,24 @@ import { allowedRoles } from "../models/User";
 import Contact from "../models/Contact";
 import { generateError, isAdmin } from "../lib/utils";
 
+export async function removeContact(req, res, next) {
+  try {
+    const { contactId } = req.params;
+
+    const contact = await Contact.findById(contactId).lean();
+
+    if (!contact) {
+      throw new Error("Contact not found", 404);
+    }
+
+    await Contact.deleteOne({ _id: contactId }).exec();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
 export async function getContacts(req, res, next) {
   try {
     const { contactCategoryId } = req.params;
