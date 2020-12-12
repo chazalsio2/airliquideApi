@@ -48,8 +48,8 @@ const PORT = process.env.PORT || 3001;
 // mongoose connection
 mongoose.Promise = global.Promise;
 mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true
-  // useUnifiedTopology: true // Error Server selection timed out after 30000 ms if activated
+  useNewUrlParser: true,
+  reconnectTries: 60
 });
 
 mongoose.connection.on("connected", () => {
