@@ -251,9 +251,8 @@ export async function editProperty(req, res, next) {
       propertyData.numberOfRooms = Number(numberOfRooms);
     }
 
-    propertyData.name = `${getPropertyType(propertyData.type) || ""} ${
-      propertyData.livingArea
-    } m² ${propertyData.city || ""}`;
+    propertyData.name = `${getPropertyType(propertyData.type) || ""} ${propertyData.livingArea
+      } m² ${propertyData.city || ""}`;
 
     const propertyEdited = await Property.updateOne(
       { _id: propertyId },
@@ -293,6 +292,20 @@ export async function updatePropertyVisibility(req, res, next) {
   } catch (e) {
     next(generateError(e.message));
   }
+}
+
+
+export async function editPropertyStatus(req, res, next) {
+  const { status } = req.body
+  const { propertyId } = req.params;
+
+  if (!status || ['available', 'unavailable'].indexOf(status) === -1) {
+    return next(generateError("Invalid request", 401));
+  }
+
+  await Property.updateOne({ _id: propertyId }, { $set: { status } }).exec()
+
+  return res.json({ success: true });
 }
 
 export async function deletePhoto(req, res, next) {

@@ -85,7 +85,8 @@ import {
   updatePropertyVisibility,
   getPublicProperties,
   getPublicProperty,
-  deletePhoto
+  deletePhoto,
+  editPropertyStatus
 } from "./controllers/property";
 import {
   getFolders,
@@ -398,9 +399,18 @@ export default (app) => {
   app.put(
     `/properties/:propertyId`,
     passport.authenticate("jwt", { session: false }),
-    checkAdmin,
+    checkAdminOrCommercial,
     checkAccountDesactivated,
     editProperty,
+    errorHandle
+  );
+
+  app.put(
+    `/properties/:propertyId/status`,
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    editPropertyStatus,
     errorHandle
   );
 
