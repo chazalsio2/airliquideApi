@@ -8,8 +8,8 @@ cron.schedule("0 0 * * * *", async () => {
   const projects = await Project.find({
     status: "missing_information",
     createdAt: {
-      $gte: moment().subtract(2, "hours"),
-      $lt: moment().subtract(1, "hours"),
+      $gte: moment().subtract(3, "hours"),
+      $lt: moment().subtract(2, "hours"),
     },
   }).lean();
 
