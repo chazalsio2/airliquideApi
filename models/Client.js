@@ -184,6 +184,10 @@ var schema = new mongoose.Schema(
       type: Number,
       required: false
     },
+    availableSavings: {
+      type: Number,
+      required: false
+    },
     desiredGrossYield: {
       type: String,
       enum: ["4to6", "6to8", "8to10", "greaterthan10"],

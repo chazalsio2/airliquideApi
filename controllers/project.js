@@ -1410,6 +1410,7 @@ export async function savePersonalSituation(req, res, next) {
       personalsituation,
       personalstatus,
       savings,
+      availableSavings,
       loans,
       crd,
       rentamount,
@@ -1468,6 +1469,10 @@ export async function savePersonalSituation(req, res, next) {
       situation: personalsituation,
       status: personalstatus
     };
+
+    if (availableSavings) {
+      clientModifier.availableSavings = availableSavings;
+    }
 
     if (birthday) {
       clientModifier.birthday = moment(birthday);
@@ -1538,11 +1543,9 @@ export async function refuseProject(req, res, next) {
     const user = await User.findById(req.user._id).lean();
 
     sendMessageToSlack({
-      message: `Le mandat de ${
-        project.type === "search" ? "recherche" : "vente"
-      } de ${client.displayName} a été refusé par ${user.displayName} : ${
-        process.env.APP_URL
-      }/projects/${project._id}`
+      message: `Le mandat de ${project.type === "search" ? "recherche" : "vente"
+        } de ${client.displayName} a été refusé par ${user.displayName} : ${process.env.APP_URL
+        }/projects/${project._id}`
     });
 
     return res.json({ success: true });
@@ -1581,11 +1584,9 @@ export async function acceptProject(req, res, next) {
     const user = await User.findById(req.user._id).lean();
 
     sendMessageToSlack({
-      message: `Le mandat de ${
-        project.type === "search" ? "recherche" : "vente"
-      } de ${client.displayName} a été accepté par ${user.displayName} : ${
-        process.env.APP_URL
-      }/projects/${project._id}`
+      message: `Le mandat de ${project.type === "search" ? "recherche" : "vente"
+        } de ${client.displayName} a été accepté par ${user.displayName} : ${process.env.APP_URL
+        }/projects/${project._id}`
     });
 
     if (project.type === "search") {
@@ -1703,11 +1704,9 @@ export async function uploadLoanOfferForProject(req, res, next) {
     const client = await Client.findById(project.clientId).lean();
 
     sendMessageToSlack({
-      message: `L'offre de prêt pour mandat de ${
-        project.type === "search" ? "recherche" : "vente"
-      } du client ${client.displayName} est en attente d'acceptation : ${
-        process.env.APP_URL
-      }/projects/${project._id}`
+      message: `L'offre de prêt pour mandat de ${project.type === "search" ? "recherche" : "vente"
+        } du client ${client.displayName} est en attente d'acceptation : ${process.env.APP_URL
+        }/projects/${project._id}`
     });
 
     await new ProjectEvent({
@@ -1784,11 +1783,9 @@ export async function uploadMandateForProject(req, res, next) {
 
     const client = await Client.findById(project.clientId).lean();
     sendMessageToSlack({
-      message: `Le mandat de ${
-        project.type === "search" ? "recherche" : "vente"
-      } pour le client ${client.displayName} est en attente de validation : ${
-        process.env.APP_URL
-      }/projects/${projectId}`
+      message: `Le mandat de ${project.type === "search" ? "recherche" : "vente"
+        } pour le client ${client.displayName} est en attente de validation : ${process.env.APP_URL
+        }/projects/${projectId}`
     });
 
     await new ProjectEvent({
@@ -1863,11 +1860,9 @@ export async function uploadPurchaseOfferForProject(req, res, next) {
 
     const client = await Client.findById(project.clientId).lean();
     sendMessageToSlack({
-      message: `L'offre d'achat pour le mandat de ${
-        project.type === "search" ? "recherche" : "vente"
-      } du client ${client.displayName} est en attente de validation : ${
-        process.env.APP_URL
-      }/projects/${projectId}`
+      message: `L'offre d'achat pour le mandat de ${project.type === "search" ? "recherche" : "vente"
+        } du client ${client.displayName} est en attente de validation : ${process.env.APP_URL
+        }/projects/${projectId}`
     });
 
     await new ProjectEvent({
@@ -1951,11 +1946,9 @@ export async function uploadAgreementForProject(req, res, next) {
 
     const client = await Client.findById(project.clientId).lean();
     sendMessageToSlack({
-      message: `Le compromis de vente pour le mandat de ${
-        project.type === "search" ? "recherche" : "vente"
-      } du client ${client.displayName} est en attente de validation : ${
-        process.env.APP_URL
-      }/projects/${projectId}`
+      message: `Le compromis de vente pour le mandat de ${project.type === "search" ? "recherche" : "vente"
+        } du client ${client.displayName} est en attente de validation : ${process.env.APP_URL
+        }/projects/${projectId}`
     });
 
     sendAgreementWaitingValidation(project);
@@ -2025,11 +2018,9 @@ export async function uploadDeedForProject(req, res, next) {
 
     const client = await Client.findById(project.clientId).lean();
     sendMessageToSlack({
-      message: `L'acte authentique pour le mandat de ${
-        project.type === "search" ? "recherche" : "vente"
-      } du client ${client.displayName} est en attente de validation : ${
-        process.env.APP_URL
-      }/projects/${projectId}`
+      message: `L'acte authentique pour le mandat de ${project.type === "search" ? "recherche" : "vente"
+        } du client ${client.displayName} est en attente de validation : ${process.env.APP_URL
+        }/projects/${projectId}`
     });
 
     sendDeedWaitingValidation(project);
