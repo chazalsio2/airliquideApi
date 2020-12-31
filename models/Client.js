@@ -162,6 +162,10 @@ var schema = new mongoose.Schema(
       type: Number,
       required: false
     },
+    rentalIncome: {
+      type: Number,
+      required: false
+    },
     industry: {
       type: String,
       required: false

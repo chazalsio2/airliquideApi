@@ -185,7 +185,8 @@ export async function editClient(req, res, next) {
       personalindustry,
       personalseniority,
       personalsituation,
-      personalstatus
+      personalstatus,
+      rentalIncome
     } = modifier;
 
     const {
@@ -222,10 +223,15 @@ export async function editClient(req, res, next) {
       modifier.birthday = moment(birthday).toDate();
     }
 
+    if (rentalIncome) {
+      modifier.rentalIncome = rentalIncome;
+    }
+
     if (typeofincome) {
       modifier.typesOfIncome = typeofincome;
       delete modifier.typeofincome;
     }
+
     if (othertypeofincome) {
       modifier.othersTypesOfIncome = othertypeofincome;
       delete modifier.othertypeofincome;

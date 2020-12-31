@@ -1417,6 +1417,7 @@ export async function savePersonalSituation(req, res, next) {
       creditamount,
       principalresidence,
       typeofincome,
+      rentalIncome,
       othertypeofincome,
       typeofrentalincome,
       othertypeofrentalincome,
@@ -1472,6 +1473,10 @@ export async function savePersonalSituation(req, res, next) {
 
     if (availableSavings) {
       clientModifier.availableSavings = availableSavings;
+    }
+
+    if (rentalIncome) {
+      clientModifier.rentalIncome = rentalIncome;
     }
 
     if (birthday) {
