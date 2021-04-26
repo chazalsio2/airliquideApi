@@ -1,67 +1,5 @@
 import mongoose from "mongoose";
 
-const FinancialSheet = new mongoose.Schema({
-  typeOfInvestment: {
-    type: String
-  },
-  rent: {
-    type: Number,
-    default: 0
-  },
-  coOwnershipCharge: {
-    type: Number,
-    default: 0
-  },
-  assurancePNO: {
-    type: Number,
-    default: 0
-  },
-  propertyTax: {
-    type: Number,
-    default: 0
-  },
-  accounting: {
-    type: Number,
-    default: 0
-  },
-  cga: {
-    type: Number,
-    default: 0
-  },
-  divers: {
-    type: Number,
-    default: 0
-  },
-  propertyPrice: {
-    type: Number,
-    default: 0
-  },
-  notaryFees: {
-    type: Number,
-    default: 0
-  },
-  visionRFees: {
-    type: Number,
-    default: 0
-  },
-  agencyFees: {
-    type: Number,
-    default: 0
-  },
-  works: {
-    type: Number,
-    default: 0
-  },
-  financialExpense: {
-    type: Number,
-    default: 0
-  },
-  equipment: {
-    type: Number,
-    default: 0
-  }
-});
-
 export function getPropertyType(type) {
   // "apartment", "commercial",   "construction_land",   "home",   "parking",   "building"
   if (type === "apartment") return "Appartement";
@@ -79,12 +17,109 @@ const schema = new mongoose.Schema(
       type: String,
       required: false
     },
+    floor: {
+      type: String,
+      required: false
+    },
+    outdoorParking: {
+      type: String,
+      required: false
+    },
+    coveredParking: {
+      type: String,
+      required: false
+    },
+    swimmingPool: {
+      type: String,
+      required: false
+    },
+    secureEntrance: {
+      type: String,
+      required: false
+    },
+    intercom: {
+      type: String,
+      required: false
+    },
+    view: {
+      type: String,
+      required: false
+    },
+    sanitation: {
+      type: String,
+      required: false
+    },
+    doubleGlazing: {
+      type: String,
+      required: false
+    },
+    hotWater: {
+      type: String,
+      required: false
+    },
+    airConditioner: {
+      type: String,
+      required: false
+    },
+    numberOfCoOwnershipLots: {
+      type: Number,
+      required: false
+    },
+    procedureInProgress: {
+      type: Boolean,
+      required: false
+    },
+    freeOfOccupation: {
+      type: Boolean,
+      required: false
+    },
+    // DPE: {
+    //   type: Boolean,
+    //   required: false
+    // },
+    equippedKitchen: {
+      type: String,
+      required: false
+    },
+    electricRollerShutters: {
+      type: String,
+      required: false
+    },
+    roomDescription: {
+      type: String,
+      required: false
+    },
+    commercialName: {
+      type: String
+    },
+    commercialEmail: {
+      type: String
+    },
+    commercialPhoneNumber: {
+      type: String
+    },
+    kitchenArea: {
+      type: Number,
+      required: false
+    },
+    bathroomArea: {
+      type: Number,
+      required: false
+    },
+    numberOfRooms: {
+      type: Number,
+      required: false
+    },
     ref: {
       type: String,
       required: false
     },
     description: {
       type: String
+    },
+    propertyStatus: {
+      type: String,
+      enum: ["hunting", "forsale"]
     },
     type: {
       type: String,
@@ -137,23 +172,71 @@ const schema = new mongoose.Schema(
       default: "available",
       enum: ["available", "unavailable"]
     },
-    financialSheet: {
-      type: FinancialSheet,
-      required: false
-    },
-    public: {
-      type: Boolean,
-      default: false
-    },
-    salesMandate: {
-      type: Boolean,
-      default: false
-    },
     city: {
       type: String
     },
     address: {
       type: String
+    },
+
+    typeOfInvestment: {
+      type: String
+    },
+    rent: {
+      type: Number,
+      default: 0
+    },
+    coOwnershipCharge: {
+      type: Number,
+      default: 0
+    },
+    assurancePNO: {
+      type: Number,
+      default: 0
+    },
+    propertyTax: {
+      type: Number,
+      default: 0
+    },
+    accounting: {
+      type: Number,
+      default: 0
+    },
+    cga: {
+      type: Number,
+      default: 0
+    },
+    divers: {
+      type: Number,
+      default: 0
+    },
+    // propertyPrice: {
+    //   type: Number,
+    //   default: 0
+    // },
+    notaryFees: {
+      type: Number,
+      default: 0
+    },
+    visionRFees: {
+      type: Number,
+      default: 0
+    },
+    agencyFees: {
+      type: Number,
+      default: 0
+    },
+    works: {
+      type: Number,
+      default: 0
+    },
+    financialExpense: {
+      type: Number,
+      default: 0
+    },
+    equipment: {
+      type: Number,
+      default: 0
     }
   },
   {
@@ -167,8 +250,8 @@ schema.pre("save", async function (next) {
     const propertiesCount = await mongoose.models["Document"].countDocuments();
     const refTemps = `00000000${propertiesCount}`;
     this.ref = `${refTemps.substring(propertiesCount.toString().length)}`;
-    this.name = `${getPropertyType(this.type)} ${this.livingArea} m² ${
-      this.city
+    this.name = `${getPropertyType(this.type) || ""} ${this.livingArea} m² ${
+      this.city || ""
     }`;
     next();
   } catch (e) {

@@ -13,10 +13,27 @@ export async function getTrainings(req, res, next) {
       return res.json({ success: true, data: trainings });
     } else {
       const trainings = await Training.find({
-        roles: { $in: req.user.roles },
+        roles: { $in: req.user.roles }
       }).lean();
       return res.json({ success: true, data: trainings });
     }
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+export async function removeTraining(req, res, next) {
+  try {
+    const { trainingId } = req.params;
+
+    const training = await Training.findById(trainingId).lean();
+
+    if (!training) {
+      throw new Error("Training not found", 404);
+    }
+
+    await Training.deleteOne({ _id: trainingId }).exec();
+    return res.json({ success: true });
   } catch (e) {
     next(generateError(e.message));
   }
@@ -79,7 +96,7 @@ export async function createTraining(req, res, next) {
       name,
       url,
       roles,
-      description,
+      description
     }).save();
     return res.json({ success: true, data: training });
   } catch (e) {

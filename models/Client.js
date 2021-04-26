@@ -46,7 +46,7 @@ const SpouseSchema = new mongoose.Schema({
   },
   situation: {
     type: String,
-    enum: allowedSituationValues
+    enum: allowedStatusValues
   },
   income: {
     type: String
@@ -162,6 +162,10 @@ var schema = new mongoose.Schema(
       type: Number,
       required: false
     },
+    rentalIncome: {
+      type: Number,
+      required: false
+    },
     industry: {
       type: String,
       required: false
@@ -181,6 +185,10 @@ var schema = new mongoose.Schema(
       enum: allowedStatusValues
     },
     savings: {
+      type: Number,
+      required: false
+    },
+    availableSavings: {
       type: Number,
       required: false
     },

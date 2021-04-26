@@ -33,7 +33,7 @@ export async function getRootFolder(req, res, next) {
   try {
     const folderSelector = isAdmin(req.user)
       ? {}
-      : { roles: { $in: req.user.roles } };
+      : { allowedRoles: { $in: req.user.roles } };
 
     const folders = await Folder.find(
       folderSelector,
@@ -65,21 +65,20 @@ export async function getFolder(req, res, next) {
 
     const docSelector = isAdmin(req.user)
       ? {
-          folderId,
+          folderId
         }
       : {
-          folderId,
-          roles: { $in: req.user.roles },
+          folderId
         };
 
     const documents = await Document.find(docSelector, null, {
-      sort: { createdAt: -1 },
+      sort: { createdAt: -1 }
     }).lean();
 
     // folders is empty because we do not support multi level
     return res.json({
       success: true,
-      data: { name: folder.name, folders: [], documents },
+      data: { name: folder.name, folders: [], documents }
     });
   } catch (e) {
     next(generateError(e.message));
@@ -97,7 +96,7 @@ export async function deleteDocument(req, res, next) {
     }
 
     const useAsMandate = await Project.countDocuments({
-      mandateDocId: documentId,
+      mandateDocId: documentId
     }).lean();
 
     if (useAsMandate) {
@@ -106,7 +105,7 @@ export async function deleteDocument(req, res, next) {
       );
     }
     const useAsAgreement = await Project.countDocuments({
-      salesAgreementDocId: documentId,
+      salesAgreementDocId: documentId
     }).lean();
 
     if (useAsAgreement) {
@@ -116,7 +115,7 @@ export async function deleteDocument(req, res, next) {
     }
 
     const useAsDeed = await Project.countDocuments({
-      salesDeedDocId: documentId,
+      salesDeedDocId: documentId
     }).lean();
 
     if (useAsDeed) {
@@ -125,7 +124,7 @@ export async function deleteDocument(req, res, next) {
       );
     }
     const useAsPurchaseOffer = await Project.countDocuments({
-      purchaseOfferDocId: documentId,
+      purchaseOfferDocId: documentId
     }).lean();
 
     if (useAsPurchaseOffer) {
@@ -137,7 +136,7 @@ export async function deleteDocument(req, res, next) {
       );
     }
     const useAsLoanOffer = await Project.countDocuments({
-      loanOfferDocId: documentId,
+      loanOfferDocId: documentId
     }).lean();
 
     if (useAsLoanOffer) {

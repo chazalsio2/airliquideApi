@@ -70,7 +70,7 @@ export async function getClient(req, res, next) {
     client.projects = await Project.find(
       {
         clientId: client._id,
-        status: { $nin: ["canceled", "completed"] }
+        // status: { $nin: ["canceled", "completed"] }
       },
       null,
       { sort: { createdAt: -1 } }
@@ -185,8 +185,35 @@ export async function editClient(req, res, next) {
       personalindustry,
       personalseniority,
       personalsituation,
-      personalstatus
+      personalstatus,
+      rentalIncome
     } = modifier;
+
+    const {
+      spousefirstname,
+      spouseaddress,
+      spouseemail,
+      spouseincome,
+      spouseindustry,
+      spouselastname,
+      spousephone,
+      spouseseniority,
+      spousesituation
+    } = req.body;
+
+    if (spousefirstname) {
+      modifier.spouse = {
+        firstname: spousefirstname,
+        lastname: spouselastname,
+        email: spouseemail,
+        income: spouseincome,
+        industry: spouseindustry,
+        phone: spousephone,
+        address: spouseaddress,
+        seniority: spouseseniority,
+        situation: spousesituation
+      };
+    }
 
     if (email || createdAt || updatedAt || projects || referral) {
       return next(generateError("Cannot update some fields", 403));
@@ -196,10 +223,15 @@ export async function editClient(req, res, next) {
       modifier.birthday = moment(birthday).toDate();
     }
 
+    if (rentalIncome) {
+      modifier.rentalIncome = rentalIncome;
+    }
+
     if (typeofincome) {
       modifier.typesOfIncome = typeofincome;
       delete modifier.typeofincome;
     }
+
     if (othertypeofincome) {
       modifier.othersTypesOfIncome = othertypeofincome;
       delete modifier.othertypeofincome;

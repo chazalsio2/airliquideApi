@@ -83,9 +83,10 @@ import {
   getProperty,
   editProperty,
   updatePropertyVisibility,
-  updateFinancialPropertyData,
   getPublicProperties,
-  getPublicProperty
+  getPublicProperty,
+  deletePhoto,
+  editPropertyStatus
 } from "./controllers/property";
 import {
   getFolders,
@@ -97,7 +98,8 @@ import { getUser, getCommercials } from "./controllers/user";
 import {
   getTrainings,
   createTraining,
-  getTraining
+  getTraining,
+  removeTraining
 } from "./controllers/training";
 import { handleWebhookDocusign } from "./controllers/webhook";
 import { getDashboardData } from "./controllers/dashboard";
@@ -106,7 +108,8 @@ import {
   createContact,
   createContactCategory,
   getContactCategories,
-  getContacts
+  getContacts,
+  removeContact
 } from "./controllers/contact";
 
 const checkAdmin = (req, res, next) => checkRoles("admin", req, res, next);
@@ -187,7 +190,17 @@ export default (app) => {
   app.get(
     "/contacts",
     passport.authenticate("jwt", { session: false }),
+    checkAccountDesactivated,
     getContacts,
+    errorHandle
+  );
+
+  app.delete(
+    "/contacts/:contactId",
+    passport.authenticate("jwt", { session: false }),
+    checkAccountDesactivated,
+    checkAdmin,
+    removeContact,
     errorHandle
   );
 
@@ -347,6 +360,15 @@ export default (app) => {
     errorHandle
   );
 
+  app.delete(
+    "/trainings/:trainingId",
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    removeTraining,
+    errorHandle
+  );
+
   app.get(
     `/users/:userId`,
     passport.authenticate("jwt", { session: false }),
@@ -377,9 +399,27 @@ export default (app) => {
   app.put(
     `/properties/:propertyId`,
     passport.authenticate("jwt", { session: false }),
-    checkAdmin,
+    checkAdminOrCommercial,
     checkAccountDesactivated,
     editProperty,
+    errorHandle
+  );
+
+  app.put(
+    `/properties/:propertyId/status`,
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    editPropertyStatus,
+    errorHandle
+  );
+
+  app.delete(
+    `/properties/:propertyId/photos`,
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    deletePhoto,
     errorHandle
   );
 
@@ -573,15 +613,6 @@ export default (app) => {
     checkAdmin,
     checkAccountDesactivated,
     getProjectsMissingValidation,
-    errorHandle
-  );
-
-  app.put(
-    "/properties/:propertyId/financial-data",
-    passport.authenticate("jwt", { session: false }),
-    checkAdminOrCommercial,
-    checkAccountDesactivated,
-    updateFinancialPropertyData,
     errorHandle
   );
 

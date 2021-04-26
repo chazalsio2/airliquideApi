@@ -1,12 +1,11 @@
 import moment from "moment";
 import { generateError, isAdmin, isAdminOrCommercial } from "../lib/utils";
 import User from "../models/User";
-import Project, { projectTypes } from "../models/Project";
+import Project from "../models/Project";
 import Client from "../models/Client";
 import Document from "../models/Document";
 import ProjectEvent from "../models/ProjectEvent";
 import _ from "underscore";
-import mongoose from "mongoose";
 import {
   sendProjectWaitingValidationEmail,
   sendAssignProjectNotification,
@@ -20,13 +19,17 @@ import {
   sendAcceptSalesDeedConfirmation,
   sendMandateSignatureConfirmation,
   sendWelcomeEmail,
-  sendProductionConfirmation
+  sendMandateSignedForSalesProject,
+  sendProductionConfirmation,
+  sendSalesAgreementAcceptedForSalesProject,
+  sendPurchaseOfferAcceptedForSalesProject,
+  sendLoanOfferAcceptedForSalesProject,
+  sendDeedAcceptedForSalesProject
 } from "../lib/email";
 import { uploadFile } from "../lib/aws";
 import { sendMessageToSlack } from "../lib/slack";
 import { matchPropertiesForSearchMandate } from "../lib/matching";
 import Property from "../models/Property";
-import { Mongoose } from "mongoose";
 
 const LIMIT_BY_PAGE = 10;
 
@@ -164,6 +167,7 @@ export async function getProject(req, res, next) {
   }
 }
 
+// peut-être ici la fonction qui vérifie les mandat refusé
 export async function refuseMandate(req, res, next) {
   try {
     const { projectId } = req.params;
@@ -187,7 +191,7 @@ export async function refuseMandate(req, res, next) {
         $unset: { mandateDocId: "", mandateDoc: "" }
       }
     ).exec();
-
+//new ProjectEvent crée peut-être le doublon
     new ProjectEvent({
       projectId,
       type: "mandate_refused",
@@ -231,32 +235,44 @@ export async function editSalesSheet(req, res, next) {
     if (
       !propertyType ||
       !propertySize ||
-      !livingArea ||
-      !landArea ||
-      !workNeeded ||
       !reasonForTheSale ||
       !delay ||
       !readyToSign ||
       !workEstimate ||
-      !priceEstimate ||
       !fullAddress
     ) {
       throw new Error("Missing fields");
     }
 
-    const newSalesSheet = _.defaults(project.salesSheet, {
+    const newSalesSheetEdited = {
       propertyType,
       propertySize,
-      livingArea,
-      landArea,
-      workNeeded,
+      // livingArea,
+      // landArea,
       reasonForTheSale,
       delay,
       readyToSign,
-      priceEstimate,
       workEstimate,
       fullAddress
-    });
+    };
+
+    if (livingArea) {
+      newSalesSheetEdited.livingArea = livingArea;
+    }
+
+    if (landArea) {
+      newSalesSheetEdited.landArea = landArea;
+    }
+
+    if (priceEstimate) {
+      newSalesSheetEdited.priceEstimate = priceEstimate;
+    }
+
+    if (workNeeded) {
+      newSalesSheetEdited.workNeeded = workNeeded;
+    }
+
+    const newSalesSheet = _.defaults(newSalesSheetEdited, project.salesSheet);
 
     await Project.updateOne(
       { _id: projectId },
@@ -304,38 +320,57 @@ export async function saveSalesSheet(req, res, next) {
     if (
       !propertyType ||
       !propertySize ||
-      !livingArea ||
-      !landArea ||
-      !workNeeded ||
-      !reasonForTheSale ||
+      // !livingArea ||
+      // !landArea ||
       !delay ||
       !readyToSign ||
       !nextAvailabilities ||
-      !workEstimate ||
-      !priceEstimate ||
       !fullAddress
     ) {
       throw new Error("Missing fields");
+    }
+
+    const salesSheet = {
+      propertyType,
+      propertySize,
+      // livingArea,
+      // landArea,
+      workNeeded,
+      delay,
+      readyToSign,
+      nextAvailabilities,
+      fullAddress
+    };
+
+    if (workEstimate) {
+      salesSheet.workEstimate = workEstimate;
+    }
+
+    if (landArea) {
+      salesSheet.landArea = landArea;
+    }
+
+    if (livingArea) {
+      salesSheet.livingArea = livingArea;
+    }
+
+    if (priceEstimate) {
+      salesSheet.priceEstimate = priceEstimate;
+    }
+
+    if (reasonForTheSale) {
+      salesSheet.reasonForTheSale = reasonForTheSale;
+    }
+
+    if (workNeeded) {
+      salesSheet.workNeeded = workNeeded;
     }
 
     await Project.updateOne(
       { _id: projectId },
       {
         $set: {
-          salesSheet: {
-            propertyType,
-            propertySize,
-            livingArea,
-            landArea,
-            workNeeded,
-            reasonForTheSale,
-            delay,
-            readyToSign,
-            nextAvailabilities,
-            priceEstimate,
-            workEstimate,
-            fullAddress
-          }
+          salesSheet
         }
       }
     ).exec();
@@ -380,7 +415,7 @@ export async function getMyProjects(req, res, next) {
     next(generateError(e.message));
   }
 }
-
+//peut-être ici aussi pour le doublon
 export async function refuseDeed(req, res, next) {
   try {
     const { projectId } = req.params;
@@ -417,7 +452,7 @@ export async function refuseDeed(req, res, next) {
     next(generateError(e.message));
   }
 }
-
+//peut-être ici aussi pour le doublon
 export async function refuseAgreement(req, res, next) {
   try {
     const { projectId } = req.params;
@@ -454,7 +489,7 @@ export async function refuseAgreement(req, res, next) {
     next(generateError(e.message));
   }
 }
-
+//peut-être ici aussi pour le doublon
 export async function refusePurchaseOffer(req, res, next) {
   try {
     const { projectId } = req.params;
@@ -491,7 +526,7 @@ export async function refusePurchaseOffer(req, res, next) {
     next(generateError(e.message));
   }
 }
-
+//peut-être ici aussi pour le doublon
 export async function refuseLoanOffer(req, res, next) {
   try {
     const { projectId } = req.params;
@@ -559,7 +594,11 @@ export async function acceptLoanOffer(req, res, next) {
 
     const client = await Client.findById(project.clientId).lean();
 
-    sendAcceptLoanOfferConfirmation(client);
+    if (project.type === "sales") {
+      sendLoanOfferAcceptedForSalesProject(client);
+    } else {
+      sendAcceptLoanOfferConfirmation(client);
+    }
 
     return res.json({ success: true });
   } catch (e) {
@@ -662,10 +701,14 @@ export async function acceptMandate(req, res, next) {
       authorUserId: userId
     }).save();
 
-    sendMandateSignatureConfirmation(client);
+    if (project.type === "sales") {
+      sendMandateSignedForSalesProject(client);
+    } else {
+      sendMandateSignatureConfirmation(client);
+    }
 
     const alreadyUser = await User.findOne({
-      clientId: client._id
+      email: client.email
     }).lean();
 
     let roleToAdd;
@@ -738,7 +781,11 @@ export async function acceptPurchaseOffer(req, res, next) {
 
     const client = await Client.findOne({ _id: project.clientId }).lean();
 
-    sendAcceptPurchaseOfferConfirmation(client);
+    if (project.type === "sales") {
+      sendPurchaseOfferAcceptedForSalesProject(client);
+    } else {
+      sendAcceptPurchaseOfferConfirmation(client);
+    }
 
     return res.json({ success: true });
   } catch (e) {
@@ -785,7 +832,12 @@ export async function acceptAgreement(req, res, next) {
     }).save();
 
     const client = await Client.findById(project.clientId).lean();
-    sendAcceptSalesAgreementConfirmation(client);
+
+    if (project.type === "sales") {
+      sendSalesAgreementAcceptedForSalesProject(client);
+    } else {
+      sendAcceptSalesAgreementConfirmation(client);
+    }
 
     return res.json({ success: true });
   } catch (e) {
@@ -826,6 +878,11 @@ export async function acceptDeed(req, res, next) {
       type: "project_completed",
       authorUserId: userId
     }).save();
+
+    const client = await Client.findById(project.clientId).lean();
+    if (project.type === "sales") {
+      sendDeedAcceptedForSalesProject(client);
+    }
 
     return res.json({ success: true });
   } catch (e) {
@@ -876,7 +933,7 @@ export async function getProjects(req, res, next) {
     next(generateError(e.message));
   }
 }
-
+//peut-être ici aussi pour le doublon
 export async function getProjectsAssigned(req, res, next) {
   try {
     const { page = "" } = req.query;
@@ -999,8 +1056,6 @@ export async function saveSearchSheet(req, res, next) {
       !investmentType ||
       !propertyArea ||
       !searchSector ||
-      !swimmingpool ||
-      !varangue ||
       !delay ||
       !budget
     ) {
@@ -1011,27 +1066,35 @@ export async function saveSearchSheet(req, res, next) {
       return next(generateError("Project not found", 404));
     }
 
+    const searchSheet = {
+      investmentType:
+        investmentType === "other" ? otherInvestmentType : investmentType,
+      propertySize,
+      propertyType,
+      additionalInfos,
+      propertySizeDetail,
+      propertyArea,
+      land,
+      landArea,
+      searchSector,
+      delay,
+      budget,
+      searchSectorCities: searchSectorCities || []
+    };
+
+    if (swimmingpool) {
+      searchSheet.swimmingpool = swimmingpool;
+    }
+
+    if (varangue) {
+      searchSheet.varangue = varangue;
+    }
+
     await Project.updateOne(
       { _id: projectId },
       {
         $set: {
-          searchSheet: {
-            investmentType:
-              investmentType === "other" ? otherInvestmentType : investmentType,
-            propertySize,
-            propertyType,
-            additionalInfos,
-            propertySizeDetail,
-            propertyArea,
-            land,
-            landArea,
-            searchSector,
-            swimmingpool,
-            varangue,
-            delay,
-            budget,
-            searchSectorCities: searchSectorCities || []
-          }
+          searchSheet
         }
       }
     ).exec();
@@ -1065,6 +1128,8 @@ export async function editSearchProject(req, res, next) {
       swimmingpool,
       varangue,
       delay,
+      investalone,
+      desiredgrossyield,
       budget
     } = req.body;
 
@@ -1075,28 +1140,44 @@ export async function editSearchProject(req, res, next) {
       return next(generateError("Project not found", 404));
     }
 
+    const modifier = {
+      searchSheet: {
+        investmentType:
+          investmentType === "other" ? otherInvestmentType : investmentType,
+        propertySize,
+        propertyType,
+        additionalInfos,
+        propertySizeDetail,
+        propertyArea,
+        land,
+        landArea,
+        searchSector,
+        delay,
+        budget,
+        searchSectorCities: searchSectorCities || []
+      }
+    };
+
+    if (!_.isUndefined(investalone)) {
+      modifier.investAlone = investalone;
+    }
+
+    if (desiredgrossyield) {
+      modifier.desiredGrossYield = desiredgrossyield;
+    }
+
+    if (varangue) {
+      modifier.varangue = varangue;
+    }
+
+    if (swimmingpool) {
+      modifier.swimmingpool = swimmingpool;
+    }
+
     await Project.updateOne(
       { _id: projectId },
       {
-        $set: {
-          searchSheet: {
-            investmentType:
-              investmentType === "other" ? otherInvestmentType : investmentType,
-            propertySize,
-            propertyType,
-            additionalInfos,
-            propertySizeDetail,
-            propertyArea,
-            land,
-            landArea,
-            searchSector,
-            swimmingpool,
-            varangue,
-            delay,
-            budget,
-            searchSectorCities: searchSectorCities || []
-          }
-        }
+        $set: modifier
       }
     ).exec();
 
@@ -1157,16 +1238,12 @@ export async function confirmSearchMandate(req, res, next) {
       authorUserId: project.clientId
     }).save();
 
-    sendMessageToSlack({
-      message: `Le mandat de recherche pour le client ${client.displayName} est en attente de validation : ${process.env.APP_URL}/projects/${projectId}`
-    });
-
     return res.json({ success: true });
   } catch (e) {
     next(generateError(e.message));
   }
 }
-
+//peut-être ici aussi pour le doublon
 export async function cancelProject(req, res, next) {
   try {
     const { projectId } = req.params;
@@ -1334,12 +1411,14 @@ export async function savePersonalSituation(req, res, next) {
       personalsituation,
       personalstatus,
       savings,
+      availableSavings,
       loans,
       crd,
       rentamount,
       creditamount,
       principalresidence,
       typeofincome,
+      rentalIncome,
       othertypeofincome,
       typeofrentalincome,
       othertypeofrentalincome,
@@ -1393,6 +1472,14 @@ export async function savePersonalSituation(req, res, next) {
       status: personalstatus
     };
 
+    if (availableSavings) {
+      clientModifier.availableSavings = availableSavings;
+    }
+
+    if (rentalIncome) {
+      clientModifier.rentalIncome = rentalIncome;
+    }
+
     if (birthday) {
       clientModifier.birthday = moment(birthday);
     }
@@ -1429,7 +1516,7 @@ export async function savePersonalSituation(req, res, next) {
     next(generateError(e.message));
   }
 }
-
+//peut-être ici aussi pour le doublon
 export async function refuseProject(req, res, next) {
   try {
     const { projectId } = req.params;
@@ -1462,7 +1549,9 @@ export async function refuseProject(req, res, next) {
     const user = await User.findById(req.user._id).lean();
 
     sendMessageToSlack({
-      message: `Le mandat de recherche de ${client.displayName} a été refusé par ${user.displayName} : ${process.env.APP_URL}/projects/${project._id}`
+      message: `Le mandat de ${project.type === "search" ? "recherche" : "vente"
+        } de ${client.displayName} a été refusé par ${user.displayName} : ${process.env.APP_URL
+        }/projects/${project._id}`
     });
 
     return res.json({ success: true });
@@ -1501,7 +1590,9 @@ export async function acceptProject(req, res, next) {
     const user = await User.findById(req.user._id).lean();
 
     sendMessageToSlack({
-      message: `Le mandat de recherche de ${client.displayName} a été accepté par ${user.displayName} : ${process.env.APP_URL}/projects/${project._id}`
+      message: `Le mandat de ${project.type === "search" ? "recherche" : "vente"
+        } de ${client.displayName} a été accepté par ${user.displayName} : ${process.env.APP_URL
+        }/projects/${project._id}`
     });
 
     if (project.type === "search") {
@@ -1616,6 +1707,14 @@ export async function uploadLoanOfferForProject(req, res, next) {
       }
     ).exec();
 
+    const client = await Client.findById(project.clientId).lean();
+
+    sendMessageToSlack({
+      message: `L'offre de prêt pour mandat de ${project.type === "search" ? "recherche" : "vente"
+        } du client ${client.displayName} est en attente d'acceptation : ${process.env.APP_URL
+        }/projects/${project._id}`
+    });
+
     await new ProjectEvent({
       projectId,
       type: "loan_offer_added",
@@ -1688,6 +1787,13 @@ export async function uploadMandateForProject(req, res, next) {
       }
     ).exec();
 
+    const client = await Client.findById(project.clientId).lean();
+    sendMessageToSlack({
+      message: `Le mandat de ${project.type === "search" ? "recherche" : "vente"
+        } pour le client ${client.displayName} est en attente de validation : ${process.env.APP_URL
+        }/projects/${projectId}`
+    });
+
     await new ProjectEvent({
       projectId,
       type: "mandate_added",
@@ -1757,6 +1863,13 @@ export async function uploadPurchaseOfferForProject(req, res, next) {
         }
       }
     ).exec();
+
+    const client = await Client.findById(project.clientId).lean();
+    sendMessageToSlack({
+      message: `L'offre d'achat pour le mandat de ${project.type === "search" ? "recherche" : "vente"
+        } du client ${client.displayName} est en attente de validation : ${process.env.APP_URL
+        }/projects/${projectId}`
+    });
 
     await new ProjectEvent({
       projectId,
@@ -1837,6 +1950,13 @@ export async function uploadAgreementForProject(req, res, next) {
       documentId: document._id
     }).save();
 
+    const client = await Client.findById(project.clientId).lean();
+    sendMessageToSlack({
+      message: `Le compromis de vente pour le mandat de ${project.type === "search" ? "recherche" : "vente"
+        } du client ${client.displayName} est en attente de validation : ${process.env.APP_URL
+        }/projects/${projectId}`
+    });
+
     sendAgreementWaitingValidation(project);
 
     return res.json({ success: true });
@@ -1901,6 +2021,13 @@ export async function uploadDeedForProject(req, res, next) {
         }
       }
     ).exec();
+
+    const client = await Client.findById(project.clientId).lean();
+    sendMessageToSlack({
+      message: `L'acte authentique pour le mandat de ${project.type === "search" ? "recherche" : "vente"
+        } du client ${client.displayName} est en attente de validation : ${process.env.APP_URL
+        }/projects/${projectId}`
+    });
 
     sendDeedWaitingValidation(project);
 

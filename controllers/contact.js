@@ -5,6 +5,24 @@ import { allowedRoles } from "../models/User";
 import Contact from "../models/Contact";
 import { generateError, isAdmin } from "../lib/utils";
 
+export async function removeContact(req, res, next) {
+  try {
+    const { contactId } = req.params;
+
+    const contact = await Contact.findById(contactId).lean();
+
+    if (!contact) {
+      throw new Error("Contact not found", 404);
+    }
+
+    await Contact.deleteOne({ _id: contactId }).exec();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
 export async function getContacts(req, res, next) {
   try {
     const { contactCategoryId } = req.params;
@@ -74,7 +92,13 @@ export async function getContactCategories(req, res, next) {
 
 export async function createContact(req, res, next) {
   try {
-    const { firstname, lastname, phone, contactCategoryId } = req.body;
+    const {
+      firstname,
+      lastname,
+      phone,
+      contactCategoryId,
+      description
+    } = req.body;
 
     if (!firstname || !lastname || !phone || !contactCategoryId) {
       throw new Error("Missing fields");
@@ -88,7 +112,13 @@ export async function createContact(req, res, next) {
       throw new Error("Contact category not found");
     }
 
-    await new Contact({ firstname, lastname, phone, contactCategoryId }).save();
+    await new Contact({
+      firstname,
+      lastname,
+      phone,
+      contactCategoryId,
+      description
+    }).save();
 
     return res.json({ success: true });
   } catch (e) {

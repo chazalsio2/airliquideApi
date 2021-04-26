@@ -263,7 +263,7 @@ export async function createSimulation(req, res, next) {
       throw new Error("Not authorized");
     }
 
-    await new Simulation({
+    const propertyData = {
       title,
       propertyPrice: getStringOrNumber(propertyPrice) * 100,
       agencyFees: getStringOrNumber(agencyFees) * 100,
@@ -293,7 +293,9 @@ export async function createSimulation(req, res, next) {
       internet: getStringOrNumber(internet) * 100,
       others: getStringOrNumber(others) * 100,
       userId
-    }).save();
+    };
+
+    await new Simulation(propertyData).save();
 
     return res.json({ success: true });
   } catch (e) {
