@@ -167,6 +167,7 @@ export async function getProject(req, res, next) {
   }
 }
 
+// peut-être ici la fonction qui vérifie les mandat refusé
 export async function refuseMandate(req, res, next) {
   try {
     const { projectId } = req.params;
@@ -190,7 +191,7 @@ export async function refuseMandate(req, res, next) {
         $unset: { mandateDocId: "", mandateDoc: "" }
       }
     ).exec();
-
+//new ProjectEvent crée peut-être le doublon
     new ProjectEvent({
       projectId,
       type: "mandate_refused",
@@ -414,7 +415,7 @@ export async function getMyProjects(req, res, next) {
     next(generateError(e.message));
   }
 }
-
+//peut-être ici aussi pour le doublon
 export async function refuseDeed(req, res, next) {
   try {
     const { projectId } = req.params;
@@ -451,7 +452,7 @@ export async function refuseDeed(req, res, next) {
     next(generateError(e.message));
   }
 }
-
+//peut-être ici aussi pour le doublon
 export async function refuseAgreement(req, res, next) {
   try {
     const { projectId } = req.params;
@@ -488,7 +489,7 @@ export async function refuseAgreement(req, res, next) {
     next(generateError(e.message));
   }
 }
-
+//peut-être ici aussi pour le doublon
 export async function refusePurchaseOffer(req, res, next) {
   try {
     const { projectId } = req.params;
@@ -525,7 +526,7 @@ export async function refusePurchaseOffer(req, res, next) {
     next(generateError(e.message));
   }
 }
-
+//peut-être ici aussi pour le doublon
 export async function refuseLoanOffer(req, res, next) {
   try {
     const { projectId } = req.params;
@@ -932,7 +933,7 @@ export async function getProjects(req, res, next) {
     next(generateError(e.message));
   }
 }
-
+//peut-être ici aussi pour le doublon
 export async function getProjectsAssigned(req, res, next) {
   try {
     const { page = "" } = req.query;
@@ -1242,7 +1243,7 @@ export async function confirmSearchMandate(req, res, next) {
     next(generateError(e.message));
   }
 }
-
+//peut-être ici aussi pour le doublon
 export async function cancelProject(req, res, next) {
   try {
     const { projectId } = req.params;
@@ -1515,7 +1516,7 @@ export async function savePersonalSituation(req, res, next) {
     next(generateError(e.message));
   }
 }
-
+//peut-être ici aussi pour le doublon
 export async function refuseProject(req, res, next) {
   try {
     const { projectId } = req.params;

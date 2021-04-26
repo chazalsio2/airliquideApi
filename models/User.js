@@ -6,7 +6,8 @@ export const allowedRoles = [
   "commercial_agent",
   "client_sales_mandate",
   "client_management_mandate",
-  "client_search_mandate"
+  "client_search_mandate",
+  "client_coaching"
 ];
 
 var schema = new mongoose.Schema(
