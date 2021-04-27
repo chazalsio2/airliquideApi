@@ -81,6 +81,7 @@ export async function editUser(req, res, next) {
   try {
     const { roles, displayName, userId, deactivated } = req.body;
 
+    console.log(req.body);
     if (!userId || !displayName) {
       return next(generateError("Missing fields", 400));
     }
