@@ -63,8 +63,7 @@ export async function createUser(req, res, next) {
   );
 
   if (!isValidRoles) {
-    // return next(generateError("Wrong arguments", 401));
-    return next(generateError(isValidRoles, 401));
+    return next(generateError("Wrong arguments", 401));
   }
 
   try {
@@ -81,15 +80,13 @@ export async function createUser(req, res, next) {
 export async function editUser(req, res, next) {
   try {
     const { roles, displayName, userId, deactivated } = req.body;
-    
+
     if (!userId || !displayName) {
       return next(generateError("Missing fields", 400));
     }
 
     if (!_.isArray(roles) || !roles.length) {
-      // return next(generateError("Wrong arguments", 401));
-      return next(generateError(roles, 401));
-
+      return next(generateError("Wrong arguments", 401));
     }
 
     const isValidRoles = _.all(
@@ -98,9 +95,7 @@ export async function editUser(req, res, next) {
     );
 
     if (!isValidRoles) {
-      // return next(generateError("Wrong arguments", 401));
-      return next(generateError(isValidRoles, 401));
-
+      return next(generateError("Wrong arguments", 401));
     }
 
     const user = await User.findOne({ _id: userId }).exec();
