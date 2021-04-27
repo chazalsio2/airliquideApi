@@ -53,9 +53,9 @@ export async function createUser(req, res, next) {
   }
 
   if (!_.isArray(roles) || !roles.length) {
-    console.log(roles);
     return next(generateError("Wrong arguments", 401));
   }
+  console.log(_.isArray(roles));
 
   const isValidRoles = _.all(
     roles,
@@ -81,7 +81,7 @@ export async function editUser(req, res, next) {
   try {
     const { roles, displayName, userId, deactivated } = req.body;
 
-    console.log(req.body);
+    console.log(roles, " ", userId);
     if (!userId || !displayName) {
       return next(generateError("Missing fields", 400));
     }
