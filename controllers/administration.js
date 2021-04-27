@@ -53,6 +53,7 @@ export async function createUser(req, res, next) {
   }
 
   if (!_.isArray(roles) || !roles.length) {
+    console.log(roles);
     return next(generateError("Wrong arguments", 401));
   }
 
