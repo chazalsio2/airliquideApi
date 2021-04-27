@@ -63,6 +63,7 @@ export async function createUser(req, res, next) {
   );
 
   if (!isValidRoles) {
+    next(generateError(roles, 401));
     return next(generateError("Wrong arguments", 401));
   }
 
@@ -87,6 +88,7 @@ export async function editUser(req, res, next) {
     }
 
     if (!_.isArray(roles) || !roles.length) {
+      next(generateError(roles, 401));
       return next(generateError("Wrong arguments", 401));
     }
 
