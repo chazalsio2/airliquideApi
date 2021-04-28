@@ -49,7 +49,8 @@ export async function createUser(req, res, next) {
   const { email, roles, displayName } = req.body;  
 
   if (!email || !roles || !displayName) {
-    return next(generateError("Missing fields", 400));
+    return next(generateError("Missing fields caca", 400));
+    // return next(generateError("Missing fields", 400));
   }
 
   if (!_.isArray(roles) || !roles.length) {
