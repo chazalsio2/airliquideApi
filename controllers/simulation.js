@@ -1,7 +1,8 @@
 import {
   generateError,
   isAdminOrCommercial,
-  isSearchClient
+  isSearchClient,
+  isCoaching
 } from "../lib/utils";
 import _ from "underscore";
 import Simulation from "../models/Simulation";
@@ -108,9 +109,9 @@ export async function editSimulation(req, res, next) {
     ) {
       throw new Error("Missing fields");
     }
-
+//coaching
     const isAuthorized =
-      isAdminOrCommercial(req.user) || isSearchClient(req.user);
+      isAdminOrCommercial(req.user) || isSearchClient(req.user) || isCoaching(req.user);
 
     if (!isAuthorized) {
       throw new Error("Not authorized");
@@ -173,9 +174,9 @@ export async function deleteSimulation(req, res, next) {
     if (!simulation) {
       throw new Error("Simulation not found");
     }
-
+//coaching
     const isAuthorized =
-      isAdminOrCommercial(req.user) || isSearchClient(req.user);
+      isAdminOrCommercial(req.user) || isSearchClient(req.user) || isCoaching(req.user);
 
     if (!isAuthorized) {
       throw new Error("Not authorized");
@@ -255,9 +256,9 @@ export async function createSimulation(req, res, next) {
     ) {
       throw new Error("Missing fields");
     }
-
+//coaching
     const isAuthorized =
-      isAdminOrCommercial(req.user) || isSearchClient(req.user);
+      isAdminOrCommercial(req.user) || isSearchClient(req.user) || isCoaching(req.user);
 
     if (!isAuthorized) {
       throw new Error("Not authorized");

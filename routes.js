@@ -122,6 +122,9 @@ const checkAdminOrCommercialOrSearchClient = (req, res, next) =>
     res,
     next
   );
+//add check coaching in routes
+
+const checkCoaching = (req, res, next ) => checkRoles("client_coaching", req, res, next);
 
 export default (app) => {
   // webhooks
