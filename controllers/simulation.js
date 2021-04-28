@@ -107,7 +107,7 @@ export async function editSimulation(req, res, next) {
       !water ||
       !others
     ) {
-      throw new Error("Missing fields 13");
+      throw new Error("Missing fields 12");
       // throw new Error("Missing fields");
     }
 //coaching
@@ -255,7 +255,7 @@ export async function createSimulation(req, res, next) {
       !water ||
       !others
     ) {
-      throw new Error("Missing fields 14");
+      throw new Error("Missing fields 13");
       // throw new Error("Missing fields");
     }
 //coaching
