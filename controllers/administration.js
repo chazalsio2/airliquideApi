@@ -46,7 +46,7 @@ export async function getUsers(req, res, next) {
 }
 
 export async function createUser(req, res, next) {
-  const { email, roles, displayName } = req.body;
+  const { email, roles, displayName } = req.body;  
 
   if (!email || !roles || !displayName) {
     return next(generateError("Missing fields", 400));
@@ -77,14 +77,16 @@ export async function createUser(req, res, next) {
 }
 
 export async function editUser(req, res, next) {
+  console.log("hello world 1");
   try {
     const { roles, displayName, userId, deactivated } = req.body;
-
+    console.log("hello world 2");
     if (!userId || !displayName) {
       return next(generateError("Missing fields", 400));
     }
 
     if (!_.isArray(roles) || !roles.length) {
+      console.log("hello error 1 valide array");
       return next(generateError("Wrong arguments", 401));
     }
 
@@ -94,6 +96,7 @@ export async function editUser(req, res, next) {
     );
 
     if (!isValidRoles) {
+      console.log("hello error 2 valideRole");
       return next(generateError("Wrong arguments", 401));
     }
 
