@@ -80,7 +80,8 @@ export async function editUser(req, res, next) {
   try {
     const { roles, displayName, userId, deactivated } = req.body;
     if (!userId || !displayName) {
-      return next(generateError("Missing fields", 400));
+      return next(generateError("Missing fields caca", 400));
+      // return next(generateError("Missing fields", 400));
     }
 
     if (!_.isArray(roles) || !roles.length) {
