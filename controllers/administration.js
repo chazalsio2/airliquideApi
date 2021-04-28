@@ -9,7 +9,7 @@ const allowedRoles = [
   "client_sales_mandate",
   "client_management_mandate",
   "client_search_mandate",
-  "client_coaching",
+  "client_coaching"
 ];
 
 export async function getUsers(req, res, next) {
@@ -55,7 +55,6 @@ export async function createUser(req, res, next) {
   if (!_.isArray(roles) || !roles.length) {
     return next(generateError("Wrong arguments", 401));
   }
-  console.log(_.isArray(roles));
 
   const isValidRoles = _.all(
     roles,
