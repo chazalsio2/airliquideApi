@@ -10,7 +10,8 @@ export async function searchTerm(req, res, next) {
   const { t } = req.query;
 
   if (!t) {
-    next(generateError("Missing fields", 401));
+    next(generateError("Missing fields 12", 401));
+    // next(generateError("Missing fields", 401));
   }
 
   const results = [];

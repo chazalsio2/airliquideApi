@@ -49,7 +49,7 @@ export async function createUser(req, res, next) {
   const { email, roles, displayName } = req.body;  
 
   if (!email || !roles || !displayName) {
-    return next(generateError("Missing fields caca", 400));
+    return next(generateError("Missing fields caca  1", 400));
     // return next(generateError("Missing fields", 400));
   }
 
@@ -81,7 +81,7 @@ export async function editUser(req, res, next) {
   try {
     const { roles, displayName, userId, deactivated } = req.body;
     if (!userId || !displayName) {
-      return next(generateError("Missing fields caca", 400));
+      return next(generateError("Missing fields caca 2", 400));
       // return next(generateError("Missing fields", 400));
     }
 

@@ -101,7 +101,8 @@ export async function createContact(req, res, next) {
     } = req.body;
 
     if (!firstname || !lastname || !phone || !contactCategoryId) {
-      throw new Error("Missing fields");
+      throw new Error("Missing fields 6");
+      // throw new Error("Missing fields");
     }
 
     const contactCategory = await ContactCategory.findById(
@@ -131,7 +132,8 @@ export async function createContactCategory(req, res, next) {
     const { name, description, roles } = req.body;
 
     if (!name || !roles) {
-      throw new Error("Missing fields");
+      throw new Error("Missing fields 7");
+      // throw new Error("Missing fields");
     }
 
     if (

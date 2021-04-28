@@ -107,7 +107,8 @@ export async function editSimulation(req, res, next) {
       !water ||
       !others
     ) {
-      throw new Error("Missing fields");
+      throw new Error("Missing fields 13");
+      // throw new Error("Missing fields");
     }
 //coaching
     const isAuthorized =
@@ -254,7 +255,8 @@ export async function createSimulation(req, res, next) {
       !water ||
       !others
     ) {
-      throw new Error("Missing fields");
+      throw new Error("Missing fields 14");
+      // throw new Error("Missing fields");
     }
 //coaching
     const isAuthorized =

@@ -241,7 +241,8 @@ export async function editSalesSheet(req, res, next) {
       !workEstimate ||
       !fullAddress
     ) {
-      throw new Error("Missing fields");
+      throw new Error("Missing fields 8");
+      // throw new Error("Missing fields");
     }
 
     const newSalesSheetEdited = {
@@ -327,7 +328,8 @@ export async function saveSalesSheet(req, res, next) {
       !nextAvailabilities ||
       !fullAddress
     ) {
-      throw new Error("Missing fields");
+      throw new Error("Missing fields 9");
+      // throw new Error("Missing fields");
     }
 
     const salesSheet = {
@@ -811,7 +813,8 @@ export async function acceptAgreement(req, res, next) {
     }
 
     if (!commission || !commercialPourcentage) {
-      return next(generateError("Missing fields", 401));
+      return next(generateError("Missing fields 10", 401));
+      // return next(generateError("Missing fields", 401));
     }
 
     await Project.updateOne(
