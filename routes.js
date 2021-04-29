@@ -667,7 +667,7 @@ export default (app) => {
   app.put(
     "/clients/:clientId",
     passport.authenticate("jwt", { session: false }),
-    checkAdmin,
+    checkAdminOrCommercial,
     checkAccountDesactivated,
     editClient,
     errorHandle
