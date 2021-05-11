@@ -49,8 +49,7 @@ export async function createUser(req, res, next) {
   const { email, roles, displayName } = req.body;  
 
   if (!email || !roles || !displayName) {
-    return next(generateError("Missing fields  1", 400));
-    // return next(generateError("Missing fields", 400));
+    return next(generateError("Missing fields", 400));
   }
 
   if (!_.isArray(roles) || !roles.length) {
@@ -81,8 +80,7 @@ export async function editUser(req, res, next) {
   try {
     const { roles, displayName, userId, deactivated } = req.body;
     if (!userId || !displayName) {
-      return next(generateError("Missing fields  2", 400));
-      // return next(generateError("Missing fields", 400));
+      return next(generateError("Missing fields", 400));
     }
 
     if (!_.isArray(roles) || !roles.length) {
@@ -113,7 +111,6 @@ export async function editUser(req, res, next) {
       { _id: userId },
       "email roles createdAt active displayName active deactivated"
     ).lean();
-
     return res.json({ success: true, data: userUpdated });
   } catch (e) {
     return res.status(500).json({ success: false, reason: e.message });
