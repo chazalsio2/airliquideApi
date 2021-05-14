@@ -119,7 +119,7 @@ const checkAdminOrCommercial = (req, res, next) =>
   checkRoles(["admin", "commercial_agent"], req, res, next);
 const checkAdminOrCommercialOrSearchClient = (req, res, next) =>
   checkRoles(
-    ["admin", "commercial_agent", "client_search_mandate"],
+    ["admin", "commercial_agent", "client_search_mandate", "client_search_mandate_vip"],
     req,
     res,
     next

@@ -88,7 +88,7 @@ export async function handleWebhookDocusign(req, res, next) {
             });
           }
 
-          if (project.type === "search") {
+          if (project.type === "search" || project.type === "search vip") {
             DocusignManager.getEnvelope(
               envelope.envelopeid,
               async (err, docData) => {
@@ -161,6 +161,10 @@ export async function handleWebhookDocusign(req, res, next) {
 
           if (project.type === "search") {
             roleToAdd = "client_search_mandate";
+          }
+
+          if (project.type === "search vip") {
+            roleToAdd = "client_search_mandate_vip";
           }
 
           if (alreadyUser) {

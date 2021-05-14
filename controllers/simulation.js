@@ -2,6 +2,7 @@ import {
   generateError,
   isAdminOrCommercial,
   isSearchClient,
+  isSearchClientVip,
   isCoaching
 } from "../lib/utils";
 import _ from "underscore";
@@ -112,7 +113,7 @@ export async function editSimulation(req, res, next) {
     }
 //coaching
     const isAuthorized =
-      isAdminOrCommercial(req.user) || isSearchClient(req.user) || isCoaching(req.user);
+      isAdminOrCommercial(req.user) || isSearchClient(req.user) || isSearchClientVip(req.user) || isCoaching(req.user);
       
     if (!isAuthorized) {
       throw new Error("Not authorized");
@@ -176,7 +177,7 @@ export async function deleteSimulation(req, res, next) {
     }
 //coaching
     const isAuthorized =
-      isAdminOrCommercial(req.user) || isSearchClient(req.user) || isCoaching(req.user);
+      isAdminOrCommercial(req.user) || isSearchClient(req.user) || isSearchClientVip(req.user) || isCoaching(req.user);
 
     if (!isAuthorized) {
       throw new Error("Not authorized");
@@ -259,7 +260,7 @@ export async function createSimulation(req, res, next) {
     }
 //coaching
     const isAuthorized =
-      isAdminOrCommercial(req.user) || isSearchClient(req.user) || isCoaching(req.user);
+      isAdminOrCommercial(req.user) || isSearchClient(req.user) || isSearchClientVip(req.user) || isCoaching(req.user);
 
     if (!isAuthorized) {
       throw new Error("Not authorized");

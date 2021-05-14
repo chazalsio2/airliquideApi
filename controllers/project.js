@@ -727,6 +727,10 @@ export async function acceptMandate(req, res, next) {
       roleToAdd = "client_search_mandate";
     }
 
+    if (project.type === "search vip") {
+      roleToAdd = "client_search_mandate_vip";
+    }
+
     if (alreadyUser) {
       await User.updateOne(
         { _id: alreadyUser._id },
@@ -1551,12 +1555,20 @@ export async function refuseProject(req, res, next) {
 
     const user = await User.findById(req.user._id).lean();
 
-    sendMessageToSlack({
-      message: `Le mandat de ${project.type === "search" ? "recherche" : "vente"
-        } de ${client.displayName} a été refusé par ${user.displayName} : ${process.env.APP_URL
-        }/projects/${project._id}`
-    });
-
+    if (project.type === "search") {
+      sendMessageToSlack({
+        message: `Le mandat de ${project.type === "search" ? "recherche" : "vente"
+          } de ${client.displayName} a été refusé par ${user.displayName} : ${process.env.APP_URL
+          }/projects/${project._id}`
+      });
+      }
+      else {
+        sendMessageToSlack({
+          message: `Le mandat de ${project.type === "search vip" ? "recherche" : "vente"
+            } de ${client.displayName} a été refusé par ${user.displayName} : ${process.env.APP_URL
+            }/projects/${project._id}`
+        });
+      }
     return res.json({ success: true });
   } catch (e) {
     next(generateError(e.message));
@@ -1592,13 +1604,27 @@ export async function acceptProject(req, res, next) {
 
     const user = await User.findById(req.user._id).lean();
 
-    sendMessageToSlack({
-      message: `Le mandat de ${project.type === "search" ? "recherche" : "vente"
-        } de ${client.displayName} a été accepté par ${user.displayName} : ${process.env.APP_URL
-        }/projects/${project._id}`
-    });
+    if (project.type === "search") {
+      sendMessageToSlack({
+        message: `Le mandat de ${project.type === "search" ? "recherche" : "vente"
+          } de ${client.displayName} a été accepté par ${user.displayName} : ${process.env.APP_URL
+          }/projects/${project._id}`
+      });
+    }
+    else {
+        sendMessageToSlack({
+          message: `Le mandat de ${project.type === "search vip" ? "recherche" : "vente"
+            } de ${client.displayName} a été accepté par ${user.displayName} : ${process.env.APP_URL
+            }/projects/${project._id}`
+        });
+    }
+
 
     if (project.type === "search") {
+      await matchPropertiesForSearchMandate(project._id);
+    }
+
+    if (project.type === "search vip") {
       await matchPropertiesForSearchMandate(project._id);
     }
 

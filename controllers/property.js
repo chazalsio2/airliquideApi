@@ -1,6 +1,7 @@
 import {
   generateError,
   isSearchClient,
+  isSearchClientVip,
   isAdminOrCommercial
 } from "../lib/utils";
 import { uploadPhotos } from "../lib/cloudinary";
@@ -589,7 +590,7 @@ export async function getProperties(req, res, next) {
 
   if (
     type === "hunting" ||
-    (isSearchClient(req.user) && !isAdminOrCommercial(req.user))
+    ((isSearchClient(req.user) || isSearchClientVip(req.user)) && !isAdminOrCommercial(req.user))
   ) {
     selector.propertyStatus = "hunting";
   }
@@ -626,7 +627,7 @@ export async function getProperty(req, res, next) {
 
     const selector = { _id: propertyId };
 
-    if (isSearchClient(req.user) && !isAdminOrCommercial(req.user)) {
+    if ((isSearchClient(req.user) || isSearchClientVip(req.user)) && !isAdminOrCommercial(req.user)) {
       selector.propertyStatus = "hunting";
     }
 

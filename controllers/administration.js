@@ -9,7 +9,8 @@ const allowedRoles = [
   "client_sales_mandate",
   "client_management_mandate",
   "client_search_mandate",
-  "client_coaching"
+  "client_coaching",
+  "client_search_mandate_vip"
 ];
 
 export async function getUsers(req, res, next) {
