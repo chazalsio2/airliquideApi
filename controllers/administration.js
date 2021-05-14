@@ -80,11 +80,12 @@ export async function createUser(req, res, next) {
 export async function editUser(req, res, next) {
   try {
     const { roles, displayName, userId, deactivated } = req.body;
-    if (!userId || !displayName) {
+    if (!userId || !displayName) {      
       return next(generateError("Missing fields", 400));
     }
 
     if (!_.isArray(roles) || !roles.length) {
+      console.info( "roles " + roles);
       return next(generateError("Wrong arguments", 401));
     }
 
@@ -94,6 +95,7 @@ export async function editUser(req, res, next) {
     );
 
     if (!isValidRoles) {
+      console.log("valide roles " + roles);
       return next(generateError("Wrong arguments", 401));
     }
 
