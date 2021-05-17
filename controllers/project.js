@@ -191,7 +191,7 @@ export async function refuseMandate(req, res, next) {
         $unset: { mandateDocId: "", mandateDoc: "" }
       }
     ).exec();
-//new ProjectEvent crée peut-être le doublon
+
     new ProjectEvent({
       projectId,
       type: "mandate_refused",
@@ -240,9 +240,8 @@ export async function editSalesSheet(req, res, next) {
       !readyToSign ||
       !workEstimate ||
       !fullAddress
-    ) {
-      throw new Error("Missing fields 8");
-      // throw new Error("Missing fields");
+    ) {      
+      throw new Error("Missing fields");
     }
 
     const newSalesSheetEdited = {
@@ -328,8 +327,7 @@ export async function saveSalesSheet(req, res, next) {
       !nextAvailabilities ||
       !fullAddress
     ) {
-      throw new Error("Missing fields 9");
-      // throw new Error("Missing fields");
+      throw new Error("Missing fields");
     }
 
     const salesSheet = {
@@ -417,7 +415,7 @@ export async function getMyProjects(req, res, next) {
     next(generateError(e.message));
   }
 }
-//peut-être ici aussi pour le doublon
+
 export async function refuseDeed(req, res, next) {
   try {
     const { projectId } = req.params;
@@ -454,7 +452,7 @@ export async function refuseDeed(req, res, next) {
     next(generateError(e.message));
   }
 }
-//peut-être ici aussi pour le doublon
+
 export async function refuseAgreement(req, res, next) {
   try {
     const { projectId } = req.params;
@@ -491,7 +489,7 @@ export async function refuseAgreement(req, res, next) {
     next(generateError(e.message));
   }
 }
-//peut-être ici aussi pour le doublon
+
 export async function refusePurchaseOffer(req, res, next) {
   try {
     const { projectId } = req.params;
@@ -528,7 +526,7 @@ export async function refusePurchaseOffer(req, res, next) {
     next(generateError(e.message));
   }
 }
-//peut-être ici aussi pour le doublon
+
 export async function refuseLoanOffer(req, res, next) {
   try {
     const { projectId } = req.params;
@@ -731,6 +729,10 @@ export async function acceptMandate(req, res, next) {
       roleToAdd = "client_search_mandate_vip";
     }
 
+    if (project.type === "coaching") {
+      roleToAdd = "client_coaching";
+    }
+
     if (alreadyUser) {
       await User.updateOne(
         { _id: alreadyUser._id },
@@ -816,9 +818,8 @@ export async function acceptAgreement(req, res, next) {
       return next(generateError("Wrong state", 403));
     }
 
-    if (!commission || !commercialPourcentage) {
-      return next(generateError("Missing fields 10", 401));
-      // return next(generateError("Missing fields", 401));
+    if (!commission || !commercialPourcentage) {      
+      return next(generateError("Missing fields", 401));
     }
 
     await Project.updateOne(
@@ -1523,7 +1524,7 @@ export async function savePersonalSituation(req, res, next) {
     next(generateError(e.message));
   }
 }
-//peut-être ici aussi pour le doublon
+
 export async function refuseProject(req, res, next) {
   try {
     const { projectId } = req.params;
