@@ -1,7 +1,0 @@
-POST http://localhost:3001/login HTTP/1.1
-content-type: application/json
-
-{
-    "email": "djothi974@gmail.com",
-    "password": "Azertyui974+"
-}
