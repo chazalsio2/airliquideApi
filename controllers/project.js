@@ -167,7 +167,6 @@ export async function getProject(req, res, next) {
   }
 }
 
-// peut-être ici la fonction qui vérifie les mandat refusé
 export async function refuseMandate(req, res, next) {
   try {
     const { projectId } = req.params;
@@ -570,6 +569,8 @@ export async function acceptLoanOffer(req, res, next) {
     const userId = req.user._id;
 
     const project = await Project.findById(projectId).lean();
+    const client = await Client.findById(project.clientId).lean();
+    const user = await User.findById(req.user._id).lean();
 
     if (!project) {
       return next(generateError("Project not found", 404));
@@ -591,8 +592,11 @@ export async function acceptLoanOffer(req, res, next) {
       type: "loan_offer_accepted",
       authorUserId: userId
     }).save();
-
-    const client = await Client.findById(project.clientId).lean();
+    sendMessageToSlack({
+      message: `L'offre de prêt pour mandat de ${project.type === "search" ? "recherche" : "vente"
+        } du client ${client.displayName} a été accepté par ${user.displayName}: ${process.env.APP_URL
+        }/projects/${project._id}`
+    });//validation pret
 
     if (project.type === "sales") {
       sendLoanOfferAcceptedForSalesProject(client);
@@ -671,6 +675,7 @@ export async function acceptMandate(req, res, next) {
     const userId = req.user._id;
 
     const project = await Project.findById(projectId).lean();
+    const user = await User.findById(req.user._id).lean();
 
     if (!project) {
       return next(generateError("Project not found", 404));
@@ -700,6 +705,11 @@ export async function acceptMandate(req, res, next) {
       type: "mandate_accepted",
       authorUserId: userId
     }).save();
+    sendMessageToSlack({
+      message: `Le mandat de ${project.type === "search" ? "recherche" : "vente"
+        } pour le client ${client.displayName} a été accepté par ${user.displayName} : ${process.env.APP_URL
+        }/projects/${projectId}`
+    });//validation mandat
 
     if (project.type === "sales") {
       sendMandateSignedForSalesProject(client);
@@ -765,6 +775,8 @@ export async function acceptPurchaseOffer(req, res, next) {
     const userId = req.user._id;
 
     const project = await Project.findById(projectId).lean();
+    const user = await User.findById(req.user._id).lean();
+    const client = await Client.findOne({ _id: project.clientId }).lean();
 
     if (!project) {
       return next(generateError("Project not found", 404));
@@ -786,8 +798,11 @@ export async function acceptPurchaseOffer(req, res, next) {
       type: "purchase_offer_accepted",
       authorUserId: userId
     }).save();
-
-    const client = await Client.findOne({ _id: project.clientId }).lean();
+    sendMessageToSlack({
+      message: `L'offre d'achat pour le mandat de ${project.type === "search" ? "recherche" : "vente"
+        } du client ${client.displayName} a été accepté par ${user.displayName} : ${process.env.APP_URL
+        }/projects/${projectId}`
+    });//validation offre achat
 
     if (project.type === "sales") {
       sendPurchaseOfferAcceptedForSalesProject(client);
@@ -809,6 +824,8 @@ export async function acceptAgreement(req, res, next) {
     const { commission, commercialPourcentage } = req.body;
 
     const project = await Project.findById(projectId).lean();
+    const user = await User.findById(req.user._id).lean();
+    const client = await Client.findById(project.clientId).lean();
 
     if (!project) {
       return next(generateError("Project not found", 404));
@@ -838,8 +855,11 @@ export async function acceptAgreement(req, res, next) {
       type: "sales_agreement_accepted",
       authorUserId: userId
     }).save();
-
-    const client = await Client.findById(project.clientId).lean();
+    sendMessageToSlack({
+      message: `Le compromis de vente pour le mandat de ${project.type === "search" ? "recherche" : "vente"
+        } du client ${client.displayName} a été accepté par ${user.displayName}: ${process.env.APP_URL
+        }/projects/${projectId}`
+    });//validation compromis  
 
     if (project.type === "sales") {
       sendSalesAgreementAcceptedForSalesProject(client);
@@ -859,6 +879,8 @@ export async function acceptDeed(req, res, next) {
     const userId = req.user._id;
 
     const project = await Project.findById(projectId).lean();
+    const user = await User.findById(req.user._id).lean();
+    const client = await Client.findById(project.clientId).lean();
 
     if (!project) {
       return next(generateError("Project not found", 404));
@@ -880,6 +902,11 @@ export async function acceptDeed(req, res, next) {
       type: "sales_deed_accepted",
       authorUserId: userId
     }).save();
+    sendMessageToSlack({
+      message: `L'acte authentique pour le mandat de ${project.type === "search" ? "recherche" : "vente"
+        } du client ${client.displayName} a été accepté par ${user.displayName} : ${process.env.APP_URL
+        }/projects/${projectId}`
+    });//validation acte authentique
 
     new ProjectEvent({
       projectId,
@@ -887,7 +914,7 @@ export async function acceptDeed(req, res, next) {
       authorUserId: userId
     }).save();
 
-    const client = await Client.findById(project.clientId).lean();
+    
     if (project.type === "sales") {
       sendDeedAcceptedForSalesProject(client);
     }
@@ -941,7 +968,7 @@ export async function getProjects(req, res, next) {
     next(generateError(e.message));
   }
 }
-//peut-être ici aussi pour le doublon
+
 export async function getProjectsAssigned(req, res, next) {
   try {
     const { page = "" } = req.query;
@@ -1251,7 +1278,7 @@ export async function confirmSearchMandate(req, res, next) {
     next(generateError(e.message));
   }
 }
-//peut-être ici aussi pour le doublon
+
 export async function cancelProject(req, res, next) {
   try {
     const { projectId } = req.params;
@@ -1576,6 +1603,37 @@ export async function refuseProject(req, res, next) {
   }
 }
 
+//validation finance
+export async function validationFinance(req, res, next) {
+  try {
+    const { projectId } = req.params;
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+    console.log(project.value)
+
+    if (project.value === false) {
+      await Project.updateOne(
+        { _id: projectId },
+        { $set: { value: true } }
+      ).exec();
+    }
+    else {
+      await Project.updateOne(
+        { _id: projectId },
+        { $set: { value: false } }
+      ).exec();
+    }
+    console.log(project.value)
+    return res.json({ success: true });
+  }
+  catch(e) {
+    next(generateError(e.message));
+  }
+}
+
 export async function acceptProject(req, res, next) {
   try {
     const { projectId } = req.params;
@@ -1600,26 +1658,13 @@ export async function acceptProject(req, res, next) {
       type: "project_accepted",
       authorUserId: req.user._id
     }).save();
-
+    
     const client = await Client.findById(project.clientId).lean();
-
     const user = await User.findById(req.user._id).lean();
 
-    if (project.type === "search") {
-      sendMessageToSlack({
-        message: `Le mandat de ${project.type === "search" ? "recherche" : "vente"
-          } de ${client.displayName} a été accepté par ${user.displayName} : ${process.env.APP_URL
-          }/projects/${project._id}`
-      });
-    }
-    else {
-        sendMessageToSlack({
-          message: `Le mandat de ${project.type === "search vip" ? "recherche" : "vente"
-            } de ${client.displayName} a été accepté par ${user.displayName} : ${process.env.APP_URL
-            }/projects/${project._id}`
-        });
-    }
-
+    sendMessageToSlack({
+      message: `Le projet du client ${client.displayName} a été accepté par ${user.displayName}`//validé projet
+    });
 
     if (project.type === "search") {
       await matchPropertiesForSearchMandate(project._id);
@@ -1684,8 +1729,10 @@ export async function uploadLoanOfferForProject(req, res, next) {
   try {
     const { projectId } = req.params;
     const { fileName, fileData, contentType } = req.body;
+    const user = await User.findById(req.user._id).lean();
 
     const project = await Project.findById(projectId).lean();
+    const client = await Client.findById(project.clientId).lean();
 
     if (!project) {
       return next(generateError("Project not found", 404));
@@ -1737,7 +1784,7 @@ export async function uploadLoanOfferForProject(req, res, next) {
       }
     ).exec();
 
-    const client = await Client.findById(project.clientId).lean();
+    // const client = await Client.findById(project.clientId).lean();
 
     sendMessageToSlack({
       message: `L'offre de prêt pour mandat de ${project.type === "search" ? "recherche" : "vente"
@@ -1764,6 +1811,7 @@ export async function uploadMandateForProject(req, res, next) {
   try {
     const { projectId } = req.params;
     const { fileName, fileData, contentType } = req.body;
+    const user = await User.findById(req.user._id).lean();
 
     const project = await Project.findById(projectId).lean();
 
@@ -1895,11 +1943,12 @@ export async function uploadPurchaseOfferForProject(req, res, next) {
     ).exec();
 
     const client = await Client.findById(project.clientId).lean();
+    const user = await User.findById(req.user._id).lean();
     sendMessageToSlack({
       message: `L'offre d'achat pour le mandat de ${project.type === "search" ? "recherche" : "vente"
         } du client ${client.displayName} est en attente de validation : ${process.env.APP_URL
         }/projects/${projectId}`
-    });
+    });//toto
 
     await new ProjectEvent({
       projectId,
@@ -1922,6 +1971,8 @@ export async function uploadAgreementForProject(req, res, next) {
     const { fileName, fileData, contentType } = req.body;
 
     const project = await Project.findById(projectId).lean();
+    const client = await Client.findById(project.clientId).lean();
+    const user = await User.findById(req.user._id).lean();
 
     if (!project) {
       return next(generateError("Project not found", 404));
@@ -1980,7 +2031,7 @@ export async function uploadAgreementForProject(req, res, next) {
       documentId: document._id
     }).save();
 
-    const client = await Client.findById(project.clientId).lean();
+    // const client = await Client.findById(project.clientId).lean();
     sendMessageToSlack({
       message: `Le compromis de vente pour le mandat de ${project.type === "search" ? "recherche" : "vente"
         } du client ${client.displayName} est en attente de validation : ${process.env.APP_URL
@@ -2001,6 +2052,8 @@ export async function uploadDeedForProject(req, res, next) {
     const { fileName, fileData, contentType } = req.body;
 
     const project = await Project.findById(projectId).lean();
+    const client = await Client.findById(project.clientId).lean();
+    const user = await User.findById(req.user._id).lean();
 
     if (!project) {
       return next(generateError("Project not found", 404));
@@ -2052,7 +2105,7 @@ export async function uploadDeedForProject(req, res, next) {
       }
     ).exec();
 
-    const client = await Client.findById(project.clientId).lean();
+    // const client = await Client.findById(project.clientId).lean();
     sendMessageToSlack({
       message: `L'acte authentique pour le mandat de ${project.type === "search" ? "recherche" : "vente"
         } du client ${client.displayName} est en attente de validation : ${process.env.APP_URL
