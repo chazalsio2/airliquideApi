@@ -1783,7 +1783,6 @@ export async function uploadLoanOfferForProject(req, res, next) {
         }
       }
     ).exec();
-
     // const client = await Client.findById(project.clientId).lean();
 
     sendMessageToSlack({
