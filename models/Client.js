@@ -6,6 +6,7 @@ const allowedStatusValues = [
   "entrepreneur",
   "freelance",
   "investor",
+  "official",
   "retired",
   "unemployed"
 ];
