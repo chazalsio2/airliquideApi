@@ -640,13 +640,14 @@ export async function sendCompletedProjectEmail(req, res, next) {
     }
 
     const client = await Client.findById(project.clientId).lean();
+    const commercial = await User.findById(project.commercialId).lean();
 
     if (!client) {
       throw new Error("Client not found", 404);
     }
 
     if (emailNumber === 5) {
-      sendAcceptSalesDeedConfirmation(client);
+      sendAcceptSalesDeedConfirmation(client, commercial);
       await new ProjectEvent({
         type: "project_completed_email_5",
         projectId,
@@ -655,7 +656,7 @@ export async function sendCompletedProjectEmail(req, res, next) {
     }
 
     if (emailNumber === 6) {
-      sendProductionConfirmation(client);
+      sendProductionConfirmation(client, commercial);
       await new ProjectEvent({
         type: "project_completed_email_6",
         projectId,
@@ -735,9 +736,9 @@ export async function acceptMandate(req, res, next) {
       roleToAdd = "client_search_mandate";
     }
 
-    if (project.type === "search vip") {
-      roleToAdd = "client_search_mandate_vip";
-    }
+    // if (project.type === "search vip") {
+    //   roleToAdd = "client_search_mandate_vip";
+    // }
 
     if (project.type === "coaching") {
       roleToAdd = "client_coaching";
@@ -1590,13 +1591,13 @@ export async function refuseProject(req, res, next) {
           }/projects/${project._id}`
       });
       }
-      else {
-        sendMessageToSlack({
-          message: `Le mandat de ${project.type === "search vip" ? "recherche" : "vente"
-            } de ${client.displayName} a été refusé par ${user.displayName} : ${process.env.APP_URL
-            }/projects/${project._id}`
-        });
-      }
+      // else {
+      //   sendMessageToSlack({
+      //     message: `Le mandat de ${project.type === "search vip" ? "recherche" : "vente"
+      //       } de ${client.displayName} a été refusé par ${user.displayName} : ${process.env.APP_URL
+      //       }/projects/${project._id}`
+      //   });
+      // }
     return res.json({ success: true });
   } catch (e) {
     next(generateError(e.message));
@@ -1670,9 +1671,9 @@ export async function acceptProject(req, res, next) {
       await matchPropertiesForSearchMandate(project._id);
     }
 
-    if (project.type === "search vip") {
-      await matchPropertiesForSearchMandate(project._id);
-    }
+    // if (project.type === "search vip") {
+    //   await matchPropertiesForSearchMandate(project._id);
+    // }
 
     return res.json({ success: true });
   } catch (e) {
