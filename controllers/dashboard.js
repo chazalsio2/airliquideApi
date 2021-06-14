@@ -106,9 +106,24 @@ export async function getDashboardData(req, res, next) {
         }
     );
 
-    const projectSelector = isUserAdmin
-      ? { createdAt: { $gt: moment().startOf("year") } }
-      : { createdAt: { $gt: moment().startOf("year") }, commercialId: userId };
+    // we search for projects still opened (not completed, refused or canceled)
+    // or projects created this current year
+    const projectSelector = {
+      $or: [
+        {
+          createdAt: { $gt: moment().startOf("year") }
+        },
+        {
+          status: {
+            $nin: ['completed', 'refused', 'canceled']
+          }
+        }
+      ]
+    }
+
+    if (!isUserAdmin) {
+      projectSelector.commercialId = userId;
+    }
 
     const projects = await Project.find(projectSelector).lean();
 
@@ -153,7 +168,6 @@ export async function getDashboardData(req, res, next) {
         managementMandatesCount,
         searchMandatesCount,
         propertiesPublishedCount,
-        // propertiesClosedCount,
         salesDeedCount,
         salesAgreementCount,
         provisionalCommission: Math.round(provisionalCommission * 100) / 100,
