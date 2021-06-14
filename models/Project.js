@@ -274,6 +274,12 @@ const schema = new mongoose.Schema(
     }
   },
   {
+   preValidationState: {
+     type: Boolean,
+     default: false
+   } 
+  },
+  {
     timestamps: true,
     collection: "projects"
   }
