@@ -95,7 +95,6 @@ export async function editUser(req, res, next) {
     );
 
     if (!isValidRoles) {
-      console.log("valide roles " + roles);
       return next(generateError("Wrong arguments", 401));
     }
 

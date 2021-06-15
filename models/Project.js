@@ -258,6 +258,10 @@ const schema = new mongoose.Schema(
       type: String,
       required: false
     },
+      preValidationSate: {
+        type: Boolean,
+        default: false
+    },
     commissionAmount: {
       type: Number,
       required: false
@@ -272,12 +276,6 @@ const schema = new mongoose.Schema(
       min: 0,
       max: 100
     }
-  },
-  {
-   preValidationState: {
-     type: Boolean,
-     default: false
-   } 
   },
   {
     timestamps: true,
