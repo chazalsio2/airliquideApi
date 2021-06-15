@@ -1613,21 +1613,21 @@ export async function refuseProject(req, res, next) {
 //     if (!project) {
 //       return next(generateError("Project not found", 404));
 //     }
-//     console.log(project.preValidationState)
+//     console.log(project.preValidationSate)
 
-//     if (project.preValidationState === false) {
+//     if (project.preValidationSate === false) {
 //       await Project.updateOne(
 //         { _id: projectId },
-//         { $set: { preValidationState: true } }
+//         { $set: { preValidationSate: true } }
 //       ).exec();
 //     }
 //     else {
 //       await Project.updateOne(
 //         { _id: projectId },
-//         { $set: { preValidationState: false } }
+//         { $set: { preValidationSate: false } }
 //       ).exec();
 //     }
-//     console.log(project.preValidationState)
+//     console.log(project.preValidationSate)
 //     return res.json({ success: true });
 //   }
 //   catch(e) {

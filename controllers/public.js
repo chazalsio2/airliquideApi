@@ -15,6 +15,8 @@ export async function publicCreateClient(req, res, next) {
       phone,
       serviceType,
       geographicSector,
+      referral,
+      referaldetails
     } = req.body;
 
     if (projectTypes.indexOf(serviceType) === -1) {
@@ -27,6 +29,8 @@ export async function publicCreateClient(req, res, next) {
       geographicSector,
       email,
       phone,
+      referral,
+      referaldetails
     };
 
     const client = await new Client(newClientData).save();

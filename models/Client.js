@@ -115,6 +115,9 @@ var schema = new mongoose.Schema(
       type: String,
       enum: ["other", "socialmedia", "wordofmouth", "website"]
     },
+    referaldetails: {
+      type: String,
+    },
     displayName: {
       type: String,
       required: false
