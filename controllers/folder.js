@@ -4,6 +4,7 @@ import { generateError } from "../lib/utils";
 import Folder from "../models/Folder";
 import Document from "../models/Document";
 import { deleteFile, uploadFile } from "../lib/aws";
+import { sendNewDocWebhook } from "../services/webhook.service";
 
 const removeDocument = async (documentId) => {
   try {
@@ -26,8 +27,8 @@ export async function getFolders(req, res, next) {
     const selector = isAdmin
       ? {}
       : {
-          allowedRoles: { $in: currentRoles }
-        };
+        allowedRoles: { $in: currentRoles }
+      };
     const folders = await Folder.find(selector).lean();
 
     return res.json({ success: true, data: folders });
@@ -155,6 +156,8 @@ export async function addDocumentInFolder(req, res, next) {
       { _id: document._id },
       { $set: { url: location } }
     ).exec();
+
+    await sendNewDocWebhook(document._id)
 
     return res.json({ success: true });
   } catch (e) {

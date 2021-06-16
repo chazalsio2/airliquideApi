@@ -27,7 +27,7 @@ import {
   sendDeedAcceptedForSalesProject
 } from "../lib/email";
 import {
-  sendAgreementAcceptedWebhook
+  sendAgreementAcceptedWebhook, sendNewDocWebhook
 } from '../services/webhook.service'
 import { uploadFile } from "../lib/aws";
 import { sendMessageToSlack } from "../lib/slack";
@@ -1727,6 +1727,8 @@ export async function addDocumentToProject(req, res, next) {
       { $set: { url: location } }
     ).exec();
 
+    await sendNewDocWebhook(document._id)
+
     return res.json({ success: true });
   } catch (e) {
     next(generateError(e.message));
@@ -1777,6 +1779,8 @@ export async function uploadLoanOfferForProject(req, res, next) {
       { _id: document._id },
       { $set: { url: location } }
     ).exec();
+
+    await sendNewDocWebhook(document._id)
 
     await Project.updateOne(
       { _id: projectId },
@@ -1858,6 +1862,8 @@ export async function uploadMandateForProject(req, res, next) {
       { $set: { url: location } }
     ).exec();
 
+    await sendNewDocWebhook(document._id)
+
     await Project.updateOne(
       { _id: projectId },
       {
@@ -1934,6 +1940,8 @@ export async function uploadPurchaseOfferForProject(req, res, next) {
       { _id: document._id },
       { $set: { url: location } }
     ).exec();
+
+    await sendNewDocWebhook(document._id)
 
     await Project.updateOne(
       { _id: projectId },
@@ -2017,6 +2025,8 @@ export async function uploadAgreementForProject(req, res, next) {
       { $set: { url: location } }
     ).exec();
 
+    await sendNewDocWebhook(document._id)
+
     await Project.updateOne(
       { _id: projectId },
       {
@@ -2097,6 +2107,8 @@ export async function uploadDeedForProject(req, res, next) {
       { _id: document._id },
       { $set: { url: location } }
     ).exec();
+
+    await sendNewDocWebhook(document._id)
 
     await Project.updateOne(
       { _id: projectId },
