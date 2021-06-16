@@ -26,6 +26,9 @@ import {
   sendLoanOfferAcceptedForSalesProject,
   sendDeedAcceptedForSalesProject
 } from "../lib/email";
+import {
+  sendAgreementAcceptedWebhook
+} from '../services/webhook.service'
 import { uploadFile } from "../lib/aws";
 import { sendMessageToSlack } from "../lib/slack";
 import { matchPropertiesForSearchMandate } from "../lib/matching";
@@ -239,7 +242,7 @@ export async function editSalesSheet(req, res, next) {
       !readyToSign ||
       !workEstimate ||
       !fullAddress
-    ) {      
+    ) {
       throw new Error("Missing fields");
     }
 
@@ -696,6 +699,7 @@ export async function acceptMandate(req, res, next) {
       { _id: projectId },
       {
         $set: {
+          mandateDate: moment(),
           status: "wait_purchase_offer"
         }
       }
@@ -836,7 +840,7 @@ export async function acceptAgreement(req, res, next) {
       return next(generateError("Wrong state", 403));
     }
 
-    if (!commission || !commercialPourcentage) {      
+    if (!commission || !commercialPourcentage) {
       return next(generateError("Missing fields", 401));
     }
 
@@ -846,7 +850,8 @@ export async function acceptAgreement(req, res, next) {
         $set: {
           status: "wait_loan_offer",
           commissionAmount: Number(commission) * 100,
-          commercialPourcentage: Number(commercialPourcentage)
+          commercialPourcentage: Number(commercialPourcentage),
+          salesAgreementDate: moment()
         }
       }
     ).exec();
@@ -867,6 +872,8 @@ export async function acceptAgreement(req, res, next) {
     } else {
       sendAcceptSalesAgreementConfirmation(client);
     }
+
+    sendAgreementAcceptedWebhook(project)
 
     return res.json({ success: true });
   } catch (e) {
@@ -915,7 +922,7 @@ export async function acceptDeed(req, res, next) {
       authorUserId: userId
     }).save();
 
-    
+
     if (project.type === "sales") {
       sendDeedAcceptedForSalesProject(client);
     }
@@ -1590,14 +1597,14 @@ export async function refuseProject(req, res, next) {
           } de ${client.displayName} a été refusé par ${user.displayName} : ${process.env.APP_URL
           }/projects/${project._id}`
       });
-      }
-      // else {
-      //   sendMessageToSlack({
-      //     message: `Le mandat de ${project.type === "search vip" ? "recherche" : "vente"
-      //       } de ${client.displayName} a été refusé par ${user.displayName} : ${process.env.APP_URL
-      //       }/projects/${project._id}`
-      //   });
-      // }
+    }
+    // else {
+    //   sendMessageToSlack({
+    //     message: `Le mandat de ${project.type === "search vip" ? "recherche" : "vente"
+    //       } de ${client.displayName} a été refusé par ${user.displayName} : ${process.env.APP_URL
+    //       }/projects/${project._id}`
+    //   });
+    // }
     return res.json({ success: true });
   } catch (e) {
     next(generateError(e.message));
@@ -1659,7 +1666,7 @@ export async function acceptProject(req, res, next) {
       type: "project_accepted",
       authorUserId: req.user._id
     }).save();
-    
+
     const client = await Client.findById(project.clientId).lean();
     const user = await User.findById(req.user._id).lean();
 
