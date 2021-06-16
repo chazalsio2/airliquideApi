@@ -873,7 +873,7 @@ export async function acceptAgreement(req, res, next) {
       sendAcceptSalesAgreementConfirmation(client);
     }
 
-    sendAgreementAcceptedWebhook(projectId)
+    await sendAgreementAcceptedWebhook(projectId)
 
     return res.json({ success: true });
   } catch (e) {
