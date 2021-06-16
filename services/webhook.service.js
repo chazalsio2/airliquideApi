@@ -1,20 +1,22 @@
 import axios from 'axios'
 import moment from 'moment'
+import { getProject } from './project.service'
 import { getClient } from './client.service'
 import { getUser } from './user.service'
 
-export async function sendAgreementAcceptedWebhook(project) {
+export async function sendAgreementAcceptedWebhook(projectId) {
+  const project = await getProject(projectId)
   const client = await getClient(project.clientId)
   const commercial = await getUser(project.commercialId)
   axios({
     method: "POST",
     url: process.env.ZAPPIER_WEBHOOK_URL,
     data: {
-      clientName: `${client.firstName} ${client.lastName}`,
+      clientName: `${client.firstname} ${client.lastname}`,
       projectUrl: `${process.env.APP_URL}/projects/${project._id}`,
       commercialCommission: (project.commissionAmount / 100).toFixed(2),
       commissionPercent: project.commercialPourcentage,
-      commercialName: commercial ? `${commercial.firstName} ${commercial.lastName}` : null,
+      commercialName: commercial ? commercial.displayName : null,
       mandateDate: project.mandateDate ? moment(project.mandateDate).toISOString() : null,
       mandateUrl: project.mandateDoc ? project.mandateDoc.url : null,
       salesAgreementDate: project.salesAgreementDate ? moment(project.salesAgreementDate).toISOString() : null,
