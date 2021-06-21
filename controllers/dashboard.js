@@ -36,30 +36,30 @@ export async function getDashboardData(req, res, next) {
       isUserAdmin
         ? { type: "", type: "sales", status: { $nin: notActiveState } }
         : {
-            commercialId: userId,
-            type: "sales",
-            status: { $nin: notActiveState }
-          }
+          commercialId: userId,
+          type: "sales",
+          status: { $nin: notActiveState }
+        }
     ).exec();
 
     const managementMandatesCount = await Project.countDocuments(
       isUserAdmin
         ? { status: { $nin: notActiveState }, type: "management" }
         : {
-            commercialId: userId,
-            type: "management",
-            status: { $nin: notActiveState }
-          }
+          commercialId: userId,
+          type: "management",
+          status: { $nin: notActiveState }
+        }
     ).exec();
 
     const searchMandatesCount = await Project.countDocuments(
       isUserAdmin
         ? { status: { $nin: notActiveState }, type: "search" }
         : {
-            commercialId: userId,
-            type: "search",
-            status: { $nin: notActiveState }
-          }
+          commercialId: userId,
+          type: "search",
+          status: { $nin: notActiveState }
+        }
     ).exec();
 
     const propertiesPublishedCount = await Property.countDocuments({
@@ -83,32 +83,47 @@ export async function getDashboardData(req, res, next) {
     const salesAgreementCount = await Project.countDocuments(
       isUserAdmin
         ? {
-            createdAt: { $gt: moment().startOf("year") },
-            status: { $in: salesAgreementStatus }
-          }
+          // createdAt: { $gt: moment().startOf("year") },
+          status: { $in: salesAgreementStatus }
+        }
         : {
-            createdAt: { $gt: moment().startOf("year") },
-            status: { $in: salesAgreementStatus },
-            commercialId: userId
-          }
+          // createdAt: { $gt: moment().startOf("year") },
+          status: { $in: salesAgreementStatus },
+          commercialId: userId
+        }
     );
 
     const salesDeedCount = await Project.countDocuments(
       isUserAdmin
         ? {
-            createdAt: { $gt: moment().startOf("year") },
-            status: "completed"
-          }
+          createdAt: { $gt: moment().startOf("year") },
+          status: "completed"
+        }
         : {
-            createdAt: { $gt: moment().startOf("year") },
-            status: "completed",
-            commercialId: userId
-          }
+          createdAt: { $gt: moment().startOf("year") },
+          status: "completed",
+          commercialId: userId
+        }
     );
 
-    const projectSelector = isUserAdmin
-      ? { createdAt: { $gt: moment().startOf("year") } }
-      : { createdAt: { $gt: moment().startOf("year") }, commercialId: userId };
+    // we search for projects still opened (not completed, refused or canceled)
+    // or projects created this current year
+    const projectSelector = {
+      $or: [
+        {
+          createdAt: { $gt: moment().startOf("year") }
+        },
+        {
+          status: {
+            $nin: ['completed', 'refused', 'canceled']
+          }
+        }
+      ]
+    }
+
+    if (!isUserAdmin) {
+      projectSelector.commercialId = userId;
+    }
 
     const projects = await Project.find(projectSelector).lean();
 
@@ -153,7 +168,6 @@ export async function getDashboardData(req, res, next) {
         managementMandatesCount,
         searchMandatesCount,
         propertiesPublishedCount,
-        // propertiesClosedCount,
         salesDeedCount,
         salesAgreementCount,
         provisionalCommission: Math.round(provisionalCommission * 100) / 100,
