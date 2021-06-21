@@ -26,6 +26,9 @@ import {
   sendLoanOfferAcceptedForSalesProject,
   sendDeedAcceptedForSalesProject
 } from "../lib/email";
+import {
+  sendAgreementAcceptedWebhook, sendNewDocWebhook
+} from '../services/webhook.service'
 import { uploadFile } from "../lib/aws";
 import { sendMessageToSlack } from "../lib/slack";
 import { matchPropertiesForSearchMandate } from "../lib/matching";
@@ -239,7 +242,7 @@ export async function editSalesSheet(req, res, next) {
       !readyToSign ||
       !workEstimate ||
       !fullAddress
-    ) {      
+    ) {
       throw new Error("Missing fields");
     }
 
@@ -696,6 +699,7 @@ export async function acceptMandate(req, res, next) {
       { _id: projectId },
       {
         $set: {
+          mandateDate: moment(),
           status: "wait_purchase_offer"
         }
       }
@@ -836,7 +840,7 @@ export async function acceptAgreement(req, res, next) {
       return next(generateError("Wrong state", 403));
     }
 
-    if (!commission || !commercialPourcentage) {      
+    if (!commission || !commercialPourcentage) {
       return next(generateError("Missing fields", 401));
     }
 
@@ -846,7 +850,8 @@ export async function acceptAgreement(req, res, next) {
         $set: {
           status: "wait_loan_offer",
           commissionAmount: Number(commission) * 100,
-          commercialPourcentage: Number(commercialPourcentage)
+          commercialPourcentage: Number(commercialPourcentage),
+          salesAgreementDate: moment()
         }
       }
     ).exec();
@@ -867,6 +872,8 @@ export async function acceptAgreement(req, res, next) {
     } else {
       sendAcceptSalesAgreementConfirmation(client);
     }
+
+    await sendAgreementAcceptedWebhook(projectId)
 
     return res.json({ success: true });
   } catch (e) {
@@ -915,7 +922,7 @@ export async function acceptDeed(req, res, next) {
       authorUserId: userId
     }).save();
 
-    
+
     if (project.type === "sales") {
       sendDeedAcceptedForSalesProject(client);
     }
@@ -1553,6 +1560,33 @@ export async function savePersonalSituation(req, res, next) {
   }
 }
 
+//prevalidation
+export async function PreValidationProject(req, res, next) {
+  try {
+    const { projectId }  = req.params;
+    const { reason } = req.body;
+
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    if (project.status !== "wait_project_validation") {
+      return next(generateError("Wrong state", 401));
+    }
+
+    await Project.updateOne(
+      { _id: projectId },
+      { $set: {preValidationState: req.body.preValidationState } }
+    ).exec();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
 export async function refuseProject(req, res, next) {
   try {
     const { projectId } = req.params;
@@ -1590,50 +1624,19 @@ export async function refuseProject(req, res, next) {
           } de ${client.displayName} a été refusé par ${user.displayName} : ${process.env.APP_URL
           }/projects/${project._id}`
       });
-      }
-      // else {
-      //   sendMessageToSlack({
-      //     message: `Le mandat de ${project.type === "search vip" ? "recherche" : "vente"
-      //       } de ${client.displayName} a été refusé par ${user.displayName} : ${process.env.APP_URL
-      //       }/projects/${project._id}`
-      //   });
-      // }
+    }
+    // else {
+    //   sendMessageToSlack({
+    //     message: `Le mandat de ${project.type === "search vip" ? "recherche" : "vente"
+    //       } de ${client.displayName} a été refusé par ${user.displayName} : ${process.env.APP_URL
+    //       }/projects/${project._id}`
+    //   });
+    // }
     return res.json({ success: true });
   } catch (e) {
     next(generateError(e.message));
   }
 }
-
-//validation finance
-// export async function validationFinance(req, res, next) {
-//   try {
-//     const { projectId } = req.params;
-//     const project = await Project.findById(projectId).lean();
-
-//     if (!project) {
-//       return next(generateError("Project not found", 404));
-//     }
-//     console.log(project.preValidationSate)
-
-//     if (project.preValidationSate === false) {
-//       await Project.updateOne(
-//         { _id: projectId },
-//         { $set: { preValidationSate: true } }
-//       ).exec();
-//     }
-//     else {
-//       await Project.updateOne(
-//         { _id: projectId },
-//         { $set: { preValidationSate: false } }
-//       ).exec();
-//     }
-//     console.log(project.preValidationSate)
-//     return res.json({ success: true });
-//   }
-//   catch(e) {
-//     next(generateError(e.message));
-//   }
-// }
 
 export async function acceptProject(req, res, next) {
   try {
@@ -1659,7 +1662,7 @@ export async function acceptProject(req, res, next) {
       type: "project_accepted",
       authorUserId: req.user._id
     }).save();
-    
+
     const client = await Client.findById(project.clientId).lean();
     const user = await User.findById(req.user._id).lean();
 
@@ -1720,6 +1723,8 @@ export async function addDocumentToProject(req, res, next) {
       { $set: { url: location } }
     ).exec();
 
+    await sendNewDocWebhook(document._id)
+
     return res.json({ success: true });
   } catch (e) {
     next(generateError(e.message));
@@ -1770,6 +1775,8 @@ export async function uploadLoanOfferForProject(req, res, next) {
       { _id: document._id },
       { $set: { url: location } }
     ).exec();
+
+    await sendNewDocWebhook(document._id)
 
     await Project.updateOne(
       { _id: projectId },
@@ -1851,6 +1858,8 @@ export async function uploadMandateForProject(req, res, next) {
       { $set: { url: location } }
     ).exec();
 
+    await sendNewDocWebhook(document._id)
+
     await Project.updateOne(
       { _id: projectId },
       {
@@ -1927,6 +1936,8 @@ export async function uploadPurchaseOfferForProject(req, res, next) {
       { _id: document._id },
       { $set: { url: location } }
     ).exec();
+
+    await sendNewDocWebhook(document._id)
 
     await Project.updateOne(
       { _id: projectId },
@@ -2010,6 +2021,8 @@ export async function uploadAgreementForProject(req, res, next) {
       { $set: { url: location } }
     ).exec();
 
+    await sendNewDocWebhook(document._id)
+
     await Project.updateOne(
       { _id: projectId },
       {
@@ -2090,6 +2103,8 @@ export async function uploadDeedForProject(req, res, next) {
       { _id: document._id },
       { $set: { url: location } }
     ).exec();
+
+    await sendNewDocWebhook(document._id)
 
     await Project.updateOne(
       { _id: projectId },

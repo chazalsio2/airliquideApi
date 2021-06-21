@@ -77,7 +77,8 @@ import {
   saveSalesSheet,
   savePersonalSituationForSalesMandate,
   editSearchProject,
-  editSalesSheet
+  editSalesSheet,
+  PreValidationProject
 } from "./controllers/project";
 import {
   createProperty,
@@ -391,6 +392,15 @@ export default (app) => {
     updatePropertyVisibility,
     errorHandle
   );
+//prevalid
+  app.post(
+    `/projects/:projectId/check`,
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    checkAccountDesactivated,
+    PreValidationProject,
+    errorHandle
+  )
 
   app.post(
     `/projects/:projectId/refuse`,

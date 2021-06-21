@@ -222,6 +222,14 @@ const schema = new mongoose.Schema(
       type: DocSubset,
       required: false
     },
+    mandateDate: {
+      type: Date,
+      required: false
+    },
+    salesAgreementDate: {
+      type: Date,
+      required: false
+    },
     salesAgreementDocId: {
       type: Types.ObjectId,
       required: false
@@ -258,7 +266,7 @@ const schema = new mongoose.Schema(
       type: String,
       required: false
     },
-      preValidationSate: {
+      preValidationState: {
         type: Boolean,
         default: false
     },

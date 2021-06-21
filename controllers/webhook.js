@@ -10,6 +10,7 @@ import { sendMandateSignatureConfirmation } from "../lib/email";
 import { uploadFileFromStringData } from "../lib/aws";
 
 import DocusignManager from "../lib/docusign";
+import { sendNewDocWebhook } from "../services/webhook.service";
 
 function computeHash(payload) {
   const hmac = crypto.createHmac("sha256", process.env.DOCUSIGN_CONNECT_SECRET);
@@ -109,6 +110,10 @@ export async function handleWebhookDocusign(req, res, next) {
                     { _id: mandateDoc._id },
                     { $set: { url: location } }
                   ).exec();
+
+                  await sendNewDocWebhook(document._id)
+
+
                   await Project.updateOne(
                     { _id: project._id },
                     { $set: { mandateDocId: mandateDoc._id } }
