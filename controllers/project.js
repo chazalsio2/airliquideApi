@@ -1571,7 +1571,7 @@ export async function PreValidationProject(req, res, next) {
 
     await Project.updateOne(
       { _id: projectId },
-      { $set: {preValidationSate: req.body.preValidationSate } }
+      { $set: {preValidationState: req.body.preValidationState } }
     ).exec();
 
     return res.json({ success: true });

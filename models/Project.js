@@ -258,7 +258,7 @@ const schema = new mongoose.Schema(
       type: String,
       required: false
     },
-      preValidationSate: {
+      preValidationState: {
         type: Boolean,
         default: false
     },
