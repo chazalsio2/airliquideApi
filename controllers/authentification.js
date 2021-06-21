@@ -83,8 +83,7 @@ export async function createAdmin(req, res, next) {
     const { email, displayName } = req.body;
 
     if (!email || !displayName) {
-      return next(generateError("Missing fields 3", 400));
-      // return next(generateError("Missing fields", 400));
+      return next(generateError("Missing fields", 400));
     }
 
     const user = await new User({
@@ -105,8 +104,7 @@ export async function createPassword(req, res, next) {
   const { password, token } = req.body;
 
   if (!password || !token) {
-    return next(generateError("Missing fields 4", 400));
-    // return next(generateError("Missing fields", 400));
+    return next(generateError("Missing fields", 400));
   }
 
   const user = await User.findOne({ token, active: false }).exec();
@@ -146,8 +144,7 @@ export async function forgotPassword(req, res, next) {
   const { email } = req.body;
 
   if (!email) {
-    return next(generateError("Missing fields 5", 400));
-    // return next(generateError("Missing fields", 400));
+    return next(generateError("Missing fields", 400));
   }
 
   const user = await User.findOne({ email }).exec();

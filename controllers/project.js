@@ -1560,6 +1560,33 @@ export async function savePersonalSituation(req, res, next) {
   }
 }
 
+//prevalidation
+export async function PreValidationProject(req, res, next) {
+  try {
+    const { projectId }  = req.params;
+    const { reason } = req.body;
+
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    if (project.status !== "wait_project_validation") {
+      return next(generateError("Wrong state", 401));
+    }
+
+    await Project.updateOne(
+      { _id: projectId },
+      { $set: {preValidationState: req.body.preValidationState } }
+    ).exec();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
 export async function refuseProject(req, res, next) {
   try {
     const { projectId } = req.params;
@@ -1610,37 +1637,6 @@ export async function refuseProject(req, res, next) {
     next(generateError(e.message));
   }
 }
-
-//validation finance
-// export async function validationFinance(req, res, next) {
-//   try {
-//     const { projectId } = req.params;
-//     const project = await Project.findById(projectId).lean();
-
-//     if (!project) {
-//       return next(generateError("Project not found", 404));
-//     }
-//     console.log(project.preValidationSate)
-
-//     if (project.preValidationSate === false) {
-//       await Project.updateOne(
-//         { _id: projectId },
-//         { $set: { preValidationSate: true } }
-//       ).exec();
-//     }
-//     else {
-//       await Project.updateOne(
-//         { _id: projectId },
-//         { $set: { preValidationSate: false } }
-//       ).exec();
-//     }
-//     console.log(project.preValidationSate)
-//     return res.json({ success: true });
-//   }
-//   catch(e) {
-//     next(generateError(e.message));
-//   }
-// }
 
 export async function acceptProject(req, res, next) {
   try {

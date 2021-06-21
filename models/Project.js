@@ -266,9 +266,9 @@ const schema = new mongoose.Schema(
       type: String,
       required: false
     },
-    preValidationSate: {
-      type: Boolean,
-      default: false
+      preValidationState: {
+        type: Boolean,
+        default: false
     },
     commissionAmount: {
       type: Number,
