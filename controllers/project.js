@@ -901,7 +901,10 @@ export async function acceptDeed(req, res, next) {
     await Project.updateOne(
       { _id: projectId },
       {
-        $set: { status: "completed" }
+        $set: {
+          status: "completed",
+          completedAt: moment()
+        }
       }
     ).exec();
 
@@ -910,6 +913,7 @@ export async function acceptDeed(req, res, next) {
       type: "sales_deed_accepted",
       authorUserId: userId
     }).save();
+
     sendMessageToSlack({
       message: `L'acte authentique pour le mandat de ${project.type === "search" ? "recherche" : "vente"
         } du client ${client.displayName} a été accepté par ${user.displayName} : ${process.env.APP_URL
@@ -1563,7 +1567,7 @@ export async function savePersonalSituation(req, res, next) {
 //prevalidation
 export async function PreValidationProject(req, res, next) {
   try {
-    const { projectId }  = req.params;
+    const { projectId } = req.params;
     const { reason } = req.body;
 
     const project = await Project.findById(projectId).lean();
@@ -1578,7 +1582,7 @@ export async function PreValidationProject(req, res, next) {
 
     await Project.updateOne(
       { _id: projectId },
-      { $set: {preValidationState: req.body.preValidationState } }
+      { $set: { preValidationState: req.body.preValidationState } }
     ).exec();
 
     return res.json({ success: true });

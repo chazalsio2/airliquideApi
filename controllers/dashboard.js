@@ -111,7 +111,14 @@ export async function getDashboardData(req, res, next) {
     const projectSelector = {
       $or: [
         {
-          createdAt: { $gt: moment().startOf("year") }
+          createdAt: { $gt: moment().startOf("year") },
+          status: {
+            $nin: ['refused', 'canceled']
+          }
+        },
+        {
+          completedAt: { $gt: moment().startOf("year") },
+          status: "completed"
         },
         {
           status: {
