@@ -77,8 +77,7 @@ import {
   saveSalesSheet,
   savePersonalSituationForSalesMandate,
   editSearchProject,
-  editSalesSheet,
-  PreValidationProject
+  editSalesSheet
 } from "./controllers/project";
 import {
   createProperty,
@@ -89,7 +88,8 @@ import {
   getPublicProperties,
   getPublicProperty,
   deletePhoto,
-  editPropertyStatus
+  editPropertyStatus,
+  deleteProperty
 } from "./controllers/property";
 import {
   getFolders,
@@ -392,15 +392,6 @@ export default (app) => {
     updatePropertyVisibility,
     errorHandle
   );
-//prevalid
-  app.post(
-    `/projects/:projectId/check`,
-    passport.authenticate("jwt", { session: false }),
-    checkAdminOrCommercial,
-    checkAccountDesactivated,
-    PreValidationProject,
-    errorHandle
-  )
 
   app.post(
     `/projects/:projectId/refuse`,
@@ -417,6 +408,15 @@ export default (app) => {
     checkAdminOrCommercial,
     checkAccountDesactivated,
     editProperty,
+    errorHandle
+  );
+//remove property
+  app.delete(
+    `/properties/:propertyId`,
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    checkAccountDesactivated,
+    deleteProperty,
     errorHandle
   );
 
