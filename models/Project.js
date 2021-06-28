@@ -230,6 +230,10 @@ const schema = new mongoose.Schema(
       type: Date,
       required: false
     },
+    completedAt: {
+      type: Date,
+      required: false
+    },
     salesAgreementDocId: {
       type: Types.ObjectId,
       required: false
@@ -266,9 +270,9 @@ const schema = new mongoose.Schema(
       type: String,
       required: false
     },
-      preValidationState: {
-        type: Boolean,
-        default: false
+    preValidationState: {
+      type: Boolean,
+      default: false
     },
     commissionAmount: {
       type: Number,
