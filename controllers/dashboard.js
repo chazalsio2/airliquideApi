@@ -96,11 +96,11 @@ export async function getDashboardData(req, res, next) {
     const salesDeedCount = await Project.countDocuments(
       isUserAdmin
         ? {
-          createdAt: { $gt: moment().startOf("year") },
+          completedAt: { $gt: moment().startOf("year") },
           status: "completed"
         }
         : {
-          createdAt: { $gt: moment().startOf("year") },
+          completedAt: { $gt: moment().startOf("year") },
           status: "completed",
           commercialId: userId
         }
@@ -110,12 +110,6 @@ export async function getDashboardData(req, res, next) {
     // or projects created this current year
     const projectSelector = {
       $or: [
-        {
-          createdAt: { $gt: moment().startOf("year") },
-          status: {
-            $nin: ['refused', 'canceled']
-          }
-        },
         {
           completedAt: { $gt: moment().startOf("year") },
           status: "completed"
@@ -157,6 +151,7 @@ export async function getDashboardData(req, res, next) {
         ),
       0
     );
+
     const provisionalCommission = _.reduce(
       projectsNotCompleted,
       (memo, project) =>
