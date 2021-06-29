@@ -11,6 +11,24 @@ import { checkMatchingForProperty } from "../lib/matching";
 
 const LIMIT_BY_PAGE = 12;
 
+export async function deleteProperty(req, res, next) {
+  try {
+    const { propertyId } = req.params;
+
+    const properties = await Property.findById(propertyId).lean();
+
+    if (!properties) {
+      throw new Error("Cannot find property", 404);
+    }
+
+    await Property.deleteOne({ _id: propertyId }).exec();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
 export async function editProperty(req, res, next) {
   try {
     const {
