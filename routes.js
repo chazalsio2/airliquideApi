@@ -89,7 +89,8 @@ import {
   getPublicProperties,
   getPublicProperty,
   deletePhoto,
-  editPropertyStatus
+  editPropertyStatus,
+  deleteProperty
 } from "./controllers/property";
 import {
   getFolders,
@@ -392,7 +393,8 @@ export default (app) => {
     updatePropertyVisibility,
     errorHandle
   );
-//prevalid
+
+  //prevalid
   app.post(
     `/projects/:projectId/check`,
     passport.authenticate("jwt", { session: false }),
@@ -401,7 +403,6 @@ export default (app) => {
     PreValidationProject,
     errorHandle
   )
-
   app.post(
     `/projects/:projectId/refuse`,
     passport.authenticate("jwt", { session: false }),
@@ -417,6 +418,15 @@ export default (app) => {
     checkAdminOrCommercial,
     checkAccountDesactivated,
     editProperty,
+    errorHandle
+  );
+//remove property
+  app.delete(
+    `/properties/:propertyId`,
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    checkAccountDesactivated,
+    deleteProperty,
     errorHandle
   );
 
