@@ -209,7 +209,7 @@ export default (app) => {
     "/contacts/:contactId/contact",
     passport.authenticate("jwt", { session: false }),
     checkAccountDesactivated,
-    checkAdmin,
+    checkAdminOrCommercial,
     editContact,
     errorHandle
   )
