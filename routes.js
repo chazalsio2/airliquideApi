@@ -78,7 +78,17 @@ import {
   savePersonalSituationForSalesMandate,
   editSearchProject,
   editSalesSheet,
-  PreValidationProject
+  PreValidationProject,
+  PreValidationWaitMandat,
+  PreValidationValSignMandat,
+  PreValidationWaitOffer,
+  PreValidationValOffer,
+  PreValidationValAgre,
+  PreValidationWaitLoan,
+  PreValidationValLoan,
+  PreValidationWaitDeed,
+  PreValidationValDeed,
+  PreValidationWaitAgre
 } from "./controllers/project";
 import {
   createProperty,
@@ -394,15 +404,116 @@ export default (app) => {
     errorHandle
   );
 
-  //prevalid
+  //prevalid-wait_project_validation
   app.post(
-    `/projects/:projectId/check`,
+    `/projects/:projectId/wait_project_validation`,
     passport.authenticate("jwt", { session: false }),
     checkAdminOrCommercial,
     checkAccountDesactivated,
     PreValidationProject,
     errorHandle
   )
+  
+  //prevalid-wait_mandate
+  app.post(
+    `/projects/:projectId/wait_mandate`,
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    checkAccountDesactivated,
+    PreValidationWaitMandat,
+    errorHandle
+  )
+
+  //prevalid-wait_mandate_validation
+  app.post(
+    `/projects/:projectId/wait_mandate_validation`,
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    checkAccountDesactivated,
+    PreValidationValSignMandat,
+    errorHandle
+  )
+
+  //prevalid-wait_purchase_offer
+  app.post(
+    `/projects/:projectId/wait_purchase_offer`,
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    checkAccountDesactivated,
+    PreValidationWaitOffer,
+    errorHandle
+  )
+
+  //prevalid-wait_purchase_offer_validation
+  app.post(
+    `/projects/:projectId/wait_purchase_offer_validation`,
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    checkAccountDesactivated,
+    PreValidationValOffer,
+    errorHandle
+  )
+
+  //prevalid-wait_sales_agreement
+  app.post(
+    `/projects/:projectId/wait_sales_agreement`,
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    checkAccountDesactivated,
+    PreValidationWaitAgre,
+    errorHandle
+  )
+
+  //prevalid-wait_sales_agreement_validation
+  app.post(
+    `/projects/:projectId/wait_sales_agreement_validation`,
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    checkAccountDesactivated,
+    PreValidationValAgre,
+    errorHandle
+  )
+
+  //prevalid-wait_loan_offer
+  app.post(
+    `/projects/:projectId/wait_loan_offer`,
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    checkAccountDesactivated,
+    PreValidationWaitLoan,
+    errorHandle
+  )
+
+  //prevalid-wait_loan_offer_validation
+  app.post(
+    `/projects/:projectId/wait_loan_offer_validation`,
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    checkAccountDesactivated,
+    PreValidationValLoan,
+    errorHandle
+  )
+
+  //prevalid-wait_sales_deed
+  app.post(
+    `/projects/:projectId/wait_sales_deed`,
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    checkAccountDesactivated,
+    PreValidationWaitDeed,
+    errorHandle
+  )
+
+  //prevalid-wait_sales_deed_validation
+  app.post(
+    `/projects/:projectId/wait_sales_deed_validation`,
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    checkAccountDesactivated,
+    PreValidationValDeed,
+    errorHandle
+  )
+
   app.post(
     `/projects/:projectId/refuse`,
     passport.authenticate("jwt", { session: false }),

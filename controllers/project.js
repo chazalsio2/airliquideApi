@@ -1587,6 +1587,276 @@ export async function PreValidationProject(req, res, next) {
   }
 }
 
+//prevalidation
+export async function PreValidationWaitMandat(req, res, next) {
+  try {
+    const { projectId }  = req.params;
+    const { reason } = req.body;
+
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    if (project.status !== "wait_mandate") {
+      return next(generateError("Wrong state", 401));
+    }
+
+    await Project.updateOne(
+      { _id: projectId },
+      { $set: {preValidationState: req.body.preValidationState } }
+    ).exec();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+//prevalidation
+export async function PreValidationValSignMandat(req, res, next) {
+  try {
+    const { projectId }  = req.params;
+    const { reason } = req.body;
+
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    if (project.status !== "wait_mandate_validation") {
+      return next(generateError("Wrong state", 401));
+    }
+
+    await Project.updateOne(
+      { _id: projectId },
+      { $set: {preValidationState: req.body.preValidationState } }
+    ).exec();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+//prevalidation
+export async function PreValidationWaitOffer(req, res, next) {
+  try {
+    const { projectId }  = req.params;
+    const { reason } = req.body;
+
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    if (project.status !== "wait_purchase_offer") {
+      return next(generateError("Wrong state", 401));
+    }
+
+    await Project.updateOne(
+      { _id: projectId },
+      { $set: {preValidationState: req.body.preValidationState } }
+    ).exec();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+//prevalidation
+export async function PreValidationValOffer(req, res, next) {
+  try {
+    const { projectId }  = req.params;
+    const { reason } = req.body;
+
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    if (project.status !== "wait_purchase_offer_validation") {
+      return next(generateError("Wrong state", 401));
+    }
+
+    await Project.updateOne(
+      { _id: projectId },
+      { $set: {preValidationState: req.body.preValidationState } }
+    ).exec();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+//prevalidation
+export async function PreValidationWaitAgre(req, res, next) {
+  try {
+    const { projectId }  = req.params;
+    const { reason } = req.body;
+
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    if (project.status !== "wait_sales_agreement") {
+      return next(generateError("Wrong state", 401));
+    }
+
+    await Project.updateOne(
+      { _id: projectId },
+      { $set: {preValidationState: req.body.preValidationState } }
+    ).exec();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+//prevalidation
+export async function PreValidationValAgre(req, res, next) {
+  try {
+    const { projectId }  = req.params;
+    const { reason } = req.body;
+
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    if (project.status !== "wait_sales_agreement_validation") {
+      return next(generateError("Wrong state", 401));
+    }
+
+    await Project.updateOne(
+      { _id: projectId },
+      { $set: {preValidationState: req.body.preValidationState } }
+    ).exec();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+//prevalidation
+export async function PreValidationWaitLoan(req, res, next) {
+  try {
+    const { projectId }  = req.params;
+    const { reason } = req.body;
+
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    if (project.status !== "wait_loan_offer") {
+      return next(generateError("Wrong state", 401));
+    }
+
+    await Project.updateOne(
+      { _id: projectId },
+      { $set: {preValidationState: req.body.preValidationState } }
+    ).exec();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+//prevalidation
+export async function PreValidationValLoan(req, res, next) {
+  try {
+    const { projectId }  = req.params;
+    const { reason } = req.body;
+
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    if (project.status !== "wait_loan_offer_validation") {
+      return next(generateError("Wrong state", 401));
+    }
+
+    await Project.updateOne(
+      { _id: projectId },
+      { $set: {preValidationState: req.body.preValidationState } }
+    ).exec();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+//prevalidation
+export async function PreValidationWaitDeed(req, res, next) {
+  try {
+    const { projectId }  = req.params;
+    const { reason } = req.body;
+
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    if (project.status !== "wait_sales_deed") {
+      return next(generateError("Wrong state", 401));
+    }
+
+    await Project.updateOne(
+      { _id: projectId },
+      { $set: {preValidationState: req.body.preValidationState } }
+    ).exec();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+//prevalidation
+export async function PreValidationValDeed(req, res, next) {
+  try {
+    const { projectId }  = req.params;
+    const { reason } = req.body;
+
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    if (project.status !== "wait_sales_deed_validation") {
+      return next(generateError("Wrong state", 401));
+    }
+
+    await Project.updateOne(
+      { _id: projectId },
+      { $set: {preValidationState: req.body.preValidationState } }
+    ).exec();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
 export async function refuseProject(req, res, next) {
   try {
     const { projectId } = req.params;
