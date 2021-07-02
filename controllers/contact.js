@@ -101,8 +101,7 @@ export async function createContact(req, res, next) {
     } = req.body;
 
     if (!firstname || !lastname || !phone || !contactCategoryId) {
-      throw new Error("Missing fields 6");
-      // throw new Error("Missing fields");
+      throw new Error("Missing fields");
     }
 
     const contactCategory = await ContactCategory.findById(
@@ -127,13 +126,66 @@ export async function createContact(req, res, next) {
   }
 }
 
+//edit contact
+
+export async function editContact(req, res, next) {
+  try {
+    const modifier = req.body
+    const {
+      firstname,
+      lastname,
+      phone,
+      contactCategoryId,
+      // createdAt,
+      // updatedAt,
+      description
+    } = modifier;
+
+    if (!contactCategoryId) {
+      return next(generateError("Cannot update some fields", 403));
+    }
+
+    if (contactCategoryId) {
+      modifier.contactCategoryId = contactCategoryId;
+    }
+    
+    if (firstname) {
+      modifier.firstname = firstname;
+    }
+
+    if (lastname) {
+      modifier.lastname = lastname;
+    }
+
+    if (phone) {
+      modifier.phone = phone;
+    }
+
+    if (description) {
+      modifier.description = description;
+    }
+
+    const { contactId } = req.params;
+    const opts = { runValidators: true };
+    const contact = await Contact.updateOne(
+      { _id: contactId },
+      { $set: modifier },
+      opts
+    ).exec();
+
+    return res.json({ success: true, data: contact });
+  }
+  catch (e) {
+    next(generateError(e.message));
+  }
+}
+
 export async function createContactCategory(req, res, next) {
   try {
     const { name, description, roles } = req.body;
 
     if (!name || !roles) {
-      throw new Error("Missing fields 7");
-      // throw new Error("Missing fields");
+      throw new Error("Missing fields");
     }
 
     if (

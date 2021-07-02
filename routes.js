@@ -112,7 +112,8 @@ import {
   createContactCategory,
   getContactCategories,
   getContacts,
-  removeContact
+  removeContact,
+  editContact
 } from "./controllers/contact";
 
 const checkAdmin = (req, res, next) => checkRoles("admin", req, res, next);
@@ -146,6 +147,8 @@ export default (app) => {
   app.post("/users/change-password", changePassword, errorHandle);
 
   app.post("/public/clients", cors(), publicCreateClient, errorHandle);
+  //check email in signUP
+  // app.post("/public/clients-checkEmail", cors(), publicCreateClient, errorHandle);
 
   app.get("/public/properties", cors(), getPublicProperties, errorHandle);
   app.get(
@@ -200,6 +203,16 @@ export default (app) => {
     getContacts,
     errorHandle
   );
+
+  //modifier contact
+  app.put(
+    "/contacts/:contactId/contact",
+    passport.authenticate("jwt", { session: false }),
+    checkAccountDesactivated,
+    checkAdmin,
+    editContact,
+    errorHandle
+  )
 
   app.delete(
     "/contacts/:contactId",
@@ -689,6 +702,15 @@ export default (app) => {
 //// remove client
   app.post(
     "/clients",
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    checkAccountDesactivated,
+    createClient,
+    errorHandle
+  );
+//check email in visionR
+  app.post(
+    "/clients-checkEmail",
     passport.authenticate("jwt", { session: false }),
     checkAdminOrCommercial,
     checkAccountDesactivated,
