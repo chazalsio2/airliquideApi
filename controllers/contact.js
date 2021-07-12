@@ -3,7 +3,7 @@ import _ from "underscore";
 import ContactCategory from "../models/ContactCategory";
 import { allowedRoles } from "../models/User";
 import Contact from "../models/Contact";
-import { generateError, isAdmin } from "../lib/utils";
+import { generateError, isAdmin, isAdminOrCommercial } from "../lib/utils";
 
 export async function removeContact(req, res, next) {
   try {
@@ -127,53 +127,29 @@ export async function createContact(req, res, next) {
 }
 
 //edit contact
-
 export async function editContact(req, res, next) {
   try {
-    const modifier = req.body
-    const {
-      firstname,
-      lastname,
-      phone,
-      contactCategoryId,
-      // createdAt,
-      // updatedAt,
-      description
-    } = modifier;
+    const isAuthorized =
+    isAdminOrCommercial(req.user);
 
-    if (!contactCategoryId) {
-      return next(generateError("Cannot update some fields", 403));
+    if (isAuthorized) {
+      const modifier = req.body;
+
+      if (!modifier.contactCategoryId || !modifier.firstname || !modifier.lastname ||
+        !modifier.description) {
+        return next(generateError("Cannot update some fields", 403));
+      }
+
+      const { contactId } = req.params;
+      const opts = { runValidators: true };
+      const contact = await Contact.updateOne(
+        { _id: contactId },
+        { $set: modifier },
+        opts
+      ).exec();
+
+      return res.json({ success: true, data: contact });
     }
-
-    if (contactCategoryId) {
-      modifier.contactCategoryId = contactCategoryId;
-    }
-    
-    if (firstname) {
-      modifier.firstname = firstname;
-    }
-
-    if (lastname) {
-      modifier.lastname = lastname;
-    }
-
-    if (phone) {
-      modifier.phone = phone;
-    }
-
-    if (description) {
-      modifier.description = description;
-    }
-
-    const { contactId } = req.params;
-    const opts = { runValidators: true };
-    const contact = await Contact.updateOne(
-      { _id: contactId },
-      { $set: modifier },
-      opts
-    ).exec();
-
-    return res.json({ success: true, data: contact });
   }
   catch (e) {
     next(generateError(e.message));
