@@ -268,6 +268,7 @@ export default (app) => {
   app.put(
     "/trainings/:trainingId",
     passport.authenticate("jwt", { session: false }),
+    checkAdmin,
     checkAccountDesactivated,
     editTraining,
     errorHandle
