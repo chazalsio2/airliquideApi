@@ -201,6 +201,14 @@ var schema = new mongoose.Schema(
       enum: ["4to6", "6to8", "8to10", "greaterthan10"],
       required: false
     },
+    projectTypes: {
+      type: Array,
+      default: [],
+    },
+    "projectTypes.$": {
+      type: String,
+      enum: ["search", 'sales', "coaching", "management"]
+    },
     rentAmount: {
       type: Number,
       required: false

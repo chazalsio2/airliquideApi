@@ -1,16 +1,13 @@
 import moment from "moment";
-
 import Client from "../models/Client";
 import { generateError } from "../lib/utils";
 import Project, { projectTypes } from "../models/Project";
 import ProjectEvent from "../models/ProjectEvent";
-import { matchPropertiesForSearchMandate } from "../lib/matching";
-import { sendMatchPropertiesEmail } from "../lib/email";
 
 export async function getClients(req, res, next) {
   try {
     const LIMIT_BY_PAGE = 10;
-    const { page = "", filter = "" } = req.query;
+    const { page = "", filter = "", types } = req.query;
     const pageNumber = Number(page) || 1;
     const selector = {
       $or: [
@@ -28,6 +25,11 @@ export async function getClients(req, res, next) {
         }
       ]
     };
+
+    if (types) {
+      const typesSplitted = types.split(',')
+      selector.projectTypes = { $elemMatch: { $in: typesSplitted } }
+    }
     const clientCount = await Client.countDocuments(selector).exec();
 
     const clients = await Client.find(selector, null, {
@@ -122,6 +124,8 @@ export async function createClient(req, res, next) {
         type: serviceType
       }).save();
 
+      await Client.updateOne({ _id: client._id }, { $addToSet: { projectTypes: serviceType } }).exec()
+
       return res.json({
         success: true,
         data: {
@@ -155,6 +159,7 @@ export async function addProject(req, res, next) {
     }
 
     const project = await new Project({ clientId, type: projectType }).save();
+    await Client.updateOne({ _id: clientId }, { $addToSet: { projectTypes: projectType } }).exec()
 
     await ProjectEvent({
       projectId: project._id,
@@ -316,11 +321,11 @@ export async function deleteProject(req, res, next) {
   try {
     const { projectId } = req.params;
     const project = await Project.findById(projectId).lean();
-    
+
     if (!project) {
       return next(generateError("Project not found", 404));
     }
-    
+
     await Project.deleteOne({ _id: projectId }).exec();
     // project.projects = await Project.deleteOne(
     //   {
