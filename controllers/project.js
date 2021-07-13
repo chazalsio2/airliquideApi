@@ -1339,6 +1339,8 @@ export async function savePersonalSituationForSalesMandate(req, res, next) {
       lastname,
       birthday,
       address,
+      zipcode,
+      city,
       phone,
       email,
       spousefirstname,
@@ -1407,6 +1409,14 @@ export async function savePersonalSituationForSalesMandate(req, res, next) {
       clientModifier.email = email;
     }
 
+    if (city) {
+      clientModifier.city = city;
+    }
+
+    if (zipcode) {
+      clientModifier.zipcode = zipcode;
+    }
+
     clientModifier.spouse = {
       firstname: spousefirstname,
       lastname: spouselastname,
@@ -1461,6 +1471,8 @@ export async function savePersonalSituation(req, res, next) {
       availableSavings,
       loans,
       crd,
+      zipcode,
+      city,
       rentamount,
       creditamount,
       principalresidence,
@@ -1503,6 +1515,8 @@ export async function savePersonalSituation(req, res, next) {
       email,
       address,
       savings,
+      zipcode,
+      city,
       loans,
       crd,
       typesOfIncome: typeofincome,
