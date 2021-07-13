@@ -1578,8 +1578,8 @@ export async function savePersonalSituation(req, res, next) {
   }
 }
 
-//prevalidation
-export async function PreValidationProject(req, res, next) {
+
+export async function preValidationAllStep(req, res, next) {
   try {
     const { projectId } = req.params;
     const { reason } = req.body;
@@ -1590,14 +1590,82 @@ export async function PreValidationProject(req, res, next) {
       return next(generateError("Project not found", 404));
     }
 
-    if (project.status !== "wait_project_validation") {
-      return next(generateError("Wrong state", 401));
+    if (project.status === "wait_project_validation") {
+      await Project.updateOne(
+        { _id: projectId },
+        { $set: {preValidationState: req.body.preValidationState } }
+      ).exec();
     }
 
-    await Project.updateOne(
-      { _id: projectId },
-      { $set: { preValidationState: req.body.preValidationState } }
-    ).exec();
+    if (project.status === "wait_mandate") {
+      await Project.updateOne(
+        { _id: projectId },
+        { $set: {preValidationState: req.body.preValidationState } }
+      ).exec();
+    }
+
+    if (project.status === "wait_mandate_validation") {
+      await Project.updateOne(
+        { _id: projectId },
+        { $set: {preValidationState: req.body.preValidationState } }
+      ).exec();
+    }
+
+    if (project.status === "wait_purchase_offer") {
+      await Project.updateOne(
+        { _id: projectId },
+        { $set: {preValidationState: req.body.preValidationState } }
+      ).exec();
+    }
+
+    if (project.status === "wait_purchase_offer_validation") {
+      await Project.updateOne(
+        { _id: projectId },
+        { $set: {preValidationState: req.body.preValidationState } }
+      ).exec();
+    }
+
+    if (project.status === "wait_sales_agreement") {
+      await Project.updateOne(
+        { _id: projectId },
+        { $set: {preValidationState: req.body.preValidationState } }
+      ).exec();
+    }
+
+    if (project.status === "wait_sales_agreement_validation") {
+      await Project.updateOne(
+        { _id: projectId },
+        { $set: {preValidationState: req.body.preValidationState } }
+      ).exec();
+    }
+
+    if (project.status === "wait_loan_offer") {
+      await Project.updateOne(
+        { _id: projectId },
+        { $set: {preValidationState: req.body.preValidationState } }
+      ).exec();
+    }
+
+    if (project.status === "wait_loan_offer_validation") {
+      await Project.updateOne(
+        { _id: projectId },
+        { $set: {preValidationState: req.body.preValidationState } }
+      ).exec();
+    }
+
+    if (project.status === "wait_sales_deed") {
+      await Project.updateOne(
+        { _id: projectId },
+        { $set: {preValidationState: req.body.preValidationState } }
+      ).exec();
+    }
+
+    if (project.status === "wait_sales_deed_validation") {
+      await Project.updateOne(
+        { _id: projectId },
+        { $set: {preValidationState: req.body.preValidationState } }
+      ).exec();
+    }
 
     return res.json({ success: true });
   } catch (e) {

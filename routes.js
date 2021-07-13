@@ -78,7 +78,7 @@ import {
   savePersonalSituationForSalesMandate,
   editSearchProject,
   editSalesSheet,
-  PreValidationProject
+  preValidationAllStep
 } from "./controllers/project";
 import {
   createProperty,
@@ -417,15 +417,16 @@ export default (app) => {
     errorHandle
   );
 
-  //prevalid
   app.post(
-    `/projects/:projectId/check`,
+    `/projects/:projectId`,
     passport.authenticate("jwt", { session: false }),
     checkAdminOrCommercial,
     checkAccountDesactivated,
-    PreValidationProject,
+    preValidationAllStep,
     errorHandle
   )
+
+
   app.post(
     `/projects/:projectId/refuse`,
     passport.authenticate("jwt", { session: false }),
