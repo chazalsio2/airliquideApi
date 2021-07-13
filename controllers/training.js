@@ -39,6 +39,49 @@ export async function removeTraining(req, res, next) {
   }
 }
 
+export async function editTraining(req, res, next) {
+  try {
+    const { trainingId } = req.params;
+
+    const training = await Training.findById(trainingId).lean();
+
+    if (!training) {
+      throw new Error("Training not found", 404);
+    }
+
+    const { roles, url, name, description } = req.body;
+
+    if (!url || !name || !description) {
+      throw new Error('Missing arguments')
+    }
+
+    if (!roles || !_.isArray(roles)) {
+      throw new Error("Wrong arguments", 403);
+    }
+
+    const isAllowedRoles = _.every(
+      roles,
+      (role) => allowedRoles.indexOf(role) !== -1
+    );
+
+    if (!isAllowedRoles) {
+      throw new Error("Wrong arguments", 403);
+    }
+
+    await Training.updateOne({ _id: trainingId }, {
+      $set: {
+        roles,
+        url,
+        name,
+        description
+      }
+    }).exec();
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
 export async function getTraining(req, res, next) {
   try {
     const { trainingId } = req.params;
@@ -74,10 +117,6 @@ export async function createTraining(req, res, next) {
     if (!name || !url) {
       throw new Error("Missing arguments", 403);
     }
-
-    // if (!type || allowedTrainingTypes.indexOf(type) !== -1) {
-    //   throw new Error("Wrong arguments", 403);
-    // }
 
     if (!roles || !_.isArray(roles)) {
       throw new Error("Wrong arguments", 403);

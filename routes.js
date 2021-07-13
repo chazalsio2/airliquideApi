@@ -103,7 +103,8 @@ import {
   getTrainings,
   createTraining,
   getTraining,
-  removeTraining
+  removeTraining,
+  editTraining
 } from "./controllers/training";
 import { handleWebhookDocusign } from "./controllers/webhook";
 import { getDashboardData } from "./controllers/dashboard";
@@ -128,7 +129,7 @@ const checkAdminOrCommercialOrSearchClient = (req, res, next) =>
   );
 //add check coaching in routes
 
-const checkCoaching = (req, res, next ) => checkRoles("client_coaching", req, res, next);
+const checkCoaching = (req, res, next) => checkRoles("client_coaching", req, res, next);
 
 export default (app) => {
   // webhooks
@@ -261,6 +262,14 @@ export default (app) => {
     passport.authenticate("jwt", { session: false }),
     checkAccountDesactivated,
     getTraining,
+    errorHandle
+  );
+
+  app.put(
+    "/trainings/:trainingId",
+    passport.authenticate("jwt", { session: false }),
+    checkAccountDesactivated,
+    editTraining,
     errorHandle
   );
 
@@ -420,7 +429,7 @@ export default (app) => {
     editProperty,
     errorHandle
   );
-//remove property
+  //remove property
   app.delete(
     `/properties/:propertyId`,
     passport.authenticate("jwt", { session: false }),
@@ -696,7 +705,7 @@ export default (app) => {
     deleteProject,
     errorHandle
   );
-//// remove client
+  //// remove client
   app.post(
     "/clients",
     passport.authenticate("jwt", { session: false }),
