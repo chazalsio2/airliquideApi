@@ -20,6 +20,33 @@ const removeDocument = async (documentId) => {
   }
 };
 
+export async function editDocumentFolder(req, res, next) {
+  try {
+    const { folderId } = req.params;
+
+    if (!folderId) {
+      return next(generateError("Invalid request", 403));
+    }
+
+    const { name } = req.body;
+
+    if (!name) {
+      return next(generateError("Missing name parameter", 403));
+    }
+
+    const folder = await Folder.findById(folderId).lean();
+
+    if (!folder) {
+      return next(generateError("Folder not found", 404));
+    }
+
+    await Folder.updateOne({ _id: folderId }, { $set: { name } }).exec();
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+};
+
 export async function getFolders(req, res, next) {
   try {
     const currentRoles = req.user.roles;
