@@ -901,7 +901,10 @@ export async function acceptDeed(req, res, next) {
     await Project.updateOne(
       { _id: projectId },
       {
-        $set: { status: "completed" }
+        $set: {
+          status: "completed",
+          completedAt: moment()
+        }
       }
     ).exec();
 
@@ -910,6 +913,7 @@ export async function acceptDeed(req, res, next) {
       type: "sales_deed_accepted",
       authorUserId: userId
     }).save();
+
     sendMessageToSlack({
       message: `L'acte authentique pour le mandat de ${project.type === "search" ? "recherche" : "vente"
         } du client ${client.displayName} a été accepté par ${user.displayName} : ${process.env.APP_URL
@@ -1335,6 +1339,8 @@ export async function savePersonalSituationForSalesMandate(req, res, next) {
       lastname,
       birthday,
       address,
+      zipcode,
+      city,
       phone,
       email,
       spousefirstname,
@@ -1403,6 +1409,14 @@ export async function savePersonalSituationForSalesMandate(req, res, next) {
       clientModifier.email = email;
     }
 
+    if (city) {
+      clientModifier.city = city;
+    }
+
+    if (zipcode) {
+      clientModifier.zipcode = zipcode;
+    }
+
     clientModifier.spouse = {
       firstname: spousefirstname,
       lastname: spouselastname,
@@ -1457,6 +1471,8 @@ export async function savePersonalSituation(req, res, next) {
       availableSavings,
       loans,
       crd,
+      zipcode,
+      city,
       rentamount,
       creditamount,
       principalresidence,
@@ -1499,6 +1515,8 @@ export async function savePersonalSituation(req, res, next) {
       email,
       address,
       savings,
+      zipcode,
+      city,
       loans,
       crd,
       typesOfIncome: typeofincome,
@@ -1563,7 +1581,7 @@ export async function savePersonalSituation(req, res, next) {
 
 export async function preValidationAllStep(req, res, next) {
   try {
-    const { projectId }  = req.params;
+    const { projectId } = req.params;
     const { reason } = req.body;
 
     const project = await Project.findById(projectId).lean();

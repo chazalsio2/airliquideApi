@@ -94,6 +94,8 @@ export async function createClient(req, res, next) {
       phone,
       serviceType,
       geographicSector,
+      city,
+      zipcode,
       referral
     } = req.body;
 
@@ -107,6 +109,8 @@ export async function createClient(req, res, next) {
       geographicSector,
       email,
       phone,
+      city,
+      zipcode,
       referral
     };
 
@@ -125,7 +129,6 @@ export async function createClient(req, res, next) {
         }
       });
     }
-
     return res.json({ success: true, data: { completed: true } });
   } catch (e) {
     next(generateError(e.message));
