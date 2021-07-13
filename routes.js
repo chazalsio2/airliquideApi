@@ -104,7 +104,8 @@ import {
   getTrainings,
   createTraining,
   getTraining,
-  removeTraining
+  removeTraining,
+  editTraining
 } from "./controllers/training";
 import { handleWebhookDocusign } from "./controllers/webhook";
 import { getDashboardData } from "./controllers/dashboard";
@@ -275,6 +276,15 @@ export default (app) => {
     passport.authenticate("jwt", { session: false }),
     checkAccountDesactivated,
     getTraining,
+    errorHandle
+  );
+
+  app.put(
+    "/trainings/:trainingId",
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    editTraining,
     errorHandle
   );
 
