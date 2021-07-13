@@ -134,9 +134,16 @@ export async function editContact(req, res, next) {
 
     if (isAuthorized) {
       const modifier = req.body;
+        const {
+          firstname,
+          lastname,
+          phone,
+          contactCategoryId,
+          description
+        } = modifier;
 
-      if (!modifier.contactCategoryId || !modifier.firstname || !modifier.lastname ||
-        !modifier.description) {
+      if (!contactCategoryId || !phone || !firstname || !lastname ||
+        !description) {
         return next(generateError("Cannot update some fields", 403));
       }
 
