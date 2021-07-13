@@ -30,6 +30,11 @@ var schema = new mongoose.Schema(
     contentType: {
       type: String,
     },
+    visibility: {
+      type: String,
+      enum: ["private", "public"],
+      default: "public"
+    }
   },
   {
     timestamps: true,
