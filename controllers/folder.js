@@ -1,5 +1,4 @@
 import _ from "underscore";
-
 import { generateError } from "../lib/utils";
 import Folder from "../models/Folder";
 import Document from "../models/Document";
@@ -28,10 +27,22 @@ export async function editDocumentFolder(req, res, next) {
       return next(generateError("Invalid request", 403));
     }
 
-    const { name } = req.body;
+    const { name, allowedRoles } = req.body;
 
     if (!name) {
       return next(generateError("Missing name parameter", 403));
+    }
+
+    const authorizedAllowedRoles = [
+      "admin",
+      "commercial_agent",
+      "client_search_mandate",
+      "client_sales_mandate",
+      "client_management_mandate"
+    ];
+
+    if (!_.every(allowedRoles, (role) => authorizedAllowedRoles.indexOf(role) !== -1)) {
+      return next(generateError("Invalid roles", 403));
     }
 
     const folder = await Folder.findById(folderId).lean();
@@ -40,7 +51,7 @@ export async function editDocumentFolder(req, res, next) {
       return next(generateError("Folder not found", 404));
     }
 
-    await Folder.updateOne({ _id: folderId }, { $set: { name } }).exec();
+    await Folder.updateOne({ _id: folderId }, { $set: { name, allowedRoles } }).exec();
     return res.json({ success: true });
   } catch (e) {
     next(generateError(e.message));

@@ -37,7 +37,7 @@ export async function getRootFolder(req, res, next) {
 
     const folders = await Folder.find(
       folderSelector,
-      "name createdAt documentsCount"
+      "name createdAt documentsCount allowedRoles"
     ).lean();
 
     return res.json({ success: true, data: { documents: [], folders } });
@@ -65,11 +65,11 @@ export async function getFolder(req, res, next) {
 
     const docSelector = isAdmin(req.user)
       ? {
-          folderId
-        }
+        folderId
+      }
       : {
-          folderId
-        };
+        folderId
+      };
 
     const documents = await Document.find(docSelector, null, {
       sort: { createdAt: -1 }
