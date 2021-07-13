@@ -1577,7 +1577,6 @@ export async function preValidationAllStep(req, res, next) {
         { _id: projectId },
         { $set: {preValidationState: req.body.preValidationState } }
       ).exec();
-      return res.json({ success: true });
     }
 
     if (project.status === "wait_mandate") {
@@ -1585,7 +1584,6 @@ export async function preValidationAllStep(req, res, next) {
         { _id: projectId },
         { $set: {preValidationState: req.body.preValidationState } }
       ).exec();
-      return res.json({ success: true });
     }
 
     if (project.status === "wait_mandate_validation") {
@@ -1593,7 +1591,6 @@ export async function preValidationAllStep(req, res, next) {
         { _id: projectId },
         { $set: {preValidationState: req.body.preValidationState } }
       ).exec();
-      return res.json({ success: true });
     }
 
     if (project.status === "wait_purchase_offer") {
@@ -1601,7 +1598,6 @@ export async function preValidationAllStep(req, res, next) {
         { _id: projectId },
         { $set: {preValidationState: req.body.preValidationState } }
       ).exec();
-      return res.json({ success: true });
     }
 
     if (project.status === "wait_purchase_offer_validation") {
@@ -1609,7 +1605,6 @@ export async function preValidationAllStep(req, res, next) {
         { _id: projectId },
         { $set: {preValidationState: req.body.preValidationState } }
       ).exec();
-      return res.json({ success: true });
     }
 
     if (project.status === "wait_sales_agreement") {
@@ -1617,7 +1612,6 @@ export async function preValidationAllStep(req, res, next) {
         { _id: projectId },
         { $set: {preValidationState: req.body.preValidationState } }
       ).exec();
-      return res.json({ success: true });
     }
 
     if (project.status === "wait_sales_agreement_validation") {
@@ -1625,7 +1619,6 @@ export async function preValidationAllStep(req, res, next) {
         { _id: projectId },
         { $set: {preValidationState: req.body.preValidationState } }
       ).exec();
-      return res.json({ success: true });
     }
 
     if (project.status === "wait_loan_offer") {
@@ -1633,7 +1626,6 @@ export async function preValidationAllStep(req, res, next) {
         { _id: projectId },
         { $set: {preValidationState: req.body.preValidationState } }
       ).exec();
-      return res.json({ success: true });
     }
 
     if (project.status === "wait_loan_offer_validation") {
@@ -1641,7 +1633,6 @@ export async function preValidationAllStep(req, res, next) {
         { _id: projectId },
         { $set: {preValidationState: req.body.preValidationState } }
       ).exec();
-      return res.json({ success: true });
     }
 
     if (project.status === "wait_sales_deed") {
@@ -1649,7 +1640,6 @@ export async function preValidationAllStep(req, res, next) {
         { _id: projectId },
         { $set: {preValidationState: req.body.preValidationState } }
       ).exec();
-      return res.json({ success: true });
     }
 
     if (project.status === "wait_sales_deed_validation") {
@@ -1657,9 +1647,9 @@ export async function preValidationAllStep(req, res, next) {
         { _id: projectId },
         { $set: {preValidationState: req.body.preValidationState } }
       ).exec();
-      return res.json({ success: true });
     }
 
+    return res.json({ success: true });
   } catch (e) {
     next(generateError(e.message));
   }
