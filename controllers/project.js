@@ -133,9 +133,16 @@ export async function getProject(req, res, next) {
     project.events = await ProjectEvent.find({ projectId }, null, {
       sort: { createdAt: -1 }
     }).lean();
-    project.documents = await Document.find({ projectId }, null, {
+
+    project.documents = await Document.find({ projectId, visibility: "public" }, null, {
       sort: { createdAt: -1 }
     }).lean();
+
+    if (isAdminOrCommercial(req.user)) {
+      project.privateDocuments = await Document.find({ projectId, visibility: "private" }, null, {
+        sort: { createdAt: -1 }
+      }).lean();
+    }
 
     if (project.commercialId) {
       project.commercial = await User.findById(
@@ -1339,6 +1346,8 @@ export async function savePersonalSituationForSalesMandate(req, res, next) {
       lastname,
       birthday,
       address,
+      zipcode,
+      city,
       phone,
       email,
       spousefirstname,
@@ -1407,6 +1416,14 @@ export async function savePersonalSituationForSalesMandate(req, res, next) {
       clientModifier.email = email;
     }
 
+    if (city) {
+      clientModifier.city = city;
+    }
+
+    if (zipcode) {
+      clientModifier.zipcode = zipcode;
+    }
+
     clientModifier.spouse = {
       firstname: spousefirstname,
       lastname: spouselastname,
@@ -1461,6 +1478,8 @@ export async function savePersonalSituation(req, res, next) {
       availableSavings,
       loans,
       crd,
+      zipcode,
+      city,
       rentamount,
       creditamount,
       principalresidence,
@@ -1503,6 +1522,8 @@ export async function savePersonalSituation(req, res, next) {
       email,
       address,
       savings,
+      zipcode,
+      city,
       loans,
       crd,
       typesOfIncome: typeofincome,
@@ -1564,8 +1585,8 @@ export async function savePersonalSituation(req, res, next) {
   }
 }
 
-//prevalidation
-export async function PreValidationProject(req, res, next) {
+
+export async function preValidationAllStep(req, res, next) {
   try {
     const { projectId } = req.params;
     const { reason } = req.body;
@@ -1576,14 +1597,82 @@ export async function PreValidationProject(req, res, next) {
       return next(generateError("Project not found", 404));
     }
 
-    if (project.status !== "wait_project_validation") {
-      return next(generateError("Wrong state", 401));
+    if (project.status === "wait_project_validation") {
+      await Project.updateOne(
+        { _id: projectId },
+        { $set: { preValidationState: req.body.preValidationState } }
+      ).exec();
     }
 
-    await Project.updateOne(
-      { _id: projectId },
-      { $set: { preValidationState: req.body.preValidationState } }
-    ).exec();
+    if (project.status === "wait_mandate") {
+      await Project.updateOne(
+        { _id: projectId },
+        { $set: { preValidationState: req.body.preValidationState } }
+      ).exec();
+    }
+
+    if (project.status === "wait_mandate_validation") {
+      await Project.updateOne(
+        { _id: projectId },
+        { $set: { preValidationState: req.body.preValidationState } }
+      ).exec();
+    }
+
+    if (project.status === "wait_purchase_offer") {
+      await Project.updateOne(
+        { _id: projectId },
+        { $set: { preValidationState: req.body.preValidationState } }
+      ).exec();
+    }
+
+    if (project.status === "wait_purchase_offer_validation") {
+      await Project.updateOne(
+        { _id: projectId },
+        { $set: { preValidationState: req.body.preValidationState } }
+      ).exec();
+    }
+
+    if (project.status === "wait_sales_agreement") {
+      await Project.updateOne(
+        { _id: projectId },
+        { $set: { preValidationState: req.body.preValidationState } }
+      ).exec();
+    }
+
+    if (project.status === "wait_sales_agreement_validation") {
+      await Project.updateOne(
+        { _id: projectId },
+        { $set: { preValidationState: req.body.preValidationState } }
+      ).exec();
+    }
+
+    if (project.status === "wait_loan_offer") {
+      await Project.updateOne(
+        { _id: projectId },
+        { $set: { preValidationState: req.body.preValidationState } }
+      ).exec();
+    }
+
+    if (project.status === "wait_loan_offer_validation") {
+      await Project.updateOne(
+        { _id: projectId },
+        { $set: { preValidationState: req.body.preValidationState } }
+      ).exec();
+    }
+
+    if (project.status === "wait_sales_deed") {
+      await Project.updateOne(
+        { _id: projectId },
+        { $set: { preValidationState: req.body.preValidationState } }
+      ).exec();
+    }
+
+    if (project.status === "wait_sales_deed_validation") {
+      await Project.updateOne(
+        { _id: projectId },
+        { $set: { preValidationState: req.body.preValidationState } }
+      ).exec();
+    }
 
     return res.json({ success: true });
   } catch (e) {
@@ -1691,7 +1780,7 @@ export async function acceptProject(req, res, next) {
 export async function addDocumentToProject(req, res, next) {
   try {
     const { projectId } = req.params;
-    const { fileName, fileData, contentType } = req.body;
+    const { fileName, fileData, contentType, visibility } = req.body;
 
     const project = await Project.findById(projectId).lean();
 
@@ -1714,7 +1803,8 @@ export async function addDocumentToProject(req, res, next) {
       name: fileName,
       authorUserId: req.user._id,
       projectId,
-      contentType
+      contentType,
+      visibility
     }).save();
 
     const location = await uploadFile(

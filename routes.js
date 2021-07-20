@@ -78,7 +78,7 @@ import {
   savePersonalSituationForSalesMandate,
   editSearchProject,
   editSalesSheet,
-  PreValidationProject
+  preValidationAllStep
 } from "./controllers/project";
 import {
   createProperty,
@@ -96,14 +96,16 @@ import {
   getFolders,
   addFolder,
   addDocumentInFolder,
-  removeFolder
+  removeFolder,
+  editDocumentFolder
 } from "./controllers/folder";
 import { getUser, getCommercials } from "./controllers/user";
 import {
   getTrainings,
   createTraining,
   getTraining,
-  removeTraining
+  removeTraining,
+  editTraining
 } from "./controllers/training";
 import { handleWebhookDocusign } from "./controllers/webhook";
 import { getDashboardData } from "./controllers/dashboard";
@@ -113,7 +115,8 @@ import {
   createContactCategory,
   getContactCategories,
   getContacts,
-  removeContact
+  removeContact,
+  editContact
 } from "./controllers/contact";
 
 const checkAdmin = (req, res, next) => checkRoles("admin", req, res, next);
@@ -128,7 +131,7 @@ const checkAdminOrCommercialOrSearchClient = (req, res, next) =>
   );
 //add check coaching in routes
 
-const checkCoaching = (req, res, next ) => checkRoles("client_coaching", req, res, next);
+const checkCoaching = (req, res, next) => checkRoles("client_coaching", req, res, next);
 
 export default (app) => {
   // webhooks
@@ -147,6 +150,8 @@ export default (app) => {
   app.post("/users/change-password", changePassword, errorHandle);
 
   app.post("/public/clients", cors(), publicCreateClient, errorHandle);
+  //check email in signUP
+  // app.post("/public/clients-checkEmail", cors(), publicCreateClient, errorHandle);
 
   app.get("/public/properties", cors(), getPublicProperties, errorHandle);
   app.get(
@@ -201,6 +206,16 @@ export default (app) => {
     getContacts,
     errorHandle
   );
+
+  //modifier contact
+  app.put(
+    "/contacts/:contactId/contact",
+    passport.authenticate("jwt", { session: false }),
+    checkAccountDesactivated,
+    checkAdminOrCommercial,
+    editContact,
+    errorHandle
+  )
 
   app.delete(
     "/contacts/:contactId",
@@ -264,6 +279,15 @@ export default (app) => {
     errorHandle
   );
 
+  app.put(
+    "/trainings/:trainingId",
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    editTraining,
+    errorHandle
+  );
+
   // SuperAdmin
   app.post("/users/admin", checkSuperAdmin, createAdmin, errorHandle);
 
@@ -301,6 +325,15 @@ export default (app) => {
     checkAdmin,
     checkAccountDesactivated,
     removeFolder,
+    errorHandle
+  );
+
+  app.put(
+    "/folders/:folderId",
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    editDocumentFolder,
     errorHandle
   );
 
@@ -394,15 +427,16 @@ export default (app) => {
     errorHandle
   );
 
-  //prevalid
   app.post(
-    `/projects/:projectId/check`,
+    `/projects/:projectId`,
     passport.authenticate("jwt", { session: false }),
     checkAdminOrCommercial,
     checkAccountDesactivated,
-    PreValidationProject,
+    preValidationAllStep,
     errorHandle
   )
+
+
   app.post(
     `/projects/:projectId/refuse`,
     passport.authenticate("jwt", { session: false }),
@@ -420,7 +454,7 @@ export default (app) => {
     editProperty,
     errorHandle
   );
-//remove property
+  //remove property
   app.delete(
     `/properties/:propertyId`,
     passport.authenticate("jwt", { session: false }),
@@ -696,9 +730,18 @@ export default (app) => {
     deleteProject,
     errorHandle
   );
-//// remove client
+  //// remove client
   app.post(
     "/clients",
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    checkAccountDesactivated,
+    createClient,
+    errorHandle
+  );
+//check email in visionR
+  app.post(
+    "/clients-checkEmail",
     passport.authenticate("jwt", { session: false }),
     checkAdminOrCommercial,
     checkAccountDesactivated,

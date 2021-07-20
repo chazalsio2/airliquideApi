@@ -3,7 +3,7 @@ import _ from "underscore";
 import ContactCategory from "../models/ContactCategory";
 import { allowedRoles } from "../models/User";
 import Contact from "../models/Contact";
-import { generateError, isAdmin } from "../lib/utils";
+import { generateError, isAdmin, isAdminOrCommercial } from "../lib/utils";
 
 export async function removeContact(req, res, next) {
   try {
@@ -101,8 +101,7 @@ export async function createContact(req, res, next) {
     } = req.body;
 
     if (!firstname || !lastname || !phone || !contactCategoryId) {
-      throw new Error("Missing fields 6");
-      // throw new Error("Missing fields");
+      throw new Error("Missing fields");
     }
 
     const contactCategory = await ContactCategory.findById(
@@ -127,13 +126,49 @@ export async function createContact(req, res, next) {
   }
 }
 
+//edit contact
+export async function editContact(req, res, next) {
+  try {
+    const isAuthorized =
+    isAdminOrCommercial(req.user);
+
+    if (isAuthorized) {
+      const modifier = req.body;
+        const {
+          firstname,
+          lastname,
+          phone,
+          contactCategoryId,
+          description
+        } = modifier;
+
+      if (!contactCategoryId || !phone || !firstname || !lastname ||
+        !description) {
+        return next(generateError("Cannot update some fields", 403));
+      }
+
+      const { contactId } = req.params;
+      const opts = { runValidators: true };
+      const contact = await Contact.updateOne(
+        { _id: contactId },
+        { $set: modifier },
+        opts
+      ).exec();
+
+      return res.json({ success: true, data: contact });
+    }
+  }
+  catch (e) {
+    next(generateError(e.message));
+  }
+}
+
 export async function createContactCategory(req, res, next) {
   try {
     const { name, description, roles } = req.body;
 
     if (!name || !roles) {
-      throw new Error("Missing fields 7");
-      // throw new Error("Missing fields");
+      throw new Error("Missing fields");
     }
 
     if (
