@@ -119,7 +119,7 @@ const schema = new mongoose.Schema(
     },
     propertyStatus: {
       type: String,
-      enum: ["hunting", "forsale"]
+      enum: ["hunting", "forsale", "rental"]
     },
     type: {
       type: String,

@@ -606,6 +606,10 @@ export async function getProperties(req, res, next) {
     selector.propertyStatus = "forsale";
   }
 
+  if (type === "rental") {
+    selector.propertyStatus = "rental";
+  }
+
   if (
     type === "hunting" ||
     ((isSearchClient(req.user) || isSearchClientVip(req.user)) && !isAdminOrCommercial(req.user))
@@ -703,6 +707,41 @@ export async function getPublicProperties(req, res, next) {
   }
 }
 
+export async function getPublicPropertiesRental(req, res, next) {
+  try {
+    const { page = "" } = req.query;
+    const selector = {
+      propertyStatus: "rental",
+      public: true
+    };
+    const pageNumber = Number(page) || 1;
+
+    const propertiesCount = await Property.countDocuments(selector).exec();
+    const pageCount = Math.ceil(propertiesCount / LIMIT_BY_PAGE);
+
+    const properties = await Property.find(
+      selector,
+      "name description photos salesPrice",
+      {
+        sort: { createdAt: -1 },
+        limit: LIMIT_BY_PAGE,
+        skip: (pageNumber - 1) * LIMIT_BY_PAGE
+      }
+    ).lean();
+
+    return res.json({
+      success: true,
+      data: {
+        properties,
+        pageCount,
+        total: propertiesCount
+      }
+    });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
 export async function getPublicProperty(req, res, next) {
   try {
     const { propertyId } = req.params;
@@ -714,6 +753,34 @@ export async function getPublicProperty(req, res, next) {
     const selector = {
       _id: propertyId,
       propertyStatus: "forsale",
+      public: true
+    };
+
+    const property = await Property.findOne(
+      selector,
+      propertiesPublicFields
+    ).lean();
+
+    if (!property) {
+      return next(generateError("Property not found", 404));
+    }
+    return res.json({ success: true, data: property });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+export async function getPublicPropertyRental(req, res, next) {
+  try {
+    const { propertyId } = req.params;
+
+    if (!propertyId) {
+      return next(generateError("Invalid request", 401));
+    }
+
+    const selector = {
+      _id: propertyId,
+      propertyStatus: "rental",
       public: true
     };
 

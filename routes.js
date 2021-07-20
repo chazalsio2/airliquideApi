@@ -87,7 +87,9 @@ import {
   editProperty,
   updatePropertyVisibility,
   getPublicProperties,
+  getPublicPropertiesRental,
   getPublicProperty,
+  getPublicPropertyRental,
   deletePhoto,
   editPropertyStatus,
   deleteProperty
@@ -153,11 +155,12 @@ export default (app) => {
   //check email in signUP
   // app.post("/public/clients-checkEmail", cors(), publicCreateClient, errorHandle);
 
-  app.get("/public/properties", cors(), getPublicProperties, errorHandle);
+  app.get("/public/properties", cors(), getPublicProperties, getPublicPropertiesRental , errorHandle);
   app.get(
     "/public/properties/:propertyId",
     cors(),
     getPublicProperty,
+    getPublicPropertyRental,
     errorHandle
   );
 
