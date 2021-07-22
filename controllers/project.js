@@ -244,10 +244,10 @@ export async function editSalesSheet(req, res, next) {
     if (
       !propertyType ||
       !propertySize ||
-      !reasonForTheSale ||
+      // !reasonForTheSale ||
       !delay ||
       !readyToSign ||
-      !workEstimate ||
+      // !workEstimate ||
       !fullAddress
     ) {
       throw new Error("Missing fields");
@@ -1350,6 +1350,7 @@ export async function savePersonalSituationForSalesMandate(req, res, next) {
       city,
       phone,
       email,
+      allowSaveData,
       spousefirstname,
       spouselastname,
       spouseaddress,
@@ -1373,6 +1374,10 @@ export async function savePersonalSituationForSalesMandate(req, res, next) {
     }
 
     const clientModifier = {};
+    
+    if (allowSaveData) {
+      clientModifier.allowSaveData = allowSaveData;
+    }
 
     if (industry) {
       clientModifier.industry = industry;
@@ -1440,6 +1445,17 @@ export async function savePersonalSituationForSalesMandate(req, res, next) {
       { _id: project.clientId },
       {
         $set: clientModifier
+      }
+    ).exec();
+
+    await Client.updateOne(
+      {
+        _id: project.clientId
+      },
+      {
+        $set: {
+          allowSaveData
+        }
       }
     ).exec();
 
