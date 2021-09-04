@@ -228,6 +228,7 @@ export async function editSalesSheet(req, res, next) {
     }
 
     const {
+      landconstcd,
       propertyType,
       propertySize,
       livingArea,
@@ -267,6 +268,9 @@ export async function editSalesSheet(req, res, next) {
 
     if (livingArea) {
       newSalesSheetEdited.livingArea = livingArea;
+    }
+    if (landconstcd) {
+      newSalesSheetEdited.landconstcd = landconstcd;
     }
 
     if (landArea) {
@@ -312,6 +316,7 @@ export async function saveSalesSheet(req, res, next) {
     }
 
     const {
+      landconstcd,
       propertyType,
       propertySize,
       livingArea,
@@ -334,7 +339,8 @@ export async function saveSalesSheet(req, res, next) {
       !delay ||
       !readyToSign ||
       !nextAvailabilities ||
-      !fullAddress
+      !fullAddress 
+      
     ) {
       throw new Error("Missing fields");
     }
@@ -348,7 +354,8 @@ export async function saveSalesSheet(req, res, next) {
       delay,
       readyToSign,
       nextAvailabilities,
-      fullAddress
+      fullAddress,
+      landconstcd
     };
 
     if (workEstimate) {
@@ -361,6 +368,10 @@ export async function saveSalesSheet(req, res, next) {
 
     if (livingArea) {
       salesSheet.livingArea = livingArea;
+    }
+    
+    if (landconstcd) {
+      salesSheet.landconstcd = landconstcd;
     }
 
     if (priceEstimate) {
