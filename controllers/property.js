@@ -38,6 +38,7 @@ export async function editProperty(req, res, next) {
       address,
       landArea,
       livingArea,
+      landconstcd,
       varangueArea,
       type,
       virtualVisitLink,
@@ -107,6 +108,9 @@ export async function editProperty(req, res, next) {
     }
     if (livingArea) {
       propertyData.livingArea = livingArea;
+    }
+    if (landconstcd) {
+      propertyData.landconstcd = landconstcd;
     }
     if (typeOfInvestment) {
       propertyData.typeOfInvestment = typeOfInvestment;
