@@ -26,10 +26,11 @@ export async function sendAgreementAcceptedWebhook(projectId) {
   })
 }
 
-export async function sendNewDocWebhook(documentId) {
+export async function sendNewDocWebhook(documentId,projectId) {
+  const project = await getProject(projectId)
   const document = await getDocument(documentId)
   const client = await getClient(project.clientId)
-  const project = await getProject(projectId)
+  
   axios({
     method: "POST",
     url: process.env.ZAPPIER_FILE_WEBHOOK_URL,
