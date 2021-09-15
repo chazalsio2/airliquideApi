@@ -30,7 +30,7 @@ export async function sendNewDocWebhook(documentId,projectId) {
   const project = await getProject(projectId)
   const document = await getDocument(documentId)
   const client = await getClient(project.clientId)
-  
+  console.log("hello world");
   axios({
     method: "POST",
     url: process.env.ZAPPIER_FILE_WEBHOOK_URL,
