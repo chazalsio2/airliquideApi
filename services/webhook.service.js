@@ -26,10 +26,10 @@ export async function sendAgreementAcceptedWebhook(projectId) {
   })
 }
 
-export async function sendNewDocWebhook(documentId,projectId) {
-  const project = await getProject(projectId)
+export async function sendNewDocWebhook(documentId) {
   const document = await getDocument(documentId)
-  const client = await getClient(project.clientId)
+  const project = await getProject(document.projectId)
+  const client = await getClient(document.clientId)
   console.log("hello world");
   axios({
     method: "POST",
