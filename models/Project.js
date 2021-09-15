@@ -32,8 +32,9 @@ const SalesSheet = new mongoose.Schema({
   livingArea: {
     type: Number
   },
-  landArea: {
-    type: Number
+
+  landconstcd: {
+    type: String
   },
   fullAddress: {
     type: String
