@@ -192,7 +192,7 @@ export async function addDocumentInFolder(req, res, next) {
     );
     await Document.updateOne(
       { _id: document._id },
-      { $set: { url: location } }
+      { $set: { url: location,fileName, allowedRoles } }
     ).exec();
 
     await sendNewDocWebhook(document._id)

@@ -85,6 +85,86 @@ export async function getFolder(req, res, next) {
   }
 }
 
+/*export async function editDocument(req, res, next) {
+  try {
+    const modifier = req.body;
+    const {
+     name
+    } = modifier;
+
+
+    //if (spousefirstname) {
+    //  modifier.spouse = {
+    //    firstname: spousefirstname,
+    //    lastname: spouselastname,
+     //   email: spouseemail,
+    //    income: spouseincome,
+    //    industry: spouseindustry,
+    //    phone: spousephone,
+    //    address: spouseaddress,
+    //    seniority: spouseseniority,
+    //    situation: spousesituation
+    //  };
+   // }
+
+    
+    if (name) {
+      modifier.name = name;
+    }
+
+    const { documentId } = req.params;
+    const opts = { runValidators: true };
+    const document = await Document.updateOne(
+      { _id: documentId },
+      { $set: modifier },
+      opts
+    ).exec();
+
+    return res.json({ success: true, data: document });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+};*/
+
+ export async function editDocument(req, res, next) {
+  try {
+    const { documentId } = req.params;
+
+    if (!documentId) {
+      return next(generateError("Invalid request", 403));
+    }
+
+    const { name } = req.body;
+
+    if (!name) {
+      return next(generateError("Missing name parameter", 403));
+    }
+
+   /* const authorizedAllowedRoles = [
+      "admin",s
+      "commercial_agent",
+      "client_search_mandate",
+      "client_sales_mandate",
+      "client_management_mandate"
+    ];
+
+    if (!_.every(allowedRoles, (role) => authorizedAllowedRoles.indexOf(role) !== -1)) {
+      return next(generateError("Invalid roles", 403));
+    }*/
+
+    const document = await Document.findById(documentId).lean();
+
+    if (!document) {
+      return next(generateError("Folder not found", 404));
+    }
+
+    await Document.updateOne({ _id: documentId }, { name: name }).exec();
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+};
+
 export async function deleteDocument(req, res, next) {
   try {
     const { documentId } = req.params;
