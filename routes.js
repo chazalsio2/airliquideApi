@@ -40,7 +40,8 @@ import {
   getDocument,
   getFolder,
   getRootFolder,
-  deleteDocument
+  deleteDocument,
+  editDocument
 } from "./controllers/document";
 import {
   getProject,
@@ -348,7 +349,11 @@ export default (app) => {
     cancelProject,
     errorHandle
   );
-
+app.put(
+    "/documents/:documentId", 
+    passport.authenticate("jwt", { session: false }),
+    editDocument
+);
   app.delete(
     "/documents/:documentId",
     passport.authenticate("jwt", { session: false }),

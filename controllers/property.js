@@ -38,6 +38,7 @@ export async function editProperty(req, res, next) {
       address,
       landArea,
       livingArea,
+      landconstcd,
       varangueArea,
       type,
       virtualVisitLink,
@@ -107,6 +108,9 @@ export async function editProperty(req, res, next) {
     }
     if (livingArea) {
       propertyData.livingArea = livingArea;
+    }
+    if (landconstcd) {
+      propertyData.landconstcd = landconstcd;
     }
     if (typeOfInvestment) {
       propertyData.typeOfInvestment = typeOfInvestment;
@@ -327,7 +331,8 @@ export async function editPropertyStatus(req, res, next) {
   return res.json({ success: true });
 }
 
-export async function deletePhoto(req, res, next) {
+export async function deletePhoto(e,req, res, next) {
+  console.log(e);
   const { photo } = req.body;
   const { propertyId } = req.params;
 
