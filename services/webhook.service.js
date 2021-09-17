@@ -34,7 +34,7 @@ export async function sendNewDocWebhook(documentId) {
     method: "POST",
     url: process.env.ZAPPIER_FILE_WEBHOOK_URL,
     data: {
-      clientName: `${client.firstname} ${client.lastname}`, 
+      clientName: client.firstname, 
       filename: document.name,
       location: document.url,
       typeProject: project.type,
