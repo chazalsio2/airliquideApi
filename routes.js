@@ -482,7 +482,7 @@ app.put(
   );
 
   app.delete(
-    `/properties/:propertyId/photos`,
+    `/properties/photos`,
     passport.authenticate("jwt", { session: false }),
     checkAdmin,
     checkAccountDesactivated,

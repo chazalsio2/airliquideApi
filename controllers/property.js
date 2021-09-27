@@ -337,7 +337,7 @@ export async function deletePhoto(e,req, res, next) {
   const { propertyId } = req.params;
 
   try {
-    await Property.updateOne(
+    await Property.delete(
       { _id: propertyId },
       { $pull: { photos: photo } }
     ).exec();
