@@ -331,8 +331,7 @@ export async function editPropertyStatus(req, res, next) {
   return res.json({ success: true });
 }
 
-export async function deletePhoto(e,req, res, next) {
-  console.log(e);
+export async function deletePhoto(req, res, next) {
   const { photo } = req.body;
   const { propertyId } = req.params;
 
@@ -347,7 +346,6 @@ export async function deletePhoto(e,req, res, next) {
     next(generateError(e.message));
   }
 }
-
 export async function createProperty(req, res, next) {
   try {
     const {

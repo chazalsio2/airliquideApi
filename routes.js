@@ -484,7 +484,7 @@ app.put(
   app.delete(
     `/properties/:propertyId/photos`,
     passport.authenticate("jwt", { session: false }),
-    checkAdmin,
+    checkAdminOrCommercial,
     checkAccountDesactivated,
     deletePhoto,
     errorHandle
