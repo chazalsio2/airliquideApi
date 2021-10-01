@@ -97,7 +97,10 @@ export async function createContact(req, res, next) {
       lastname,
       phone,
       contactCategoryId,
-      description
+      description,
+      email,
+      address
+
     } = req.body;
 
     if (!firstname || !lastname || !phone || !contactCategoryId) {
@@ -117,7 +120,10 @@ export async function createContact(req, res, next) {
       lastname,
       phone,
       contactCategoryId,
-      description
+      description,
+      email,
+      address
+
     }).save();
 
     return res.json({ success: true });
@@ -139,11 +145,13 @@ export async function editContact(req, res, next) {
           lastname,
           phone,
           contactCategoryId,
-          description
+          description,
+          email,
+          address
         } = modifier;
 
       if (!contactCategoryId || !phone || !firstname || !lastname ||
-        !description) {
+        !description || !email ||!address) {
         return next(generateError("Cannot update some fields", 403));
       }
 

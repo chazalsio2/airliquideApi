@@ -16,8 +16,15 @@ var schema = new mongoose.Schema(
     },
     contactCategoryId: {
       type: mongoose.Types.ObjectId
+    },
+    email: {
+      type: String
+    },
+    address: {
+      type: String
     }
   },
+  
   {
     timestamps: true,
     collection: "contacts"
