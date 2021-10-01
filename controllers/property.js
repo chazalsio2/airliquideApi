@@ -303,7 +303,7 @@ export async function updatePropertyVisibility(req, res, next) {
       { $set: { public: !!req.body.public } }
     ).exec();
 
-    if (req.body.public && property.propertyStatus === "forsale") {
+    if (req.body.public && property.propertyStatus === "forsale")  {
       try {
         checkMatchingForProperty(property._id);
       } catch (e) {
