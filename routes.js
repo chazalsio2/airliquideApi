@@ -769,7 +769,7 @@ app.put(
   app.put(
     "/projects/:projectId/search-sheet",
     passport.authenticate("jwt", { session: false }),
-    checkAdmin,
+    checkAdminOrCommercial,
     checkAccountDesactivated,
     editSearchProject,
     errorHandle
@@ -778,7 +778,7 @@ app.put(
   app.put(
     "/projects/:projectId/sales-sheet",
     passport.authenticate("jwt", { session: false }),
-    checkAdmin,
+    checkAdminOrCommercial,
     checkAccountDesactivated,
     editSalesSheet,
     errorHandle
