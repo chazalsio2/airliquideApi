@@ -14,6 +14,7 @@ const allowedRoles = [
 ];
 
 export async function getUsers(req, res, next) {
+  console.log("roles");
   const LIMIT_BY_PAGE = 10;
   const { page = "", filter = "" } = req.query;
   const pageNumber = Number(page) || 1;
