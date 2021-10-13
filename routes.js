@@ -36,6 +36,7 @@ import {
   deleteProject
 } from "./controllers/client";
 import { publicCreateClient } from "./controllers/public";
+import { createDossierNotaire } from "./controllers/dossierNotaire"
 import {
   getDocument,
   getFolder,
@@ -291,6 +292,14 @@ export default (app) => {
     editTraining,
     errorHandle
   );
+  app.post("/dossierNotaire",
+  passport.authenticate("jwt", { session: false }),
+  checkAdminOrCommercial,
+  checkAccountDesactivated,
+  createDossierNotaire,
+  errorHandle
+
+  )
 
   // SuperAdmin
   app.post("/users/admin", checkSuperAdmin, createAdmin, errorHandle);
