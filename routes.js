@@ -308,7 +308,7 @@ export default (app) => {
   app.post(
     "/contacts",
     passport.authenticate("jwt", { session: false }),
-    checkAdmin,
+    checkAdminOrCommercial,
     checkAccountDesactivated,
     createContact,
     errorHandle
@@ -317,7 +317,7 @@ export default (app) => {
   app.post(
     "/contact-categories",
     passport.authenticate("jwt", { session: false }),
-    checkAdmin,
+    checkAdminOrCommercial,
     checkAccountDesactivated,
     createContactCategory,
     errorHandle
@@ -610,7 +610,6 @@ app.put(
   app.post(
     `/folders/:folderId/documents`,
     passport.authenticate("jwt", { session: false }),
-    checkAdmin,
     checkAccountDesactivated,
     addDocumentInFolder,
     errorHandle
