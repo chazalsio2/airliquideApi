@@ -43,3 +43,15 @@ export async function sendNewDocWebhook(documentId) {
     }
   })
 }
+
+export async function sendNewClientWebhook(clientId) {
+  const client = await Client.findById(clientId)
+  axios({
+    method: 'POST',
+    url: process.env.ZAPPIER_TEST_WEBHOOK_URL,
+    data:{
+      clientName: client.lastname,
+      clientFirstName: client.firstname
+    }
+  })
+}

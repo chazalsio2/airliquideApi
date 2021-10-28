@@ -7,6 +7,7 @@ import Contact from "../models/Contact";
 import { generateError, isAdmin, isAdminOrCommercial } from "../lib/utils";
 
 export async function createDossierNotaire(req, res, next) {
+  console.log(req.body);
     try {
       const {
         contactId,
