@@ -36,6 +36,7 @@ export async function sendNewDocWebhook(documentId) {
     data: {
       clientName: client.firstname, 
       filename: document.name,
+      email: client.email,
       location: document.url,
       typeProject: project.type,
       StatusProject: project.status,
