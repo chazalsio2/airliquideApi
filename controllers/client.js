@@ -3,6 +3,7 @@ import Client from "../models/Client";
 import { generateError } from "../lib/utils";
 import Project, { projectTypes } from "../models/Project";
 import ProjectEvent from "../models/ProjectEvent";
+import { sendNewClientWebhook } from '../services/webhook.service';
 
 export async function getClients(req, res, next) {
   try {
@@ -125,6 +126,8 @@ export async function createClient(req, res, next) {
       }).save();
 
       await Client.updateOne({ _id: client._id }, { $addToSet: { projectTypes: serviceType } }).exec()
+
+      await sendNewClientWebhook(client._id)
 
       return res.json({
         success: true,

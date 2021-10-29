@@ -36,6 +36,7 @@ import {
   deleteProject
 } from "./controllers/client";
 import { publicCreateClient } from "./controllers/public";
+import { createDossierNotaire } from "./controllers/dossierNotaire"
 import {
   getDocument,
   getFolder,
@@ -291,6 +292,14 @@ export default (app) => {
     editTraining,
     errorHandle
   );
+  app.post("/dossierNotaire",
+  passport.authenticate("jwt", { session: false }),
+  checkAdminOrCommercial,
+  checkAccountDesactivated,
+  createDossierNotaire,
+  errorHandle
+
+  )
 
   // SuperAdmin
   app.post("/users/admin", checkSuperAdmin, createAdmin, errorHandle);
@@ -299,7 +308,7 @@ export default (app) => {
   app.post(
     "/contacts",
     passport.authenticate("jwt", { session: false }),
-    checkAdmin,
+    checkAdminOrCommercial,
     checkAccountDesactivated,
     createContact,
     errorHandle
@@ -308,7 +317,7 @@ export default (app) => {
   app.post(
     "/contact-categories",
     passport.authenticate("jwt", { session: false }),
-    checkAdmin,
+    checkAdminOrCommercial,
     checkAccountDesactivated,
     createContactCategory,
     errorHandle
@@ -601,7 +610,6 @@ app.put(
   app.post(
     `/folders/:folderId/documents`,
     passport.authenticate("jwt", { session: false }),
-    checkAdmin,
     checkAccountDesactivated,
     addDocumentInFolder,
     errorHandle
