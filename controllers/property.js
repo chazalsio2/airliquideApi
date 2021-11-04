@@ -585,7 +585,7 @@ export async function createProperty(req, res, next) {
 
     propertyData.commercialEmail = req.user.email;
     propertyData.commercialName = req.user.displayName;
-    propertyData.commercialPhoneNumber = req.user.phoneNumber;
+    propertyData.commercialPhoneNumber = req.user.phone;
 
     const property = await new Property(propertyData).save();
 

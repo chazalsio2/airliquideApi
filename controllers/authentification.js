@@ -69,8 +69,10 @@ export async function login(req, res, next) {
       data: {
         jwt: jwtGenerated,
         displayName: user.displayName,
+        Numphone:user.phone,
         roles: user.roles,
         deactivated: user.deactivated,
+        mail: user.email,
       },
     });
   } else {
@@ -80,15 +82,16 @@ export async function login(req, res, next) {
 
 export async function createAdmin(req, res, next) {
   try {
-    const { email, displayName } = req.body;
+    const { email, displayName, phone } = req.body;
 
-    if (!email || !displayName) {
+    if (!email || !displayName || !phone) {
       return next(generateError("Missing fields", 400));
     }
 
     const user = await new User({
       email,
       displayName,
+      phone,
       roles: ["admin"],
     }).save();
 
@@ -135,6 +138,7 @@ export async function createPassword(req, res, next) {
       jwt: jwtGenerated,
       displayName: user.displayName,
       roles: user.roles,
+      Numphone:user.phone,
       deactivated: user.deactivated,
     },
   });

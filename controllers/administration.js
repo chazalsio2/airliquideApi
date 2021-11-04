@@ -31,7 +31,7 @@ export async function getUsers(req, res, next) {
   const userCount = await User.countDocuments(selector).exec();
   const users = await User.find(
     selector,
-    "email roles createdAt active displayName active deactivated",
+    "email roles createdAt active displayName phone active deactivated",
     {
       limit: LIMIT_BY_PAGE,
       skip: (pageNumber - 1) * LIMIT_BY_PAGE,
@@ -48,9 +48,9 @@ export async function getUsers(req, res, next) {
 }
 
 export async function createUser(req, res, next) {
-  const { email, roles, displayName } = req.body;  
+  const { email, roles, displayName,phone } = req.body;  
 
-  if (!email || !roles || !displayName) {
+  if (!email || !roles || !displayName|| !phone) {
     return next(generateError("Missing fields", 400));
   }
 
@@ -68,7 +68,7 @@ export async function createUser(req, res, next) {
   }
 
   try {
-    await new User({ email, roles, displayName }).save();
+    await new User({ email, roles, displayName, phone }).save();
     const user = await User.findOne({ email }).exec();
     sendWelcomeEmail(user);
   } catch (e) {
@@ -80,8 +80,8 @@ export async function createUser(req, res, next) {
 
 export async function editUser(req, res, next) {
   try {
-    const { roles, displayName, userId, deactivated } = req.body;
-    if (!userId || !displayName) {      
+    const { roles, displayName, userId, deactivated, phone } = req.body;
+    if (!userId || !displayName || !phone) {      
       return next(generateError("Missing fields", 400));
     }
 
@@ -107,7 +107,7 @@ export async function editUser(req, res, next) {
 
     await User.updateOne(
       { _id: userId },
-      { $set: { displayName, roles, deactivated } }
+      { $set: { displayName, roles, deactivated, phone } }
     ).exec();
 
     const userUpdated = await User.findOne(
