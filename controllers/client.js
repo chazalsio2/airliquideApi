@@ -23,6 +23,9 @@ export async function getClients(req, res, next) {
         },
         {
           email: { $regex: filter, $options: "i" }
+        },
+        {
+          phone: { $regex: filter, $options: "i" }
         }
       ]
     };
