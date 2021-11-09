@@ -10,11 +10,32 @@ export async function createDossierNotaire(req, res, next) {
   console.log(req.body);
     try {
       const {
+        societe,
+        vendeur,
+        adresse,
+        Mail,
         contactId,
+        phone,
+        date_lieu,
+        cp_ville,
+        nationalite,
+        profession,
+        regime_matrimonial
       } = req.body;
   
-      if (!contactId) {
-        throw new Error("Missing fields");
+      if (
+        !societe||
+        !vendeur||
+        !adresse||
+        !Mail||
+        !contactId||
+        !phone||
+        !date_lieu||
+        !cp_ville||
+        !nationalite||
+        !profession||
+        !regime_matrimonial) {
+          throw new Error("Missing fields");
       }
   
       const contact = await Contact.findById(
@@ -22,11 +43,21 @@ export async function createDossierNotaire(req, res, next) {
       ).lean();
   
       if (!contact) {
-        throw new Error("Contact category not found");
+        throw new Error("Contact not found");
       }
   
-      await new Contact({
-        contactId
+      await new DossierNotaire({
+        societe,
+        vendeur,
+        adresse,
+        Mail,
+        contactId,
+        phone,
+        date_lieu,
+        cp_ville,
+        nationalite,
+        profession,
+        regime_matrimonial
       }).save();
   
       return res.json({ success: true });
