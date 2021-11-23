@@ -292,7 +292,7 @@ export default (app) => {
     editTraining,
     errorHandle
   );
-  app.post("/dossierNotaire",
+  app.post("/dossierNotaire/:projectId",
   passport.authenticate("jwt", { session: false }),
   checkAdminOrCommercial,
   checkAccountDesactivated,

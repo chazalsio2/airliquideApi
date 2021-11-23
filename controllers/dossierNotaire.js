@@ -1,14 +1,19 @@
 import _ from "underscore";
-
-import ContactCategory from "../models/ContactCategory";
+import Project from "../models/Project";
 import DossierNotaire from "../models/DossierNotaire"
 import { allowedRoles } from "../models/User";
 import Contact from "../models/Contact";
 import { generateError, isAdmin, isAdminOrCommercial } from "../lib/utils";
 
 export async function createDossierNotaire(req, res, next) {
-  console.log(req.body);
     try {
+    const { projectId } = req.params;
+    const project = await Project.findById(projectId).lean();
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+
       const {
         societe,
         vendeur,
@@ -46,7 +51,7 @@ export async function createDossierNotaire(req, res, next) {
         throw new Error("Contact not found");
       }
   
-      await new DossierNotaire({
+      const DossierNotaireData = {
         societe,
         vendeur,
         adresse,
@@ -58,9 +63,30 @@ export async function createDossierNotaire(req, res, next) {
         nationalite,
         profession,
         regime_matrimonial
-      }).save();
+      };
+      console.log(projectId);
+      
+      const dossiernotaire = await new DossierNotaire(DossierNotaireData).save();
+      console.log(dossiernotaire._id);
+         await Project.updateOne(
+          { _id: projectId },
+          { $set: { dossiernotaireId: dossiernotaire._id } }
+        ).exec();
   
-      return res.json({ success: true });
+      await DossierNotaire.updateOne({ _id: dossiernotaire._id }).exec();
+  
+  
+       
+
+
+      /* if (["search"].indexOf(serviceType) !== -1) {
+        const project = await Project({
+          clientId: client,
+          type: serviceType,
+        }).save();*/
+  
+
+      return res.json({ success: true,data: { completed: true } });
     } catch (e) {
       next(generateError(e.message));
     }
