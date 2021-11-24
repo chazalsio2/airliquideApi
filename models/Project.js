@@ -32,7 +32,10 @@ const SalesSheet = new mongoose.Schema({
   livingArea: {
     type: Number
   },
-
+  landArea: {
+    type: Number,
+    
+  },
   landconstcd: {
     type: String
   },
@@ -100,10 +103,7 @@ const SearchSheet = new mongoose.Schema({
     type: String,
     enum: ["optional", "priority"]
   },
-  landArea: {
-    type: Number,
-    required: false
-  },
+ 
   searchSector: {
     type: String,
     enum: [
