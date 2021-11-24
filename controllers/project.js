@@ -349,7 +349,7 @@ export async function saveSalesSheet(req, res, next) {
       propertyType,
       propertySize,
       // livingArea,
-      // landArea,
+      //landArea,
       workNeeded,
       delay,
       readyToSign,
