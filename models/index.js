@@ -10,3 +10,5 @@ export { default as Simulation } from './Simulation'
 export { default as Training } from './Training'
 export { default as Transaction } from './Transaction'
 export { default as User } from './User'
+export { default as DossierNotaire } from './DossierNotaire'
+
