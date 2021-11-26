@@ -68,7 +68,7 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
   const contact2 = await getContact(dossiernotaire.contactClientId)
   axios({
     method: 'POST',
-    url: process.env.ZAPPIER_TEST_WEBHOOK_URL,
+    url: process.env.ZAPPIER_TEST_WEBHOOK,
     data:{
       MESSAGE:'Donnée client vision_r',
       societe: dossiernotaire.societe,
