@@ -49,6 +49,7 @@ export async function sendNewDocWebhook(documentId) {
   })
 }
 
+
 export async function sendNewClientWebhook(clientId) {
   const client = await Client.findById(clientId)
   axios({
