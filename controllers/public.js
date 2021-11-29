@@ -5,7 +5,7 @@ import Client from "../models/Client";
 import Project, { projectTypes } from "../models/Project";
 import { sendNewClientEmail } from "../lib/email";
 import { sendMessageToSlack } from "../lib/slack";
-import { sendNewClientWebhook } from '../services/webhook.service';
+import {sendNewClientWebhook} from "../services/webhook.service";
 
 
 export async function publicCreateClient(req, res, next) {
@@ -41,8 +41,7 @@ export async function publicCreateClient(req, res, next) {
 
       const client = await new Client(newClientData).save();
 
-      console.log(client._id);
-    await sendNewClientWebhook(client._id);
+      console.log(client);
 
       sendNewClientEmail(client);
 
@@ -55,6 +54,8 @@ export async function publicCreateClient(req, res, next) {
           clientId: client,
           type: serviceType,
         }).save();
+        console.log(project);
+        await sendNewClientWebhook(project);
 
         return res.json({
           success: true,
@@ -70,7 +71,11 @@ export async function publicCreateClient(req, res, next) {
         const project = await Project({
           clientId: client,
           type: serviceType,
-        }).save();
+        }).save(); 
+        console.log(project);
+        await sendNewClientWebhook(project);
+
+
 
         return res.json({
           success: true,
