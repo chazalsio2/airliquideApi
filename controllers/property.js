@@ -280,7 +280,7 @@ export async function editProperty(req, res, next) {
       propertyData.numberOfRooms = Number(numberOfRooms);
     }
 
-    propertyData.name = `${getPropertyType(propertyData.type) || ""} ${propertyData.livingArea} m² ${propertyData.city || ""} ${propertyData.landArea} m²`;
+    propertyData.name = `${getPropertyType(propertyData.type) || ""} ${propertyData.livingArea ? propertyData.livingArea+" m²" : ""}  ${propertyData.city || ""} ${propertyData.landArea ? propertyData.landArea+ " m²" : ""}`;
 
     const propertyEdited = await Property.updateOne(
       { _id: propertyId },

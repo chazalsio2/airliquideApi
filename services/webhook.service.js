@@ -66,6 +66,17 @@ export async function sendNewClientWebhook(projectId) {
   })
 }
 
+export async function sendNewproperties(dossiernotaireId){
+  const dossiernotaire = await DossierNotaire.findById(dossiernotaireId._id)
+  axios({
+    method: 'POST',
+    url :process.env.ZAPPIER_TEST_WEBHOOK_FORMATION,
+    data:{
+      societe : dossiernotaire.societe
+    }
+  })
+}
+
 export async function sendNewDosiierNtaire(dossiernotaireId){
   const dossiernotaire = await DossierNotaire.findById(dossiernotaireId)
   const contact = await getContact(dossiernotaire.contactId)
