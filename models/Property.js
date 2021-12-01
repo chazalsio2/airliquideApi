@@ -199,12 +199,10 @@ const schema = new mongoose.Schema(
       default: 0
     },
     accounting: {
-      type: Number,
-      default: 0
+      type: String,
     },
     cga: {
-      type: Number,
-      default: 0
+      type: String,
     },
     divers: {
       type: Number,

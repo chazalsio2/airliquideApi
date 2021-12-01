@@ -90,7 +90,6 @@ var schema = new mongoose.Schema(
     },
     accounting: {
       type: Number,
-      default: 0
     },
     electricity: {
       type: Number,

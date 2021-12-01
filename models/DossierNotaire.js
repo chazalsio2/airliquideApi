@@ -150,10 +150,7 @@ var schema = new mongoose.Schema(
         honoraires_vision_r_properties:{
           type: String
         },
-        charge_vision_r_properties:{
-          type: String
-        },
-        charge_vision_r_properties:{
+        charges_Vendeur_properties:{
           type: String
         },
         honoraires_properties:{
