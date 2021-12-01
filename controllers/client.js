@@ -122,23 +122,22 @@ export async function createClient(req, res, next) {
 
     const client = await new Client(clientData).save();
 
-    //if (projectTypes.indexOf(serviceType) !== -1) {
-      //const project = await new Project({
-        //clientId: client,
-        //type: serviceType
-      //}).save();
-    //console.log(project);
+    if (projectTypes.indexOf(serviceType) !== -1) {
+      const project = await new Project({
+        clientId: client,
+        type: serviceType
+      }).save();
 
-     // await Client.updateOne({ _id: client._id }, { $addToSet: { projectTypes: serviceType } }).exec()
+      await Client.updateOne({ _id: client._id }, { $addToSet: { projectTypes: serviceType } }).exec()
 
 
-      //return res.json({
-        //success: true,
-        //data: {
-         // projectId: project._id
-       // }
-      //});
-  //  }
+      return res.json({
+        success: true,
+        data: {
+          projectId: project._id
+        }
+      });
+    }
     return res.json({ success: true, data: { completed: true } });
   } catch (e) {
     next(generateError(e.message));
