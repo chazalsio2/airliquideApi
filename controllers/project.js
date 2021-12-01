@@ -3,6 +3,7 @@ import { generateError, isAdmin, isAdminOrCommercial } from "../lib/utils";
 import User from "../models/User";
 import Project from "../models/Project";
 import Client from "../models/Client";
+import DossierNotaire from "../models/DossierNotaire";
 import Document from "../models/Document";
 import ProjectEvent from "../models/ProjectEvent";
 import _ from "underscore";
@@ -79,12 +80,15 @@ export async function getPublicProject(req, res, next) {
     }
 
     const client = await Client.findOne({ _id: project.clientId }, null).lean();
+    const dossiernotaire = await DossierNotaire.findOne({ _id: project.dossiernotaireId }, null).lean();
+
 
     if (!client) {
       return next(generateError("Client not found", 404));
     }
 
     project.client = client;
+    project.dossiernotaire= dossiernotaire;
     project.events = await ProjectEvent.find({ projectId }, null, {
       sort: { createdAt: -1 }
     }).lean();
@@ -116,6 +120,8 @@ export async function getProject(req, res, next) {
     }
 
     const client = await Client.findOne({ _id: project.clientId }, null).lean();
+    const dossiernotaire = await DossierNotaire.findOne({ _id: project.dossiernotaireId }, null).lean();
+
 
     if (!client) {
       return next(generateError("Client not found", 404));
@@ -130,6 +136,7 @@ export async function getProject(req, res, next) {
     }
 
     project.client = client;
+    project.dossiernotaire = dossiernotaire;
     project.events = await ProjectEvent.find({ projectId }, null, {
       sort: { createdAt: -1 }
     }).lean();

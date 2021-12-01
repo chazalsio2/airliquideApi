@@ -107,7 +107,7 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
       banque_properties: dossiernotaire.banque_properties,
       carte_conseiller_properties: dossiernotaire.carte_conseiller_properties,
       charge_properties: dossiernotaire.charge_properties.charge_properties,
-      charge_vision_r_properties: dossiernotaire.charge_vision_r_properties,
+      charges_Vendeur_properties: dossiernotaire.charges_Vendeur_properties,
       code_postal_properties: dossiernotaire.code_postal_properties,
       conseiller_properties: dossiernotaire.conseiller_properties,
       date_mandat_properties: dossiernotaire.date_mandat_properties,
