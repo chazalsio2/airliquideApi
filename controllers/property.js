@@ -128,10 +128,16 @@ export async function editProperty(req, res, next) {
       propertyData.propertyTax = Number(propertyTax);
     }
     if (accounting) {
-      propertyData.accounting = Number(accounting);
+      propertyData.accounting = accounting;
+    }
+    if (!accounting) {
+      propertyData.accounting = accounting;
     }
     if (cga) {
-      propertyData.cga = Number(cga);
+      propertyData.cga = cga;
+    }
+    if (!cga) {
+      propertyData.cga = cga;
     }
     if (divers) {
       propertyData.divers = Number(divers);
@@ -447,10 +453,10 @@ export async function createProperty(req, res, next) {
       propertyData.propertyTax = Number(propertyTax);
     }
     if (accounting) {
-      propertyData.accounting = Number(accounting);
+      propertyData.accounting = accounting;
     }
     if (cga) {
-      propertyData.cga = Number(cga);
+      propertyData.cga = cga;
     }
     if (divers) {
       propertyData.divers = Number(divers);

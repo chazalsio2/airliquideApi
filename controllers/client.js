@@ -122,23 +122,23 @@ export async function createClient(req, res, next) {
 
     const client = await new Client(clientData).save();
 
-    if (projectTypes.indexOf(serviceType) !== -1) {
-      const project = await new Project({
-        clientId: client,
-        type: serviceType
-      }).save();
+    //if (projectTypes.indexOf(serviceType) !== -1) {
+      //const project = await new Project({
+        //clientId: client,
+        //type: serviceType
+      //}).save();
+    //console.log(project);
 
-      await Client.updateOne({ _id: client._id }, { $addToSet: { projectTypes: serviceType } }).exec()
+     // await Client.updateOne({ _id: client._id }, { $addToSet: { projectTypes: serviceType } }).exec()
 
-      await sendNewClientWebhook(client._id)
 
-      return res.json({
-        success: true,
-        data: {
-          projectId: project._id
-        }
-      });
-    }
+      //return res.json({
+        //success: true,
+        //data: {
+         // projectId: project._id
+       // }
+      //});
+  //  }
     return res.json({ success: true, data: { completed: true } });
   } catch (e) {
     next(generateError(e.message));
@@ -165,6 +165,7 @@ export async function addProject(req, res, next) {
     }
 
     const project = await new Project({ clientId, type: projectType }).save();
+    console.log(project);
     await Client.updateOne({ _id: clientId }, { $addToSet: { projectTypes: projectType } }).exec()
 
     await ProjectEvent({
@@ -173,6 +174,7 @@ export async function addProject(req, res, next) {
     }).save();
 
     return res.json({ success: true, data: { projectId: project._id } });
+    console.log(res);
   } catch (e) {
     next(generateError(e.message));
   }
