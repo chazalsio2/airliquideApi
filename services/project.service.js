@@ -8,6 +8,5 @@ export async function getProject(projectId) {
 }
 export async function getContact(contactId,contactClientId) {
   const contact = await Contact.findById(contactId).lean();
-  const contact2 = await Contact.findById(contactClientId).lean();
-  return contact, contact2
+  return contact
 }
