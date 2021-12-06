@@ -4,7 +4,7 @@ import DossierNotaire from "../models/DossierNotaire"
 import { allowedRoles } from "../models/User";
 import Contact from "../models/Contact";
 import { generateError, isAdmin, isAdminOrCommercial } from "../lib/utils";
-import {sendNewDosiierNtaire,sendNewproperties} from '../services/webhook.service';
+import {sendNewDosiierNtaire} from '../services/webhook.service';
 
 export async function createDossierNotaire(req, res, next) {
     try {
@@ -72,7 +72,6 @@ export async function createDossierNotaire(req, res, next) {
           { _id: projectId },
           { $set: { dossiernotaireId: dossiernotaire._id } }
         ).exec();
-        sendNewproperties(dossiernotaire);
       return res.json({ success: true,data: { completed: true } });
     } catch (e) {
       next(generateError(e.message));
