@@ -126,9 +126,9 @@ import {
 const checkAdmin = (req, res, next) => checkRoles("admin", req, res, next);
 const checkAdminOrCommercial = (req, res, next) =>
   checkRoles(["admin", "commercial_agent"], req, res, next);
-const checkAdminOrCommercialOrSearchClient = (req, res, next) =>
+const checkAdminOrCommercialOrSearchClientOrclientcoaching = (req, res, next) =>
   checkRoles(
-    ["admin", "commercial_agent", "client_search_mandate", "client_search_mandate_vip"],
+    ["admin", "commercial_agent", "client_search_mandate", "client_search_mandate_vip","client_coaching"],
     req,
     res,
     next
@@ -636,7 +636,7 @@ app.put(
   app.get(
     "/properties/:propertyId",
     passport.authenticate("jwt", { session: false }),
-    checkAdminOrCommercialOrSearchClient,
+    checkAdminOrCommercialOrSearchClientOrclientcoaching,
     checkAccountDesactivated,
     getProperty,
     errorHandle
@@ -645,7 +645,7 @@ app.put(
   app.get(
     "/properties",
     passport.authenticate("jwt", { session: false }),
-    checkAdminOrCommercialOrSearchClient,
+    checkAdminOrCommercialOrSearchClientOrclientcoaching,
     checkAccountDesactivated,
     getProperties,
     errorHandle
