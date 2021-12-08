@@ -69,17 +69,16 @@ export async function sendNewClientWebhook(projectId) {
 export async function sendNewDosiierNtaire(dossiernotaireId){
   const dossiernotaire = await DossierNotaire.findById(dossiernotaireId)
   const contact = await getContact(dossiernotaire.contactId)
-  const contact2 = await getContact(dossiernotaire.contactClientId)
   axios({
     method: 'POST',
-    url: process.env.ZAPPIER_TEST_WEBHOOK,
+    url: process.env.ZAPPIER_TEST_WEBHOOK_FORMATION,
     data:{
       MESSAGE:'Donnée client vision_r',
       societe: dossiernotaire.societe,
       client_vision_r: dossiernotaire.client_vision_r,
       adresse: dossiernotaire.adresse,
       Mail: dossiernotaire.Mail,
-      //nom_prenon_contact_client_vision_r: contact.firstname+' '+contact.lastname,
+      nom_prenon_contact_client_vision_r: contact.firstname+' '+contact.lastname,
       phone_client_vision_r: dossiernotaire.phone,
       date_lieu: dossiernotaire.date_lieu,
       cp_ville: dossiernotaire.cp_ville,
@@ -106,8 +105,10 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
       Substitution_properties: dossiernotaire.Substitution_properties,
       banque_properties: dossiernotaire.banque_properties,
       carte_conseiller_properties: dossiernotaire.carte_conseiller_properties,
-      charge_properties: dossiernotaire.charge_properties.charge_properties,
-      charge_vision_r_properties: dossiernotaire.charge_vision_r_properties,
+      honoraires_Acquéreur_properties: dossiernotaire.honoraires_Acquéreur_properties,
+      charge_Acquéreur_properties: dossiernotaire.charge_Acquéreur_properties,
+      charges_Vendeur_properties: dossiernotaire.charges_Vendeur_properties,
+      Honoraires_Vendeur_properties: dossiernotaire.Honoraires_Vendeur_properties,
       code_postal_properties: dossiernotaire.code_postal_properties,
       conseiller_properties: dossiernotaire.conseiller_properties,
       date_mandat_properties: dossiernotaire.date_mandat_properties,

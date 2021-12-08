@@ -30,7 +30,6 @@ export async function createDossierNotaire(req, res, next) {
       } = req.body;
   
       if (
-        !societe||
         !client_vision_r||
         !adresse||
         !Mail||
@@ -104,7 +103,7 @@ export async function editDossierNotaire(req, res, next) {
 
     } = modifier;
 
-  if ( !contactClientId || !societe1_a ) {
+  if ( !contactClientId ) {
     return next(generateError("Cannot update some fields", 403));
   }
   const { dossiernotaireId } = req.params;
@@ -132,10 +131,10 @@ export async function editFinaleDossierNotaire(req, res, next) {
       ref_cadastrales_properties,
       prix_net_properties,
       mobilier_p_properties,
-      honoraires_vision_r_properties,
-      charge_vision_r_properties,
-      honoraires_properties,
-      charge_properties,
+      Honoraires_Vendeur_properties,
+      charges_Vendeur_properties,
+      honoraires_Acquéreur_properties,
+      charge_Acquéreur_properties,
       frais_notaires_properties,
       montant_depot_garantie_properties,
       type_acquisition_properties,
