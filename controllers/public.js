@@ -20,7 +20,7 @@ export async function publicCreateClient(req, res, next) {
       referral,
       city,
       zipcode,
-      referaldetails
+      referaldetails,lieux_de_naissance,nationalite
     } = req.body;
 
     if (projectTypes.indexOf(serviceType) === -1) {
@@ -36,12 +36,12 @@ export async function publicCreateClient(req, res, next) {
       referral,
       city,
       zipcode,
-      referaldetails
+      referaldetails,
+      lieux_de_naissance,nationalite
     };
 
       const client = await new Client(newClientData).save();
 
-      console.log(client);
 
       sendNewClientEmail(client);
 

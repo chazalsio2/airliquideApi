@@ -154,7 +154,7 @@ export async function editFinaleDossierNotaire(req, res, next) {
 
     } = modifier;
 
-  if ( !propertiesId || !code_postal_properties ) {
+  if ( !propertiesId ) {
     return next(generateError("Cannot update some fields", 403));
   }
   const { dossiernotaireId } = req.params;

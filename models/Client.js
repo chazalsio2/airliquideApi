@@ -82,6 +82,12 @@ var schema = new mongoose.Schema(
     lastname: {
       type: String
     },
+    lieux_de_naissance:{
+      type: String
+    },
+    nationalite:{
+        type: String
+    },
     email: {
       type: String
     },
