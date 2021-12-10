@@ -102,7 +102,9 @@ export async function createClient(req, res, next) {
       geographicSector,
       city,
       zipcode,
-      referral
+      referral,
+      lieux_de_naissance,
+      nationalite
     } = req.body;
 
     if (projectTypes.indexOf(serviceType) === -1) {
@@ -117,7 +119,9 @@ export async function createClient(req, res, next) {
       phone,
       city,
       zipcode,
-      referral
+      referral,
+      lieux_de_naissance,
+      nationalite
     };
 
     const client = await new Client(clientData).save();
