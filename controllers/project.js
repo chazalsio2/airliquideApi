@@ -1363,6 +1363,8 @@ export async function savePersonalSituationForSalesMandate(req, res, next) {
       firstname,
       lastname,
       birthday,
+      lieux_de_naissance,
+      nationalite,
       address,
       zipcode,
       city,
@@ -1427,6 +1429,15 @@ export async function savePersonalSituationForSalesMandate(req, res, next) {
     if (birthday) {
       clientModifier.birthday = moment(birthday);
     }
+
+    if(lieux_de_naissance) {
+      clientModifier.lieux_de_naissance = lieux_de_naissance;
+    }
+
+    if(nationalite) {
+      clientModifier.nationalite = nationalite;
+    }
+
     if (address) {
       clientModifier.address = address;
     }
@@ -1531,7 +1542,9 @@ export async function savePersonalSituation(req, res, next) {
       spouseindustry,
       spouseseniority,
       spousephone,
-      birthday
+      birthday,
+      lieux_de_naissance,
+      nationalite
     } = req.body;
 
     const { projectId } = req.params;
@@ -1586,6 +1599,14 @@ export async function savePersonalSituation(req, res, next) {
       clientModifier.birthday = moment(birthday);
     }
 
+    if(lieux_de_naissance) {
+      clientModifier.lieux_de_naissance = lieux_de_naissance;
+    }
+
+    if(nationalite) {
+      clientModifier.nationalite = nationalite;
+    }
+    
     if (investalone === "couple") {
       clientModifier.spouse = {
         firstname: spousefirstname,
