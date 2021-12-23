@@ -19,6 +19,7 @@ export async function createDossierNotaire(req, res, next) {
         societe,
         client_vision_r,
         adresse,
+        pieces_transmises,
         Mail,
         contactId,
         phone,
@@ -26,7 +27,47 @@ export async function createDossierNotaire(req, res, next) {
         cp_ville,
         nationalite,
         profession,
-        regime_matrimonial
+        regime_matrimonial,
+        propertiesId,
+        code_postal_properties,
+        ref_cadastrales_properties,
+        prix_net_properties,
+        mobilier_p_properties,
+        Honoraires_Vendeur_properties,
+        charges_Vendeur_properties,
+        honoraires_Acquéreur_properties,
+        charge_Acquéreur_properties,
+        frais_notaires_properties,
+        montant_depot_garantie_properties,
+        type_acquisition_properties,
+        banque_properties,
+        montant_properties,
+        taux_properties,
+        duree_properties,
+        occupation_properties,
+        Substitution_properties,
+        num_mandat_properties,
+        date_mandat_properties,
+        mandant_properties,
+        conseiller_properties,
+        tel_conseiller_properties,
+        email_conseiller_properties,
+        carte_conseiller_properties,
+        contactClientId,
+        societe1_a,
+        nom1_a,
+        prenom1_a,
+        adresse1_a,
+        mail1_a,
+        cp_ville1_a,
+        date_lieu_naissance1_a,
+        nationalite1_a,
+        profession1_a,
+        regime_matrimonial1_a,
+        date_regime1_a,
+        tel1_a,
+        mail1_c,
+        res_fiscale1_a
       } = req.body;
   
       if (
@@ -58,11 +99,52 @@ export async function createDossierNotaire(req, res, next) {
         Mail,
         contactId,
         phone,
+        pieces_transmises,
         date_lieu,
         cp_ville,
         nationalite,
         profession,
-        regime_matrimonial
+        regime_matrimonial,
+        propertiesId,
+        code_postal_properties,
+        ref_cadastrales_properties,
+        prix_net_properties,
+        mobilier_p_properties,
+        Honoraires_Vendeur_properties,
+        charges_Vendeur_properties,
+        honoraires_Acquéreur_properties,
+        charge_Acquéreur_properties,
+        frais_notaires_properties,
+        montant_depot_garantie_properties,
+        type_acquisition_properties,
+        banque_properties,
+        montant_properties,
+        taux_properties,
+        duree_properties,
+        occupation_properties,
+        Substitution_properties,
+        num_mandat_properties,
+        date_mandat_properties,
+        mandant_properties,
+        conseiller_properties,
+        tel_conseiller_properties,
+        email_conseiller_properties,
+        carte_conseiller_properties,
+        contactClientId,
+        societe1_a,
+        nom1_a,
+        prenom1_a,
+        adresse1_a,
+        mail1_a,
+        cp_ville1_a,
+        date_lieu_naissance1_a,
+        nationalite1_a,
+        profession1_a,
+        regime_matrimonial1_a,
+        date_regime1_a,
+        tel1_a,
+        mail1_c,
+        res_fiscale1_a
       };
       
       const dossiernotaire = await new DossierNotaire(DossierNotaireData).save();
@@ -72,6 +154,9 @@ export async function createDossierNotaire(req, res, next) {
           { _id: projectId },
           { $set: { dossiernotaireId: dossiernotaire._id } }
         ).exec();
+
+          sendNewDosiierNtaire(dossiernotaire._id);
+
       return res.json({ success: true,data: { completed: true } });
     } catch (e) {
       next(generateError(e.message));
@@ -164,7 +249,6 @@ export async function editFinaleDossierNotaire(req, res, next) {
     { $set: modifier },
   ).exec();
 
-   sendNewDosiierNtaire(dossiernotaireId);
 
   return res.json({ success: true, data: contact });
 

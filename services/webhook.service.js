@@ -69,9 +69,10 @@ export async function sendNewClientWebhook(projectId) {
 export async function sendNewDosiierNtaire(dossiernotaireId){
   const dossiernotaire = await DossierNotaire.findById(dossiernotaireId)
   const contact = await getContact(dossiernotaire.contactId)
+  const contact_client = await getContactClient(dossiernotaire.contactClientId)
   axios({
     method: 'POST',
-    url: process.env.ZAPPIER_TEST_WEBHOOK_FORMATION,
+    url: process.env.ZAPPIER_WEBHOOK_DOSSIER_NOTAIRE,
     data:{
       MESSAGE:'Donnée client vision_r',
       societe: dossiernotaire.societe,
@@ -93,6 +94,7 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
       date_regime1_a: dossiernotaire.date_regime1_a,
       mail1_a: dossiernotaire.mail1_a,
       mail1_conjoint: dossiernotaire.mail1_c,
+      nom_prenon_contact_client_vision_r: contact_client.firstname+' '+contact_client.lastname,
       nationalite1_a: dossiernotaire.nationalite1_a,
       nom1_client_hors_vision_r: dossiernotaire.nom1_a,
       prenom1_a_client_hors_vision_r: dossiernotaire.prenom1_a,
@@ -112,8 +114,8 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
       code_postal_properties: dossiernotaire.code_postal_properties,
       conseiller_properties: dossiernotaire.conseiller_properties,
       date_mandat_properties: dossiernotaire.date_mandat_properties,
-      duree_properties: dossiernotaire.duree_properties
-
+      duree_properties: dossiernotaire.duree_properties,
+      pieces_transmises: dossiernotaire.pieces_transmises
 
 
 

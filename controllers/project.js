@@ -112,7 +112,6 @@ export async function getPublicProject(req, res, next) {
 export async function getProject(req, res, next) {
   try {
     const { projectId } = req.params;
-
     const project = await Project.findById(projectId).lean();
 
     if (!project) {
@@ -126,6 +125,9 @@ export async function getProject(req, res, next) {
     if (!client) {
       return next(generateError("Client not found", 404));
     }
+    /*if (!dossiernotaire) {
+      return next(generateError("dossiernotaire not found", 404));
+    }*/
 
     const isOwner = String(req.user.clientId) === String(project.clientId);
 
