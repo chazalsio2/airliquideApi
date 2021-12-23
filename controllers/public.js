@@ -54,7 +54,6 @@ export async function publicCreateClient(req, res, next) {
           clientId: client,
           type: serviceType,
         }).save();
-        console.log(project);
         await sendNewClientWebhook(project);
 
         return res.json({
@@ -72,7 +71,6 @@ export async function publicCreateClient(req, res, next) {
           clientId: client,
           type: serviceType,
         }).save(); 
-        console.log(project);
         await sendNewClientWebhook(project);
 
 

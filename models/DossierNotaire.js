@@ -1,8 +1,20 @@
 import mongoose from "mongoose";
 
+
+const checkbox = ["Carnet_d'entretien_de_l'immeuble", "Lettre_d'intention_d'achat", "Statuts_de_la_SCI","Convention,Dossier_de_diagnostic_technique","Dernier_de_taxes","liste_détaillée_et_chiffrée","3_derniers_PV_d","Diagnostic_technique_global","Reglement_de_copropriété","Carte_d'identité","Baux"]
+
 var schema = new mongoose.Schema(
   {
         societe:{
+          type: String
+        },
+        Honoraires_Vendeur_properties:{
+          type: String
+        },
+        honoraires_Acquéreur_properties:{
+          type: String
+        },
+        charge_Acquéreur_properties:{
           type: String
         },
         client_vision_r:{
@@ -206,6 +218,15 @@ var schema = new mongoose.Schema(
         },
         carte_conseiller_properties:{
           type: String
+        },
+        pieces_transmises: {
+          type: Array,
+          required: false
+        },
+        "pieces_transmises.$": {
+          type: String,
+          enum: checkbox,
+          required: false
         }
   },
   
