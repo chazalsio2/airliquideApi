@@ -8,6 +8,8 @@ import { uploadPhotos } from "../lib/cloudinary";
 import Property, { getPropertyType } from "../models/Property";
 import { sendMessageToSlack } from "../lib/slack";
 import { checkMatchingForProperty } from "../lib/matching";
+import {sendNewDProprieteWebhook} from '../services/webhook.service';
+
 
 const LIMIT_BY_PAGE = 12;
 
@@ -597,6 +599,8 @@ export async function createProperty(req, res, next) {
     const slackMessage = `Un nouveau bien a été ajouté (${property.name}) : ${process.env.APP_URL}/biens-immobiliers/${property._id}`;
 
     sendMessageToSlack({ message: slackMessage, copyToCommercial: true });
+
+    sendNewDProprieteWebhook(property._id);
 
     return res.json({ success: true, data: property });
   } catch (e) {
