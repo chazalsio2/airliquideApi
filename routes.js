@@ -85,6 +85,7 @@ import {
 import {
   createProperty,
   getProperties,
+  getPropertie,
   getProperty,
   editProperty,
   updatePropertyVisibility,
@@ -648,6 +649,14 @@ app.put(
     checkAdminOrCommercialOrSearchClientOrclientcoaching,
     checkAccountDesactivated,
     getProperties,
+    errorHandle
+  );
+  app.get(
+    "/propertie",
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercialOrSearchClientOrclientcoaching,
+    checkAccountDesactivated,
+    getPropertie,
     errorHandle
   );
 

@@ -619,7 +619,8 @@ export async function getProperties(req, res, next) {
   }
 
   if (type === "rental") {
-    selector.propertyStatus = "rental";
+    selector.propertyStatus = "rental"
+    ;
   }
 
   if (
@@ -649,6 +650,19 @@ export async function getProperties(req, res, next) {
   } catch (e) {
     next(generateError(e.message));
   }
+}
+export async function getPropertie(req, res, next){
+  try {
+    const folderSelector = isAdminOrCommercial(req.user)? {}
+    : { allowedRoles: { $in: req.user.roles } };
+    const properties = await Property.find(folderSelector).lean();
+  return res.json({
+    success: true,
+    data: { properties }
+  });
+} catch (e) {
+  next(generateError(e.message));
+}
 }
 
 export async function getProperty(req, res, next) {
