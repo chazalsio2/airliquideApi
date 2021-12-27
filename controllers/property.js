@@ -8,6 +8,8 @@ import { uploadPhotos } from "../lib/cloudinary";
 import Property, { getPropertyType } from "../models/Property";
 import { sendMessageToSlack } from "../lib/slack";
 import { checkMatchingForProperty } from "../lib/matching";
+import {sendNewDProprieteWebhook} from '../services/webhook.service';
+
 
 const LIMIT_BY_PAGE = 12;
 
@@ -598,6 +600,8 @@ export async function createProperty(req, res, next) {
 
     sendMessageToSlack({ message: slackMessage, copyToCommercial: true });
 
+    sendNewDProprieteWebhook(property._id);
+
     return res.json({ success: true, data: property });
   } catch (e) {
     next(generateError(e.message));
@@ -615,7 +619,8 @@ export async function getProperties(req, res, next) {
   }
 
   if (type === "rental") {
-    selector.propertyStatus = "rental";
+    selector.propertyStatus = "rental"
+    ;
   }
 
   if (
@@ -645,6 +650,19 @@ export async function getProperties(req, res, next) {
   } catch (e) {
     next(generateError(e.message));
   }
+}
+export async function getPropertie(req, res, next){
+  try {
+    const folderSelector = isAdminOrCommercial(req.user)? {}
+    : { allowedRoles: { $in: req.user.roles } };
+    const properties = await Property.find(folderSelector).lean();
+  return res.json({
+    success: true,
+    data: { properties }
+  });
+} catch (e) {
+  next(generateError(e.message));
+}
 }
 
 export async function getProperty(req, res, next) {

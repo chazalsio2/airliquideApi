@@ -6,6 +6,7 @@ import { getUser } from './user.service'
 import { getDocument } from './document.service'
 import { Client } from '../models'
 import {DossierNotaire} from '../models'
+import {Property} from '../models'
 
 
 export async function sendAgreementAcceptedWebhook(projectId) {
@@ -116,13 +117,64 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
       date_mandat_properties: dossiernotaire.date_mandat_properties,
       duree_properties: dossiernotaire.duree_properties,
       pieces_transmises: dossiernotaire.pieces_transmises
+    }
+  })
+}
 
-
-
-
-
-
-
+export async function sendNewDProprieteWebhook(propertyId) {
+  console.log(propertyId);
+  const proprietes = await Property.findById(propertyId)
+  axios({
+    method:'POST',
+    url: process.env.ZAPPIER_WEBHOOK_PROPRIETE,
+    data:{
+      description:proprietes.description,
+      propertyStatus:proprietes.propertyStatus,
+      salesPrice:proprietes.salesPrice,
+      landArea: proprietes.landArea,
+      livingArea:proprietes.livingArea,
+      varangueArea:proprietes.varangueArea,
+      photos:proprietes.photos,
+      type:proprietes.type,
+      virtualVisitLink:proprietes.virtualVisitLink,
+      yearOfConstruction:proprietes.yearOfConstruction,
+      city:proprietes.city,
+      address:proprietes.address,
+      roomDescription:proprietes.roomDescription,
+      kitchenArea:proprietes.kitchenArea,
+      bathroomArea:proprietes.bathroomArea,
+      numberOfRooms:proprietes.numberOfRooms,
+      floor:proprietes.floor,
+      outdoorParking:proprietes.outdoorParking,
+      coveredParking:proprietes.coveredParking,
+      swimmingPool:proprietes.swimmingPool,
+      secureEntrance:proprietes.secureEntrance,
+      intercom:proprietes.intercom,
+      view:proprietes.view,
+      sanitation:proprietes.sanitation,
+      doubleGlazing:proprietes.doubleGlazing,
+      electricRollerShutters:proprietes.electricRollerShutters,
+      hotWater:proprietes.hotWater,
+      airConditioner:proprietes.airConditioner,
+      equippedKitchen:proprietes.equippedKitchen,
+      // DPE,
+      numberOfCoOwnershipLots:proprietes.numberOfCoOwnershipLots,
+      procedureInProgress:proprietes.procedureInProgress,
+      freeOfOccupation:proprietes.freeOfOccupation,
+      typeOfInvestment:proprietes.typeOfInvestment,
+      rent:proprietes.rent,
+      coOwnershipCharge:proprietes.coOwnershipCharge,
+      assurancePNO:proprietes.assurancePNO,
+      propertyTax:proprietes.propertyTax,
+      accounting:proprietes.accounting,
+      cga:proprietes.cga,
+      divers:proprietes.divers,
+      notaryFees:proprietes.notaryFees,
+      visionRFees:proprietes.visionRFees,
+      works:proprietes.works,
+      financialExpense:proprietes.financialExpense,
+      equipment:proprietes.equipment,
+      agencyFees:proprietes.agencyFees
     }
   })
 }
