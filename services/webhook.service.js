@@ -68,9 +68,10 @@ export async function sendNewClientWebhook(projectId) {
 }
 
 export async function sendNewDosiierNtaire(dossiernotaireId){
+  console.log(dossiernotaireId);
   const dossiernotaire = await DossierNotaire.findById(dossiernotaireId)
   const contact = await getContact(dossiernotaire.contactId)
-  const contact_client = await getContactClient(dossiernotaire.contactClientId)
+  const contact_client = await getContact(dossiernotaire.contactClientId)
   axios({
     method: 'POST',
     url: process.env.ZAPPIER_WEBHOOK_DOSSIER_NOTAIRE,
@@ -87,7 +88,7 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
       nationalite: dossiernotaire.nationalite,
       profession: dossiernotaire.profession,
       regime_matrimonial: dossiernotaire.regime_matrimonial,
-      MESSAGE:'Donnée acheteur ou vendeur hors vision_r',
+      MESSAGE2:'Donnée acheteur ou vendeur hors vision_r',
       adresse1_a: dossiernotaire.adresse1_a,
       //nom_prenon_contact: contact2.firstname+' '+contact2.lastname,
       cp_ville1_a: dossiernotaire.cp_ville1_a,
@@ -95,16 +96,15 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
       date_regime1_a: dossiernotaire.date_regime1_a,
       mail1_a: dossiernotaire.mail1_a,
       mail1_conjoint: dossiernotaire.mail1_c,
-      nom_prenon_contact_client_vision_r: contact_client.firstname+' '+contact_client.lastname,
+      nom_prenon_contact_client_hors_vision_r: contact_client.firstname+' '+contact_client.lastname,
       nationalite1_a: dossiernotaire.nationalite1_a,
       nom1_client_hors_vision_r: dossiernotaire.nom1_a,
       prenom1_a_client_hors_vision_r: dossiernotaire.prenom1_a,
       profession1_a: dossiernotaire.profession1_a,
       regime_matrimonial1_a: dossiernotaire.regime_matrimonial1_a,
-      regime_matrimonial1_a: dossiernotaire.regime_matrimonial1_a,
       societe1_a: dossiernotaire.societe1_a,
       tel1_a: dossiernotaire.tel1_a,
-      Message:"Donnée propriété",
+      Message3:"Donnée propriété",
       Substitution_properties: dossiernotaire.Substitution_properties,
       banque_properties: dossiernotaire.banque_properties,
       carte_conseiller_properties: dossiernotaire.carte_conseiller_properties,
@@ -122,13 +122,15 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
 }
 
 export async function sendNewDProprieteWebhook(propertyId) {
-  console.log(propertyId);
+  console.log(propertyId,"  hello");
   const proprietes = await Property.findById(propertyId)
   axios({
-    method:'POST',
+    method:'GET',
     url: process.env.ZAPPIER_WEBHOOK_PROPRIETE,
     data:{
+      titre:`${proprietes.type || ""} ${proprietes.livingArea ? proprietes.livingArea+" m²" : ""}  ${proprietes.city || ""} ${proprietes.landArea ? proprietes.landArea+ " m²" : ""}`,
       description:proprietes.description,
+      ref:proprietes.ref,
       propertyStatus:proprietes.propertyStatus,
       salesPrice:proprietes.salesPrice,
       landArea: proprietes.landArea,
