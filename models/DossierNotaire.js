@@ -48,6 +48,27 @@ var schema = new mongoose.Schema(
           type: mongoose.Types.ObjectId
 
         },
+        cp_ville1_conj:{
+          type: String
+        },
+        nationalite_conj:{
+          type: String
+        },
+        date_lieu_naissance1_conj:{
+          type: String
+        },
+        Adress_conj:{
+          type: String
+        },
+        societe_conj:{
+          type: String
+        },
+        res_conj:{
+          type: String
+        },
+        projectId:{
+          type: mongoose.Types.ObjectId
+        },
         tel_n_a: {
           type: String
         },
@@ -121,6 +142,12 @@ var schema = new mongoose.Schema(
           type: String
         },
         date_regime2_a: {
+          type: String
+        },
+        nom_prenom_c:{
+          type: String
+        },
+        num1_a:{
           type: String
         },
         tel1_a: {
