@@ -42,6 +42,7 @@ export async function createDossierNotaire(req, res, next) {
         type_acquisition_properties,
         banque_properties,
         montant_properties,
+        cp_ville1_conj,
         taux_properties,
         duree_properties,
         occupation_properties,
@@ -58,7 +59,12 @@ export async function createDossierNotaire(req, res, next) {
         nom1_a,
         prenom1_a,
         adresse1_a,
+        nationalite_conj,
+        date_lieu_naissance1_conj,
         mail1_a,
+        Adress_conj,
+        societe_conj,
+        res_conj,
         cp_ville1_a,
         date_lieu_naissance1_a,
         nationalite1_a,
@@ -67,7 +73,9 @@ export async function createDossierNotaire(req, res, next) {
         date_regime1_a,
         tel1_a,
         mail1_c,
-        res_fiscale1_a
+        num1_a,
+        res_fiscale1_a,
+        nom_prenom_c
       } = req.body;
   
       if (
@@ -93,6 +101,7 @@ export async function createDossierNotaire(req, res, next) {
       }
   
       const DossierNotaireData = {
+        projectId,
         societe,
         client_vision_r,
         adresse,
@@ -108,6 +117,12 @@ export async function createDossierNotaire(req, res, next) {
         propertiesId,
         code_postal_properties,
         ref_cadastrales_properties,
+        cp_ville1_conj,
+        date_lieu_naissance1_conj,
+        Adress_conj,
+        societe_conj,
+        res_conj,
+        nationalite_conj,
         prix_net_properties,
         mobilier_p_properties,
         Honoraires_Vendeur_properties,
@@ -125,6 +140,7 @@ export async function createDossierNotaire(req, res, next) {
         Substitution_properties,
         num_mandat_properties,
         date_mandat_properties,
+        num1_a,
         mandant_properties,
         conseiller_properties,
         tel_conseiller_properties,
@@ -144,7 +160,8 @@ export async function createDossierNotaire(req, res, next) {
         date_regime1_a,
         tel1_a,
         mail1_c,
-        res_fiscale1_a
+        res_fiscale1_a,
+        nom_prenom_c,
       };
       
       const dossiernotaire = await new DossierNotaire(DossierNotaireData).save();
@@ -155,6 +172,10 @@ export async function createDossierNotaire(req, res, next) {
           { $set: { dossiernotaireId: dossiernotaire._id } }
         ).exec();
 
+         await DossierNotaire.updateOne(
+           { _id: dossiernotaire._id },
+           { $set: { projectId: projectId }}
+         )
           sendNewDosiierNtaire(dossiernotaire._id);
 
       return res.json({ success: true,data: { completed: true } });

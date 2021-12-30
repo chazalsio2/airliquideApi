@@ -1,6 +1,6 @@
 import axios from 'axios'
 import moment from 'moment'
-import { getProject, getContact } from './project.service'
+import { getProject, getContact,getProperty } from './project.service'
 import { getClient } from './client.service'
 import { getUser } from './user.service'
 import { getDocument } from './document.service'
@@ -72,6 +72,9 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
   const dossiernotaire = await DossierNotaire.findById(dossiernotaireId)
   const contact = await getContact(dossiernotaire.contactId)
   const contact_client = await getContact(dossiernotaire.contactClientId)
+  const project = await getProject(dossiernotaire.projectId)
+  const client = await getClient(project.clientId)
+  const properties = await getProperty(dossiernotaire.propertiesId)
   axios({
     method: 'POST',
     url: process.env.ZAPPIER_WEBHOOK_DOSSIER_NOTAIRE,
@@ -79,15 +82,28 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
       MESSAGE:'Donnée client vision_r',
       societe: dossiernotaire.societe,
       client_vision_r: dossiernotaire.client_vision_r,
+      conjoint_client_vision_r: client.spouse.firstname + ' ' + client.spouse.lastname,
+      conjoint_Mail_vision_r : client.spouse.email,
+      conjoint_revenu_vision_r : client.spouse.income,
+      conjoint_industry_vision_r : client.spouse.industry,
+      conjoint_phone_vision_r : client.spouse.phone,
+      conjoint_address_vision_r : client.spouse.address,
+      conjoint_seniority_vision_r : client.spouse.seniority,
+      conjoint_situation_vision_r : client.spouse.situation,
       adresse: dossiernotaire.adresse,
       Mail: dossiernotaire.Mail,
       nom_prenon_contact_client_vision_r: contact.firstname+' '+contact.lastname,
+      num_contact_client_vision_r: contact.phone,
+      description_contact_client_vision_r: contact.description,
+      adress_contact_client_vision_r : contact.address,
+      email_contact_client_vision_r : contact.email,
       phone_client_vision_r: dossiernotaire.phone,
       date_lieu: dossiernotaire.date_lieu,
       cp_ville: dossiernotaire.cp_ville,
       nationalite: dossiernotaire.nationalite,
       profession: dossiernotaire.profession,
       regime_matrimonial: dossiernotaire.regime_matrimonial,
+      ref_cadastrales_properties: dossiernotaire.ref_cadastrales_properties,
       MESSAGE2:'Donnée acheteur ou vendeur hors vision_r',
       adresse1_a: dossiernotaire.adresse1_a,
       //nom_prenon_contact: contact2.firstname+' '+contact2.lastname,
@@ -96,6 +112,12 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
       date_regime1_a: dossiernotaire.date_regime1_a,
       mail1_a: dossiernotaire.mail1_a,
       mail1_conjoint: dossiernotaire.mail1_c,
+      cp_ville1_conj: dossiernotaire.cp_ville1_conj,
+      date_lieu_naissance1_conj: dossiernotaire.date_lieu_naissance1_conj,
+      Adress_conj:dossiernotaire.Adress_conj,
+      societe_conj:dossiernotaire.societe_conj,
+      res_conj:dossiernotaire.res_conj,
+      nationalite_conj:dossiernotaire.nationalite_conj,
       nom_prenon_contact_client_hors_vision_r: contact_client.firstname+' '+contact_client.lastname,
       nationalite1_a: dossiernotaire.nationalite1_a,
       nom1_client_hors_vision_r: dossiernotaire.nom1_a,
@@ -104,18 +126,33 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
       regime_matrimonial1_a: dossiernotaire.regime_matrimonial1_a,
       societe1_a: dossiernotaire.societe1_a,
       tel1_a: dossiernotaire.tel1_a,
+      res_fiscale1_a:dossiernotaire.res_fiscale1_a,
+      nom_prenom_c:dossiernotaire.nom_prenom_c,
       Message3:"Donnée propriété",
-      Substitution_properties: dossiernotaire.Substitution_properties,
+      prix_net_properties: dossiernotaire.prix_net_properties,
+      mobilier_p_properties:dossiernotaire.mobilier_p_properties,
       banque_properties: dossiernotaire.banque_properties,
       carte_conseiller_properties: dossiernotaire.carte_conseiller_properties,
       honoraires_Acquéreur_properties: dossiernotaire.honoraires_Acquéreur_properties,
       charge_Acquéreur_properties: dossiernotaire.charge_Acquéreur_properties,
+      frais_notaires_properties: dossiernotaire.frais_notaires_properties,
+      type_acquisition_properties: dossiernotaire.type_acquisition_properties,
+      montant_properties: dossiernotaire.montant_properties,
+      taux_properties:dossiernotaire.taux_properties,
+      occupation_properties:dossiernotaire.occupation_properties,
+      Substitution_properties:dossiernotaire.Substitution_properties,
+      num_mandat_properties:dossiernotaire.num_mandat_properties,
+      montant_depot_garantie_properties:dossiernotaire.montant_depot_garantie_properties,
       charges_Vendeur_properties: dossiernotaire.charges_Vendeur_properties,
       Honoraires_Vendeur_properties: dossiernotaire.Honoraires_Vendeur_properties,
       code_postal_properties: dossiernotaire.code_postal_properties,
       conseiller_properties: dossiernotaire.conseiller_properties,
       date_mandat_properties: dossiernotaire.date_mandat_properties,
       duree_properties: dossiernotaire.duree_properties,
+      num1_a :dossiernotaire.num1_a,
+      email_conseiller_properties:dossiernotaire.email_conseiller_properties,
+      tel_conseiller_properties:dossiernotaire.tel_conseiller_properties,
+      mandant_properties:dossiernotaire.mandant_properties,
       pieces_transmises: dossiernotaire.pieces_transmises
     }
   })
