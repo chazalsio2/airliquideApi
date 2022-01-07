@@ -1,8 +1,20 @@
 import mongoose from "mongoose";
 
+
+const checkbox = ["Carnet_d'entretien_de_l'immeuble", "Lettre_d'intention_d'achat", "Statuts_de_la_SCI","Convention,Dossier_de_diagnostic_technique","Dernier_de_taxes","liste_détaillée_et_chiffrée","3_derniers_PV_d","Diagnostic_technique_global","Reglement_de_copropriété","Carte_d'identité","Baux"]
+
 var schema = new mongoose.Schema(
   {
         societe:{
+          type: String
+        },
+        Honoraires_Vendeur_properties:{
+          type: String
+        },
+        honoraires_Acquéreur_properties:{
+          type: String
+        },
+        charge_Acquéreur_properties:{
           type: String
         },
         client_vision_r:{
@@ -35,6 +47,27 @@ var schema = new mongoose.Schema(
         contactClientId: {
           type: mongoose.Types.ObjectId
 
+        },
+        cp_ville1_conj:{
+          type: String
+        },
+        nationalite_conj:{
+          type: String
+        },
+        date_lieu_naissance1_conj:{
+          type: String
+        },
+        Adress_conj:{
+          type: String
+        },
+        societe_conj:{
+          type: String
+        },
+        res_conj:{
+          type: String
+        },
+        projectId:{
+          type: mongoose.Types.ObjectId
         },
         tel_n_a: {
           type: String
@@ -109,6 +142,12 @@ var schema = new mongoose.Schema(
           type: String
         },
         date_regime2_a: {
+          type: String
+        },
+        nom_prenom_c:{
+          type: String
+        },
+        num1_a:{
           type: String
         },
         tel1_a: {
@@ -206,6 +245,15 @@ var schema = new mongoose.Schema(
         },
         carte_conseiller_properties:{
           type: String
+        },
+        pieces_transmises: {
+          type: Array,
+          required: false
+        },
+        "pieces_transmises.$": {
+          type: String,
+          enum: checkbox,
+          required: false
         }
   },
   
