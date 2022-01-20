@@ -68,13 +68,20 @@ export async function sendNewClientWebhook(projectId) {
 }
 
 export async function sendNewDosiierNtaire(dossiernotaireId){
-  console.log(dossiernotaireId);
   const dossiernotaire = await DossierNotaire.findById(dossiernotaireId)
   const contact_v = await getContact(dossiernotaire.contact_v_Id)
   const contact_a = await getContact(dossiernotaire.contact_a_Id)
   const project = await getProject(dossiernotaire.projectId)
   const client = await getClient(project.clientId)
   const properties = await getProperty(dossiernotaire.propertiesId)
+  const pieces_transmises = dossiernotaire.pieces_transmises;
+
+    const piece = dossiernotaire.pieces_transmises.sort();
+    //console.log(pieces_transmises.contains());
+   const pieces_transmises_1 = piece[1];
+   const pieces_transmises_2 = piece[2];
+    console.log("1" + ":" +  pieces_transmises_1);
+    console.log("2" + ":" + pieces_transmises_2);
 
   if(project.type === "sales"){
     axios({
@@ -113,7 +120,7 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
         date_regime2_v:dossiernotaire.date_regime_matrimonial,
         res_fiscale1_v:dossiernotaire.res_fiscale1,
         res_fiscale2_v:dossiernotaire.res_fiscale2,
-       //////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////
         nom_n_a: contact_a.lastname,
         prenom_n_a:contact_a.firstname,
         tel_n_a: contact_a.phone,
@@ -153,7 +160,7 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
         commune_b:properties.city,
         ref_cadastrales_b: dossiernotaire.ref_cadastrales_properties,
         descriptif_b: properties.description,
-        etat_occupation_b: properties,
+        ////etat_occupation_b: properties,
         nu_meuble_b: `${properties.typeOfInvestment === "naked" && ( "Location nu") ,
                         properties.typeOfInvestment === "furnished" && ("Location meublé") ,
                         properties.typeOfInvestment === "shortterm" && ("Location courte durée"),
@@ -180,7 +187,20 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
         num_mandat:dossiernotaire.num_mandat_properties,
         date_mandat: dossiernotaire.date_mandat_properties,
         mandant:dossiernotaire.mandant_properties,
-        pieces_transmises: dossiernotaire.pieces_transmises,
+        pieces_transmises_0: `${pieces_transmises[0] && ("")}`,
+        entretien_x: `${pieces_transmises.includes("1_Carnet_d'entretien_de_l'immeuble") && ("Carnet_dentretien_de_limmeuble")}`,
+        offre_achat_x: `${pieces_transmises.includes("2_Lettre_d'intention_d'achat") && ("Lettre_d'intention_d'achat")}`,
+        sci_x: `${pieces_transmises.includes("3_Statuts_de_la_SCI") && ("Statuts_de_la_SCI")}`,
+        convention_x: `${pieces_transmises.includes("4_Convention") && ("Convention le cas échéant (Anah...)")}`,
+        diag_x: `${pieces_transmises.includes("5_Dossier_de_diagnostic_technique") && ("Dossier_de_diagnostic_technique")}`,
+        taxe_fonciere_x: `${pieces_transmises.includes("6_Dernier_de_taxes") && ("Taxe foncière")}`,
+        meuble_x: `${pieces_transmises.includes("7_liste_détaillée_et_chiffrée") && ("Equipement et mobiliers/décorations")}`,
+        ag_x: `${pieces_transmises.includes("8_3_derniers_PV_d'AG") && ("3_derniers_PV_d'AG")}`,
+        dtg_x: `${pieces_transmises.includes("9_Diagnostic_technique_global") && ("Diagnostic_technique_global")}`,
+        reg_copro_x: `${pieces_transmises.includes("10_Reglement_de_copropriété") && ("Reglement de copropriété")}`,
+        cni_x: `${pieces_transmises.includes("11_Carte_d'identité") && ("Carte d'identité acquéreur et/ou vendeur ")}`,
+        bail_x: `${pieces_transmises.includes("12_Baux") && ("Baux si bien occupé")}`,
+       
         nom_conseiller:properties.commercialName,
         tel_conseiller:properties.commercialPhoneNumber,
         mail_conseiller: properties.commercialEmail,
@@ -203,6 +223,7 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
         tel_conseiller_properties:dossiernotaire.tel_conseiller_properties,}*/
       }
     })
+    console.log("cest bon ");
   } 
   if(project.type === "search"){
     axios({
@@ -275,44 +296,56 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
        res_fiscale1_v:dossiernotaire.res_fiscale1,
        res_fiscale2_v:dossiernotaire.res_fiscale2,
        /////////////////////////////////////////////////////////
-        designation_b:properties.type,
-        adresse_b: properties.address,
-        code_postal_b: properties.city,
-        commune_b:properties.city,
-        ref_cadastrales_b: dossiernotaire.ref_cadastrales_properties,
-        descriptif_b: properties.description,
-        etat_occupation_b: properties,
-        nu_meuble_b: `${properties.typeOfInvestment === "naked" && ( "Location nu") ,
-                        properties.typeOfInvestment === "furnished" && ("Location meublé") ,
-                        properties.typeOfInvestment === "shortterm" && ("Location courte durée"),
-                        properties.typeOfInvestment === "flatsharing" && ("Colocation"),
-                        properties.typeOfInvestment === "principalresidence" && ("Résidence principale"),
-                        properties.typeOfInvestment === "other" && ("Inconnu")}`,
-        prix_fai_p: properties.salesPrice,
-        prix_net_p: dossiernotaire.prix_net_properties,
-        mobilier_p:dossiernotaire.mobilier_p_properties,
-        honoraires_v_p: properties.visionRFees,
-        charge_v_p: dossiernotaire.charges_Vendeur_properties,
-        honoraires_a_p: dossiernotaire.honoraires_Acquéreur_properties,
-        charges_a_p: dossiernotaire.charge_Acquéreur_properties,
-        frais_notaires_p: dossiernotaire.frais_notaires_properties,
-        montant_depot_garantie_p:dossiernotaire.montant_depot_garantie_properties,
-        type_acquisition_p: dossiernotaire.type_acquisition_properties,
-        banque_f: dossiernotaire.banque_properties,
-        montant_f: dossiernotaire.montant_properties,
-        taux_f:dossiernotaire.taux_properties,
-        duree_f: dossiernotaire.duree_properties,
-        occupation_cs:dossiernotaire.occupation_properties,
-        substitution_cs:dossiernotaire.Substitution_properties,
-        conseiller: dossiernotaire.conseiller_properties,
-        num_mandat:dossiernotaire.num_mandat_properties,
-        date_mandat: dossiernotaire.date_mandat_properties,
-        mandant:dossiernotaire.mandant_properties,
-        pieces_transmises: dossiernotaire.pieces_transmises,
-        nom_conseiller:properties.commercialName,
-        tel_conseiller:properties.commercialPhoneNumber,
-        mail_conseiller: properties.commercialEmail,
-        carte_conseiller: dossiernotaire.carte_conseiller_properties,
+       designation_b:properties.type,
+       adresse_b: properties.address,
+       code_postal_b: properties.city,
+       commune_b:properties.city,
+       ref_cadastrales_b: dossiernotaire.ref_cadastrales_properties,
+       descriptif_b: properties.description,
+       //etat_occupation_b: properties,
+       nu_meuble_b: `${properties.typeOfInvestment === "naked" && ( "Location nu") ,
+                       properties.typeOfInvestment === "furnished" && ("Location meublé") ,
+                       properties.typeOfInvestment === "shortterm" && ("Location courte durée"),
+                       properties.typeOfInvestment === "flatsharing" && ("Colocation"),
+                       properties.typeOfInvestment === "principalresidence" && ("Résidence principale"),
+                       properties.typeOfInvestment === "other" && ("Inconnu")}`,
+       prix_fai_p: properties.salesPrice,
+       prix_net_p: dossiernotaire.prix_net_properties,
+       mobilier_p:dossiernotaire.mobilier_p_properties,
+       honoraires_v_p: properties.visionRFees,
+       charge_v_p: dossiernotaire.charges_Vendeur_properties,
+       honoraires_a_p: dossiernotaire.honoraires_Acquéreur_properties,
+       charges_a_p: dossiernotaire.charge_Acquéreur_properties,
+       frais_notaires_p: dossiernotaire.frais_notaires_properties,
+       montant_depot_garantie_p:dossiernotaire.montant_depot_garantie_properties,
+       type_acquisition_p: dossiernotaire.type_acquisition_properties,
+       banque_f: dossiernotaire.banque_properties,
+       montant_f: dossiernotaire.montant_properties,
+       taux_f:dossiernotaire.taux_properties,
+       duree_f: dossiernotaire.duree_properties,
+       occupation_cs:dossiernotaire.occupation_properties,
+       substitution_cs:dossiernotaire.Substitution_properties,
+       conseiller: dossiernotaire.conseiller_properties,
+       num_mandat:dossiernotaire.num_mandat_properties,
+       date_mandat: dossiernotaire.date_mandat_properties,
+       mandant:dossiernotaire.mandant_properties,
+       pieces_transmises_0: `${pieces_transmises[0] && ("")}`,
+       entretien_x: `${pieces_transmises.includes("1_Carnet_d'entretien_de_l'immeuble") && ("Carnet_dentretien_de_limmeuble")}`,
+       offre_achat_x: `${pieces_transmises.includes("2_Lettre_d'intention_d'achat") && ("Lettre_d'intention_d'achat")}`,
+       sci_x: `${pieces_transmises.includes("3_Statuts_de_la_SCI") && ("Statuts_de_la_SCI")}`,
+       convention_x: `${pieces_transmises.includes("4_Convention") && ("Convention le cas échéant (Anah...)")}`,
+       diag_x: `${pieces_transmises.includes("5_Dossier_de_diagnostic_technique") && ("Dossier_de_diagnostic_technique")}`,
+       taxe_fonciere_x: `${pieces_transmises.includes("6_Dernier_de_taxes") && ("Taxe foncière")}`,
+       meuble_x: `${pieces_transmises.includes("7_liste_détaillée_et_chiffrée") && ("Equipement et mobiliers/décorations")}`,
+       ag_x: `${pieces_transmises.includes("8_3_derniers_PV_d'AG") && ("3_derniers_PV_d'AG")}`,
+       dtg_x: `${pieces_transmises.includes("9_Diagnostic_technique_global") && ("Diagnostic_technique_global")}`,
+       reg_copro_x: `${pieces_transmises.includes("10_Reglement_de_copropriété") && ("Reglement de copropriété")}`,
+       cni_x: `${pieces_transmises.includes("11_Carte_d'identité") && ("Carte d'identité acquéreur et/ou vendeur ")}`,
+       bail_x: `${pieces_transmises.includes("12_Baux") && ("Baux si bien occupé")}`,
+       nom_conseiller:properties.commercialName,
+       tel_conseiller:properties.commercialPhoneNumber,
+       mail_conseiller: properties.commercialEmail,
+       carte_conseiller: dossiernotaire.carte_conseiller_properties,
 ////////////////////////////////////////////////
        /* nu_meuble_b_sanitation:properties.sanitation,
         nu_meuble_b_doubleGlazing: properties.doubleGlazing,

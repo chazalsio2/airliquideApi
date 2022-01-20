@@ -1,8 +1,18 @@
 import mongoose from "mongoose";
 
 
-const checkbox = ["Carnet_d'entretien_de_l'immeuble", "Lettre_d'intention_d'achat", "Statuts_de_la_SCI","Convention,Dossier_de_diagnostic_technique","Dernier_de_taxes","liste_détaillée_et_chiffrée","3_derniers_PV_d","Diagnostic_technique_global","Reglement_de_copropriété","Carte_d'identité","Baux"]
+const monObjet = ["Carnet_d'entretien_de_l'immeuble"]//,"Dossier_de_diagnostic_technique", "Lettre_d'intention_d'achat", "Statuts_de_la_SCI","Convention,Dossier_de_diagnostic_technique","Dernier_de_taxes","liste_détaillée_et_chiffrée","3_derniers_PV_d","Diagnostic_technique_global","Reglement_de_copropriété","Carte_d'identité","Baux"];
+/*var monTableau = Object.keys(monObjet).map(function(cle) {
+    return [Number(cle), monObjet[cle]];
+});*/
 
+/* const piece_transmise = new mongoose.Schema({
+ pieces_transmises : {
+    type: String,
+    enum:monObjet
+  }
+})
+*/
 var schema = new mongoose.Schema(
   {
         societe1_v:{
@@ -266,13 +276,15 @@ var schema = new mongoose.Schema(
         },
         pieces_transmises: {
           type: Array,
-          required: false
+          required: false,
+          //monObjet
+           //{"Carnet_dentretien_de_limmeuble":1 ,"Dossier_de_diagnostic_technique":2}//, "Lettre_d'intention_d'achat", "Statuts_de_la_SCI","Convention,Dossier_de_diagnostic_technique","Dernier_de_taxes","liste_détaillée_et_chiffrée","3_derniers_PV_d","Diagnostic_technique_global","Reglement_de_copropriété","Carte_d'identité","Baux"],
         },
-        "pieces_transmises.$": {
-          type: String,
-          enum: checkbox,
-          required: false
-        }
+        /*"pieces_transmises.$" : {
+           type: String,
+        }*/
+        
+        
   },
   
   {
