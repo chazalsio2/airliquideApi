@@ -209,6 +209,7 @@ export async function editClient(req, res, next) {
     } = modifier;
 
     const {
+      spousenationalite,
       spousefirstname,
       spouseaddress,
       spouseemail,
@@ -222,6 +223,7 @@ export async function editClient(req, res, next) {
 
     if (spousefirstname) {
       modifier.spouse = {
+        nationalite:spousenationalite,
         firstname: spousefirstname,
         lastname: spouselastname,
         email: spouseemail,

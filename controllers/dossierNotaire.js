@@ -16,16 +16,20 @@ export async function createDossierNotaire(req, res, next) {
 
 
       const {
-        societe,
+        societe1_a,
+        societe1_v,
         client_vision_r,
         adresse,
         pieces_transmises,
         Mail,
-        contactId,
+        contact_v_Id,
+        contact_a_Id,
         phone,
         date_lieu,
         cp_ville,
         nationalite,
+        date_regime_matrimonial,
+        res_fiscale1,
         profession,
         regime_matrimonial,
         propertiesId,
@@ -55,14 +59,16 @@ export async function createDossierNotaire(req, res, next) {
         email_conseiller_properties,
         carte_conseiller_properties,
         contactClientId,
-        societe1_a,
         nom1_a,
         prenom1_a,
         adresse1_a,
         nationalite_conj,
+        res_fiscale2,
         date_lieu_naissance1_conj,
         mail1_a,
         Adress_conj,
+        lieux_naissance,
+        nom_c,
         societe_conj,
         res_conj,
         cp_ville1_a,
@@ -79,10 +85,10 @@ export async function createDossierNotaire(req, res, next) {
       } = req.body;
   
       if (
-        !client_vision_r||
+        !contact_a_Id||
         !adresse||
         !Mail||
-        !contactId||
+        !contact_v_Id||
         !phone||
         !date_lieu||
         !cp_ville||
@@ -93,7 +99,7 @@ export async function createDossierNotaire(req, res, next) {
       }
   
       const contact = await Contact.findById(
-        contactId
+        contact_v_Id,contact_a_Id
       ).lean();
   
       if (!contact) {
@@ -101,13 +107,19 @@ export async function createDossierNotaire(req, res, next) {
       }
   
       const DossierNotaireData = {
-        projectId,
-        societe,
+        societe1_a,
+        societe1_v,
+        nom_c,
         client_vision_r,
         adresse,
         Mail,
-        contactId,
+        contact_v_Id,
+        date_regime_matrimonial,
+        contact_a_Id,
         phone,
+        res_fiscale1,
+        lieux_naissance,
+        res_fiscale2,
         pieces_transmises,
         date_lieu,
         cp_ville,
@@ -147,7 +159,6 @@ export async function createDossierNotaire(req, res, next) {
         email_conseiller_properties,
         carte_conseiller_properties,
         contactClientId,
-        societe1_a,
         nom1_a,
         prenom1_a,
         adresse1_a,
@@ -186,13 +197,12 @@ export async function createDossierNotaire(req, res, next) {
 
 export async function editDossierNotaire(req, res, next) {
   
-  try {
+/*  try {
 
     const modifier = req.body;
     console.log(modifier);
     const {
       contactClientId,
-      societe1_a,
       nom1_a,
       prenom1_a,
       adresse1_a,
@@ -223,11 +233,11 @@ export async function editDossierNotaire(req, res, next) {
 
   } catch (error) {
     next(generateError(e.message));
-  }
+  }*/
 }
 export async function editFinaleDossierNotaire(req, res, next) {
   
-  try {
+ /* try {
 
     const modifier = req.body;
     console.log(modifier);
@@ -275,5 +285,5 @@ export async function editFinaleDossierNotaire(req, res, next) {
 
   } catch (error) {
     next(generateError(e.message));
-  }
+  }*/
 }

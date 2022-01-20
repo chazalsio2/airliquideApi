@@ -5,7 +5,7 @@ const checkbox = ["Carnet_d'entretien_de_l'immeuble", "Lettre_d'intention_d'acha
 
 var schema = new mongoose.Schema(
   {
-        societe:{
+        societe1_v:{
           type: String
         },
         Honoraires_Vendeur_properties:{
@@ -138,6 +138,21 @@ var schema = new mongoose.Schema(
         regime_matrimonial2_a: {
           type: String
         },
+        lieux_naissance:{
+          type: String
+        },
+        date_regime_matrimonial:{
+          type: String
+        },
+        res_fiscale1:{
+          type: String
+        },
+        nom_c:{
+          type: String
+        },
+        res_fiscale2:{
+          type: String
+        },
         date_regime1_a: {
           type: String
         },
@@ -168,7 +183,10 @@ var schema = new mongoose.Schema(
         res_fiscale2_a: {
           type: String
         },
-        contactId: {
+        contact_v_Id: {
+          type: mongoose.Types.ObjectId
+        },
+        contact_a_Id: {
           type: mongoose.Types.ObjectId
         },
         propertiesId:{
