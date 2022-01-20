@@ -20,13 +20,13 @@ export async function createDossierNotaire(req, res, next) {
         societe1_v,
         client_vision_r,
         adresse,
-        pieces_transmises,
         Mail,
         contact_v_Id,
         contact_a_Id,
         phone,
         date_lieu,
         cp_ville,
+        pieces_transmises,
         nationalite,
         date_regime_matrimonial,
         res_fiscale1,
@@ -120,7 +120,6 @@ export async function createDossierNotaire(req, res, next) {
         res_fiscale1,
         lieux_naissance,
         res_fiscale2,
-        pieces_transmises,
         date_lieu,
         cp_ville,
         nationalite,
@@ -135,6 +134,7 @@ export async function createDossierNotaire(req, res, next) {
         societe_conj,
         res_conj,
         nationalite_conj,
+        pieces_transmises,
         prix_net_properties,
         mobilier_p_properties,
         Honoraires_Vendeur_properties,
@@ -182,6 +182,7 @@ export async function createDossierNotaire(req, res, next) {
           { _id: projectId },
           { $set: { dossiernotaireId: dossiernotaire._id } }
         ).exec();
+
 
          await DossierNotaire.updateOne(
            { _id: dossiernotaire._id },
