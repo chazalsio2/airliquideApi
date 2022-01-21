@@ -142,6 +142,15 @@ var schema = new mongoose.Schema(
         profession2_a: {
           type: String
         },
+        etat_occupation_b:{
+          type: String
+        },
+        profession1_conj:{
+          type: String
+        },
+        lieux_naissance_conj:{
+          type: String
+        },
         regime_matrimonial1_a: {
           type: String
         },
