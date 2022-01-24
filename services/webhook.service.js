@@ -68,6 +68,7 @@ export async function sendNewClientWebhook(projectId) {
 }
 
 export async function sendNewDosiierNtaire(dossiernotaireId){
+  console.log(dossiernotaireId.date_regime_matrimonial);
   const dossiernotaire = await DossierNotaire.findById(dossiernotaireId)
   const contact_v = await getContact(dossiernotaire.contact_v_Id)
   const contact_a = await getContact(dossiernotaire.contact_a_Id)
@@ -157,8 +158,8 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
         profession2_a:dossiernotaire.profession1_conj,
         regime_matrimonial1_a:dossiernotaire.regime_matrimonial1_a,
         regime_matrimonial2_a:dossiernotaire.regime_matrimonial1_a,
-        date_regime1_a:moment(dossiernotaire.date_regime_matrimonial).format("DD/MM/YYYY")||"",
-        date_regime2_a:moment(dossiernotaire.date_regime_matrimonial).format("DD/MM/YYYY")||"",
+        date_regime1_a:`${ dossiernotaire.date_regime_matrimonial && ( moment(dossiernotaire.date_regime_matrimonial).format("DD/MM/YYYY"))||""}`,
+        date_regime2_a:`${client.spouse && ( moment(dossiernotaire.date_regime_matrimonial).format("DD/MM/YYYY"))||""}`,
         num_tel1_a:dossiernotaire.num1_a,
         num_tel2_a:dossiernotaire.tel1_a,
         res_fiscale1_a:dossiernotaire.res_fiscale1,
@@ -266,8 +267,8 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
         mail2_a:client.spouse  &&(client.spouse.email)||"",
         num_tel1_a:client.phone,
         num_tel2_a:client.spouse  &&(client.spouse.phone)||"",
-        //date_lieu_naissance1_a:`${moment(client.birthday).format("DD/MM/YYYY")||""}  ${client.lieux_de_naissance ? (client.lieux_de_naissance):("")}`,
-        //date_lieu_naissance2_a:`${client.spouse && (moment(client.spouse.birthday).format("DD/MM/YYYY"))|| ""}  ${client.spouse.lieux_de_naissance ? (client.spouse.lieux_de_naissance):("")}`,
+        date_lieu_naissance1_a:`${moment(client.birthday).format("DD/MM/YYYY")||""}  ${client.lieux_de_naissance && (client.lieux_de_naissance)||""}`,
+        date_lieu_naissance2_a:`${client.spouse && (client.spouse.birthday.format("DD/MM/YYYY"))|| ""}  ${client.spouse && (client.spouse.lieux_de_naissance)|| ""}`,
         cp_ville1_a:client.crd+"  "+ client.city,
         cp_ville2_a:client.crd+"  "+ client.city,
         nationalite1_a:client.nationalite,
@@ -280,14 +281,14 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
                                   client.situation === "legalcommunity" && ("Couple communauté légale réduite aux acquêts")||
                                   client.situation === "jointpossession" && ("Indivision")||
                                   client.situation === "company" && ("Société"))}`,
-        regime_matrimonial2_a:`${ client.spouse.situation === "single" && ("Célibataire")||
+        regime_matrimonial2_a:`${client.situation.spouse && (  client.spouse.situation === "single" && ("Célibataire")||
                                   client.spouse.situation === "married" && ("Couple vivant maritalement")||
                                   client.spouse.situation === "separationofproperty" && ("Couple séparation des biens")||
                                   client.spouse.situation === "legalcommunity" && ("Couple communauté légale réduite aux acquêts")||
                                   client.spouse.situation === "jointpossession" && ("Indivision")||
-                                  client.spouse.situation === "company" && ("Société")}`,
-        date_regime1_a:moment(dossiernotaire.date_regime_matrimonial).format("DD/MM/YYYY")||"",
-        date_regime2_a:moment(dossiernotaire.date_regime_matrimonial).format("DD/MM/YYYY")||"",
+                                  client.spouse.situation === "company" && ("Société"))||""}`,
+        date_regime1_a:`${client.spouse && ( moment(dossiernotaire.date_regime_matrimonial).format("DD/MM/YYYY"))||""}`,
+        date_regime2_a:`${client.spouse && ( moment(dossiernotaire.date_regime_matrimonial).format("DD/MM/YYYY"))||""}`,
         res_fiscale1_a:dossiernotaire.res_fiscale1,
         res_fiscale2_a:dossiernotaire.res_fiscale2,
        //////////////////////////////////////////////////////////
@@ -309,16 +310,16 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
        mail2_v:dossiernotaire.mail1_c,
        cp_ville1_v:dossiernotaire.cp_ville1_a,
        cp_ville2_v:dossiernotaire.cp_ville1_conj,
-       date_lieu_naissance1_v:moment(dossiernotaire.date_lieu_naissance1_a).format("DD/MM/YYYY")+"  "+dossiernotaire.lieux_naissance||"",
-       date_lieu_naissance2_v:moment(dossiernotaire.date_lieu_naissance1_conj).format("DD/MM/YYYY")+"  "+dossiernotaire.lieux_naissance_conj||"",
+       date_lieu_naissance1_v:moment(dossiernotaire.date_lieu_naissance1_a).format("DD/MM/YYYY")+"  "+`${dossiernotaire.lieux_naissance && (dossiernotaire.lieux_naissance)||""}`,
+       date_lieu_naissance2_v:moment(dossiernotaire.date_lieu_naissance1_conj).format("DD/MM/YYYY")+"  "+`${dossiernotaire.lieux_naissance_conj && (dossiernotaire.lieux_naissance_conj)||""}`,
        nationalite1_v:dossiernotaire.nationalite1_a,
        nationalite2_v:dossiernotaire.nationalite_conj,
        profession1_v:dossiernotaire.profession1_a,
        profession2_v:dossiernotaire.profession1_conj,
        regime_matrimonial1_v:dossiernotaire.regime_matrimonial1_a,
        regime_matrimonial2_v:dossiernotaire.regime_matrimonial1_a,
-       date_regime1_v:moment(dossiernotaire.date_regime_matrimonial).format("DD/MM/YYYY")||"",
-       date_regime2_v:moment(dossiernotaire.date_regime_matrimonial).format("DD/MM/YYYY")||"",
+       date_regime1_v:moment(dossiernotaire.date_regime1_a).format("DD/MM/YYYY")||"",
+       date_regime2_v:moment(dossiernotaire.date_regime1_a).format("DD/MM/YYYY")||"",
        num_tel1_v:dossiernotaire.num1_a,
        num_tel2_v:dossiernotaire.tel1_a,
        res_fiscale1_v:dossiernotaire.res_fiscale1,
