@@ -145,6 +145,12 @@ var schema = new mongoose.Schema(
         etat_occupation_b:{
           type: String
         },
+        societe2_v:{
+          type: String
+        },
+        societe2_a:{
+          type: String
+        },
         profession1_conj:{
           type: String
         },
