@@ -342,7 +342,8 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
                        properties.typeOfInvestment === "shortterm" && ("Location courte durée")||
                        properties.typeOfInvestment === "flatsharing" && ("Colocation")||
                        properties.typeOfInvestment === "principalresidence" && ("Résidence principale")||
-                       properties.typeOfInvestment === "other" && ("Inconnu")}`,
+                       properties.typeOfInvestment === "other" && ("Inconnu")||
+                       !properties.typeOfInvestment && ("")}`,
        prix_fai_p: properties.salesPrice,
        prix_net_p: dossiernotaire.prix_net_properties,
        mobilier_p:dossiernotaire.mobilier_p_properties,
