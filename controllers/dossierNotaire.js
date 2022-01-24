@@ -69,6 +69,8 @@ export async function createDossierNotaire(req, res, next) {
         mail1_a,
         Adress_conj,
         lieux_naissance,
+        societe2_v,
+        societe2_a,
         etat_occupation_b,
         nom_c,
         lieux_naissance_conj,
@@ -89,16 +91,23 @@ export async function createDossierNotaire(req, res, next) {
   
       if (
         !contact_a_Id||
+        !contact_v_Id||
+        !client_vision_r||
         !adresse||
         !Mail||
-        !contact_v_Id||
         !phone||
         !date_lieu||
         !cp_ville||
         !nationalite||
         !profession||
-        !regime_matrimonial) {
-          throw new Error("Missing fields");
+        !res_fiscale1||
+        !propertiesId||
+        !adresse||
+        !Mail||
+        !contact_v_Id||
+        !phone
+        ) {
+          throw new Error("Champs manquants");
       }
   
       const contact = await Contact.findById(
@@ -124,6 +133,8 @@ export async function createDossierNotaire(req, res, next) {
         res_fiscale1,
         lieux_naissance,
         profession1_conj,
+        societe2_v,
+        societe2_a,
         res_fiscale2,
         date_lieu,
         cp_ville,
