@@ -107,13 +107,11 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
         mail2_v:client.spouse.email,
         num_tel1_v:client.phone,
         num_tel2_v:client.spouse.phone,
-        //date_lieu_naissance1_a:`${moment(client.birthday).format("DD/MM/YYYY")||""}  ${client.lieux_de_naissance }`,
-        //date_lieu_naissance2_a:`${moment(client.spouse.birthday).format("DD/MM/YYYY")||""}  ${client.spouse.lieux_de_naissance }`,
         cp_ville1_v:client.crd+"  "+ client.city,
         cp_ville2_v:client.crd+"  "+ client.city,
         nationalite1_v:client.nationalite,
         nationalite2_v:client.spouse.nationalite,
-        profession1_v:client.industry,
+        profession1_v:dossiernotaire.profession,
         profession2_v:client.spouse.industry,
         regime_matrimonial1_v:`${ client.situation === "single" && ("Célibataire")||
                                   client.situation === "married" && ("Couple vivant maritalement")||
