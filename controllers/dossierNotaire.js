@@ -30,6 +30,9 @@ export async function createDossierNotaire(req, res, next) {
         nationalite,
         date_regime_matrimonial,
         res_fiscale1,
+        nom2_,
+        prenom2_,
+        adresse2_,
         profession,
         regime_matrimonial,
         propertiesId,
@@ -67,6 +70,8 @@ export async function createDossierNotaire(req, res, next) {
         res_fiscale2,
         date_lieu_naissance1_conj,
         mail1_a,
+        mail2_,
+        num_tel2_,
         Adress_conj,
         lieux_naissance,
         societe2_v,
@@ -74,6 +79,8 @@ export async function createDossierNotaire(req, res, next) {
         etat_occupation_b,
         nom_c,
         lieux_naissance_conj,
+        cp_ville2_,
+        profession2_,
         societe_conj,
         res_conj,
         cp_ville1_a,
@@ -82,6 +89,7 @@ export async function createDossierNotaire(req, res, next) {
         profession1_a,
         regime_matrimonial1_a,
         date_regime1_a,
+        nationalite2_,
         tel1_a,
         mail1_c,
         num1_a,
@@ -90,7 +98,7 @@ export async function createDossierNotaire(req, res, next) {
       } = req.body;
   
       if (
-        !contact_a_Id||
+        //!contact_a_Id||
         !contact_v_Id||
         !client_vision_r||
         !adresse||
@@ -137,8 +145,16 @@ export async function createDossierNotaire(req, res, next) {
         societe2_a,
         res_fiscale2,
         date_lieu,
+        nom2_,
+        adresse2_,
+        prenom2_,
+        mail2_,
         cp_ville,
+        num_tel2_,
         nationalite,
+        nationalite2_,
+        cp_ville2_,
+        profession2_,
         profession,
         regime_matrimonial,
         propertiesId,
@@ -205,7 +221,7 @@ export async function createDossierNotaire(req, res, next) {
            { _id: dossiernotaire._id },
            { $set: { projectId: projectId }}
          )
-          sendNewDosiierNtaire(dossiernotaire._id);
+          //sendNewDosiierNtaire(dossiernotaire._id);
 
       return res.json({ success: true,data: { completed: true } });
     } catch (e) {
