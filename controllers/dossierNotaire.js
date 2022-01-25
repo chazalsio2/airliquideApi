@@ -221,7 +221,7 @@ export async function createDossierNotaire(req, res, next) {
            { _id: dossiernotaire._id },
            { $set: { projectId: projectId }}
          )
-          //sendNewDosiierNtaire(dossiernotaire._id);
+          sendNewDosiierNtaire(dossiernotaire._id);
 
       return res.json({ success: true,data: { completed: true } });
     } catch (e) {
