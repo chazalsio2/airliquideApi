@@ -73,6 +73,7 @@ export async function createDossierNotaire(req, res, next) {
         mail2_,
         num_tel2_,
         Adress_conj,
+        autre_condition,
         lieux_naissance,
         societe2_,
         date_lieu_naissance2_,
@@ -147,6 +148,7 @@ export async function createDossierNotaire(req, res, next) {
         societe2_a,
         res_fiscale2,
         date_lieu,
+        autre_condition,
         nom2_,
         adresse2_,
         date_lieu_naissance2_,
@@ -224,7 +226,7 @@ export async function createDossierNotaire(req, res, next) {
            { _id: dossiernotaire._id },
            { $set: { projectId: projectId }}
          )
-          //sendNewDosiierNtaire(dossiernotaire._id);
+          sendNewDosiierNtaire(dossiernotaire._id);
 
       return res.json({ success: true,data: { completed: true } });
     } catch (e) {
