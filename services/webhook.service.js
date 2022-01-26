@@ -84,10 +84,22 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
     console.log("1" + ":" +  pieces_transmises_1);
     console.log("2" + ":" + pieces_transmises_2);
 
-    /*const conversionEUR = (number) => {
-      /*const conversion = new Intl.NumberFormat('fr', { style: 'decimal'}).format(number)
+    const conversionEUR = (number) => {
+      const conversion = new Intl.NumberFormat('fr-FR', {
+        style: 'currency',
+        currency: 'EUR',
+        minimumFractionDigits: 2
+      }).format(number)
       return conversion; 
-    }*/
+    }
+
+    const conversionPercent = (number) => {
+      const conversion = new Intl.NumberFormat('fr-FR', {
+        style: 'unit',
+        unit: 'percent',
+      }).format(number)
+      return conversion; 
+    }
 
   if(project.type === "sales"){
     axios({
@@ -194,7 +206,7 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
                         properties.typeOfInvestment === "flatsharing" && ("Colocation")||
                         properties.typeOfInvestment === "principalresidence" && ("Résidence principale")||
                         properties.typeOfInvestment === "other" && ("Inconnu")||""}`,
-        /*prix_fai_p: conversionEUR(properties.salesPrice),
+        prix_fai_p: conversionEUR(properties.salesPrice),
         prix_net_p: conversionEUR(dossiernotaire.prix_net_properties),
         mobilier_p: conversionEUR(dossiernotaire.mobilier_p_properties),
         honoraires_v_p: conversionEUR(properties.visionRFees),
@@ -202,20 +214,21 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
         honoraires_a_p: conversionEUR(dossiernotaire.honoraires_Acquéreur_properties),
         charges_a_p: dossiernotaire.charge_Acquéreur_properties,
         frais_notaires_p: conversionEUR(dossiernotaire.frais_notaires_properties),
-        montant_depot_garantie_p:conversionEUR(dossiernotaire.montant_depot_garantie_properties),*/
-        prix_fai_p: properties.salesPrice,
-        prix_net_p: dossiernotaire.prix_net_properties,
-        mobilier_p: dossiernotaire.mobilier_p_properties,
+        montant_depot_garantie_p:conversionEUR(dossiernotaire.montant_depot_garantie_properties),
+        
+        //prix_fai_p: properties.salesPrice,
+        //prix_net_p: dossiernotaire.prix_net_properties,
+        /*mobilier_p: dossiernotaire.mobilier_p_properties,
         honoraires_v_p: properties.visionRFees,
         charge_v_p: dossiernotaire.charges_Vendeur_properties,
         honoraires_a_p: dossiernotaire.honoraires_Acquéreur_properties,
         charges_a_p: dossiernotaire.charge_Acquéreur_properties,
         frais_notaires_p: dossiernotaire.frais_notaires_properties,
-        montant_depot_garantie_p:dossiernotaire.montant_depot_garantie_properties,
+        montant_depot_garantie_p:dossiernotaire.montant_depot_garantie_properties,*/
         type_acquisition_p: dossiernotaire.type_acquisition_properties,
         banque_f: dossiernotaire.banque_properties,
-        montant_f: dossiernotaire.montant_properties,
-        taux_f:dossiernotaire.taux_properties,
+        montant_f: conversionEUR(dossiernotaire.montant_properties),
+        taux_f: conversionPercent(dossiernotaire.taux_properties),
         duree_f: dossiernotaire.duree_properties,
         occupation_cs:dossiernotaire.occupation_properties,
         substitution_cs:dossiernotaire.Substitution_properties,
@@ -363,28 +376,30 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
                        properties.typeOfInvestment === "principalresidence" && ("Résidence principale")||
                        properties.typeOfInvestment === "other" && ("Inconnu")||
                        !properties.typeOfInvestment && ("")}`,
-       /*prix_fai_p: conversionEUR(properties.salesPrice),
+       prix_fai_p: conversionEUR(properties.salesPrice),
        prix_net_p: conversionEUR(dossiernotaire.prix_net_properties),
        mobilier_p:conversionEUR(dossiernotaire.mobilier_p_properties),
        honoraires_v_p: conversionEUR(properties.visionRFees),
        charge_v_p: dossiernotaire.charges_Vendeur_properties,
        honoraires_a_p: conversionEUR(dossiernotaire.honoraires_Acquéreur_properties),
-       charges_a_p: dossiernotaire.charge_Acquéreur_properties,
+       charges_a_p: conversionEUR(dossiernotaire.charge_Acquéreur_properties),
        frais_notaires_p: conversionEUR(dossiernotaire.frais_notaires_properties),
-       montant_depot_garantie_p:conversionEUR(dossiernotaire.montant_depot_garantie_properties),*/
-       prix_fai_p: properties.salesPrice,
-       prix_net_p: dossiernotaire.prix_net_properties,
-       mobilier_p:dossiernotaire.mobilier_p_properties,
+       montant_depot_garantie_p:conversionEUR(dossiernotaire.montant_depot_garantie_properties),
+       
+       
+       //prix_fai_p: properties.salesPrice,
+       //prix_net_p: dossiernotaire.prix_net_properties,
+       /*mobilier_p:dossiernotaire.mobilier_p_properties,
        honoraires_v_p: properties.visionRFees,
        charge_v_p: dossiernotaire.charges_Vendeur_properties,
        honoraires_a_p: dossiernotaire.honoraires_Acquéreur_properties,
        charges_a_p: dossiernotaire.charge_Acquéreur_properties,
        frais_notaires_p: dossiernotaire.frais_notaires_properties,
-       montant_depot_garantie_p:dossiernotaire.montant_depot_garantie_properties,
+       montant_depot_garantie_p:dossiernotaire.montant_depot_garantie_properties,*/
        type_acquisition_p: dossiernotaire.type_acquisition_properties,
        banque_f: dossiernotaire.banque_properties,
-       montant_f: dossiernotaire.montant_properties,
-       taux_f:dossiernotaire.taux_properties,
+       montant_f: conversionEUR(dossiernotaire.montant_properties),
+       taux_f: conversionPercent(dossiernotaire.taux_properties),
        duree_f: dossiernotaire.duree_properties,
        occupation_cs:dossiernotaire.occupation_properties,
        substitution_cs:dossiernotaire.Substitution_properties,
