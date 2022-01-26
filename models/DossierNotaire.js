@@ -145,7 +145,7 @@ var schema = new mongoose.Schema(
         etat_occupation_b:{
           type: String
         },
-        societe2_v:{
+        societe2_:{
           type: String
         },
         societe2_a:{
@@ -161,6 +161,9 @@ var schema = new mongoose.Schema(
           type: String
         },
         profession2_:{
+          type: String
+        },
+        date_lieu_naissance2_:{
           type: String
         },
         nationalite2_:{

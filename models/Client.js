@@ -60,6 +60,9 @@ const SpouseSchema = new mongoose.Schema({
   },
   seniority: {
     type: String
+  },
+  lieu: {
+    type:String
   }
 });
 
