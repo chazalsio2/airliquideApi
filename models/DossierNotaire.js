@@ -145,10 +145,37 @@ var schema = new mongoose.Schema(
         etat_occupation_b:{
           type: String
         },
-        societe2_v:{
+        societe2_:{
           type: String
         },
         societe2_a:{
+          type: String
+        },
+        nom2_:{
+          type: String
+        },
+        prenom2_:{
+          type: String
+        },
+        adresse2_:{
+          type: String
+        },
+        profession2_:{
+          type: String
+        },
+        date_lieu_naissance2_:{
+          type: String
+        },
+        nationalite2_:{
+          type: String
+        },
+        mail2_:{
+          type: String
+        },
+        cp_ville2_:{
+          type: String
+        },
+        num_tel2_:{
           type: String
         },
         profession1_conj:{
