@@ -370,7 +370,7 @@ export default (app) => {
   app.post(
     "/projects/:projectId/cancel-project",
     passport.authenticate("jwt", { session: false }),
-    checkAdmin,
+    checkAdminOrCommercial,
     checkAccountDesactivated,
     cancelProject,
     errorHandle

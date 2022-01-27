@@ -1,11 +1,21 @@
 import mongoose from "mongoose";
 
 
-const checkbox = ["Carnet_d'entretien_de_l'immeuble", "Lettre_d'intention_d'achat", "Statuts_de_la_SCI","Convention,Dossier_de_diagnostic_technique","Dernier_de_taxes","liste_détaillée_et_chiffrée","3_derniers_PV_d","Diagnostic_technique_global","Reglement_de_copropriété","Carte_d'identité","Baux"]
+const monObjet = ["Carnet_d'entretien_de_l'immeuble"]//,"Dossier_de_diagnostic_technique", "Lettre_d'intention_d'achat", "Statuts_de_la_SCI","Convention,Dossier_de_diagnostic_technique","Dernier_de_taxes","liste_détaillée_et_chiffrée","3_derniers_PV_d","Diagnostic_technique_global","Reglement_de_copropriété","Carte_d'identité","Baux"];
+/*var monTableau = Object.keys(monObjet).map(function(cle) {
+    return [Number(cle), monObjet[cle]];
+});*/
 
+/* const piece_transmise = new mongoose.Schema({
+ pieces_transmises : {
+    type: String,
+    enum:monObjet
+  }
+})
+*/
 var schema = new mongoose.Schema(
   {
-        societe:{
+        societe1_v:{
           type: String
         },
         Honoraires_Vendeur_properties:{
@@ -132,10 +142,70 @@ var schema = new mongoose.Schema(
         profession2_a: {
           type: String
         },
+        etat_occupation_b:{
+          type: String
+        },
+        societe2_:{
+          type: String
+        },
+        societe2_a:{
+          type: String
+        },
+        nom2_:{
+          type: String
+        },
+        prenom2_:{
+          type: String
+        },
+        adresse2_:{
+          type: String
+        },
+        profession2_:{
+          type: String
+        },
+        autre_condition:{
+          type: String
+        },
+        date_lieu_naissance2_:{
+          type: String
+        },
+        nationalite2_:{
+          type: String
+        },
+        mail2_:{
+          type: String
+        },
+        cp_ville2_:{
+          type: String
+        },
+        num_tel2_:{
+          type: String
+        },
+        profession1_conj:{
+          type: String
+        },
+        lieux_naissance_conj:{
+          type: String
+        },
         regime_matrimonial1_a: {
           type: String
         },
         regime_matrimonial2_a: {
+          type: String
+        },
+        lieux_naissance:{
+          type: String
+        },
+        date_regime_matrimonial:{
+          type: String
+        },
+        res_fiscale1:{
+          type: String
+        },
+        nom_c:{
+          type: String
+        },
+        res_fiscale2:{
           type: String
         },
         date_regime1_a: {
@@ -168,7 +238,10 @@ var schema = new mongoose.Schema(
         res_fiscale2_a: {
           type: String
         },
-        contactId: {
+        contact_v_Id: {
+          type: mongoose.Types.ObjectId
+        },
+        contact_a_Id: {
           type: mongoose.Types.ObjectId
         },
         propertiesId:{
@@ -248,13 +321,15 @@ var schema = new mongoose.Schema(
         },
         pieces_transmises: {
           type: Array,
-          required: false
+          required: false,
+          //monObjet
+           //{"Carnet_dentretien_de_limmeuble":1 ,"Dossier_de_diagnostic_technique":2}//, "Lettre_d'intention_d'achat", "Statuts_de_la_SCI","Convention,Dossier_de_diagnostic_technique","Dernier_de_taxes","liste_détaillée_et_chiffrée","3_derniers_PV_d","Diagnostic_technique_global","Reglement_de_copropriété","Carte_d'identité","Baux"],
         },
-        "pieces_transmises.$": {
-          type: String,
-          enum: checkbox,
-          required: false
-        }
+        /*"pieces_transmises.$" : {
+           type: String,
+        }*/
+        
+        
   },
   
   {

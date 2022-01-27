@@ -1372,11 +1372,13 @@ export async function savePersonalSituationForSalesMandate(req, res, next) {
       city,
       phone,
       email,
+      spouselieuxdenaissance,
       allowSaveData,
       spousefirstname,
       spouselastname,
       spouseaddress,
       spousephone,
+      spousenationalite,
       spouseemail,
       spousesituation,
       spouseincome,
@@ -1461,10 +1463,12 @@ export async function savePersonalSituationForSalesMandate(req, res, next) {
     }
 
     clientModifier.spouse = {
+      nationalite:spousenationalite,
       firstname: spousefirstname,
       lastname: spouselastname,
       address: spouseaddress,
       email: spouseemail,
+      lieu: spouselieuxdenaissance,
       situation: spousesituation,
       income: spouseincome,
       industry: spouseindustry,
@@ -1542,6 +1546,7 @@ export async function savePersonalSituation(req, res, next) {
       spousesituation,
       spouseincome,
       spouseindustry,
+      spousenationalite,
       spouseseniority,
       spousephone,
       birthday,
@@ -1619,7 +1624,8 @@ export async function savePersonalSituation(req, res, next) {
         income: spouseincome,
         industry: spouseindustry,
         seniority: spouseseniority,
-        phone: spousephone
+        phone: spousephone,
+        nationalite:spousenationalite,
       };
     }
 

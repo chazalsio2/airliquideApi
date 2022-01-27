@@ -68,120 +68,389 @@ export async function sendNewClientWebhook(projectId) {
 }
 
 export async function sendNewDosiierNtaire(dossiernotaireId){
-  console.log(dossiernotaireId);
+  console.log(dossiernotaireId.date_regime_matrimonial);
   const dossiernotaire = await DossierNotaire.findById(dossiernotaireId)
-  const contact = await getContact(dossiernotaire.contactId)
-  const contact_client = await getContact(dossiernotaire.contactClientId)
+  const contact_v = await getContact(dossiernotaire.contact_v_Id)
+  const contact_a = await getContact(dossiernotaire.contact_a_Id)
   const project = await getProject(dossiernotaire.projectId)
   const client = await getClient(project.clientId)
   const properties = await getProperty(dossiernotaire.propertiesId)
-  axios({
-    method: 'POST',
-    url: process.env.ZAPPIER_WEBHOOK_DOSSIER_NOTAIRE,
-    data:{
-      MESSAGE:'Donnée client vision_r',
-      societe: dossiernotaire.societe,
-      client_vision_r: dossiernotaire.client_vision_r,
-      conjoint_client_vision_r: client.spouse.firstname + ' ' + client.spouse.lastname,
-      conjoint_Mail_vision_r : client.spouse.email,
-      conjoint_revenu_vision_r : client.spouse.income,
-      conjoint_industry_vision_r : client.spouse.industry,
-      conjoint_phone_vision_r : client.spouse.phone,
-      conjoint_address_vision_r : client.spouse.address,
-      conjoint_seniority_vision_r : client.spouse.seniority,
-      conjoint_situation_vision_r : client.spouse.situation,
-      adresse: dossiernotaire.adresse,
-      Mail: dossiernotaire.Mail,
-      nom_prenon_contact_client_vision_r: contact.firstname+' '+contact.lastname,
-      num_contact_client_vision_r: contact.phone,
-      description_contact_client_vision_r: contact.description,
-      adress_contact_client_vision_r : contact.address,
-      email_contact_client_vision_r : contact.email,
-      phone_client_vision_r: dossiernotaire.phone,
-      date_lieu: dossiernotaire.date_lieu,
-      cp_ville: dossiernotaire.cp_ville,
-      nationalite: dossiernotaire.nationalite,
-      profession: dossiernotaire.profession,
-      regime_matrimonial: dossiernotaire.regime_matrimonial,
-      ref_cadastrales_properties: dossiernotaire.ref_cadastrales_properties,
-      MESSAGE2:'Donnée acheteur ou vendeur hors vision_r',
-      adresse1_a: dossiernotaire.adresse1_a,
-      //nom_prenon_contact: contact2.firstname+' '+contact2.lastname,
-      cp_ville1_a: dossiernotaire.cp_ville1_a,
-      date_lieu_naissance1_a: dossiernotaire.date_lieu_naissance1_a,
-      date_regime1_a: dossiernotaire.date_regime1_a,
-      mail1_a: dossiernotaire.mail1_a,
-      mail1_conjoint: dossiernotaire.mail1_c,
-      cp_ville1_conj: dossiernotaire.cp_ville1_conj,
-      date_lieu_naissance1_conj: dossiernotaire.date_lieu_naissance1_conj,
-      Adress_conj:dossiernotaire.Adress_conj,
-      societe_conj:dossiernotaire.societe_conj,
-      res_conj:dossiernotaire.res_conj,
-      nationalite_conj:dossiernotaire.nationalite_conj,
-      nom_prenon_contact_client_hors_vision_r: contact_client.firstname+' '+contact_client.lastname,
-      nationalite1_a: dossiernotaire.nationalite1_a,
-      nom1_client_hors_vision_r: dossiernotaire.nom1_a,
-      prenom1_a_client_hors_vision_r: dossiernotaire.prenom1_a,
-      profession1_a: dossiernotaire.profession1_a,
-      regime_matrimonial1_a: dossiernotaire.regime_matrimonial1_a,
-      societe1_a: dossiernotaire.societe1_a,
-      tel1_a: dossiernotaire.tel1_a,
-      res_fiscale1_a:dossiernotaire.res_fiscale1_a,
-      nom_prenom_c:dossiernotaire.nom_prenom_c,
-      Message3:"Donnée propriété",
-      type_de_bien:properties.type,
-      adresse_b: properties.address,
-      code_postal_et_commune_b: properties.city,
-      descriptif_b: properties.description,
-      etat_occupation_b: properties,
-      nu_meuble_b_sanitation:properties.sanitation,
-      nu_meuble_b_doubleGlazing: properties.doubleGlazing,
-      nu_meuble_b_electricRollerShutters: properties.electricRollerShutters,
-      nu_meuble_b_hotWater: properties.hotWater,
-      nu_meuble_b_airConditioner: properties.airConditioner,
-      nu_meuble_b_equippedKitchen: properties.equippedKitchen,
-      nu_meuble_b_swimmingPool: properties.swimmingPool,
-      nu_meuble_b_secureEntrance: properties.secureEntrance,
-      nu_meuble_b_intercom: properties.intercom,
-      prix_fai_p: properties.salesPrice,
-      honoraires_v_p: properties.visionRFees,
-      prix_net_properties: dossiernotaire.prix_net_properties,
-      mobilier_p_properties:dossiernotaire.mobilier_p_properties,
-      banque_properties: dossiernotaire.banque_properties,
-      carte_conseiller_properties: dossiernotaire.carte_conseiller_properties,
-      honoraires_Acquéreur_properties: dossiernotaire.honoraires_Acquéreur_properties,
-      charge_Acquéreur_properties: dossiernotaire.charge_Acquéreur_properties,
-      frais_notaires_properties: dossiernotaire.frais_notaires_properties,
-      type_acquisition_properties: dossiernotaire.type_acquisition_properties,
-      montant_properties: dossiernotaire.montant_properties,
-      taux_properties:dossiernotaire.taux_properties,
-      occupation_properties:dossiernotaire.occupation_properties,
-      Substitution_properties:dossiernotaire.Substitution_properties,
-      num_mandat_properties:dossiernotaire.num_mandat_properties,
-      montant_depot_garantie_properties:dossiernotaire.montant_depot_garantie_properties,
-      charges_Vendeur_properties: dossiernotaire.charges_Vendeur_properties,
-      Honoraires_Vendeur_properties: dossiernotaire.Honoraires_Vendeur_properties,
-      code_postal_properties: dossiernotaire.code_postal_properties,
-      conseiller_properties: dossiernotaire.conseiller_properties,
-      date_mandat_properties: dossiernotaire.date_mandat_properties,
-      duree_properties: dossiernotaire.duree_properties,
-      num1_a :dossiernotaire.num1_a,
-      email_conseiller_properties:dossiernotaire.email_conseiller_properties,
-      tel_conseiller_properties:dossiernotaire.tel_conseiller_properties,
-      mandant_properties:dossiernotaire.mandant_properties,
-      pieces_transmises: dossiernotaire.pieces_transmises
+  const pieces_transmises = dossiernotaire.pieces_transmises;
+
+    const piece = dossiernotaire.pieces_transmises.sort();
+    //console.log(pieces_transmises.contains());
+   const pieces_transmises_1 = piece[1];
+   const pieces_transmises_2 = piece[2];
+    console.log("1" + ":" +  pieces_transmises_1);
+    console.log("2" + ":" + pieces_transmises_2);
+
+    const conversionEUR = (number) => {
+      const conversion = new Intl.NumberFormat('fr-FR', {
+        style: 'currency',
+        currency: 'EUR',
+        minimumFractionDigits: 2
+      }).format(number)
+      return conversion; 
+    }
+
+    const conversionPercent = (number) => {
+      const conversion = new Intl.NumberFormat('fr-FR', {
+        style: 'unit',
+        unit: 'percent',
+      }).format(number)
+      return conversion; 
+    }
+
+  if(project.type === "sales"){
+    axios({
+      method: 'POST',
+      url: process.env.ZAPPIER_WEBHOOK_DOSSIER_NOTAIRE,
+      data:{
+        nom_n_v: contact_v.lastname,
+        prenom_n_v:contact_v.firstname,
+        tel_n_v: contact_v.phone,
+        description_n_v: contact_v.description,
+        adresse_n_v : contact_v.address,
+        mail_n_v : contact_v.email,
+        societe1_v: dossiernotaire.societe1_v,
+        societe2_v : dossiernotaire.societe2_,
+        nom1_v: client.lastname,
+        nom2_v: dossiernotaire.nom2_,
+        prenom1_v:client.firstname,
+        prenom2_v:dossiernotaire.prenom2_,
+        adresse1_v:dossiernotaire.adresse,
+        adresse2_v: dossiernotaire.adresse2_,
+        mail1_v:dossiernotaire.Mail,
+        mail2_v:dossiernotaire.mail2_,
+        num_tel1_v:dossiernotaire.phone,
+        num_tel2_v:dossiernotaire.num_tel2_,
+        date_lieu_naissance1_v:dossiernotaire.date_lieu,
+        date_lieu_naissance2_v:dossiernotaire.date_lieu_naissance2_,
+        cp_ville1_v:dossiernotaire.cp_ville,
+        cp_ville2_v:dossiernotaire.cp_ville2_,
+        nationalite1_v:dossiernotaire.nationalite,
+        nationalite2_v:dossiernotaire.nationalite2_,
+        profession1_v:dossiernotaire.profession,
+        profession2_v:dossiernotaire.profession2_,
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+        /*regime_matrimonial1_v:`${ client.situation === "single" && ("Célibataire")||
+                                  client.situation === "married" && ("Couple vivant maritalement")||
+                                  client.situation === "separationofproperty" && ("Couple séparation des biens")||
+                                  client.situation === "legalcommunity" && ("Couple communauté légale réduite aux acquêts")||
+                                  client.situation === "jointpossession" && ("Indivision")||
+                                  client.situation === "company" && ("Société")}`, */
+        /*regime_matrimonial2_v:`${client.spouse.situation === "single" && ("Célibataire")||
+                              client.spouse.situation === "married" && ("Couple vivant maritalement")||
+                              client.spouse.situation === "separationofproperty" && ("Couple séparation des biens")||
+                              client.spouse.situation === "legalcommunity" && ("Couple communauté légale réduite aux acquêts")||
+                              client.spouse.situation === "jointpossession" && ("Indivision")||
+                              client.spouse.situation === "company" && ("Société")}`,*/
+        regime_matrimonial1_v:dossiernotaire.regime_matrimonial,
+        regime_matrimonial2_v:dossiernotaire.regime_matrimonial,
+        date_regime1_v:moment(dossiernotaire.date_regime_matrimonial).format("DD/MM/YYYY")||"",
+        date_regime2_v:moment(dossiernotaire.date_regime_matrimonial).format("DD/MM/YYYY")||"",
+        res_fiscale1_v:dossiernotaire.res_fiscale1,
+        res_fiscale2_v:dossiernotaire.res_fiscale2,
+        //////////////////////////////////////////////////////////
+        nom_n_a: contact_a.lastname,
+        prenom_n_a:contact_a.firstname,
+        tel_n_a: contact_a.phone,
+        description_n_a: contact_a.description,
+        adresse_n_a: contact_a.address,
+        mail_n_a: contact_a.email,
+        societe1_a: dossiernotaire.societe1_a,
+        societe2_a : dossiernotaire.societe_conj,
+        nom1_a: dossiernotaire.nom1_a,
+        nom2_a: dossiernotaire.nom_c,
+        prenom1_a:dossiernotaire.prenom1_a,
+        prenom2_a:dossiernotaire.nom_prenom_c,
+        adresse1_a:dossiernotaire.adresse1_a,
+        adresse2_a: dossiernotaire.Adress_conj,
+        mail1_a:dossiernotaire.mail1_a,
+        mail2_a:dossiernotaire.mail1_c,
+        cp_ville1_a:dossiernotaire.cp_ville1_a,
+        cp_ville2_a:dossiernotaire.cp_ville1_conj,
+        date_lieu_naissance1_a:dossiernotaire.date_lieu_naissance1_a||"",
+        date_lieu_naissance2_a:`${dossiernotaire.date_lieu_naissance1_conj ? (moment(dossiernotaire.date_lieu_naissance1_conj).format("DD/MM/YYYY")+"  "+dossiernotaire.lieux_naissance_conj):("")}`,
+        nationalite1_a:dossiernotaire.nationalite1_a,
+        nationalite2_a:dossiernotaire.nationalite_conj,
+        profession1_a:dossiernotaire.profession1_a,
+        profession2_a:dossiernotaire.profession1_conj,
+        regime_matrimonial1_a:dossiernotaire.regime_matrimonial1_a||"",
+        regime_matrimonial2_a:dossiernotaire.nom_c && (dossiernotaire.regime_matrimonial1_a)||"",
+        date_regime1_a:`${ dossiernotaire.date_regime_matrimonial && ( moment(dossiernotaire.date_regime_matrimonial).format("DD/MM/YYYY"))||""}`,
+        date_regime2_a:`${dossiernotaire.nom_c && ( moment(dossiernotaire.date_regime_matrimonial).format("DD/MM/YYYY"))||""}`,
+        num_tel1_a:dossiernotaire.num1_a,
+        num_tel2_a:dossiernotaire.tel1_a,
+        res_fiscale1_a:dossiernotaire.res_fiscale1_a,
+        res_fiscale2_a:dossiernotaire.res_conj,
+       /////////////////////////////////////////////////////////
+        designation_b:`${properties.type === "apartment" && ("Appartement")||        
+         properties.type === "commercial" && ("Local commercial")||
+         properties.type === "construction_land" && ("Terrain de construction")||
+         properties.type === "home" && ("Maison")||
+         properties.type === "parking" && ("Parking / Garage")||
+         properties.type === "building" && ("Immeuble")||""}`,
+         
+
+
+        adresse_b: properties.address,
+        code_postal_b: properties.city,
+        commune_b:properties.city,
+        ref_cadastrales_b: dossiernotaire.ref_cadastrales_properties,
+        descriptif_b: properties.description,
+        etat_occupation_b: dossiernotaire.etat_occupation_b,
+        nu_meuble_b: `${properties.typeOfInvestment === "naked" && ( "Location nu") ||
+                        properties.typeOfInvestment === "furnished" && ("Location meublé") ||
+                        properties.typeOfInvestment === "shortterm" && ("Location courte durée")||
+                        properties.typeOfInvestment === "flatsharing" && ("Colocation")||
+                        properties.typeOfInvestment === "principalresidence" && ("Résidence principale")||
+                        properties.typeOfInvestment === "other" && ("Inconnu")||""}`,
+        prix_fai_p: conversionEUR(properties.salesPrice),
+        prix_net_p: conversionEUR(dossiernotaire.prix_net_properties),
+        mobilier_p: conversionEUR(dossiernotaire.mobilier_p_properties),
+        honoraires_v_p: conversionEUR(properties.visionRFees),
+        charge_v_p: dossiernotaire.charges_Vendeur_properties,
+        honoraires_a_p: conversionEUR(dossiernotaire.honoraires_Acquéreur_properties),
+        charges_a_p: dossiernotaire.charge_Acquéreur_properties,
+        frais_notaires_p: conversionEUR(dossiernotaire.frais_notaires_properties),
+        montant_depot_garantie_p:conversionEUR(dossiernotaire.montant_depot_garantie_properties),
+        
+        //prix_fai_p: properties.salesPrice,
+        //prix_net_p: dossiernotaire.prix_net_properties,
+        /*mobilier_p: dossiernotaire.mobilier_p_properties,
+        honoraires_v_p: properties.visionRFees,
+        charge_v_p: dossiernotaire.charges_Vendeur_properties,
+        honoraires_a_p: dossiernotaire.honoraires_Acquéreur_properties,
+        charges_a_p: dossiernotaire.charge_Acquéreur_properties,
+        frais_notaires_p: dossiernotaire.frais_notaires_properties,
+        montant_depot_garantie_p:dossiernotaire.montant_depot_garantie_properties,*/
+        type_acquisition_p: dossiernotaire.type_acquisition_properties,
+        banque_f: dossiernotaire.banque_properties,
+        montant_f: conversionEUR(dossiernotaire.montant_properties),
+        taux_f: conversionPercent(dossiernotaire.taux_properties),
+        duree_f: dossiernotaire.duree_properties,
+        occupation_cs:dossiernotaire.occupation_properties,
+        substitution_cs:dossiernotaire.Substitution_properties,
+        num_mandat:dossiernotaire.num_mandat_properties,
+        date_mandat: moment(dossiernotaire.date_mandat_properties).format("DD/MM/YYYY")||"",
+        mandant:dossiernotaire.mandant_properties,
+        pieces_transmises_0: `${pieces_transmises[0] && ("")}`,
+        entretien_x: `${pieces_transmises.includes("1_Carnet_d'entretien_de_l'immeuble") && ("Carnet_dentretien_de_limmeuble")}`,
+        offre_achat_x: `${pieces_transmises.includes("2_Lettre_d'intention_d'achat") && ("Lettre_d'intention_d'achat")}`,
+        sci_x: `${pieces_transmises.includes("3_Statuts_de_la_SCI") && ("Statuts_de_la_SCI")}`,
+        convention_x: `${pieces_transmises.includes("4_Convention") && ("Convention le cas échéant (Anah...)")}`,
+        diag_x: `${pieces_transmises.includes("5_Dossier_de_diagnostic_technique") && ("Dossier_de_diagnostic_technique")}`,
+        taxe_fonciere_x: `${pieces_transmises.includes("6_Dernier_de_taxes") && ("Taxe foncière")}`,
+        meuble_x: `${pieces_transmises.includes("7_liste_détaillée_et_chiffrée") && ("Equipement et mobiliers/décorations")}`,
+        ag_x: `${pieces_transmises.includes("8_3_derniers_PV_d'AG") && ("3_derniers_PV_d'AG")}`,
+        dtg_x: `${pieces_transmises.includes("9_Diagnostic_technique_global") && ("Diagnostic_technique_global")}`,
+        reg_copro_x: `${pieces_transmises.includes("10_Reglement_de_copropriété") && ("Reglement de copropriété")}`,
+        cni_x: `${pieces_transmises.includes("11_Carte_d'identité") && ("Carte d'identité acquéreur et/ou vendeur ")}`,
+        bail_x: `${pieces_transmises.includes("12_Baux") && ("Baux si bien occupé")}`,      
+        nom_conseiller:dossiernotaire.conseiller_properties,
+        tel_conseiller:dossiernotaire.tel_conseiller_properties,
+        mail_conseiller: dossiernotaire.email_conseiller_properties,
+        carte_conseiller: dossiernotaire.carte_conseiller_properties,
+        autre_condition: dossiernotaire.autre_condition,
+////////////////////////////////////////////////
+       /* nu_meuble_b_sanitation:properties.sanitation,
+        nu_meuble_b_doubleGlazing: properties.doubleGlazing,
+        nu_meuble_b_electricRollerShutters: properties.electricRollerShutters,
+        nu_meuble_b_hotWater: properties.hotWater,
+        nu_meuble_b_airConditioner: properties.airConditioner,
+        nu_meuble_b_equippedKitchen: properties.equippedKitchen,
+        nu_meuble_b_swimmingPool: properties.swimmingPool,
+        nu_meuble_b_secureEntrance: properties.secureEntrance,
+        nu_meuble_b_intercom: properties.intercom,
+        mobilier_p:dossiernotaire.mobilier_p_properties,
+        Honoraires_Vendeur_properties: dossiernotaire.Honoraires_Vendeur_properties,
+        code_postal_properties: dossiernotaire.code_postal_properties,
+        num1_a :dossiernotaire.num1_a,
+        email_conseiller_properties:dossiernotaire.email_conseiller_properties,
+        tel_conseiller_properties:dossiernotaire.tel_conseiller_properties,}*/
+      }
+    })
+    console.log("cest bon ");
+  } 
+  if(project.type === "search"){
+    axios({
+      method: 'POST',
+      url: process.env.ZAPPIER_WEBHOOK_DOSSIER_NOTAIRE,
+      data:{
+        nom_n_a: contact_a.lastname,
+        prenom_n_a:contact_a.firstname,
+        tel_n_a: contact_a.phone,
+        description_n_a: contact_a.description,
+        adresse_n_a : contact_a.address,
+        mail_n_a : contact_a.email,
+        societe1_a: dossiernotaire.societe1_v,
+        societe2_a : dossiernotaire.societe2_,
+        nom1_a: client.lastname,
+        nom2_a: dossiernotaire.nom2_ &&(dossiernotaire.nom2_)||"",
+        prenom1_a:client.firstname,
+        prenom2_a:dossiernotaire.prenom2_  &&(dossiernotaire.prenom2_)||"",
+        adresse1_a:dossiernotaire.adresse,
+        adresse2_a: dossiernotaire.adresse2_  &&(dossiernotaire.adresse2_)||"",
+        mail1_a:dossiernotaire.Mail,
+        mail2_a:dossiernotaire.mail2_  &&(dossiernotaire.mail2_)||"",
+        num_tel1_a:dossiernotaire.phone,
+        num_tel2_a:dossiernotaire  &&(dossiernotaire.num_tel2_)||"",
+        date_lieu_naissance1_a:`${dossiernotaire.date_lieu||""} `,
+        date_lieu_naissance2_a:`${dossiernotaire.date_lieu_naissance2_ && (dossiernotaire.date_lieu_naissance2_)|| ""} `,
+        cp_ville1_a:dossiernotaire.cp_ville,
+        cp_ville2_a:`${dossiernotaire.cp_ville2_ && ( dossiernotaire.cp_ville2_)||""}`,
+        nationalite1_a:dossiernotaire.nationalite,
+        nationalite2_a:dossiernotaire.nationalite2_ &&(dossiernotaire.nationalite2_)||"",
+        profession1_a:dossiernotaire.profession,
+        profession2_a:dossiernotaire.profession2_ && (dossiernotaire.profession2_)||"",
+        /*regime_matrimonial1_a:`${client.situation && ( client.situation === "single" && ("Célibataire")||
+                                  client.situation === "married" && ("Couple vivant maritalement")||
+                                  client.situation === "separationofproperty" && ("Couple séparation des biens")||
+                                  client.situation === "legalcommunity" && ("Couple communauté légale réduite aux acquêts")||
+                                  client.situation === "jointpossession" && ("Indivision")||
+                                  client.situation === "company" && ("Société"))}`,
+        regime_matrimonial2_a:`${client.situation.spouse && (  dossiernotaire.situation === "single" && ("Célibataire")||
+                                  dossiernotaire.situation === "married" && ("Couple vivant maritalement")||
+                                  dossiernotaire.situation === "separationofproperty" && ("Couple séparation des biens")||
+                                  dossiernotaire.situation === "legalcommunity" && ("Couple communauté légale réduite aux acquêts")||
+                                  dossiernotaire.situation === "jointpossession" && ("Indivision")||
+                                  dossiernotaire.situation === "company" && ("Société"))||""}`,*/
+        regime_matrimonial1_a:dossiernotaire.regime_matrimonial,
+        regime_matrimonial2_a:dossiernotaire.regime_matrimonial,
+        date_regime1_a:`${dossiernotaire.date_regime_matrimonial && ( moment(dossiernotaire.date_regime_matrimonial).format("DD/MM/YYYY"))||""}`,
+        date_regime2_a:`${dossiernotaire.date_regime_matrimonial && ( moment(dossiernotaire.date_regime_matrimonial).format("DD/MM/YYYY"))||""}`,
+        res_fiscale1_a:dossiernotaire.res_fiscale1,
+        res_fiscale2_a:dossiernotaire.res_fiscale2,
+       //////////////////////////////////////////////////////////
+       nom_n_v: contact_v.lastname,
+       prenom_n_v:contact_v.firstname,
+       tel_n_v: contact_v.phone,
+       description_n_v: contact_v.description,
+       adresse_n_v: contact_v.address,
+       mail_n_v: contact_v.email,
+       societe1_v: dossiernotaire.societe1_a,
+       societe2_v : dossiernotaire.societe_conj,
+       nom1_v: dossiernotaire.nom1_a,
+       nom2_v: dossiernotaire.nom_c,
+       prenom1_v:dossiernotaire.prenom1_a,
+       prenom2_v:dossiernotaire.nom_prenom_c,
+       adresse1_v:dossiernotaire.adresse1_a,
+       adresse2_v: dossiernotaire.Adress_conj,
+       mail1_v:dossiernotaire.mail1_a,
+       mail2_v:dossiernotaire.mail1_c,
+       cp_ville1_v:dossiernotaire.cp_ville1_a,
+       cp_ville2_v:dossiernotaire.cp_ville1_conj,
+       date_lieu_naissance1_v:`${dossiernotaire.date_lieu_naissance1_a && (dossiernotaire.date_lieu_naissance1_a)|| ""}`,
+       date_lieu_naissance2_v:`${dossiernotaire.date_lieu_naissance1_conj && (moment(dossiernotaire.date_lieu_naissance1_conj).format("DD/MM/YYYY"))||""}`+"  "+`${dossiernotaire.lieux_naissance_conj && (dossiernotaire.lieux_naissance_conj)||""}`,
+       nationalite1_v:dossiernotaire.nationalite1_a,
+       nationalite2_v:dossiernotaire.nationalite_conj,
+       profession1_v:dossiernotaire.profession1_a,
+       profession2_v:dossiernotaire.profession1_conj,
+       regime_matrimonial1_v:dossiernotaire.regime_matrimonial1_a,
+       regime_matrimonial2_v:`${dossiernotaire.nom_c &&  (dossiernotaire.regime_matrimonial1_a)||""}`,
+       date_regime1_v:`${dossiernotaire.date_regime1_a && (moment(dossiernotaire.date_regime1_a).format("DD/MM/YYYY"))||""}`,
+       date_regime2_v:`${dossiernotaire.nom_c && (moment(dossiernotaire.date_regime1_a).format("DD/MM/YYYY"))||""}`,
+       num_tel1_v:dossiernotaire.num1_a,
+       num_tel2_v:dossiernotaire.tel1_a,
+       res_fiscale1_v:dossiernotaire.res_fiscale1_a,
+       res_fiscale2_v:dossiernotaire.res_conj,
+       /////////////////////////////////////////////////////////
+       designation_b:`${properties.type === "apartment" && ("Appartement")||
+         properties.type === "commercial" && ("Local commercial")||
+         properties.type === "construction_land" && ("Terrain de construction")||
+         properties.type === "home" && ("Maison")||
+         properties.type === "parking" && ("Parking / Garage")||
+         properties.type === "building" && ("Immeuble")}`,
+       adresse_b: properties.address,
+       code_postal_b: properties.city,
+       commune_b:properties.city,
+       ref_cadastrales_b: dossiernotaire.ref_cadastrales_properties,
+       descriptif_b: properties.description,
+       etat_occupation_b: dossiernotaire.etat_occupation_b,
+       nu_meuble_b: `${properties.typeOfInvestment === "naked" && ( "Location nu")|| 
+                       properties.typeOfInvestment === "furnished" && ("Location meublé") ||
+                       properties.typeOfInvestment === "shortterm" && ("Location courte durée")||
+                       properties.typeOfInvestment === "flatsharing" && ("Colocation")||
+                       properties.typeOfInvestment === "principalresidence" && ("Résidence principale")||
+                       properties.typeOfInvestment === "other" && ("Inconnu")||
+                       !properties.typeOfInvestment && ("")}`,
+       prix_fai_p: conversionEUR(properties.salesPrice),
+       prix_net_p: conversionEUR(dossiernotaire.prix_net_properties),
+       mobilier_p:conversionEUR(dossiernotaire.mobilier_p_properties),
+       honoraires_v_p: conversionEUR(properties.visionRFees),
+       charge_v_p: dossiernotaire.charges_Vendeur_properties,
+       honoraires_a_p: conversionEUR(dossiernotaire.honoraires_Acquéreur_properties),
+       charges_a_p: dossiernotaire.charge_Acquéreur_properties,
+       frais_notaires_p: conversionEUR(dossiernotaire.frais_notaires_properties),
+       montant_depot_garantie_p:conversionEUR(dossiernotaire.montant_depot_garantie_properties),
+       
+       
+       //prix_fai_p: properties.salesPrice,
+       //prix_net_p: dossiernotaire.prix_net_properties,
+       /*mobilier_p:dossiernotaire.mobilier_p_properties,
+       honoraires_v_p: properties.visionRFees,
+       charge_v_p: dossiernotaire.charges_Vendeur_properties,
+       honoraires_a_p: dossiernotaire.honoraires_Acquéreur_properties,
+       charges_a_p: dossiernotaire.charge_Acquéreur_properties,
+       frais_notaires_p: dossiernotaire.frais_notaires_properties,
+       montant_depot_garantie_p:dossiernotaire.montant_depot_garantie_properties,*/
+       type_acquisition_p: dossiernotaire.type_acquisition_properties,
+       banque_f: dossiernotaire.banque_properties,
+       montant_f: conversionEUR(dossiernotaire.montant_properties),
+       taux_f: conversionPercent(dossiernotaire.taux_properties),
+       duree_f: dossiernotaire.duree_properties,
+       occupation_cs:dossiernotaire.occupation_properties,
+       substitution_cs:dossiernotaire.Substitution_properties,
+       num_mandat:dossiernotaire.num_mandat_properties,
+       date_mandat: `${moment(dossiernotaire.date_mandat_properties).format("DD/MM/YYYY")||""}`,
+       mandant:dossiernotaire.mandant_properties,
+       pieces_transmises_0: `${pieces_transmises[0] && ("")}`,
+       entretien_x: `${pieces_transmises.includes("1_Carnet_d'entretien_de_l'immeuble") && ("Carnet_dentretien_de_limmeuble")}`,
+       offre_achat_x: `${pieces_transmises.includes("2_Lettre_d'intention_d'achat") && ("Lettre_d'intention_d'achat")}`,
+       sci_x: `${pieces_transmises.includes("3_Statuts_de_la_SCI") && ("Statuts_de_la_SCI")}`,
+       convention_x: `${pieces_transmises.includes("4_Convention") && ("Convention le cas échéant (Anah...)")}`,
+       diag_x: `${pieces_transmises.includes("5_Dossier_de_diagnostic_technique") && ("Dossier_de_diagnostic_technique")}`,
+       taxe_fonciere_x: `${pieces_transmises.includes("6_Dernier_de_taxes") && ("Taxe foncière")}`,
+       meuble_x: `${pieces_transmises.includes("7_liste_détaillée_et_chiffrée") && ("Equipement et mobiliers/décorations")}`,
+       ag_x: `${pieces_transmises.includes("8_3_derniers_PV_d'AG") && ("3_derniers_PV_d'AG")}`,
+       dtg_x: `${pieces_transmises.includes("9_Diagnostic_technique_global") && ("Diagnostic_technique_global")}`,
+       reg_copro_x: `${pieces_transmises.includes("10_Reglement_de_copropriété") && ("Reglement de copropriété")}`,
+       cni_x: `${pieces_transmises.includes("11_Carte_d'identité") && ("Carte d'identité acquéreur et/ou vendeur ")}`,
+       bail_x: `${pieces_transmises.includes("12_Baux") && ("Baux si bien occupé")}`,
+       nom_conseiller:dossiernotaire.conseiller_properties,
+       tel_conseiller:dossiernotaire.tel_conseiller_properties,
+       mail_conseiller: dossiernotaire.email_conseiller_properties,
+       carte_conseiller: dossiernotaire.carte_conseiller_properties,
+       autre_condition: dossiernotaire.autre_condition,
+////////////////////////////////////////////////
+       /* nu_meuble_b_sanitation:properties.sanitation,
+        nu_meuble_b_doubleGlazing: properties.doubleGlazing,
+        nu_meuble_b_electricRollerShutters: properties.electricRollerShutters,
+        nu_meuble_b_hotWater: properties.hotWater,
+        nu_meuble_b_airConditioner: properties.airConditioner,
+        nu_meuble_b_equippedKitchen: properties.equippedKitchen,
+        nu_meuble_b_swimmingPool: properties.swimmingPool,
+        nu_meuble_b_secureEntrance: properties.secureEntrance,
+        nu_meuble_b_intercom: properties.intercom,
+        mobilier_p:dossiernotaire.mobilier_p_properties,
+        Honoraires_Vendeur_properties: dossiernotaire.Honoraires_Vendeur_properties,
+        code_postal_properties: dossiernotaire.code_postal_properties,
+        num1_a :dossiernotaire.num1_a,
+        email_conseiller_properties:dossiernotaire.email_conseiller_properties,
+        tel_conseiller_properties:dossiernotaire.tel_conseiller_properties,}*/
     }
   })
-}
+  console.log("cest bon ");
+}}
 
 export async function sendNewDProprieteWebhook(propertyId) {
-  console.log(propertyId,"  hello");
   const proprietes = await Property.findById(propertyId)
   axios({
     method:'GET',
     url: process.env.ZAPPIER_WEBHOOK_PROPRIETE,
     data:{
-      titre:`${proprietes.type || ""} ${proprietes.livingArea ? proprietes.livingArea+" m²" : ""}  ${proprietes.city || ""} ${proprietes.landArea ? proprietes.landArea+ " m²" : ""}`,
+      titre: `${proprietes.type || ""} ${proprietes.livingArea ? proprietes.livingArea+" m²" : ""}  ${proprietes.city || ""} ${proprietes.landArea ? proprietes.landArea+ " m²" : ""}`,
       description:proprietes.description,
       ref:proprietes.ref,
       propertyStatus:proprietes.propertyStatus,

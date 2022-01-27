@@ -45,6 +45,9 @@ const SpouseSchema = new mongoose.Schema({
   phone: {
     type: String
   },
+  nationalite:{
+    type: String
+  },
   situation: {
     type: String,
     enum: allowedStatusValues
@@ -57,6 +60,9 @@ const SpouseSchema = new mongoose.Schema({
   },
   seniority: {
     type: String
+  },
+  lieu: {
+    type:String
   }
 });
 

@@ -16,16 +16,23 @@ export async function createDossierNotaire(req, res, next) {
 
 
       const {
-        societe,
+        societe1_a,
+        societe1_v,
         client_vision_r,
         adresse,
-        pieces_transmises,
         Mail,
-        contactId,
+        contact_v_Id,
+        contact_a_Id,
         phone,
         date_lieu,
         cp_ville,
+        pieces_transmises,
         nationalite,
+        date_regime_matrimonial,
+        res_fiscale1,
+        nom2_,
+        prenom2_,
+        adresse2_,
         profession,
         regime_matrimonial,
         propertiesId,
@@ -55,14 +62,27 @@ export async function createDossierNotaire(req, res, next) {
         email_conseiller_properties,
         carte_conseiller_properties,
         contactClientId,
-        societe1_a,
         nom1_a,
         prenom1_a,
+        profession1_conj,
         adresse1_a,
         nationalite_conj,
+        res_fiscale2,
         date_lieu_naissance1_conj,
         mail1_a,
+        mail2_,
+        num_tel2_,
         Adress_conj,
+        autre_condition,
+        lieux_naissance,
+        societe2_,
+        date_lieu_naissance2_,
+        societe2_a,
+        etat_occupation_b,
+        nom_c,
+        lieux_naissance_conj,
+        cp_ville2_,
+        profession2_,
         societe_conj,
         res_conj,
         cp_ville1_a,
@@ -71,6 +91,7 @@ export async function createDossierNotaire(req, res, next) {
         profession1_a,
         regime_matrimonial1_a,
         date_regime1_a,
+        nationalite2_,
         tel1_a,
         mail1_c,
         num1_a,
@@ -78,22 +99,30 @@ export async function createDossierNotaire(req, res, next) {
         nom_prenom_c
       } = req.body;
   
+      
       if (
+        //!contact_a_Id||
+        !contact_v_Id||
         !client_vision_r||
         !adresse||
         !Mail||
-        !contactId||
         !phone||
         !date_lieu||
         !cp_ville||
         !nationalite||
         !profession||
-        !regime_matrimonial) {
-          throw new Error("Missing fields");
+        !res_fiscale1||
+        !propertiesId||
+        !adresse||
+        !Mail||
+        !contact_v_Id||
+        !phone
+        ) {
+          throw new Error("Champs manquants");
       }
   
       const contact = await Contact.findById(
-        contactId
+        contact_v_Id,contact_a_Id
       ).lean();
   
       if (!contact) {
@@ -101,17 +130,36 @@ export async function createDossierNotaire(req, res, next) {
       }
   
       const DossierNotaireData = {
-        projectId,
-        societe,
+        societe1_a,
+        societe1_v,
+        nom_c,
+        etat_occupation_b,
         client_vision_r,
         adresse,
         Mail,
-        contactId,
+        contact_v_Id,
+        date_regime_matrimonial,
+        contact_a_Id,
         phone,
-        pieces_transmises,
+        res_fiscale1,
+        lieux_naissance,
+        profession1_conj,
+        societe2_,
+        societe2_a,
+        res_fiscale2,
         date_lieu,
+        autre_condition,
+        nom2_,
+        adresse2_,
+        date_lieu_naissance2_,
+        prenom2_,
+        mail2_,
         cp_ville,
+        num_tel2_,
         nationalite,
+        nationalite2_,
+        cp_ville2_,
+        profession2_,
         profession,
         regime_matrimonial,
         propertiesId,
@@ -123,6 +171,7 @@ export async function createDossierNotaire(req, res, next) {
         societe_conj,
         res_conj,
         nationalite_conj,
+        pieces_transmises,
         prix_net_properties,
         mobilier_p_properties,
         Honoraires_Vendeur_properties,
@@ -147,8 +196,8 @@ export async function createDossierNotaire(req, res, next) {
         email_conseiller_properties,
         carte_conseiller_properties,
         contactClientId,
-        societe1_a,
         nom1_a,
+        lieux_naissance_conj,
         prenom1_a,
         adresse1_a,
         mail1_a,
@@ -172,6 +221,7 @@ export async function createDossierNotaire(req, res, next) {
           { $set: { dossiernotaireId: dossiernotaire._id } }
         ).exec();
 
+
          await DossierNotaire.updateOne(
            { _id: dossiernotaire._id },
            { $set: { projectId: projectId }}
@@ -186,13 +236,12 @@ export async function createDossierNotaire(req, res, next) {
 
 export async function editDossierNotaire(req, res, next) {
   
-  try {
+/*  try {
 
     const modifier = req.body;
     console.log(modifier);
     const {
       contactClientId,
-      societe1_a,
       nom1_a,
       prenom1_a,
       adresse1_a,
@@ -223,11 +272,11 @@ export async function editDossierNotaire(req, res, next) {
 
   } catch (error) {
     next(generateError(e.message));
-  }
+  }*/
 }
 export async function editFinaleDossierNotaire(req, res, next) {
   
-  try {
+ /* try {
 
     const modifier = req.body;
     console.log(modifier);
@@ -275,5 +324,5 @@ export async function editFinaleDossierNotaire(req, res, next) {
 
   } catch (error) {
     next(generateError(e.message));
-  }
+  }*/
 }
