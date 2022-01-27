@@ -73,6 +73,7 @@ export async function createDossierNotaire(req, res, next) {
         mail2_,
         num_tel2_,
         Adress_conj,
+        autre_condition,
         lieux_naissance,
         societe2_,
         date_lieu_naissance2_,
@@ -98,6 +99,7 @@ export async function createDossierNotaire(req, res, next) {
         nom_prenom_c
       } = req.body;
   
+      
       if (
         //!contact_a_Id||
         !contact_v_Id||
@@ -146,6 +148,7 @@ export async function createDossierNotaire(req, res, next) {
         societe2_a,
         res_fiscale2,
         date_lieu,
+        autre_condition,
         nom2_,
         adresse2_,
         date_lieu_naissance2_,

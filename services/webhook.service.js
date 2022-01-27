@@ -84,10 +84,22 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
     console.log("1" + ":" +  pieces_transmises_1);
     console.log("2" + ":" + pieces_transmises_2);
 
-    /*const conversionEUR = (number) => {
-      /*const conversion = new Intl.NumberFormat('fr', { style: 'decimal'}).format(number)
+    const conversionEUR = (number) => {
+      const conversion = new Intl.NumberFormat('fr-FR', {
+        style: 'currency',
+        currency: 'EUR',
+        minimumFractionDigits: 2
+      }).format(number)
       return conversion; 
-    }*/
+    }
+
+    const conversionPercent = (number) => {
+      const conversion = new Intl.NumberFormat('fr-FR', {
+        style: 'unit',
+        unit: 'percent',
+      }).format(number)
+      return conversion; 
+    }
 
   if(project.type === "sales"){
     axios({
@@ -158,16 +170,16 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
         mail2_a:dossiernotaire.mail1_c,
         cp_ville1_a:dossiernotaire.cp_ville1_a,
         cp_ville2_a:dossiernotaire.cp_ville1_conj,
-        date_lieu_naissance1_a:moment(dossiernotaire.date_lieu_naissance1_a).format("DD/MM/YYYY")||""+"  "+dossiernotaire.lieux_naissance||"",
-        date_lieu_naissance2_a:moment(dossiernotaire.date_lieu_naissance1_conj).format("DD/MM/YYYY")||""+"  "+dossiernotaire.lieux_naissance_conj||"",
+        date_lieu_naissance1_a:dossiernotaire.date_lieu_naissance1_a||"",
+        date_lieu_naissance2_a:`${dossiernotaire.date_lieu_naissance1_conj ? (moment(dossiernotaire.date_lieu_naissance1_conj).format("DD/MM/YYYY")+"  "+dossiernotaire.lieux_naissance_conj):("")}`,
         nationalite1_a:dossiernotaire.nationalite1_a,
         nationalite2_a:dossiernotaire.nationalite_conj,
         profession1_a:dossiernotaire.profession1_a,
         profession2_a:dossiernotaire.profession1_conj,
         regime_matrimonial1_a:dossiernotaire.regime_matrimonial1_a||"",
-        regime_matrimonial2_a:dossiernotaire.regime_matrimonial1_a||"",
+        regime_matrimonial2_a:dossiernotaire.nom_c && (dossiernotaire.regime_matrimonial1_a)||"",
         date_regime1_a:`${ dossiernotaire.date_regime_matrimonial && ( moment(dossiernotaire.date_regime_matrimonial).format("DD/MM/YYYY"))||""}`,
-        date_regime2_a:`${dossiernotaire && ( moment(dossiernotaire.date_regime_matrimonial).format("DD/MM/YYYY"))||""}`,
+        date_regime2_a:`${dossiernotaire.nom_c && ( moment(dossiernotaire.date_regime_matrimonial).format("DD/MM/YYYY"))||""}`,
         num_tel1_a:dossiernotaire.num1_a,
         num_tel2_a:dossiernotaire.tel1_a,
         res_fiscale1_a:dossiernotaire.res_fiscale1_a,
@@ -194,7 +206,7 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
                         properties.typeOfInvestment === "flatsharing" && ("Colocation")||
                         properties.typeOfInvestment === "principalresidence" && ("Résidence principale")||
                         properties.typeOfInvestment === "other" && ("Inconnu")||""}`,
-        /*prix_fai_p: conversionEUR(properties.salesPrice),
+        prix_fai_p: conversionEUR(properties.salesPrice),
         prix_net_p: conversionEUR(dossiernotaire.prix_net_properties),
         mobilier_p: conversionEUR(dossiernotaire.mobilier_p_properties),
         honoraires_v_p: conversionEUR(properties.visionRFees),
@@ -202,24 +214,24 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
         honoraires_a_p: conversionEUR(dossiernotaire.honoraires_Acquéreur_properties),
         charges_a_p: dossiernotaire.charge_Acquéreur_properties,
         frais_notaires_p: conversionEUR(dossiernotaire.frais_notaires_properties),
-        montant_depot_garantie_p:conversionEUR(dossiernotaire.montant_depot_garantie_properties),*/
-        prix_fai_p: properties.salesPrice,
-        prix_net_p: dossiernotaire.prix_net_properties,
-        mobilier_p: dossiernotaire.mobilier_p_properties,
+        montant_depot_garantie_p:conversionEUR(dossiernotaire.montant_depot_garantie_properties),
+        
+        //prix_fai_p: properties.salesPrice,
+        //prix_net_p: dossiernotaire.prix_net_properties,
+        /*mobilier_p: dossiernotaire.mobilier_p_properties,
         honoraires_v_p: properties.visionRFees,
         charge_v_p: dossiernotaire.charges_Vendeur_properties,
         honoraires_a_p: dossiernotaire.honoraires_Acquéreur_properties,
         charges_a_p: dossiernotaire.charge_Acquéreur_properties,
         frais_notaires_p: dossiernotaire.frais_notaires_properties,
-        montant_depot_garantie_p:dossiernotaire.montant_depot_garantie_properties,
+        montant_depot_garantie_p:dossiernotaire.montant_depot_garantie_properties,*/
         type_acquisition_p: dossiernotaire.type_acquisition_properties,
         banque_f: dossiernotaire.banque_properties,
-        montant_f: dossiernotaire.montant_properties,
-        taux_f:dossiernotaire.taux_properties,
+        montant_f: conversionEUR(dossiernotaire.montant_properties),
+        taux_f: conversionPercent(dossiernotaire.taux_properties),
         duree_f: dossiernotaire.duree_properties,
         occupation_cs:dossiernotaire.occupation_properties,
         substitution_cs:dossiernotaire.Substitution_properties,
-        conseiller: dossiernotaire.conseiller_properties,
         num_mandat:dossiernotaire.num_mandat_properties,
         date_mandat: moment(dossiernotaire.date_mandat_properties).format("DD/MM/YYYY")||"",
         mandant:dossiernotaire.mandant_properties,
@@ -235,12 +247,12 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
         dtg_x: `${pieces_transmises.includes("9_Diagnostic_technique_global") && ("Diagnostic_technique_global")}`,
         reg_copro_x: `${pieces_transmises.includes("10_Reglement_de_copropriété") && ("Reglement de copropriété")}`,
         cni_x: `${pieces_transmises.includes("11_Carte_d'identité") && ("Carte d'identité acquéreur et/ou vendeur ")}`,
-        bail_x: `${pieces_transmises.includes("12_Baux") && ("Baux si bien occupé")}`,
-       
-        nom_conseiller:properties.commercialName,
-        tel_conseiller:properties.commercialPhoneNumber,
-        mail_conseiller: properties.commercialEmail,
+        bail_x: `${pieces_transmises.includes("12_Baux") && ("Baux si bien occupé")}`,      
+        nom_conseiller:dossiernotaire.conseiller_properties,
+        tel_conseiller:dossiernotaire.tel_conseiller_properties,
+        mail_conseiller: dossiernotaire.email_conseiller_properties,
         carte_conseiller: dossiernotaire.carte_conseiller_properties,
+        autre_condition: dossiernotaire.autre_condition,
 ////////////////////////////////////////////////
        /* nu_meuble_b_sanitation:properties.sanitation,
         nu_meuble_b_doubleGlazing: properties.doubleGlazing,
@@ -266,12 +278,12 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
       method: 'POST',
       url: process.env.ZAPPIER_WEBHOOK_DOSSIER_NOTAIRE,
       data:{
-        nom_n_a: contact_v.lastname,
-        prenom_n_a:contact_v.firstname,
-        tel_n_a: contact_v.phone,
-        description_n_a: contact_v.description,
-        adresse_n_a : contact_v.address,
-        mail_n_a : contact_v.email,
+        nom_n_a: contact_a.lastname,
+        prenom_n_a:contact_a.firstname,
+        tel_n_a: contact_a.phone,
+        description_n_a: contact_a.description,
+        adresse_n_a : contact_a.address,
+        mail_n_a : contact_a.email,
         societe1_a: dossiernotaire.societe1_v,
         societe2_a : dossiernotaire.societe2_,
         nom1_a: client.lastname,
@@ -311,12 +323,12 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
         res_fiscale1_a:dossiernotaire.res_fiscale1,
         res_fiscale2_a:dossiernotaire.res_fiscale2,
        //////////////////////////////////////////////////////////
-       nom_n_v: contact_a.lastname,
-       prenom_n_v:contact_a.firstname,
-       tel_n_v: contact_a.phone,
-       description_n_v: contact_a.description,
-       adresse_n_v: contact_a.address,
-       mail_n_v: contact_a.email,
+       nom_n_v: contact_v.lastname,
+       prenom_n_v:contact_v.firstname,
+       tel_n_v: contact_v.phone,
+       description_n_v: contact_v.description,
+       adresse_n_v: contact_v.address,
+       mail_n_v: contact_v.email,
        societe1_v: dossiernotaire.societe1_a,
        societe2_v : dossiernotaire.societe_conj,
        nom1_v: dossiernotaire.nom1_a,
@@ -329,7 +341,7 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
        mail2_v:dossiernotaire.mail1_c,
        cp_ville1_v:dossiernotaire.cp_ville1_a,
        cp_ville2_v:dossiernotaire.cp_ville1_conj,
-       date_lieu_naissance1_v:`${dossiernotaire.date_lieu_naissance1_a && (moment(dossiernotaire.date_lieu_naissance1_a).format("DD/MM/YYYY"))||""}`+"  "+`${dossiernotaire.lieux_naissance && (dossiernotaire.lieux_naissance)||""}`,
+       date_lieu_naissance1_v:`${dossiernotaire.date_lieu_naissance1_a && (dossiernotaire.date_lieu_naissance1_a)|| ""}`,
        date_lieu_naissance2_v:`${dossiernotaire.date_lieu_naissance1_conj && (moment(dossiernotaire.date_lieu_naissance1_conj).format("DD/MM/YYYY"))||""}`+"  "+`${dossiernotaire.lieux_naissance_conj && (dossiernotaire.lieux_naissance_conj)||""}`,
        nationalite1_v:dossiernotaire.nationalite1_a,
        nationalite2_v:dossiernotaire.nationalite_conj,
@@ -338,7 +350,7 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
        regime_matrimonial1_v:dossiernotaire.regime_matrimonial1_a,
        regime_matrimonial2_v:`${dossiernotaire.nom_c &&  (dossiernotaire.regime_matrimonial1_a)||""}`,
        date_regime1_v:`${dossiernotaire.date_regime1_a && (moment(dossiernotaire.date_regime1_a).format("DD/MM/YYYY"))||""}`,
-       date_regime2_v:`${dossiernotaire.date_regime1_a && (moment(dossiernotaire.date_regime1_a).format("DD/MM/YYYY"))||""}`,
+       date_regime2_v:`${dossiernotaire.nom_c && (moment(dossiernotaire.date_regime1_a).format("DD/MM/YYYY"))||""}`,
        num_tel1_v:dossiernotaire.num1_a,
        num_tel2_v:dossiernotaire.tel1_a,
        res_fiscale1_v:dossiernotaire.res_fiscale1_a,
@@ -363,7 +375,7 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
                        properties.typeOfInvestment === "principalresidence" && ("Résidence principale")||
                        properties.typeOfInvestment === "other" && ("Inconnu")||
                        !properties.typeOfInvestment && ("")}`,
-       /*prix_fai_p: conversionEUR(properties.salesPrice),
+       prix_fai_p: conversionEUR(properties.salesPrice),
        prix_net_p: conversionEUR(dossiernotaire.prix_net_properties),
        mobilier_p:conversionEUR(dossiernotaire.mobilier_p_properties),
        honoraires_v_p: conversionEUR(properties.visionRFees),
@@ -371,24 +383,25 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
        honoraires_a_p: conversionEUR(dossiernotaire.honoraires_Acquéreur_properties),
        charges_a_p: dossiernotaire.charge_Acquéreur_properties,
        frais_notaires_p: conversionEUR(dossiernotaire.frais_notaires_properties),
-       montant_depot_garantie_p:conversionEUR(dossiernotaire.montant_depot_garantie_properties),*/
-       prix_fai_p: properties.salesPrice,
-       prix_net_p: dossiernotaire.prix_net_properties,
-       mobilier_p:dossiernotaire.mobilier_p_properties,
+       montant_depot_garantie_p:conversionEUR(dossiernotaire.montant_depot_garantie_properties),
+       
+       
+       //prix_fai_p: properties.salesPrice,
+       //prix_net_p: dossiernotaire.prix_net_properties,
+       /*mobilier_p:dossiernotaire.mobilier_p_properties,
        honoraires_v_p: properties.visionRFees,
        charge_v_p: dossiernotaire.charges_Vendeur_properties,
        honoraires_a_p: dossiernotaire.honoraires_Acquéreur_properties,
        charges_a_p: dossiernotaire.charge_Acquéreur_properties,
        frais_notaires_p: dossiernotaire.frais_notaires_properties,
-       montant_depot_garantie_p:dossiernotaire.montant_depot_garantie_properties,
+       montant_depot_garantie_p:dossiernotaire.montant_depot_garantie_properties,*/
        type_acquisition_p: dossiernotaire.type_acquisition_properties,
        banque_f: dossiernotaire.banque_properties,
-       montant_f: dossiernotaire.montant_properties,
-       taux_f:dossiernotaire.taux_properties,
+       montant_f: conversionEUR(dossiernotaire.montant_properties),
+       taux_f: conversionPercent(dossiernotaire.taux_properties),
        duree_f: dossiernotaire.duree_properties,
        occupation_cs:dossiernotaire.occupation_properties,
        substitution_cs:dossiernotaire.Substitution_properties,
-       conseiller: dossiernotaire.conseiller_properties,
        num_mandat:dossiernotaire.num_mandat_properties,
        date_mandat: `${moment(dossiernotaire.date_mandat_properties).format("DD/MM/YYYY")||""}`,
        mandant:dossiernotaire.mandant_properties,
@@ -405,10 +418,11 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
        reg_copro_x: `${pieces_transmises.includes("10_Reglement_de_copropriété") && ("Reglement de copropriété")}`,
        cni_x: `${pieces_transmises.includes("11_Carte_d'identité") && ("Carte d'identité acquéreur et/ou vendeur ")}`,
        bail_x: `${pieces_transmises.includes("12_Baux") && ("Baux si bien occupé")}`,
-       nom_conseiller:properties.commercialName,
-       tel_conseiller:properties.commercialPhoneNumber,
-       mail_conseiller: properties.commercialEmail,
+       nom_conseiller:dossiernotaire.conseiller_properties,
+       tel_conseiller:dossiernotaire.tel_conseiller_properties,
+       mail_conseiller: dossiernotaire.email_conseiller_properties,
        carte_conseiller: dossiernotaire.carte_conseiller_properties,
+       autre_condition: dossiernotaire.autre_condition,
 ////////////////////////////////////////////////
        /* nu_meuble_b_sanitation:properties.sanitation,
         nu_meuble_b_doubleGlazing: properties.doubleGlazing,

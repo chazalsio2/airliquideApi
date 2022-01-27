@@ -163,6 +163,9 @@ var schema = new mongoose.Schema(
         profession2_:{
           type: String
         },
+        autre_condition:{
+          type: String
+        },
         date_lieu_naissance2_:{
           type: String
         },
