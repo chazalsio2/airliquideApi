@@ -166,6 +166,9 @@ var schema = new mongoose.Schema(
         autre_condition:{
           type: String
         },
+        Prix_de_vente_FAI:{
+          type: String
+        },
         date_lieu_naissance2_:{
           type: String
         },
