@@ -139,6 +139,7 @@ export async function getFolder(req, res, next) {
       name,moment_cle,montant_hors_taxes
     }=documents;
 
+    
     const document = await Document.findById(documentId).lean();
 
     if (!document) {
