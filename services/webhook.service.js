@@ -146,9 +146,9 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
                               client.spouse.situation === "jointpossession" && ("Indivision")||
                               client.spouse.situation === "company" && ("Société")}`,*/
         regime_matrimonial1_v:dossiernotaire.regime_matrimonial,
-        regime_matrimonial2_v:dossiernotaire.regime_matrimonial,
-        date_regime1_v:moment(dossiernotaire.date_regime_matrimonial).format("DD/MM/YYYY")||"",
-        date_regime2_v:moment(dossiernotaire.date_regime_matrimonial).format("DD/MM/YYYY")||"",
+        regime_matrimonial2_v:`${dossiernotaire.prenom2_ && (dossiernotaire.regime_matrimonial)||""}`,
+        date_regime1_v:`${dossiernotaire.date_regime_matrimonial && (moment(dossiernotaire.date_regime_matrimonial).format("DD/MM/YYYY"))||""}`,
+        date_regime2_v:`${dossiernotaire.date_regime_matrimonial && (moment(dossiernotaire.date_regime_matrimonial).format("DD/MM/YYYY"))||""}`,
         res_fiscale1_v:dossiernotaire.res_fiscale1,
         res_fiscale2_v:dossiernotaire.res_fiscale2,
         //////////////////////////////////////////////////////////
@@ -177,7 +177,7 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
         profession1_a:dossiernotaire.profession1_a,
         profession2_a:dossiernotaire.profession1_conj,
         regime_matrimonial1_a:dossiernotaire.regime_matrimonial1_a||"",
-        regime_matrimonial2_a:dossiernotaire.nom_c && (dossiernotaire.regime_matrimonial1_a)||"",
+        regime_matrimonial2_a:`${dossiernotaire.nom_c && (dossiernotaire.regime_matrimonial1_a)||""}`,
         date_regime1_a:`${ dossiernotaire.date_regime_matrimonial && ( moment(dossiernotaire.date_regime_matrimonial).format("DD/MM/YYYY"))||""}`,
         date_regime2_a:`${dossiernotaire.nom_c && ( moment(dossiernotaire.date_regime_matrimonial).format("DD/MM/YYYY"))||""}`,
         num_tel1_a:dossiernotaire.num1_a,
@@ -200,16 +200,11 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
         ref_cadastrales_b: dossiernotaire.ref_cadastrales_properties,
         descriptif_b: properties.description,
         etat_occupation_b: dossiernotaire.etat_occupation_b,
-        nu_meuble_b: `${properties.typeOfInvestment === "naked" && ( "Location nu") ||
-                        properties.typeOfInvestment === "furnished" && ("Location meublé") ||
-                        properties.typeOfInvestment === "shortterm" && ("Location courte durée")||
-                        properties.typeOfInvestment === "flatsharing" && ("Colocation")||
-                        properties.typeOfInvestment === "principalresidence" && ("Résidence principale")||
-                        properties.typeOfInvestment === "other" && ("Inconnu")||""}`,
-        prix_fai_p: conversionEUR(properties.salesPrice),
+        nu_meuble_b: `${dossiernotaire.mobilier_p_properties > 0 ? ("meublé"):("nu")}`,
+        prix_fai_p: conversionEUR(dossiernotaire.Prix_de_vente_FAI),
         prix_net_p: conversionEUR(dossiernotaire.prix_net_properties),
         mobilier_p: conversionEUR(dossiernotaire.mobilier_p_properties),
-        honoraires_v_p: conversionEUR(properties.visionRFees),
+        honoraires_v_p: conversionEUR(dossiernotaire.Honoraires_Vendeur_properties),
         charge_v_p: dossiernotaire.charges_Vendeur_properties,
         honoraires_a_p: conversionEUR(dossiernotaire.honoraires_Acquéreur_properties),
         charges_a_p: dossiernotaire.charge_Acquéreur_properties,
@@ -234,7 +229,7 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
         substitution_cs:dossiernotaire.Substitution_properties,
         num_mandat:dossiernotaire.num_mandat_properties,
         date_mandat: moment(dossiernotaire.date_mandat_properties).format("DD/MM/YYYY")||"",
-        mandant:dossiernotaire.mandant_properties,
+        mandant:"le vendeur",
         pieces_transmises_0: `${pieces_transmises[0] && ("")}`,
         entretien_x: `${pieces_transmises.includes("1_Carnet_d'entretien_de_l'immeuble") && ("Carnet_dentretien_de_limmeuble")}`,
         offre_achat_x: `${pieces_transmises.includes("2_Lettre_d'intention_d'achat") && ("Lettre_d'intention_d'achat")}`,
@@ -368,17 +363,11 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
        ref_cadastrales_b: dossiernotaire.ref_cadastrales_properties,
        descriptif_b: properties.description,
        etat_occupation_b: dossiernotaire.etat_occupation_b,
-       nu_meuble_b: `${properties.typeOfInvestment === "naked" && ( "Location nu")|| 
-                       properties.typeOfInvestment === "furnished" && ("Location meublé") ||
-                       properties.typeOfInvestment === "shortterm" && ("Location courte durée")||
-                       properties.typeOfInvestment === "flatsharing" && ("Colocation")||
-                       properties.typeOfInvestment === "principalresidence" && ("Résidence principale")||
-                       properties.typeOfInvestment === "other" && ("Inconnu")||
-                       !properties.typeOfInvestment && ("")}`,
-       prix_fai_p: conversionEUR(properties.salesPrice),
+       nu_meuble_b: `${dossiernotaire.mobilier_p_properties > 0 ? ("meublé"):("nu")}`,
+       prix_fai_p: conversionEUR(dossiernotaire.Prix_de_vente_FAI),
        prix_net_p: conversionEUR(dossiernotaire.prix_net_properties),
        mobilier_p:conversionEUR(dossiernotaire.mobilier_p_properties),
-       honoraires_v_p: conversionEUR(properties.visionRFees),
+       honoraires_v_p: conversionEUR(dossiernotaire.Honoraires_Vendeur_properties),
        charge_v_p: dossiernotaire.charges_Vendeur_properties,
        honoraires_a_p: conversionEUR(dossiernotaire.honoraires_Acquéreur_properties),
        charges_a_p: dossiernotaire.charge_Acquéreur_properties,
@@ -404,7 +393,7 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
        substitution_cs:dossiernotaire.Substitution_properties,
        num_mandat:dossiernotaire.num_mandat_properties,
        date_mandat: `${moment(dossiernotaire.date_mandat_properties).format("DD/MM/YYYY")||""}`,
-       mandant:dossiernotaire.mandant_properties,
+       mandant:"l'acheteur",
        pieces_transmises_0: `${pieces_transmises[0] && ("")}`,
        entretien_x: `${pieces_transmises.includes("1_Carnet_d'entretien_de_l'immeuble") && ("Carnet_dentretien_de_limmeuble")}`,
        offre_achat_x: `${pieces_transmises.includes("2_Lettre_d'intention_d'achat") && ("Lettre_d'intention_d'achat")}`,
