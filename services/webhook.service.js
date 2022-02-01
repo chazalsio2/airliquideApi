@@ -146,9 +146,9 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
                               client.spouse.situation === "jointpossession" && ("Indivision")||
                               client.spouse.situation === "company" && ("Société")}`,*/
         regime_matrimonial1_v:dossiernotaire.regime_matrimonial,
-        regime_matrimonial2_v:dossiernotaire.regime_matrimonial,
-        date_regime1_v:moment(dossiernotaire.date_regime_matrimonial).format("DD/MM/YYYY")||"",
-        date_regime2_v:moment(dossiernotaire.date_regime_matrimonial).format("DD/MM/YYYY")||"",
+        regime_matrimonial2_v:`${dossiernotaire.prenom2_ && (dossiernotaire.regime_matrimonial)||""}`,
+        date_regime1_v:`${dossiernotaire.date_regime_matrimonial && (moment(dossiernotaire.date_regime_matrimonial).format("DD/MM/YYYY"))||""}`,
+        date_regime2_v:`${dossiernotaire.date_regime_matrimonial && (moment(dossiernotaire.date_regime_matrimonial).format("DD/MM/YYYY"))||""}`,
         res_fiscale1_v:dossiernotaire.res_fiscale1,
         res_fiscale2_v:dossiernotaire.res_fiscale2,
         //////////////////////////////////////////////////////////
@@ -177,7 +177,7 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
         profession1_a:dossiernotaire.profession1_a,
         profession2_a:dossiernotaire.profession1_conj,
         regime_matrimonial1_a:dossiernotaire.regime_matrimonial1_a||"",
-        regime_matrimonial2_a:dossiernotaire.nom_c && (dossiernotaire.regime_matrimonial1_a)||"",
+        regime_matrimonial2_a:`${dossiernotaire.nom_c && (dossiernotaire.regime_matrimonial1_a)||""}`,
         date_regime1_a:`${ dossiernotaire.date_regime_matrimonial && ( moment(dossiernotaire.date_regime_matrimonial).format("DD/MM/YYYY"))||""}`,
         date_regime2_a:`${dossiernotaire.nom_c && ( moment(dossiernotaire.date_regime_matrimonial).format("DD/MM/YYYY"))||""}`,
         num_tel1_a:dossiernotaire.num1_a,
