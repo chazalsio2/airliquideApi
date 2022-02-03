@@ -383,7 +383,7 @@ app.put(
   app.delete(
     "/documents/:documentId",
     passport.authenticate("jwt", { session: false }),
-    checkAdmin,
+    checkAdminOrCommercial,
     checkAccountDesactivated,
     deleteDocument,
     errorHandle
