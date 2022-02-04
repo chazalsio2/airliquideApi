@@ -100,7 +100,7 @@ export async function createDossierNotaire(req, res, next) {
         nom_prenom_c
       } = req.body;
   
-      
+      //////////////
       if (
         //!contact_a_Id||
         !contact_v_Id||
