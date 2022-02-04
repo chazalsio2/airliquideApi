@@ -136,7 +136,7 @@ export async function getFolder(req, res, next) {
 
     const documents = req.body;
     const  {
-      name,moment_cle,montant_hors_taxes
+      name,moment_cle,montant_hors_taxes,montant_ttc
     }=documents;
 
     
