@@ -21,6 +21,9 @@ var schema = new mongoose.Schema(
         Honoraires_Vendeur_properties:{
           type: String
         },
+        descriptif_b:{
+          type: String
+        },
         honoraires_Acquéreur_properties:{
           type: String
         },
