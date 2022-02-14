@@ -13,6 +13,9 @@ var schema = new mongoose.Schema(
     montant_hors_taxes: {
       type: String,
     },
+    montant_ttc:{
+      type: String,
+    },
     url: {
       type: String,
       required: false,
