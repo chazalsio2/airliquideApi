@@ -42,7 +42,8 @@ import {
   getFolder,
   getRootFolder,
   deleteDocument,
-  editDocument
+  editDocument,
+  editDocument2
 } from "./controllers/document";
 import {
   getProject,
@@ -379,6 +380,11 @@ app.put(
     "/documents/:documentId", 
     passport.authenticate("jwt", { session: false }),
     editDocument
+);
+app.put(
+  "/documents2/:documentId", 
+  passport.authenticate("jwt", { session: false }),
+  editDocument2
 );
   app.delete(
     "/documents/:documentId",

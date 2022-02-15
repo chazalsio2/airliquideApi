@@ -1378,6 +1378,7 @@ export async function savePersonalSituationForSalesMandate(req, res, next) {
       spouselastname,
       spouseaddress,
       spousephone,
+      spousedate,
       spousenationalite,
       spouseemail,
       spousesituation,
@@ -1473,7 +1474,8 @@ export async function savePersonalSituationForSalesMandate(req, res, next) {
       income: spouseincome,
       industry: spouseindustry,
       seniority: spouseseniority,
-      phone: spousephone
+      phone: spousephone,
+      date: spousedate
     };
 
     const clientUpdate = await Client.updateOne(
@@ -1550,6 +1552,7 @@ export async function savePersonalSituation(req, res, next) {
       spousenationalite,
       spouseseniority,
       spousephone,
+      spousedate,
       birthday,
       lieux_de_naissance,
       nationalite
@@ -1626,6 +1629,7 @@ export async function savePersonalSituation(req, res, next) {
         industry: spouseindustry,
         seniority: spouseseniority,
         phone: spousephone,
+        date:spousedate,
         nationalite:spousenationalite,
       };
     }

@@ -6,7 +6,7 @@ import { getUser } from './user.service'
 import { getDocument } from './document.service'
 import { Client } from '../models'
 import {DossierNotaire} from '../models'
-import {Property,Project} from '../models'
+import {Property,Project,Document} from '../models'
 
 
 export async function sendAgreementAcceptedWebhook(projectId) {
@@ -509,4 +509,23 @@ export async function sendNewStatusProject(project) {
     }
   })
   console.log("c'est bon ");
+}
+export async function sendNewdocuments(document){
+  console.log(document);
+  const documents = await Document.findById(document._id)
+  axios({
+    method:'GET',
+    url: process.env.ZAPPIER_WEBHOOK_DOCUMENTS,
+    data:{
+      idprojet:documents.projectId,
+      libellé: documents.name,
+      nature: documents.moment_cle,
+      montant_HT:documents.montant_hors_taxes,
+      montant_TTC:documents.montant_ttc,
+      date : moment(documents.updatedAt).format('DD-MM-YYYY'),
+      lien_AWS : documents.url
+    }
+    
+  })
+  console.log("c'est documents");
 }
