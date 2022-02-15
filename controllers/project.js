@@ -28,7 +28,7 @@ import {
   sendDeedAcceptedForSalesProject
 } from "../lib/email";
 import {
-  sendAgreementAcceptedWebhook, sendNewDocWebhook
+  sendAgreementAcceptedWebhook, sendNewDocWebhook ,sendNewStatusProject
 } from '../services/webhook.service'
 import { uploadFile } from "../lib/aws";
 import { sendMessageToSlack } from "../lib/slack";
@@ -209,7 +209,6 @@ export async function refuseMandate(req, res, next) {
         $unset: { mandateDocId: "", mandateDoc: "" }
       }
     ).exec();
-
     new ProjectEvent({
       projectId,
       type: "mandate_refused",
@@ -579,7 +578,6 @@ export async function refuseLoanOffer(req, res, next) {
         $unset: { loanOfferDocId: "", loanOfferDoc: "" }
       }
     ).exec();
-
     new ProjectEvent({
       projectId,
       type: "purchase_offer_refused",
@@ -616,7 +614,7 @@ export async function acceptLoanOffer(req, res, next) {
         $set: { status: "wait_sales_deed" }
       }
     ).exec();
-
+    sendNewStatusProject(project);
     new ProjectEvent({
       projectId,
       type: "loan_offer_accepted",
@@ -731,7 +729,7 @@ export async function acceptMandate(req, res, next) {
         }
       }
     ).exec();
-
+    sendNewStatusProject(project);
     new ProjectEvent({
       projectId,
       type: "mandate_accepted",
@@ -824,7 +822,7 @@ export async function acceptPurchaseOffer(req, res, next) {
         $set: { status: "wait_sales_agreement" }
       }
     ).exec();
-
+    sendNewStatusProject(project);
     new ProjectEvent({
       projectId,
       type: "purchase_offer_accepted",
@@ -882,7 +880,7 @@ export async function acceptAgreement(req, res, next) {
         }
       }
     ).exec();
-
+    sendNewStatusProject(project);
     new ProjectEvent({
       projectId,
       type: "sales_agreement_accepted",
@@ -934,7 +932,8 @@ export async function acceptDeed(req, res, next) {
         }
       }
     ).exec();
-
+    console.log(project);
+    sendNewStatusProject(project);
     new ProjectEvent({
       projectId,
       type: "sales_deed_accepted",
@@ -1305,6 +1304,7 @@ export async function confirmSearchMandate(req, res, next) {
     ).exec();
 
     sendProjectWaitingValidationEmail(project);
+    sendNewStatusProject(project);
 
     await new ProjectEvent({
       projectId: project._id,
@@ -1503,6 +1503,7 @@ export async function savePersonalSituationForSalesMandate(req, res, next) {
         }
       }
     ).exec();
+    sendNewStatusProject(project);
 
     return res.json({ success: true });
   } catch (e) {
@@ -1812,6 +1813,7 @@ export async function acceptProject(req, res, next) {
       { _id: projectId },
       { $set: { status: "wait_mandate" } }
     ).exec();
+    sendNewStatusProject(project);
 
     await new ProjectEvent({
       projectId,
@@ -1949,7 +1951,7 @@ export async function uploadLoanOfferForProject(req, res, next) {
       }
     ).exec();
     // const client = await Client.findById(project.clientId).lean();
-
+    sendNewStatusProject(project);
     sendMessageToSlack({
       message: `L'offre de prêt pour mandat de ${project.type === "search" ? "recherche" : "vente"
         } du client ${client.displayName} est en attente d'acceptation : ${process.env.APP_URL
@@ -2030,7 +2032,7 @@ export async function uploadMandateForProject(req, res, next) {
         }
       }
     ).exec();
-
+    sendNewStatusProject(project);
     const client = await Client.findById(project.clientId).lean();
     sendMessageToSlack({
       message: `Le mandat de ${project.type === "search" ? "recherche" : "vente"
@@ -2109,7 +2111,7 @@ export async function uploadPurchaseOfferForProject(req, res, next) {
         }
       }
     ).exec();
-
+    sendNewStatusProject(project);
     const client = await Client.findById(project.clientId).lean();
     const user = await User.findById(req.user._id).lean();
     sendMessageToSlack({
@@ -2193,7 +2195,7 @@ export async function uploadAgreementForProject(req, res, next) {
         }
       }
     ).exec();
-
+    sendNewStatusProject(project);
     await new ProjectEvent({
       projectId,
       type: "sales_agreement_added",
@@ -2276,7 +2278,7 @@ export async function uploadDeedForProject(req, res, next) {
         }
       }
     ).exec();
-
+    sendNewStatusProject(project);
     // const client = await Client.findById(project.clientId).lean();
     sendMessageToSlack({
       message: `L'acte authentique pour le mandat de ${project.type === "search" ? "recherche" : "vente"

@@ -6,7 +6,7 @@ import { getUser } from './user.service'
 import { getDocument } from './document.service'
 import { Client } from '../models'
 import {DossierNotaire} from '../models'
-import {Property} from '../models'
+import {Property,Project} from '../models'
 
 
 export async function sendAgreementAcceptedWebhook(projectId) {
@@ -490,4 +490,23 @@ export async function sendNewDProprieteWebhook(propertyId) {
       agencyFees:proprietes.agencyFees
     }
   })
+}
+export async function sendNewStatusProject(project) {
+  console.log(project);
+  const projet = await Project.findById(project._id)
+  const client = await Client.findById(project.clientId)
+  axios({
+    method:'GET',
+    url: process.env.ZAPPIER_WEBHOOK_CLE_DE_VIE,
+    data:{
+      num_id:projet._id,
+      nom_clients:client.displayName,
+      e_mail:client.email,
+      statuts_affaires: projet.status,
+      date_dernier_statut: moment(projet.updatedAt).format('DD-MM-YYYY'),
+      type:projet.type,
+      montant_commission:projet.commissionAmount ? ((projet.commissionAmount / 100).toFixed(2)):(""),
+    }
+  })
+  console.log("c'est bon ");
 }
