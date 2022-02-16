@@ -495,6 +495,7 @@ export async function sendNewStatusProject(project) {
   console.log(project);
   const projet = await Project.findById(project._id)
   const client = await Client.findById(project.clientId)
+
   axios({
     method:'GET',
     url: process.env.ZAPPIER_WEBHOOK_CLE_DE_VIE,
@@ -503,9 +504,9 @@ export async function sendNewStatusProject(project) {
       nom_clients:client.displayName,
       e_mail:client.email,
       statuts_affaires: projet.status,
-      date_dernier_statut: moment(projet.updatedAt).format('DD-MM-YYYY'),
+      date_dernier_statut: moment(projet.updatedAt).format('DD/MM/YYYY'),
       type:projet.type,
-      montant_commission:projet.commissionAmount ? ((projet.commissionAmount / 100).toFixed(2)):(""),
+      montant_commission:projet.commissionAmount ? projet.commissionAmount :(""),
     }
   })
   console.log("c'est bon ");
@@ -522,7 +523,7 @@ export async function sendNewdocuments(document){
       nature: documents.moment_cle,
       montant_HT:documents.montant_hors_taxes,
       montant_TTC:documents.montant_ttc,
-      date : moment(documents.updatedAt).format('DD-MM-YYYY'),
+      date : moment(documents.updatedAt).format('DD/MM/YYYY'),
       lien_AWS : documents.url
     }
     
