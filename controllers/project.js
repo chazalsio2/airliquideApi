@@ -1817,7 +1817,6 @@ export async function acceptProject(req, res, next) {
       { _id: projectId },
       { $set: { status: "wait_mandate" } }
     ).exec();
-    sendNewStatusProject(project);
 
     await new ProjectEvent({
       projectId,
@@ -2036,7 +2035,7 @@ export async function uploadMandateForProject(req, res, next) {
         }
       }
     ).exec();
-    sendNewStatusProject(project);
+
     const client = await Client.findById(project.clientId).lean();
     sendMessageToSlack({
       message: `Le mandat de ${project.type === "search" ? "recherche" : "vente"
