@@ -125,9 +125,12 @@ var schema = new mongoose.Schema(
     },
     referral: {
       type: String,
-      enum: ["other", "socialmedia", "wordofmouth", "website"]
+      enum: ["other", "socialmedia", "wordofmouth", "website","commerciale"]
     },
     referaldetails: {
+      type: String,
+    },
+    referalconseiller:{
       type: String,
     },
     displayName: {
