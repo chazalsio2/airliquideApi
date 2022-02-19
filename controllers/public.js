@@ -20,6 +20,7 @@ export async function publicCreateClient(req, res, next) {
       referral,
       city,
       zipcode,
+      referalconseiller,
       referaldetails,lieux_de_naissance,nationalite
     } = req.body;
 
@@ -37,6 +38,7 @@ export async function publicCreateClient(req, res, next) {
       city,
       zipcode,
       referaldetails,
+      referalconseiller,
       lieux_de_naissance,nationalite
     };
 
