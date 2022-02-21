@@ -244,24 +244,31 @@ export async function editSalesSheet(req, res, next) {
       workNeeded,
       reasonForTheSale,
       delay,
+      terrai_y_n,
+      ref_cadastrale,
+      zone,
       readyToSign,
       workEstimate,
       priceEstimate,
-      fullAddress
+      fullAddress,
+      fullcode_postale,
+      fullville
     } = req.body;
 
-    if (
+   /* if (
       !propertyType ||
       !propertySize ||
       // !reasonForTheSale ||
       !delay ||
       !readyToSign ||
       // !workEstimate ||
-      !fullAddress
+      !fullAddress||
+      !fullcode_postale||
+      !fullville
     ) {
       throw new Error("Missing fields");
     }
-
+*/
     const newSalesSheetEdited = {
       propertyType,
       propertySize,
@@ -271,7 +278,12 @@ export async function editSalesSheet(req, res, next) {
       delay,
       readyToSign,
       workEstimate,
-      fullAddress
+      fullAddress,
+      fullcode_postale,
+      fullville,
+      terrai_y_n,
+      ref_cadastrale,
+      zone
     };
 
     if (livingArea) {
@@ -336,10 +348,15 @@ export async function saveSalesSheet(req, res, next) {
       nextAvailabilities,
       workEstimate,
       priceEstimate,
-      fullAddress
+      fullAddress,
+      fullcode_postale,
+      fullville,
+      terrai_y_n,
+      ref_cadastrale,
+      zone
     } = req.body;
 
-    if (
+    /*if (
       !propertyType ||
       !propertySize ||
       // !livingArea ||
@@ -347,12 +364,14 @@ export async function saveSalesSheet(req, res, next) {
       !delay ||
       !readyToSign ||
       !nextAvailabilities ||
-      !fullAddress 
+      !fullAddress ||
+      !fullcode_postale||
+      !fullville
       
     ) {
       throw new Error("Missing fields");
     }
-
+*/
     const salesSheet = {
       propertyType,
       propertySize,
@@ -363,6 +382,11 @@ export async function saveSalesSheet(req, res, next) {
       readyToSign,
       nextAvailabilities,
       fullAddress,
+      fullcode_postale,
+      fullville,
+      terrai_y_n,
+      ref_cadastrale,
+      zone,
       landconstcd
     };
 
@@ -1281,17 +1305,21 @@ export async function confirmSearchMandate(req, res, next) {
       return next(generateError("Client not found", 404));
     }
 
-    await Client.updateOne(
-      {
-        _id: project.clientId
-      },
-      {
-        $set: {
-          availabilities: timeslots,
-          allowSaveData
+    if(timeslots) {
+      await Client.updateOne(
+        {
+          _id: project.clientId
+        },
+        {
+          $set: {
+            availabilities: timeslots,
+            allowSaveData
+          }
         }
-      }
-    ).exec();
+      ).exec();
+    }
+
+    
 
     await Project.updateOne(
       { _id: projectId },
