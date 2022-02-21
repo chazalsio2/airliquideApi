@@ -42,6 +42,21 @@ const SalesSheet = new mongoose.Schema({
   fullAddress: {
     type: String
   },
+  fullcode_postale:{
+    type:String
+  },
+  fullville:{
+    type:String
+  },
+  terrai_y_n:{
+    type:String
+  },
+  ref_cadastrale:{
+    type:String
+  },
+  zone:{
+    type:String
+  },
   workEstimate: {
     type: String
   },
