@@ -252,7 +252,8 @@ export async function editSalesSheet(req, res, next) {
       priceEstimate,
       fullAddress,
       fullcode_postale,
-      fullville
+      fullville,
+      proprietaire
     } = req.body;
 
    /* if (
@@ -281,6 +282,7 @@ export async function editSalesSheet(req, res, next) {
       fullAddress,
       fullcode_postale,
       fullville,
+      proprietaire,
       terrai_y_n,
       ref_cadastrale,
       zone
@@ -351,6 +353,7 @@ export async function saveSalesSheet(req, res, next) {
       fullAddress,
       fullcode_postale,
       fullville,
+      proprietaire,
       terrai_y_n,
       ref_cadastrale,
       zone
@@ -384,6 +387,7 @@ export async function saveSalesSheet(req, res, next) {
       fullAddress,
       fullcode_postale,
       fullville,
+      proprietaire,
       terrai_y_n,
       ref_cadastrale,
       zone,
@@ -1332,7 +1336,6 @@ export async function confirmSearchMandate(req, res, next) {
     ).exec();
 
     sendProjectWaitingValidationEmail(project);
-    sendNewStatusProject(project);
 
     await new ProjectEvent({
       projectId: project._id,
@@ -1856,7 +1859,7 @@ export async function acceptProject(req, res, next) {
     const user = await User.findById(req.user._id).lean();
 
     sendMessageToSlack({
-      message: `Le projet du client ${client.displayName} a été accepté par ${user.displayName}`//validé projet
+      message: `Le projet du prospect ${client.displayName} a été accepté par ${user.displayName}`//validé projet
     });
 
     if (project.type === "search") {
