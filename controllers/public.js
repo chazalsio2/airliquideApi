@@ -48,7 +48,7 @@ export async function publicCreateClient(req, res, next) {
       sendNewClientEmail(client);
 
       sendMessageToSlack({
-        message: `Le client ${client.firstname} ${client.lastname} a été ajouté : ${process.env.APP_URL}/clients/${client._id}`,
+        message: `Le prospect ${client.firstname} ${client.lastname} a été ajouté : ${process.env.APP_URL}/clients/${client._id}`,
       });
 
       if (["search"].indexOf(serviceType) !== -1) {

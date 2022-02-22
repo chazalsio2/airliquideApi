@@ -48,6 +48,9 @@ const SalesSheet = new mongoose.Schema({
   fullville:{
     type:String
   },
+  proprietaire:{
+    type:String
+  },
   terrai_y_n:{
     type:String
   },
