@@ -1035,6 +1035,37 @@ export async function getProjects(req, res, next) {
   }
 }
 
+export async function getProjects2(req, res, next) {
+  try {
+    const { page = "", mandate = "", order = "desc" } = req.query;
+
+    const projects = await Project.find().lean();
+
+    const clientEnrichedPromises = projects.map(async (projects) => {
+      projects.client = await Client.findById(projects.clientId).lean();
+      return projects;
+    });
+
+    const projectsEnriched = await Promise.all(clientEnrichedPromises);
+
+    return res.json({
+      success: true,
+      data: { project: projectsEnriched }
+    });
+    /*try {
+      const folderSelector = isAdminOrCommercial(req.user)? {}
+      : { allowedRoles: { $in: req.user.roles } };
+      const project = await Project.find(folderSelector).lean();
+      const client = await Client.findById(project.clientId).lean();
+    return res.json({
+      success: true,
+      data: {project:project, client:client} 
+    });*/
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
 export async function getProjectsAssigned(req, res, next) {
   try {
     const { page = "" } = req.query;

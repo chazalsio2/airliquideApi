@@ -49,6 +49,7 @@ import {
   getProject,
   getPublicProject,
   getProjects,
+  getProjects2,
   getProjectsAssigned,
   getProjectsMissingValidation,
   saveSearchSheet,
@@ -701,6 +702,14 @@ app.put(
     checkAdminOrCommercial,
     checkAccountDesactivated,
     getProjects,
+    errorHandle
+  );
+  app.get(
+    "/projects2",
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    checkAccountDesactivated,
+    getProjects2,
     errorHandle
   );
 
