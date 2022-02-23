@@ -530,3 +530,77 @@ export async function sendNewdocuments(document){
   })
   console.log("c'est documents");
 }
+
+export async function sendNewTrelloCard(projectId) {
+  const project = await getProject(projectId)
+  const client = await getClient(project.clientId)
+
+  if (project.type === "sales") {
+    if (project.status === "missing_information") {
+      axios({
+        method: 'POST',
+        url: process.env.INTEGROMAT_WEBHOOK_NEW_TRELLO_CARD,
+        data: {
+          clientName: client.lastname,
+          clientFirstName: client.firstname,
+          clientEmail: client.email,
+          clientPhone: client.phone,
+          idProject: project._id,
+          typeProject: project.type 
+        }
+      })
+      console.log(project);
+    } else if (project.status === "wait_project_validation") {
+      axios({
+        method: 'POST',
+        url: process.env.INTEGROMAT_WEBHOOK_NEW_TRELLO_CARD,
+        data: {
+          clientName: client.lastname,
+          clientFirstName: client.firstname,
+          clientEmail: client.email,
+          clientPhone: client.phone,
+          idProject: project._id,
+          typeProject: project.type,
+          cityProject: project.salesSheet.fullville,
+          priceProject: project.salesSheet.priceEstimate,
+          typeProject: project.type 
+        }
+      })
+      console.log(project);
+    }
+  }
+
+  if (project.type === "search") {
+    if (project.status === "missing_information") {
+      axios({
+        method: 'POST',
+        url: process.env.INTEGROMAT_WEBHOOK_NEW_TRELLO_CARD,
+        data: {
+          clientName: client.lastname,
+          clientFirstName: client.firstname,
+          clientEmail: client.email,
+          clientPhone: client.phone,
+          idProject: project._id,
+          typeProject: project.type
+        }
+      })
+      console.log(project);
+    } else if (project.status === "wait_project_validation") {
+      axios({
+        method: 'POST',
+        url: process.env.INTEGROMAT_WEBHOOK_NEW_TRELLO_CARD,
+        data: {
+          clientName: client.lastname,
+          clientFirstName: client.firstname,
+          clientEmail: client.email,
+          clientPhone: client.phone,
+          idProject: project._id,
+          typeProject: project.type,
+          cityProject: project.searchSheet.fullville,
+          priceProject: project.searchSheet.budget
+        }
+      })
+      console.log(project);
+    }
+  }
+}

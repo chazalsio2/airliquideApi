@@ -5,7 +5,7 @@ import Client from "../models/Client";
 import Project, { projectTypes } from "../models/Project";
 import { sendNewClientEmail } from "../lib/email";
 import { sendMessageToSlack } from "../lib/slack";
-import {sendNewClientWebhook} from "../services/webhook.service";
+import {sendNewClientWebhook, sendNewTrelloCard} from "../services/webhook.service";
 
 
 export async function publicCreateClient(req, res, next) {
@@ -57,6 +57,8 @@ export async function publicCreateClient(req, res, next) {
           type: serviceType,
         }).save();
         await sendNewClientWebhook(project);
+        sendNewTrelloCard(project);
+
 
         return res.json({
           success: true,
@@ -74,6 +76,7 @@ export async function publicCreateClient(req, res, next) {
           type: serviceType,
         }).save(); 
         await sendNewClientWebhook(project);
+        sendNewTrelloCard(project);
 
 
 
