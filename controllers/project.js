@@ -28,7 +28,7 @@ import {
   sendDeedAcceptedForSalesProject
 } from "../lib/email";
 import {
-  sendAgreementAcceptedWebhook, sendNewDocWebhook ,sendNewStatusProject
+  sendAgreementAcceptedWebhook, sendNewDocWebhook ,sendNewStatusProject, sendNewTrelloCard
 } from '../services/webhook.service'
 import { uploadFile } from "../lib/aws";
 import { sendMessageToSlack } from "../lib/slack";
@@ -1567,8 +1567,7 @@ export async function savePersonalSituationForSalesMandate(req, res, next) {
         }
       }
     ).exec();
-    sendNewStatusProject(project);
-
+    //sendNewTrelloCard(project);
     return res.json({ success: true });
   } catch (e) {
     next(generateError(e.message));
@@ -1702,6 +1701,7 @@ export async function savePersonalSituation(req, res, next) {
         $set: clientModifier
       }
     ).exec();
+    // sendNewTrelloCard(project);
 
     // const client = await Client.findById(project.clientId).lean();
 
