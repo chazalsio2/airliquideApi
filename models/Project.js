@@ -90,12 +90,12 @@ const SearchSheet = new mongoose.Schema({
   propertyType: {
     type: String,
     enum: [
-      "apartment",
-      "home",
-      "constructionground",
-      "commercial",
-      "building",
-      "parking"
+      "Appartement",
+      "Maison",
+      "Terrain de construction",
+      "Local commercial",
+      "Immeuble",
+      "Parking / Garage"
     ]
   },
   investmentType: {
