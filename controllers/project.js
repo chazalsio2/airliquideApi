@@ -1038,6 +1038,7 @@ export async function getProjects(req, res, next) {
 export async function getProjects2(req, res, next) {
   try {
     const { page = "", mandate = "", order = "desc" } = req.query;
+    const orderCreatedAt = order === "desc" ? -1 : 1;
 
     const projects = await Project.find().lean();
 
@@ -1050,7 +1051,7 @@ export async function getProjects2(req, res, next) {
 
     return res.json({
       success: true,
-      data: { project: projectsEnriched }
+      data: projectsEnriched
     });
     /*try {
       const folderSelector = isAdminOrCommercial(req.user)? {}
