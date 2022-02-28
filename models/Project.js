@@ -42,6 +42,24 @@ const SalesSheet = new mongoose.Schema({
   fullAddress: {
     type: String
   },
+  fullcode_postale:{
+    type:String
+  },
+  fullville:{
+    type:String
+  },
+  proprietaire:{
+    type:String
+  },
+  terrai_y_n:{
+    type:String
+  },
+  ref_cadastrale:{
+    type:String
+  },
+  zone:{
+    type:String
+  },
   workEstimate: {
     type: String
   },
@@ -72,12 +90,12 @@ const SearchSheet = new mongoose.Schema({
   propertyType: {
     type: String,
     enum: [
-      "apartment",
-      "home",
-      "constructionground",
-      "commercial",
-      "building",
-      "parking"
+      "Appartement",
+      "Maison",
+      "Terrain de construction",
+      "Local commercial",
+      "Immeuble",
+      "Parking / Garage"
     ]
   },
   investmentType: {

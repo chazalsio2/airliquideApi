@@ -2,11 +2,11 @@ import mongoose from "mongoose";
 
 export function getPropertyType(type) {
   // "apartment", "commercial",   "construction_land",   "home",   "parking",   "building"
-  if (type === "apartment") return "Appartement";
-  if (type === "commercial") return "Local commercial";
-  if (type === "construction_land") return "Terrain de construction";
-  if (type === "home") return "Maison";
-  if (type === "parking") return "Parking / Garage";
+  if (type === "Appartement") return "Appartement";
+  if (type === "Local commercial") return "Local commercial";
+  if (type === "Terrain de construction") return "Terrain de construction";
+  if (type === "Maison") return "Maison";
+  if (type === "Parking / Garage") return "Parking / Garage";
   if (type === "building") return "Immeuble";
   return "Inconnu";
 }
@@ -124,11 +124,11 @@ const schema = new mongoose.Schema(
     type: {
       type: String,
       enum: [
-        "apartment",
-        "commercial",
-        "construction_land",
-        "home",
-        "parking",
+        "Appartement",
+        "Local commercial",
+        "Appartement",
+        "Maison",
+        "Parking / Garage",
         "building"
       ]
     },
@@ -144,9 +144,15 @@ const schema = new mongoose.Schema(
       type: Number,
       required: false
     },
+    projectId:{
+      type: mongoose.Types.ObjectId
+    },
     salesPrice: {
       type: Number,
       required: false
+    },
+    code_postale:{
+      type:String
     },
     varangueArea: {
       type: Number,

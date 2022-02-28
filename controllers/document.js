@@ -2,7 +2,7 @@ import Folder from "../models/Folder";
 import Document from "../models/Document";
 
 import { deleteFile } from "../lib/aws";
-
+import {sendNewdocuments} from "../services/webhook.service";
 import { generateError, hasRole, isAdmin } from "../lib/utils";
 import Project from "../models/Project";
 
@@ -152,6 +152,34 @@ export async function getFolder(req, res, next) {
     next(generateError(e.message));
   }
 };
+export async function editDocument2(req, res, next) {
+  try {
+    const { documentId } = req.params;
+
+    if (!documentId) {
+      return next(generateError("Invalid request", 403));
+    }
+
+    const documents = req.body;
+    const  {
+      name,moment_cle,montant_hors_taxes,montant_ttc
+    }=documents;
+
+    
+    const document = await Document.findById(documentId).lean();
+
+    if (!document) {
+      return next(generateError("Folder not found", 404));
+    }
+
+    await Document.updateOne({ _id: documentId }, { $set: documents }).exec();
+    sendNewdocuments(document);
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+};
+
 
 export async function deleteDocument(req, res, next) {
   try {

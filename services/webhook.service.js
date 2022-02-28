@@ -6,7 +6,7 @@ import { getUser } from './user.service'
 import { getDocument } from './document.service'
 import { Client } from '../models'
 import {DossierNotaire} from '../models'
-import {Property} from '../models'
+import {Property,Project,Document,User} from '../models'
 
 
 export async function sendAgreementAcceptedWebhook(projectId) {
@@ -68,7 +68,6 @@ export async function sendNewClientWebhook(projectId) {
 }
 
 export async function sendNewDosiierNtaire(dossiernotaireId){
-  console.log(dossiernotaireId.date_regime_matrimonial);
   const dossiernotaire = await DossierNotaire.findById(dossiernotaireId)
   const contact_v = await getContact(dossiernotaire.contact_v_Id)
   const contact_a = await getContact(dossiernotaire.contact_a_Id)
@@ -81,8 +80,7 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
     //console.log(pieces_transmises.contains());
    const pieces_transmises_1 = piece[1];
    const pieces_transmises_2 = piece[2];
-    console.log("1" + ":" +  pieces_transmises_1);
-    console.log("2" + ":" + pieces_transmises_2);
+  
 
     const conversionEUR = (number) => {
       const conversion = new Intl.NumberFormat('fr-FR', {
@@ -435,6 +433,7 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
 
 export async function sendNewDProprieteWebhook(propertyId) {
   const proprietes = await Property.findById(propertyId)
+  if(proprietes.propertyStatus ==="forsale"){
   axios({
     method:'GET',
     url: process.env.ZAPPIER_WEBHOOK_PROPRIETE,
@@ -490,4 +489,119 @@ export async function sendNewDProprieteWebhook(propertyId) {
       agencyFees:proprietes.agencyFees
     }
   })
+}
+}
+export async function sendNewStatusProject(project) {
+  const projet = await Project.findById(project._id)
+  const client = await Client.findById(project.clientId)
+  const conseiller = await User.findById(project.commercialId)
+
+  axios({
+    method:'GET',
+    url: process.env.ZAPPIER_WEBHOOK_CLE_DE_VIE,
+    data:{
+      num_id:projet._id,
+      nom_clients:client.displayName,
+      e_mail:client.email,
+      statuts_affaires: projet.status,
+      date_dernier_statut: moment(projet.updatedAt).format('DD/MM/YYYY'),
+      type:projet.type,
+      montant_commission:projet.commissionAmount ? (projet.commissionAmount/100):(""),
+      commercial_poucentage:projet.commercialPourcentage ? (projet.commercialPourcentage/100):"",
+      commercial_name:conseiller ? conseiller.displayName:"",
+    }
+  })
+  console.log("c'est bon ");
+}
+export async function sendNewdocuments(document){
+  const documents = await Document.findById(document._id)
+  axios({
+    method:'GET',
+    url: process.env.ZAPPIER_WEBHOOK_DOCUMENTS,
+    data:{
+      idprojet:documents.projectId,
+      libellé: documents.name,
+      nature: documents.moment_cle,
+      montant_HT:documents.montant_hors_taxes,
+      montant_TTC:documents.montant_ttc,
+      date : moment(documents.updatedAt).format('DD/MM/YYYY'),
+      lien_AWS : documents.url
+    }
+    
+  })
+  console.log("c'est documents");
+}
+
+export async function sendNewTrelloCard(projectId) {
+  const project = await getProject(projectId)
+  const client = await getClient(project.clientId)
+
+  if (project.type === "sales") {
+    if (project.status === "missing_information") {
+      axios({
+        method: 'POST',
+        url: process.env.INTEGROMAT_WEBHOOK_NEW_TRELLO_CARD,
+        data: {
+          clientName: client.lastname,
+          clientFirstName: client.firstname,
+          clientEmail: client.email,
+          clientPhone: client.phone,
+          idProject: project._id,
+          typeProject: project.type 
+        }
+      })
+    } else if (project.status === "wait_project_validation") {
+      axios({
+        method: 'POST',
+        url: process.env.INTEGROMAT_WEBHOOK_NEW_TRELLO_CARD,
+        data: {
+          clientName: client.lastname,
+          clientFirstName: client.firstname,
+          clientEmail: client.email,
+          clientPhone: client.phone,
+          idProject: project._id,
+          typeProject: project.type,
+          cityProject: project.salesSheet.fullville,
+          priceProject: project.salesSheet.priceEstimate,
+          propertyType: project.salesSheet.propertyType,
+          propertySize: project.salesSheet.propertySize,
+
+        }
+      })
+    }
+  }
+
+  if (project.type === "search") {
+    if (project.status === "missing_information") {
+      axios({
+        method: 'POST',
+        url: process.env.INTEGROMAT_WEBHOOK_NEW_TRELLO_CARD,
+        data: {
+          clientName: client.lastname,
+          clientFirstName: client.firstname,
+          clientEmail: client.email,
+          clientPhone: client.phone,
+          idProject: project._id,
+          typeProject: project.type
+        }
+      })
+    } else if (project.status === "wait_project_validation") {
+      axios({
+        method: 'POST',
+        url: process.env.INTEGROMAT_WEBHOOK_NEW_TRELLO_CARD,
+        data: {
+          clientName: client.lastname,
+          clientFirstName: client.firstname,
+          clientEmail: client.email,
+          clientPhone: client.phone,
+          idProject: project._id,
+          typeProject: project.type,
+          cityProject: project.searchSheet.fullville,
+          priceProject: project.searchSheet.budget,
+          propertyType: project.salesSheet.propertyType,
+          propertySize: project.salesSheet.propertySize,
+        }
+      })
+    }
+  }
 }

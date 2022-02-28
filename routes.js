@@ -42,12 +42,14 @@ import {
   getFolder,
   getRootFolder,
   deleteDocument,
-  editDocument
+  editDocument,
+  editDocument2
 } from "./controllers/document";
 import {
   getProject,
   getPublicProject,
   getProjects,
+  getProjects2,
   getProjectsAssigned,
   getProjectsMissingValidation,
   saveSearchSheet,
@@ -380,6 +382,11 @@ app.put(
     passport.authenticate("jwt", { session: false }),
     editDocument
 );
+app.put(
+  "/documents2/:documentId", 
+  passport.authenticate("jwt", { session: false }),
+  editDocument2
+);
   app.delete(
     "/documents/:documentId",
     passport.authenticate("jwt", { session: false }),
@@ -695,6 +702,14 @@ app.put(
     checkAdminOrCommercial,
     checkAccountDesactivated,
     getProjects,
+    errorHandle
+  );
+  app.get(
+    "/projects2",
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    checkAccountDesactivated,
+    getProjects2,
     errorHandle
   );
 

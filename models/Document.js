@@ -11,10 +11,10 @@ var schema = new mongoose.Schema(
       type: String,
     },
     montant_hors_taxes: {
-      type: String,
+      type: Number,
     },
     montant_ttc:{
-      type: String,
+      type: Number,
     },
     url: {
       type: String,

@@ -217,6 +217,7 @@ export async function editClient(req, res, next) {
       spouseindustry,
       spouselastname,
       spousephone,
+      spousedate,
       spouseseniority,
       spousesituation
     } = req.body;
@@ -230,6 +231,7 @@ export async function editClient(req, res, next) {
         income: spouseincome,
         industry: spouseindustry,
         phone: spousephone,
+        date:spousedate,
         address: spouseaddress,
         seniority: spouseseniority,
         situation: spousesituation
