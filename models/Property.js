@@ -126,10 +126,10 @@ const schema = new mongoose.Schema(
       enum: [
         "Appartement",
         "Local commercial",
-        "Appartement",
+        "Terrain de construction",
         "Maison",
-        "Parking / Garage",
-        "building"
+        "Garage / Parking",
+        "Immeuble"
       ]
     },
     yearOfConstruction: {
