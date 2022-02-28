@@ -6,7 +6,7 @@ import { getUser } from './user.service'
 import { getDocument } from './document.service'
 import { Client } from '../models'
 import {DossierNotaire} from '../models'
-import {Property,Project,Document} from '../models'
+import {Property,Project,Document,User} from '../models'
 
 
 export async function sendAgreementAcceptedWebhook(projectId) {
@@ -435,6 +435,7 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
 
 export async function sendNewDProprieteWebhook(propertyId) {
   const proprietes = await Property.findById(propertyId)
+  if(proprietes.propertyStatus ==="forsale"){
   axios({
     method:'GET',
     url: process.env.ZAPPIER_WEBHOOK_PROPRIETE,
@@ -491,10 +492,12 @@ export async function sendNewDProprieteWebhook(propertyId) {
     }
   })
 }
+}
 export async function sendNewStatusProject(project) {
   console.log(project);
   const projet = await Project.findById(project._id)
   const client = await Client.findById(project.clientId)
+  const conseiller = await User.findById(project.commercialId)
 
   axios({
     method:'GET',
@@ -506,7 +509,9 @@ export async function sendNewStatusProject(project) {
       statuts_affaires: projet.status,
       date_dernier_statut: moment(projet.updatedAt).format('DD/MM/YYYY'),
       type:projet.type,
-      montant_commission:projet.commissionAmount ? projet.commissionAmount :(""),
+      montant_commission:projet.commissionAmount ? (projet.commissionAmount/100):(""),
+      commercial_poucentage:projet.commercialPourcentage ? (projet.commercialPourcentage/100):"",
+      commercial_name:conseiller ? conseiller.displayName:"",
     }
   })
   console.log("c'est bon ");
