@@ -57,7 +57,7 @@ export async function publicCreateClient(req, res, next) {
           type: serviceType,
         }).save();
         await sendNewClientWebhook(project);
-        sendNewTrelloCard(project);
+        //sendNewTrelloCard(project);
 
 
         return res.json({
@@ -76,7 +76,7 @@ export async function publicCreateClient(req, res, next) {
           type: serviceType,
         }).save(); 
         await sendNewClientWebhook(project);
-        sendNewTrelloCard(project);
+        //sendNewTrelloCard(project);
 
 
 

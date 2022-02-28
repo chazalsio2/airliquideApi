@@ -68,7 +68,6 @@ export async function sendNewClientWebhook(projectId) {
 }
 
 export async function sendNewDosiierNtaire(dossiernotaireId){
-  console.log(dossiernotaireId.date_regime_matrimonial);
   const dossiernotaire = await DossierNotaire.findById(dossiernotaireId)
   const contact_v = await getContact(dossiernotaire.contact_v_Id)
   const contact_a = await getContact(dossiernotaire.contact_a_Id)
@@ -81,8 +80,7 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
     //console.log(pieces_transmises.contains());
    const pieces_transmises_1 = piece[1];
    const pieces_transmises_2 = piece[2];
-    console.log("1" + ":" +  pieces_transmises_1);
-    console.log("2" + ":" + pieces_transmises_2);
+  
 
     const conversionEUR = (number) => {
       const conversion = new Intl.NumberFormat('fr-FR', {
@@ -494,7 +492,6 @@ export async function sendNewDProprieteWebhook(propertyId) {
 }
 }
 export async function sendNewStatusProject(project) {
-  console.log(project);
   const projet = await Project.findById(project._id)
   const client = await Client.findById(project.clientId)
   const conseiller = await User.findById(project.commercialId)
@@ -517,7 +514,6 @@ export async function sendNewStatusProject(project) {
   console.log("c'est bon ");
 }
 export async function sendNewdocuments(document){
-  console.log(document);
   const documents = await Document.findById(document._id)
   axios({
     method:'GET',
@@ -554,7 +550,6 @@ export async function sendNewTrelloCard(projectId) {
           typeProject: project.type 
         }
       })
-      console.log(project);
     } else if (project.status === "wait_project_validation") {
       axios({
         method: 'POST',
@@ -568,10 +563,11 @@ export async function sendNewTrelloCard(projectId) {
           typeProject: project.type,
           cityProject: project.salesSheet.fullville,
           priceProject: project.salesSheet.priceEstimate,
-          typeProject: project.type 
+          propertyType: project.salesSheet.propertyType,
+          propertySize: project.salesSheet.propertySize,
+
         }
       })
-      console.log(project);
     }
   }
 
@@ -589,7 +585,6 @@ export async function sendNewTrelloCard(projectId) {
           typeProject: project.type
         }
       })
-      console.log(project);
     } else if (project.status === "wait_project_validation") {
       axios({
         method: 'POST',
@@ -602,10 +597,11 @@ export async function sendNewTrelloCard(projectId) {
           idProject: project._id,
           typeProject: project.type,
           cityProject: project.searchSheet.fullville,
-          priceProject: project.searchSheet.budget
+          priceProject: project.searchSheet.budget,
+          propertyType: project.salesSheet.propertyType,
+          propertySize: project.salesSheet.propertySize,
         }
       })
-      console.log(project);
     }
   }
 }
