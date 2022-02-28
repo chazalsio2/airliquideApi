@@ -144,9 +144,15 @@ const schema = new mongoose.Schema(
       type: Number,
       required: false
     },
+    projectId:{
+      type: mongoose.Types.ObjectId
+    },
     salesPrice: {
       type: Number,
       required: false
+    },
+    code_postale:{
+      type:String
     },
     varangueArea: {
       type: Number,
