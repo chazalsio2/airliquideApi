@@ -29,6 +29,9 @@ const SalesSheet = new mongoose.Schema({
   propertySize: {
     type: String
   },
+  propertySizeDetails:{
+    type: String
+  },
   livingArea: {
     type: Number
   },

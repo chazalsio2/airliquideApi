@@ -491,6 +491,7 @@ export async function sendNewDProprieteWebhook(propertyId) {
   })
 }
 }
+//coucou
 export async function sendNewStatusProject(project) {
   const projet = await Project.findById(project._id)
   const client = await Client.findById(project.clientId)
