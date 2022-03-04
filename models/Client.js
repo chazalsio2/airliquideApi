@@ -8,7 +8,8 @@ const allowedStatusValues = [
   "investor",
   "official",
   "retired",
-  "unemployed"
+  "unemployed",
+  ""
 ];
 
 const allowedSituationValues = [
