@@ -190,7 +190,7 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
          properties.type === "construction_land" && ("Terrain de construction")||
          properties.type === "home" && ("Maison")||
          properties.type === "parking" && ("Parking / Garage")||
-         properties.type === "building" && ("Immeuble")||""}`,
+         properties.type === "building" && ("Immeuble")||properties.type}`,
          
 
 
@@ -356,7 +356,7 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
          properties.type === "construction_land" && ("Terrain de construction")||
          properties.type === "home" && ("Maison")||
          properties.type === "parking" && ("Parking / Garage")||
-         properties.type === "building" && ("Immeuble")}`,
+         properties.type === "building" && ("Immeuble")||properties.type}`,
        adresse_b: properties.address,
        code_postal_b: properties.city,
        commune_b:properties.city,
@@ -373,8 +373,6 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
        charges_a_p: dossiernotaire.charge_Acquéreur_properties,
        frais_notaires_p: conversionEUR(dossiernotaire.frais_notaires_properties),
        montant_depot_garantie_p:conversionEUR(dossiernotaire.montant_depot_garantie_properties),
-       
-       
        //prix_fai_p: properties.salesPrice,
        //prix_net_p: dossiernotaire.prix_net_properties,
        /*mobilier_p:dossiernotaire.mobilier_p_properties,
@@ -513,9 +511,12 @@ export async function sendNewStatusProject(project) {
       montant_commission:projet.commissionAmount ? (projet.commissionAmount/100):(""),
       commercial_poucentage:projet.commercialPourcentage ? (projet.commercialPourcentage/100):"",
       commercial_name:conseiller ? conseiller.displayName:"",
-    }
-  })
-  console.log("c'est bon ");
+      lien_aws: `${projet.status === "wait_loan_offer_validation" &&( projet.loanOfferDoc.url)||
+      projet.status === "wait_purchase_offer_validation" &&( projet.purchaseOfferDoc.url)||
+      projet.status === "wait_sales_agreement_validation" &&( projet.salesAgreementDoc.url)||
+      projet.status === "wait_sales_deed_validation" &&( projet.salesDeedDoc.url)||""}`,
+  }})
+  console.log("c'est bon chazal ");
 }
 export async function sendNewdocuments(document){
   console.log(document);
@@ -532,7 +533,6 @@ export async function sendNewdocuments(document){
       date : moment(documents.updatedAt).format('DD/MM/YYYY'),
       lien_AWS : documents.url
     }
-    
   })
   console.log("c'est documents");
 }
