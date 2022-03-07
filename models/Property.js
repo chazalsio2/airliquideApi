@@ -2,11 +2,11 @@ import mongoose from "mongoose";
 
 export function getPropertyType(type) {
   // "apartment", "commercial",   "construction_land",   "home",   "parking",   "building"
-  if (type === "apartment") return "Appartement";
-  if (type === "commercial") return "Local commercial";
-  if (type === "construction_land") return "Terrain de construction";
-  if (type === "home") return "Maison";
-  if (type === "parking") return "Parking / Garage";
+  if (type === "Appartement") return "Appartement";
+  if (type === "Local commercial") return "Local commercial";
+  if (type === "Terrain de construction") return "Terrain de construction";
+  if (type === "Maison") return "Maison";
+  if (type === "Parking / Garage") return "Parking / Garage";
   if (type === "building") return "Immeuble";
   return "Inconnu";
 }
@@ -124,12 +124,12 @@ const schema = new mongoose.Schema(
     type: {
       type: String,
       enum: [
-        "apartment",
-        "commercial",
-        "construction_land",
-        "home",
-        "parking",
-        "building"
+        "Appartement",
+        "Local commercial",
+        "Terrain de construction",
+        "Maison",
+        "Garage / Parking",
+        "Immeuble"
       ]
     },
     yearOfConstruction: {
@@ -144,9 +144,15 @@ const schema = new mongoose.Schema(
       type: Number,
       required: false
     },
+    projectId:{
+      type: mongoose.Types.ObjectId
+    },
     salesPrice: {
       type: Number,
       required: false
+    },
+    code_postale:{
+      type:String
     },
     varangueArea: {
       type: Number,
@@ -199,12 +205,10 @@ const schema = new mongoose.Schema(
       default: 0
     },
     accounting: {
-      type: Number,
-      default: 0
+      type: String,
     },
     cga: {
-      type: Number,
-      default: 0
+      type: String,
     },
     divers: {
       type: Number,
@@ -250,9 +254,8 @@ schema.pre("save", async function (next) {
     const propertiesCount = await mongoose.models["Document"].countDocuments();
     const refTemps = `00000000${propertiesCount}`;
     this.ref = `${refTemps.substring(propertiesCount.toString().length)}`;
-    this.name = `${getPropertyType(this.type) || ""} ${this.livingArea} m² ${
-      this.city || ""
-    }`;
+    //this.name = `${getPropertyType(this.type) || ""} ${this.livingArea} m² ${this.city || ""} ${this.landArea} m²`;
+    this.name = `${getPropertyType(this.type) || ""} ${this.livingArea ? this.livingArea+" m²" : ""}  ${this.city || ""} ${this.landArea ? this.landArea+ " m²" : ""}`;
     next();
   } catch (e) {
     next(e);

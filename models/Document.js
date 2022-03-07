@@ -7,6 +7,15 @@ var schema = new mongoose.Schema(
     name: {
       type: String,
     },
+    moment_cle:{
+      type: String,
+    },
+    montant_hors_taxes: {
+      type: Number,
+    },
+    montant_ttc:{
+      type: Number,
+    },
     url: {
       type: String,
       required: false,

@@ -29,15 +29,39 @@ const SalesSheet = new mongoose.Schema({
   propertySize: {
     type: String
   },
+  propertySizeDetails:{
+    type: String
+  },
   livingArea: {
     type: Number
   },
-
+  landArea: {
+    type: Number,
+    
+  },
   landconstcd: {
     type: String
   },
   fullAddress: {
     type: String
+  },
+  fullcode_postale:{
+    type:String
+  },
+  fullville:{
+    type:String
+  },
+  proprietaire:{
+    type:String
+  },
+  terrai_y_n:{
+    type:String
+  },
+  ref_cadastrale:{
+    type:String
+  },
+  zone:{
+    type:String
   },
   workEstimate: {
     type: String
@@ -69,12 +93,12 @@ const SearchSheet = new mongoose.Schema({
   propertyType: {
     type: String,
     enum: [
-      "apartment",
-      "home",
-      "constructionground",
-      "commercial",
-      "building",
-      "parking"
+      "Appartement",
+      "Maison",
+      "Terrain de construction",
+      "Local commercial",
+      "Immeuble",
+      "Parking / Garage"
     ]
   },
   investmentType: {
@@ -100,10 +124,7 @@ const SearchSheet = new mongoose.Schema({
     type: String,
     enum: ["optional", "priority"]
   },
-  landArea: {
-    type: Number,
-    required: false
-  },
+ 
   searchSector: {
     type: String,
     enum: [
@@ -147,9 +168,15 @@ const schema = new mongoose.Schema(
     clientId: {
       type: mongoose.Types.ObjectId
     },
-    commercialId: {
+    clientId: {
+      type: mongoose.Types.ObjectId
+    },
+    dossiernotaireId: {
       type: mongoose.Types.ObjectId,
       required: false
+    },
+    commercialId:{
+      type: mongoose.Types.ObjectId
     },
     type: {
       type: String,

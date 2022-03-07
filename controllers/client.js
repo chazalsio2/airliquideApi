@@ -3,6 +3,7 @@ import Client from "../models/Client";
 import { generateError } from "../lib/utils";
 import Project, { projectTypes } from "../models/Project";
 import ProjectEvent from "../models/ProjectEvent";
+import { sendNewClientWebhook } from '../services/webhook.service';
 
 export async function getClients(req, res, next) {
   try {
@@ -22,6 +23,9 @@ export async function getClients(req, res, next) {
         },
         {
           email: { $regex: filter, $options: "i" }
+        },
+        {
+          phone: { $regex: filter, $options: "i" }
         }
       ]
     };
@@ -98,7 +102,9 @@ export async function createClient(req, res, next) {
       geographicSector,
       city,
       zipcode,
-      referral
+      referral,
+      lieux_de_naissance,
+      nationalite
     } = req.body;
 
     if (projectTypes.indexOf(serviceType) === -1) {
@@ -113,7 +119,9 @@ export async function createClient(req, res, next) {
       phone,
       city,
       zipcode,
-      referral
+      referral,
+      lieux_de_naissance,
+      nationalite
     };
 
     const client = await new Client(clientData).save();
@@ -125,6 +133,7 @@ export async function createClient(req, res, next) {
       }).save();
 
       await Client.updateOne({ _id: client._id }, { $addToSet: { projectTypes: serviceType } }).exec()
+
 
       return res.json({
         success: true,
@@ -159,6 +168,7 @@ export async function addProject(req, res, next) {
     }
 
     const project = await new Project({ clientId, type: projectType }).save();
+    console.log(project);
     await Client.updateOne({ _id: clientId }, { $addToSet: { projectTypes: projectType } }).exec()
 
     await ProjectEvent({
@@ -167,6 +177,7 @@ export async function addProject(req, res, next) {
     }).save();
 
     return res.json({ success: true, data: { projectId: project._id } });
+    console.log(res);
   } catch (e) {
     next(generateError(e.message));
   }
@@ -198,6 +209,7 @@ export async function editClient(req, res, next) {
     } = modifier;
 
     const {
+      spousenationalite,
       spousefirstname,
       spouseaddress,
       spouseemail,
@@ -205,18 +217,21 @@ export async function editClient(req, res, next) {
       spouseindustry,
       spouselastname,
       spousephone,
+      spousedate,
       spouseseniority,
       spousesituation
     } = req.body;
 
     if (spousefirstname) {
       modifier.spouse = {
+        nationalite:spousenationalite,
         firstname: spousefirstname,
         lastname: spouselastname,
         email: spouseemail,
         income: spouseincome,
         industry: spouseindustry,
         phone: spousephone,
+        date:spousedate,
         address: spouseaddress,
         seniority: spouseseniority,
         situation: spousesituation

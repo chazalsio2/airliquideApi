@@ -8,7 +8,8 @@ const allowedStatusValues = [
   "investor",
   "official",
   "retired",
-  "unemployed"
+  "unemployed",
+  ""
 ];
 
 const allowedSituationValues = [
@@ -45,6 +46,9 @@ const SpouseSchema = new mongoose.Schema({
   phone: {
     type: String
   },
+  nationalite:{
+    type: String
+  },
   situation: {
     type: String,
     enum: allowedStatusValues
@@ -57,6 +61,9 @@ const SpouseSchema = new mongoose.Schema({
   },
   seniority: {
     type: String
+  },
+  lieu: {
+    type:String
   }
 });
 
@@ -81,6 +88,12 @@ var schema = new mongoose.Schema(
     },
     lastname: {
       type: String
+    },
+    lieux_de_naissance:{
+      type: String
+    },
+    nationalite:{
+        type: String
     },
     email: {
       type: String
@@ -113,9 +126,12 @@ var schema = new mongoose.Schema(
     },
     referral: {
       type: String,
-      enum: ["other", "socialmedia", "wordofmouth", "website"]
+      enum: ["other", "socialmedia", "wordofmouth", "website","commerciale"]
     },
     referaldetails: {
+      type: String,
+    },
+    referalconseiller:{
       type: String,
     },
     displayName: {

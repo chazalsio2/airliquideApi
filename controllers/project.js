@@ -3,6 +3,7 @@ import { generateError, isAdmin, isAdminOrCommercial } from "../lib/utils";
 import User from "../models/User";
 import Project from "../models/Project";
 import Client from "../models/Client";
+import DossierNotaire from "../models/DossierNotaire";
 import Document from "../models/Document";
 import ProjectEvent from "../models/ProjectEvent";
 import _ from "underscore";
@@ -27,7 +28,7 @@ import {
   sendDeedAcceptedForSalesProject
 } from "../lib/email";
 import {
-  sendAgreementAcceptedWebhook, sendNewDocWebhook
+  sendAgreementAcceptedWebhook, sendNewDocWebhook ,sendNewStatusProject, sendNewTrelloCard
 } from '../services/webhook.service'
 import { uploadFile } from "../lib/aws";
 import { sendMessageToSlack } from "../lib/slack";
@@ -79,12 +80,15 @@ export async function getPublicProject(req, res, next) {
     }
 
     const client = await Client.findOne({ _id: project.clientId }, null).lean();
+    const dossiernotaire = await DossierNotaire.findOne({ _id: project.dossiernotaireId }, null).lean();
+
 
     if (!client) {
       return next(generateError("Client not found", 404));
     }
 
     project.client = client;
+    project.dossiernotaire= dossiernotaire;
     project.events = await ProjectEvent.find({ projectId }, null, {
       sort: { createdAt: -1 }
     }).lean();
@@ -108,7 +112,6 @@ export async function getPublicProject(req, res, next) {
 export async function getProject(req, res, next) {
   try {
     const { projectId } = req.params;
-
     const project = await Project.findById(projectId).lean();
 
     if (!project) {
@@ -116,10 +119,15 @@ export async function getProject(req, res, next) {
     }
 
     const client = await Client.findOne({ _id: project.clientId }, null).lean();
+    const dossiernotaire = await DossierNotaire.findOne({ _id: project.dossiernotaireId }, null).lean();
+
 
     if (!client) {
       return next(generateError("Client not found", 404));
     }
+    /*if (!dossiernotaire) {
+      return next(generateError("dossiernotaire not found", 404));
+    }*/
 
     const isOwner = String(req.user.clientId) === String(project.clientId);
 
@@ -130,6 +138,7 @@ export async function getProject(req, res, next) {
     }
 
     project.client = client;
+    project.dossiernotaire = dossiernotaire;
     project.events = await ProjectEvent.find({ projectId }, null, {
       sort: { createdAt: -1 }
     }).lean();
@@ -200,7 +209,6 @@ export async function refuseMandate(req, res, next) {
         $unset: { mandateDocId: "", mandateDoc: "" }
       }
     ).exec();
-
     new ProjectEvent({
       projectId,
       type: "mandate_refused",
@@ -231,39 +239,55 @@ export async function editSalesSheet(req, res, next) {
       landconstcd,
       propertyType,
       propertySize,
+      propertySizeDetails,
       livingArea,
       landArea,
       workNeeded,
       reasonForTheSale,
       delay,
+      terrai_y_n,
+      ref_cadastrale,
+      zone,
       readyToSign,
       workEstimate,
       priceEstimate,
-      fullAddress
+      fullAddress,
+      fullcode_postale,
+      fullville,
+      proprietaire
     } = req.body;
 
-    if (
+   /* if (
       !propertyType ||
       !propertySize ||
       // !reasonForTheSale ||
       !delay ||
       !readyToSign ||
       // !workEstimate ||
-      !fullAddress
+      !fullAddress||
+      !fullcode_postale||
+      !fullville
     ) {
       throw new Error("Missing fields");
     }
-
+*/
     const newSalesSheetEdited = {
       propertyType,
       propertySize,
+      propertySizeDetails,
       // livingArea,
       // landArea,
       reasonForTheSale,
       delay,
       readyToSign,
       workEstimate,
-      fullAddress
+      fullAddress,
+      fullcode_postale,
+      fullville,
+      proprietaire,
+      terrai_y_n,
+      ref_cadastrale,
+      zone
     };
 
     if (livingArea) {
@@ -319,6 +343,7 @@ export async function saveSalesSheet(req, res, next) {
       landconstcd,
       propertyType,
       propertySize,
+      propertySizeDetails,
       livingArea,
       landArea,
       workNeeded,
@@ -328,10 +353,16 @@ export async function saveSalesSheet(req, res, next) {
       nextAvailabilities,
       workEstimate,
       priceEstimate,
-      fullAddress
+      fullAddress,
+      fullcode_postale,
+      fullville,
+      proprietaire,
+      terrai_y_n,
+      ref_cadastrale,
+      zone
     } = req.body;
 
-    if (
+    /*if (
       !propertyType ||
       !propertySize ||
       // !livingArea ||
@@ -339,22 +370,31 @@ export async function saveSalesSheet(req, res, next) {
       !delay ||
       !readyToSign ||
       !nextAvailabilities ||
-      !fullAddress 
+      !fullAddress ||
+      !fullcode_postale||
+      !fullville
       
     ) {
       throw new Error("Missing fields");
     }
-
+*/
     const salesSheet = {
       propertyType,
       propertySize,
+      propertySizeDetails,
       // livingArea,
-      // landArea,
+      //landArea,
       workNeeded,
       delay,
       readyToSign,
       nextAvailabilities,
       fullAddress,
+      fullcode_postale,
+      fullville,
+      proprietaire,
+      terrai_y_n,
+      ref_cadastrale,
+      zone,
       landconstcd
     };
 
@@ -570,7 +610,6 @@ export async function refuseLoanOffer(req, res, next) {
         $unset: { loanOfferDocId: "", loanOfferDoc: "" }
       }
     ).exec();
-
     new ProjectEvent({
       projectId,
       type: "purchase_offer_refused",
@@ -607,7 +646,7 @@ export async function acceptLoanOffer(req, res, next) {
         $set: { status: "wait_sales_deed" }
       }
     ).exec();
-
+    sendNewStatusProject(project);
     new ProjectEvent({
       projectId,
       type: "loan_offer_accepted",
@@ -722,7 +761,7 @@ export async function acceptMandate(req, res, next) {
         }
       }
     ).exec();
-
+    sendNewStatusProject(project);
     new ProjectEvent({
       projectId,
       type: "mandate_accepted",
@@ -815,7 +854,7 @@ export async function acceptPurchaseOffer(req, res, next) {
         $set: { status: "wait_sales_agreement" }
       }
     ).exec();
-
+    sendNewStatusProject(project);
     new ProjectEvent({
       projectId,
       type: "purchase_offer_accepted",
@@ -873,7 +912,7 @@ export async function acceptAgreement(req, res, next) {
         }
       }
     ).exec();
-
+    sendNewStatusProject(project);
     new ProjectEvent({
       projectId,
       type: "sales_agreement_accepted",
@@ -925,7 +964,8 @@ export async function acceptDeed(req, res, next) {
         }
       }
     ).exec();
-
+    console.log(project);
+    sendNewStatusProject(project);
     new ProjectEvent({
       projectId,
       type: "sales_deed_accepted",
@@ -994,6 +1034,38 @@ export async function getProjects(req, res, next) {
       success: true,
       data: { projects: projectsEnriched, total: projectsCount, pageCount }
     });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+export async function getProjects2(req, res, next) {
+  try {
+    const { page = "", mandate = "", order = "desc" } = req.query;
+    const orderCreatedAt = order === "desc" ? -1 : 1;
+
+    const projects = await Project.find().lean();
+
+    const clientEnrichedPromises = projects.map(async (projects) => {
+      projects.client = await Client.findById(projects.clientId).lean();
+      return projects;
+    });
+
+    const projectsEnriched = await Promise.all(clientEnrichedPromises);
+
+    return res.json({
+      success: true,
+      data: projectsEnriched
+    });
+    /*try {
+      const folderSelector = isAdminOrCommercial(req.user)? {}
+      : { allowedRoles: { $in: req.user.roles } };
+      const project = await Project.find(folderSelector).lean();
+      const client = await Client.findById(project.clientId).lean();
+    return res.json({
+      success: true,
+      data: {project:project, client:client} 
+    });*/
   } catch (e) {
     next(generateError(e.message));
   }
@@ -1136,6 +1208,7 @@ export async function saveSearchSheet(req, res, next) {
         investmentType === "other" ? otherInvestmentType : investmentType,
       propertySize,
       propertyType,
+      propertySizeDetails,
       additionalInfos,
       propertySizeDetail,
       propertyArea,
@@ -1273,17 +1346,21 @@ export async function confirmSearchMandate(req, res, next) {
       return next(generateError("Client not found", 404));
     }
 
-    await Client.updateOne(
-      {
-        _id: project.clientId
-      },
-      {
-        $set: {
-          availabilities: timeslots,
-          allowSaveData
+    if(timeslots) {
+      await Client.updateOne(
+        {
+          _id: project.clientId
+        },
+        {
+          $set: {
+            availabilities: timeslots,
+            allowSaveData
+          }
         }
-      }
-    ).exec();
+      ).exec();
+    }
+
+    
 
     await Project.updateOne(
       { _id: projectId },
@@ -1356,16 +1433,21 @@ export async function savePersonalSituationForSalesMandate(req, res, next) {
       firstname,
       lastname,
       birthday,
+      lieux_de_naissance,
+      nationalite,
       address,
       zipcode,
       city,
       phone,
       email,
+      spouselieuxdenaissance,
       allowSaveData,
       spousefirstname,
       spouselastname,
       spouseaddress,
       spousephone,
+      spousedate,
+      spousenationalite,
       spouseemail,
       spousesituation,
       spouseincome,
@@ -1420,6 +1502,15 @@ export async function savePersonalSituationForSalesMandate(req, res, next) {
     if (birthday) {
       clientModifier.birthday = moment(birthday);
     }
+
+    if(lieux_de_naissance) {
+      clientModifier.lieux_de_naissance = lieux_de_naissance;
+    }
+
+    if(nationalite) {
+      clientModifier.nationalite = nationalite;
+    }
+
     if (address) {
       clientModifier.address = address;
     }
@@ -1441,15 +1532,18 @@ export async function savePersonalSituationForSalesMandate(req, res, next) {
     }
 
     clientModifier.spouse = {
+      nationalite:spousenationalite,
       firstname: spousefirstname,
       lastname: spouselastname,
       address: spouseaddress,
       email: spouseemail,
+      lieu: spouselieuxdenaissance,
       situation: spousesituation,
       income: spouseincome,
       industry: spouseindustry,
       seniority: spouseseniority,
-      phone: spousephone
+      phone: spousephone,
+      date: spousedate
     };
 
     const clientUpdate = await Client.updateOne(
@@ -1479,7 +1573,7 @@ export async function savePersonalSituationForSalesMandate(req, res, next) {
         }
       }
     ).exec();
-
+    sendNewTrelloCard(project);
     return res.json({ success: true });
   } catch (e) {
     next(generateError(e.message));
@@ -1522,9 +1616,13 @@ export async function savePersonalSituation(req, res, next) {
       spousesituation,
       spouseincome,
       spouseindustry,
+      spousenationalite,
       spouseseniority,
       spousephone,
-      birthday
+      spousedate,
+      birthday,
+      lieux_de_naissance,
+      nationalite
     } = req.body;
 
     const { projectId } = req.params;
@@ -1579,6 +1677,14 @@ export async function savePersonalSituation(req, res, next) {
       clientModifier.birthday = moment(birthday);
     }
 
+    if(lieux_de_naissance) {
+      clientModifier.lieux_de_naissance = lieux_de_naissance;
+    }
+
+    if(nationalite) {
+      clientModifier.nationalite = nationalite;
+    }
+    
     if (investalone === "couple") {
       clientModifier.spouse = {
         firstname: spousefirstname,
@@ -1589,7 +1695,9 @@ export async function savePersonalSituation(req, res, next) {
         income: spouseincome,
         industry: spouseindustry,
         seniority: spouseseniority,
-        phone: spousephone
+        phone: spousephone,
+        date:spousedate,
+        nationalite:spousenationalite,
       };
     }
 
@@ -1599,6 +1707,7 @@ export async function savePersonalSituation(req, res, next) {
         $set: clientModifier
       }
     ).exec();
+    sendNewTrelloCard(project);
 
     // const client = await Client.findById(project.clientId).lean();
 
@@ -1787,7 +1896,7 @@ export async function acceptProject(req, res, next) {
     const user = await User.findById(req.user._id).lean();
 
     sendMessageToSlack({
-      message: `Le projet du client ${client.displayName} a été accepté par ${user.displayName}`//validé projet
+      message: `Le projet du prospect ${client.displayName} a été accepté par ${user.displayName}`//validé projet
     });
 
     if (project.type === "search") {
@@ -1913,7 +2022,7 @@ export async function uploadLoanOfferForProject(req, res, next) {
       }
     ).exec();
     // const client = await Client.findById(project.clientId).lean();
-
+    sendNewStatusProject(project);
     sendMessageToSlack({
       message: `L'offre de prêt pour mandat de ${project.type === "search" ? "recherche" : "vente"
         } du client ${client.displayName} est en attente d'acceptation : ${process.env.APP_URL
@@ -2073,7 +2182,7 @@ export async function uploadPurchaseOfferForProject(req, res, next) {
         }
       }
     ).exec();
-
+    sendNewStatusProject(project);
     const client = await Client.findById(project.clientId).lean();
     const user = await User.findById(req.user._id).lean();
     sendMessageToSlack({
@@ -2157,7 +2266,7 @@ export async function uploadAgreementForProject(req, res, next) {
         }
       }
     ).exec();
-
+    sendNewStatusProject(project);
     await new ProjectEvent({
       projectId,
       type: "sales_agreement_added",
@@ -2240,7 +2349,7 @@ export async function uploadDeedForProject(req, res, next) {
         }
       }
     ).exec();
-
+    sendNewStatusProject(project);
     // const client = await Client.findById(project.clientId).lean();
     sendMessageToSlack({
       message: `L'acte authentique pour le mandat de ${project.type === "search" ? "recherche" : "vente"

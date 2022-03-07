@@ -36,17 +36,20 @@ import {
   deleteProject
 } from "./controllers/client";
 import { publicCreateClient } from "./controllers/public";
+import { createDossierNotaire,editDossierNotaire,editFinaleDossierNotaire } from "./controllers/dossierNotaire"
 import {
   getDocument,
   getFolder,
   getRootFolder,
   deleteDocument,
-  editDocument
+  editDocument,
+  editDocument2
 } from "./controllers/document";
 import {
   getProject,
   getPublicProject,
   getProjects,
+  getProjects2,
   getProjectsAssigned,
   getProjectsMissingValidation,
   saveSearchSheet,
@@ -84,6 +87,7 @@ import {
 import {
   createProperty,
   getProperties,
+  getPropertie,
   getProperty,
   editProperty,
   updatePropertyVisibility,
@@ -125,9 +129,9 @@ import {
 const checkAdmin = (req, res, next) => checkRoles("admin", req, res, next);
 const checkAdminOrCommercial = (req, res, next) =>
   checkRoles(["admin", "commercial_agent"], req, res, next);
-const checkAdminOrCommercialOrSearchClient = (req, res, next) =>
+const checkAdminOrCommercialOrSearchClientOrclientcoaching = (req, res, next) =>
   checkRoles(
-    ["admin", "commercial_agent", "client_search_mandate", "client_search_mandate_vip"],
+    ["admin", "commercial_agent", "client_search_mandate", "client_search_mandate_vip","client_coaching"],
     req,
     res,
     next
@@ -291,6 +295,30 @@ export default (app) => {
     editTraining,
     errorHandle
   );
+  app.post("/dossierNotaire/:projectId",
+  passport.authenticate("jwt", { session: false }),
+  checkAdminOrCommercial,
+  checkAccountDesactivated,
+  createDossierNotaire,
+  errorHandle
+
+  )
+
+  app.put("/dossierNotaire/:dossiernotaireId",
+  passport.authenticate("jwt", { session: false }),
+  checkAdminOrCommercial,
+  checkAccountDesactivated,
+  editDossierNotaire,
+  errorHandle
+  )
+  app.put("/dossierNotaireFinale/:dossiernotaireId",
+  passport.authenticate("jwt", { session: false }),
+  checkAdminOrCommercial,
+  checkAccountDesactivated,
+  editFinaleDossierNotaire,
+  errorHandle
+  )
+  
 
   // SuperAdmin
   app.post("/users/admin", checkSuperAdmin, createAdmin, errorHandle);
@@ -299,7 +327,7 @@ export default (app) => {
   app.post(
     "/contacts",
     passport.authenticate("jwt", { session: false }),
-    checkAdmin,
+    checkAdminOrCommercial,
     checkAccountDesactivated,
     createContact,
     errorHandle
@@ -308,7 +336,7 @@ export default (app) => {
   app.post(
     "/contact-categories",
     passport.authenticate("jwt", { session: false }),
-    checkAdmin,
+    checkAdminOrCommercial,
     checkAccountDesactivated,
     createContactCategory,
     errorHandle
@@ -344,7 +372,7 @@ export default (app) => {
   app.post(
     "/projects/:projectId/cancel-project",
     passport.authenticate("jwt", { session: false }),
-    checkAdmin,
+    checkAdminOrCommercial,
     checkAccountDesactivated,
     cancelProject,
     errorHandle
@@ -354,10 +382,15 @@ app.put(
     passport.authenticate("jwt", { session: false }),
     editDocument
 );
+app.put(
+  "/documents2/:documentId", 
+  passport.authenticate("jwt", { session: false }),
+  editDocument2
+);
   app.delete(
     "/documents/:documentId",
     passport.authenticate("jwt", { session: false }),
-    checkAdmin,
+    checkAdminOrCommercial,
     checkAccountDesactivated,
     deleteDocument,
     errorHandle
@@ -484,7 +517,7 @@ app.put(
   app.delete(
     `/properties/:propertyId/photos`,
     passport.authenticate("jwt", { session: false }),
-    checkAdmin,
+    checkAdminOrCommercial,
     checkAccountDesactivated,
     deletePhoto,
     errorHandle
@@ -601,7 +634,6 @@ app.put(
   app.post(
     `/folders/:folderId/documents`,
     passport.authenticate("jwt", { session: false }),
-    checkAdmin,
     checkAccountDesactivated,
     addDocumentInFolder,
     errorHandle
@@ -612,7 +644,7 @@ app.put(
   app.get(
     "/properties/:propertyId",
     passport.authenticate("jwt", { session: false }),
-    checkAdminOrCommercialOrSearchClient,
+    checkAdminOrCommercialOrSearchClientOrclientcoaching,
     checkAccountDesactivated,
     getProperty,
     errorHandle
@@ -621,9 +653,17 @@ app.put(
   app.get(
     "/properties",
     passport.authenticate("jwt", { session: false }),
-    checkAdminOrCommercialOrSearchClient,
+    checkAdminOrCommercialOrSearchClientOrclientcoaching,
     checkAccountDesactivated,
     getProperties,
+    errorHandle
+  );
+  app.get(
+    "/propertie",
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercialOrSearchClientOrclientcoaching,
+    checkAccountDesactivated,
+    getPropertie,
     errorHandle
   );
 
@@ -662,6 +702,14 @@ app.put(
     checkAdminOrCommercial,
     checkAccountDesactivated,
     getProjects,
+    errorHandle
+  );
+  app.get(
+    "/projects2",
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    checkAccountDesactivated,
+    getProjects2,
     errorHandle
   );
 
@@ -769,7 +817,7 @@ app.put(
   app.put(
     "/projects/:projectId/search-sheet",
     passport.authenticate("jwt", { session: false }),
-    checkAdmin,
+    checkAdminOrCommercial,
     checkAccountDesactivated,
     editSearchProject,
     errorHandle
@@ -778,7 +826,7 @@ app.put(
   app.put(
     "/projects/:projectId/sales-sheet",
     passport.authenticate("jwt", { session: false }),
-    checkAdmin,
+    checkAdminOrCommercial,
     checkAccountDesactivated,
     editSalesSheet,
     errorHandle

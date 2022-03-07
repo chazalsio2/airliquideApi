@@ -8,6 +8,8 @@ import { uploadPhotos } from "../lib/cloudinary";
 import Property, { getPropertyType } from "../models/Property";
 import { sendMessageToSlack } from "../lib/slack";
 import { checkMatchingForProperty } from "../lib/matching";
+import {sendNewDProprieteWebhook} from '../services/webhook.service';
+
 
 const LIMIT_BY_PAGE = 12;
 
@@ -34,6 +36,8 @@ export async function editProperty(req, res, next) {
     const {
       description,
       salesPrice,
+      code_postale,
+      projectId,
       city,
       address,
       landArea,
@@ -97,8 +101,10 @@ export async function editProperty(req, res, next) {
       description,
       type,
       salesPrice,
+      code_postale,
+      projectId,
       city,
-      // landArea,
+      //landArea,
       // livingArea,
       propertyStatus
     };
@@ -128,10 +134,16 @@ export async function editProperty(req, res, next) {
       propertyData.propertyTax = Number(propertyTax);
     }
     if (accounting) {
-      propertyData.accounting = Number(accounting);
+      propertyData.accounting = accounting;
+    }
+    if (!accounting) {
+      propertyData.accounting = accounting;
     }
     if (cga) {
-      propertyData.cga = Number(cga);
+      propertyData.cga = cga;
+    }
+    if (!cga) {
+      propertyData.cga = cga;
     }
     if (divers) {
       propertyData.divers = Number(divers);
@@ -274,8 +286,7 @@ export async function editProperty(req, res, next) {
       propertyData.numberOfRooms = Number(numberOfRooms);
     }
 
-    propertyData.name = `${getPropertyType(propertyData.type) || ""} ${propertyData.livingArea
-      } m² ${propertyData.city || ""}`;
+    propertyData.name = `${getPropertyType(propertyData.type) || ""} ${propertyData.livingArea ? propertyData.livingArea+" m²" : ""}  ${propertyData.city || ""} ${propertyData.landArea ? propertyData.landArea+ " m²" : ""}`;
 
     const propertyEdited = await Property.updateOne(
       { _id: propertyId },
@@ -303,7 +314,7 @@ export async function updatePropertyVisibility(req, res, next) {
       { $set: { public: !!req.body.public } }
     ).exec();
 
-    if (req.body.public && property.propertyStatus === "forsale") {
+    if (req.body.public && property.propertyStatus === "forsale")  {
       try {
         checkMatchingForProperty(property._id);
       } catch (e) {
@@ -331,8 +342,7 @@ export async function editPropertyStatus(req, res, next) {
   return res.json({ success: true });
 }
 
-export async function deletePhoto(e,req, res, next) {
-  console.log(e);
+export async function deletePhoto(req, res, next) {
   const { photo } = req.body;
   const { propertyId } = req.params;
 
@@ -347,14 +357,15 @@ export async function deletePhoto(e,req, res, next) {
     next(generateError(e.message));
   }
 }
-
 export async function createProperty(req, res, next) {
   try {
     const {
       description,
       propertyStatus,
       salesPrice,
+      code_postale,
       landArea,
+      projectId,
       livingArea,
       varangueArea,
       photos,
@@ -421,6 +432,8 @@ export async function createProperty(req, res, next) {
       description,
       type,
       salesPrice,
+      code_postale,
+      projectId,
       city,
       // landArea,
       // livingArea,
@@ -450,10 +463,10 @@ export async function createProperty(req, res, next) {
       propertyData.propertyTax = Number(propertyTax);
     }
     if (accounting) {
-      propertyData.accounting = Number(accounting);
+      propertyData.accounting = accounting;
     }
     if (cga) {
-      propertyData.cga = Number(cga);
+      propertyData.cga = cga;
     }
     if (divers) {
       propertyData.divers = Number(divers);
@@ -587,13 +600,15 @@ export async function createProperty(req, res, next) {
 
     propertyData.commercialEmail = req.user.email;
     propertyData.commercialName = req.user.displayName;
-    propertyData.commercialPhoneNumber = req.user.phoneNumber;
+    propertyData.commercialPhoneNumber = req.user.phone;
 
     const property = await new Property(propertyData).save();
 
     const slackMessage = `Un nouveau bien a été ajouté (${property.name}) : ${process.env.APP_URL}/biens-immobiliers/${property._id}`;
 
     sendMessageToSlack({ message: slackMessage, copyToCommercial: true });
+
+    sendNewDProprieteWebhook(property._id);
 
     return res.json({ success: true, data: property });
   } catch (e) {
@@ -612,7 +627,8 @@ export async function getProperties(req, res, next) {
   }
 
   if (type === "rental") {
-    selector.propertyStatus = "rental";
+    selector.propertyStatus = "rental"
+    ;
   }
 
   if (
@@ -642,6 +658,19 @@ export async function getProperties(req, res, next) {
   } catch (e) {
     next(generateError(e.message));
   }
+}
+export async function getPropertie(req, res, next){
+  try {
+    const folderSelector = isAdminOrCommercial(req.user)? {}
+    : { allowedRoles: { $in: req.user.roles } };
+    const properties = await Property.find(folderSelector).lean();
+  return res.json({
+    success: true,
+    data: { properties }
+  });
+} catch (e) {
+  next(generateError(e.message));
+}
 }
 
 export async function getProperty(req, res, next) {

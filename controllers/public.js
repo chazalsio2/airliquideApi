@@ -5,6 +5,8 @@ import Client from "../models/Client";
 import Project, { projectTypes } from "../models/Project";
 import { sendNewClientEmail } from "../lib/email";
 import { sendMessageToSlack } from "../lib/slack";
+import {sendNewClientWebhook, sendNewTrelloCard} from "../services/webhook.service";
+
 
 export async function publicCreateClient(req, res, next) {
   try {
@@ -18,7 +20,8 @@ export async function publicCreateClient(req, res, next) {
       referral,
       city,
       zipcode,
-      referaldetails
+      referalconseiller,
+      referaldetails,lieux_de_naissance,nationalite
     } = req.body;
 
     if (projectTypes.indexOf(serviceType) === -1) {
@@ -34,15 +37,18 @@ export async function publicCreateClient(req, res, next) {
       referral,
       city,
       zipcode,
-      referaldetails
+      referaldetails,
+      referalconseiller,
+      lieux_de_naissance,nationalite
     };
 
       const client = await new Client(newClientData).save();
 
+
       sendNewClientEmail(client);
 
       sendMessageToSlack({
-        message: `Le client ${client.firstname} ${client.lastname} a été ajouté : ${process.env.APP_URL}/clients/${client._id}`,
+        message: `Le prospect ${client.firstname} ${client.lastname} a été ajouté : ${process.env.APP_URL}/clients/${client._id}`,
       });
 
       if (["search"].indexOf(serviceType) !== -1) {
@@ -50,6 +56,9 @@ export async function publicCreateClient(req, res, next) {
           clientId: client,
           type: serviceType,
         }).save();
+        await sendNewClientWebhook(project);
+        //sendNewTrelloCard(project);
+
 
         return res.json({
           success: true,
@@ -65,7 +74,11 @@ export async function publicCreateClient(req, res, next) {
         const project = await Project({
           clientId: client,
           type: serviceType,
-        }).save();
+        }).save(); 
+        await sendNewClientWebhook(project);
+        //sendNewTrelloCard(project);
+
+
 
         return res.json({
           success: true,
