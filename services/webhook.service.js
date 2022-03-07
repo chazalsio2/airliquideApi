@@ -490,30 +490,7 @@ export async function sendNewDProprieteWebhook(propertyId) {
 }
 }
 //coucou
-export async function sendNewStatusProject(project) {
-  const projet = await Project.findById(project._id)
-  const client = await Client.findById(project.clientId)
-  const conseiller = await User.findById(project.commercialId)
 
-  axios({
-    method:'GET',
-    url: process.env.ZAPPIER_WEBHOOK_CLE_DE_VIE,
-    data:{
-      num_id:projet._id,
-      nom_clients:client.displayName,
-      e_mail:client.email,
-      statuts_affaires: projet.status,
-      date_dernier_statut: moment(projet.updatedAt).format('DD/MM/YYYY'),
-      type:projet.type,
-      montant_commission:projet.commissionAmount ? (projet.commissionAmount/100):(""),
-      commercial_poucentage:projet.commercialPourcentage ? (projet.commercialPourcentage/100):"",
-      commercial_name:conseiller ? conseiller.displayName:"",
-      lien_aws: `${projet.status === "wait_loan_offer_validation" &&( projet.loanOfferDoc.url)||
-      projet.status === "wait_purchase_offer_validation" &&( projet.purchaseOfferDoc.url)||
-      projet.status === "wait_sales_agreement_validation" &&( projet.salesAgreementDoc.url)||
-      projet.status === "wait_sales_deed_validation" &&( projet.salesDeedDoc.url)||""}`,
-  }})
-}
 export async function sendNewdocuments(document){
   const documents = await Document.findById(document._id)
   axios({
@@ -604,4 +581,28 @@ export async function sendNewTrelloCard(projectId) {
       })
     }
   }
+}
+export async function sendNewStatusProject(project) {
+  const projet = await Project.findById(project._id)
+  const client = await Client.findById(project.clientId)
+  const conseiller = await User.findById(project.commercialId)
+
+  axios({
+    method:'GET',
+    url: process.env.ZAPPIER_WEBHOOK_CLE_DE_VIE,
+    data:{
+      num_id:projet._id,
+      nom_clients:client.displayName,
+      e_mail:client.email,
+      statuts_affaires: projet.status,
+      date_dernier_statut: moment(projet.updatedAt).format('DD/MM/YYYY'),
+      type:projet.type,
+      montant_commission:projet.commissionAmount ? (projet.commissionAmount/100):(""),
+      commercial_poucentage:projet.commercialPourcentage ? (projet.commercialPourcentage/100):"",
+      commercial_name:conseiller ? conseiller.displayName:"",
+      lien_aws: `${projet.status === "wait_loan_offer_validation" &&( projet.loanOfferDoc.url)||
+      projet.status === "wait_purchase_offer_validation" &&( projet.purchaseOfferDoc.url)||
+      projet.status === "wait_sales_agreement_validation" &&( projet.salesAgreementDoc.url)||
+      projet.status === "wait_sales_deed_validation" &&( projet.salesDeedDoc.url)||""}`,
+  }})
 }
