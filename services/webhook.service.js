@@ -513,7 +513,6 @@ export async function sendNewStatusProject(project) {
       projet.status === "wait_sales_agreement_validation" &&( projet.salesAgreementDoc.url)||
       projet.status === "wait_sales_deed_validation" &&( projet.salesDeedDoc.url)||""}`,
   }})
-  console.log("c'est bon");
 }
 export async function sendNewdocuments(document){
   const documents = await Document.findById(document._id)
