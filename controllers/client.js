@@ -238,7 +238,7 @@ export async function editClient(req, res, next) {
       };
     }
 
-    if (email || createdAt || updatedAt || projects || referral) {
+    if (createdAt || updatedAt || projects || referral) {
       return next(generateError("Cannot update some fields", 403));
     }
 
