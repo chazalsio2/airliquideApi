@@ -34,7 +34,7 @@
     "express": "^4.17.1",
     "express-xml-bodyparser": "^0.3.0",
     "jsonwebtoken": "^8.5.1",
-    "mgdb-migrator": "^3.1.1",
+    "mgdb-migrator": "^4.0.1",
     "moment": "^2.27.0",
     "mongoose": "^5.12.5",
     "node-cron": "^2.0.3",
@@ -44,6 +44,5 @@
     "qs": "^6.9.4",
     "underscore": "^1.10.2",
     "uuid": "^8.2.0"
-  },
-  "devDependencies": {}
+  }
 }

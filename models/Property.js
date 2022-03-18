@@ -136,6 +136,12 @@ const schema = new mongoose.Schema(
       type: Number,
       required: false
     },
+    Honoraires_V_R:{
+      type: String,
+    },
+    charges_properties:{
+      type: String,
+    },
     landArea: {
       type: Number,
       required: false
