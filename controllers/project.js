@@ -1883,6 +1883,8 @@ export async function acceptProject(req, res, next) {
       { $set: { status: "wait_mandate" } }
     ).exec();
 
+    sendNewStatusProject(project);
+
     await new ProjectEvent({
       projectId,
       type: "project_accepted",
@@ -2411,6 +2413,7 @@ export async function assignCommercial(req, res, next) {
     ).exec();
 
     sendAssignProjectNotification(commercial, project);
+    //sendNewStatusProject(project,commercial);
 
     return res.json({ success: true });
   } catch (e) {

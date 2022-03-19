@@ -582,11 +582,16 @@ export async function sendNewTrelloCard(projectId) {
     }
   }
 }
-export async function sendNewStatusProject(project) {
+
+export async function sendNewAffecteCommercial(project){
+
+}
+
+export async function sendNewStatusProject(project,commercial) {
   const projet = await Project.findById(project._id)
   const client = await Client.findById(project.clientId)
   const conseiller = await User.findById(project.commercialId)
-
+  console.log(commercial);
   axios({
     method:'GET',
     url: process.env.ZAPPIER_WEBHOOK_CLE_DE_VIE,
@@ -599,7 +604,7 @@ export async function sendNewStatusProject(project) {
       type:projet.type,
       montant_commission:projet.commissionAmount ? (projet.commissionAmount/100):(""),
       commercial_poucentage:projet.commercialPourcentage ? (projet.commercialPourcentage/100):"",
-      commercial_name:conseiller ? conseiller.displayName:"",
+      commercial_name:conseiller ? conseiller.displayName:"",//commercial ? commercial.displayName:"",
       lien_aws: `${projet.status === "wait_loan_offer_validation" &&( projet.loanOfferDoc.url)||
       projet.status === "wait_purchase_offer_validation" &&( projet.purchaseOfferDoc.url)||
       projet.status === "wait_sales_agreement_validation" &&( projet.salesAgreementDoc.url)||
