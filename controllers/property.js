@@ -6,6 +6,8 @@ import {
 } from "../lib/utils";
 import { uploadPhotos } from "../lib/cloudinary";
 import Property, { getPropertyType } from "../models/Property";
+import PropertyCont from "../models/PropertyCont";
+
 import { sendMessageToSlack } from "../lib/slack";
 import { checkMatchingForProperty } from "../lib/matching";
 import {sendNewDProprieteWebhook} from '../services/webhook.service';
@@ -369,6 +371,9 @@ export async function createProperty(req, res, next) {
       salesPrice,
       code_postale,
       landArea,
+      commercialName,
+      commercialPhoneNumber,
+      commercialEmail,
       projectId,
       livingArea,
       varangueArea,
@@ -419,6 +424,7 @@ export async function createProperty(req, res, next) {
       equipment,
       agencyFees
     } = req.body;
+    console.log(projectId);
 
     if (
       !description ||
@@ -435,7 +441,17 @@ export async function createProperty(req, res, next) {
     const results = await uploadPhotos(photos);
 
     const propertyData = {
-      description,
+      description:`
+        ${description}
+
+
+        Prix de vente: ${salesPrice}€ FAI ${charges_properties ? charges_properties ==="Acquéreur" ?"(dont honoraires Vision-R est de : "+Honoraires_V_R+"€)" :"":""}
+        Honoraires charges ${charges_properties}
+        
+
+        Votre contact Vision-R Immobilier :
+        ${commercialName}:${commercialPhoneNumber}
+        ${commercialEmail}`,
       type,
       Honoraires_V_R,
       charges_properties,
@@ -448,7 +464,6 @@ export async function createProperty(req, res, next) {
       propertyStatus,
       photos: results.map((r) => r.url)
     };
-
     if (landArea) {
       propertyData.landArea = landArea;
     }
@@ -611,6 +626,10 @@ export async function createProperty(req, res, next) {
     propertyData.commercialPhoneNumber = req.user.phone;
 
     const property = await new Property(propertyData).save();
+     await new PropertyCont(
+       {name:property.name}
+     ).save();
+
 
     const slackMessage = `Un nouveau bien a été ajouté (${property.name}) : ${process.env.APP_URL}/biens-immobiliers/${property._id}`;
 
