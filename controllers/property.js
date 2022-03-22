@@ -422,6 +422,7 @@ export async function createProperty(req, res, next) {
       equipment,
       agencyFees
     } = req.body;
+    console.log(projectId);
 
     if (
       !description ||
@@ -461,7 +462,6 @@ export async function createProperty(req, res, next) {
       propertyStatus,
       photos: results.map((r) => r.url)
     };
-
     if (landArea) {
       propertyData.landArea = landArea;
     }
