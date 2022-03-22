@@ -6,6 +6,8 @@ import {
 } from "../lib/utils";
 import { uploadPhotos } from "../lib/cloudinary";
 import Property, { getPropertyType } from "../models/Property";
+import PropertyCont from "../models/PropertyCont";
+
 import { sendMessageToSlack } from "../lib/slack";
 import { checkMatchingForProperty } from "../lib/matching";
 import {sendNewDProprieteWebhook} from '../services/webhook.service';
@@ -422,6 +424,7 @@ export async function createProperty(req, res, next) {
       equipment,
       agencyFees
     } = req.body;
+    console.log(projectId);
 
     if (
       !description ||
@@ -461,7 +464,6 @@ export async function createProperty(req, res, next) {
       propertyStatus,
       photos: results.map((r) => r.url)
     };
-
     if (landArea) {
       propertyData.landArea = landArea;
     }
@@ -624,6 +626,10 @@ export async function createProperty(req, res, next) {
     propertyData.commercialPhoneNumber = req.user.phone;
 
     const property = await new Property(propertyData).save();
+     await new PropertyCont(
+       {name:property.name}
+     ).save();
+
 
     const slackMessage = `Un nouveau bien a été ajouté (${property.name}) : ${process.env.APP_URL}/biens-immobiliers/${property._id}`;
 
