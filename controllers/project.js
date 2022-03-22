@@ -713,16 +713,17 @@ export async function sendCompletedProjectEmail(req, res, next) {
         projectId,
         authorUserId: req.user._id
       }).save();
-      sendNewStatusProject(project,commercial,event);
+      sendNewStatusProject(project,commercial,event._id);
     }
 
     if (emailNumber === 6) {
       sendProductionConfirmation(client, commercial);
-      await new ProjectEvent({
+      const event = await new ProjectEvent({
         type: "project_completed_email_6",
         projectId,
         authorUserId: req.user._id
       }).save();
+      sendNewStatusProject(project,commercial,event._id);
     }
 
     return res.json({ success: true });

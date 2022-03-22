@@ -603,12 +603,14 @@ export async function sendNewAffecteCommercial(project){
   }})
 }
 
-export async function sendNewStatusProject(project,commercial,event) {
+export async function sendNewStatusProject(project,commercial,evenement) {
   const projet = await Project.findById(project._id)
   const client = await Client.findById(project.clientId)
   const conseiller = await User.findById(project.commercialId)
-  const event = await ProjectEvent.findById(event._id);
-  console.log(event);
+  const event = await ProjectEvent.findById(evenement);
+  
+  
+    //console.log(event);
   /*console.log(project.event);
   console.log(project.event);*/
   axios({
@@ -621,7 +623,7 @@ export async function sendNewStatusProject(project,commercial,event) {
       statuts_affaires: projet.status,
       date_dernier_statut: moment(projet.updatedAt).format('DD/MM/YYYY'),
       type:projet.type,
-      typeEvent: event.type,
+      typeEvent: `${event ? event.type ? event.type:"":""}`,
       montant_commission:projet.commissionAmount ? (projet.commissionAmount/100):(""),
       commercial_poucentage:projet.commercialPourcentage ? (projet.commercialPourcentage/100):"",
       commercial_name:conseiller ? conseiller.displayName:"",//commercial ? commercial.displayName:"",
