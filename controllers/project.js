@@ -28,7 +28,7 @@ import {
   sendDeedAcceptedForSalesProject
 } from "../lib/email";
 import {
-  sendAgreementAcceptedWebhook, sendNewDocWebhook ,sendNewStatusProject, sendNewTrelloCard
+  sendAgreementAcceptedWebhook, sendNewDocWebhook ,sendNewStatusProject, sendNewTrelloCard, sendNewAffecteCommercial
 } from '../services/webhook.service'
 import { uploadFile } from "../lib/aws";
 import { sendMessageToSlack } from "../lib/slack";
@@ -708,20 +708,22 @@ export async function sendCompletedProjectEmail(req, res, next) {
 
     if (emailNumber === 5) {
       sendAcceptSalesDeedConfirmation(client, commercial);
-      await new ProjectEvent({
+      const event =  await new ProjectEvent({
         type: "project_completed_email_5",
         projectId,
         authorUserId: req.user._id
       }).save();
+      sendNewStatusProject(project,commercial,event._id);
     }
 
     if (emailNumber === 6) {
       sendProductionConfirmation(client, commercial);
-      await new ProjectEvent({
+      const event = await new ProjectEvent({
         type: "project_completed_email_6",
         projectId,
         authorUserId: req.user._id
       }).save();
+      sendNewStatusProject(project,commercial,event._id);
     }
 
     return res.json({ success: true });
@@ -2413,7 +2415,7 @@ export async function assignCommercial(req, res, next) {
     ).exec();
 
     sendAssignProjectNotification(commercial, project);
-    //sendNewStatusProject(project,commercial);
+    sendNewAffecteCommercial(project);
 
     return res.json({ success: true });
   } catch (e) {
