@@ -584,7 +584,8 @@ export async function sendNewTrelloCard(projectId) {
   }
 }
 
-export async function sendNewAffecteCommercial(project){
+export async function sendNewAffecteCommercial(project,commercial){
+  console.log(commercial);
   const projet = await Project.findById(project._id)
   const client = await Client.findById(project.clientId)
   const conseiller = await User.findById(project.commercialId)
@@ -598,8 +599,8 @@ export async function sendNewAffecteCommercial(project){
       e_mail:client.email,
       statuts_affaires: projet.status,
       type:projet.type,
-      commercial_name:conseiller ? conseiller.displayName:"",
-      commercial_email:conseiller ? conseiller.email:""
+      commercial_name:commercial ? commercial.displayName:"",
+      commercial_email:commercial ? commercial.email:""
   }})
 }
 
