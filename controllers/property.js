@@ -441,17 +441,17 @@ export async function createProperty(req, res, next) {
     const results = await uploadPhotos(photos);
 
     const propertyData = {
-      description/*:`
+      description:`
         ${description}
 
 
         Prix de vente: ${salesPrice}€ FAI ${charges_properties ? charges_properties ==="Acquéreur" ?"(dont honoraires Vision-R est de : "+Honoraires_V_R+"€)" :"":""}
         Honoraires charges ${charges_properties}
         
-
+        
         Votre contact Vision-R Immobilier :
         ${commercialName}:${commercialPhoneNumber}
-        ${commercialEmail}`*/,
+        ${commercialEmail}`,
       type,
       Honoraires_V_R,
       charges_properties,
