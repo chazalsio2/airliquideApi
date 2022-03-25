@@ -5,6 +5,7 @@ import { getClient } from './client.service'
 import { getUser } from './user.service'
 import { getDocument } from './document.service'
 import { Client } from '../models'
+import { ProjectEvent } from '../models'
 import {DossierNotaire} from '../models'
 import {Property,Project,Document,User} from '../models'
 
@@ -583,15 +584,36 @@ export async function sendNewTrelloCard(projectId) {
   }
 }
 
-export async function sendNewAffecteCommercial(project){
-
-}
-
-export async function sendNewStatusProject(project,commercial) {
+export async function sendNewAffecteCommercial(project,commercial){
+  console.log(commercial);
   const projet = await Project.findById(project._id)
   const client = await Client.findById(project.clientId)
   const conseiller = await User.findById(project.commercialId)
-  console.log(commercial);
+  //console.log(commercial);
+  axios({
+    method:'GET',
+    url: process.env.INTEGROMAT_WEBHOOK_ASSIGNMENT_TRELLO_CARD,
+    data:{
+      num_id:projet._id,
+      nom_clients:client.displayName,
+      e_mail:client.email,
+      statuts_affaires: projet.status,
+      type:projet.type,
+      commercial_name:commercial ? commercial.displayName:"",
+      commercial_email:commercial ? commercial.email:""
+  }})
+}
+
+export async function sendNewStatusProject(project,commercial,evenement) {
+  const projet = await Project.findById(project._id)
+  const client = await Client.findById(project.clientId)
+  const conseiller = await User.findById(project.commercialId)
+  const event = await ProjectEvent.findById(evenement);
+  
+  
+    //console.log(event);
+  /*console.log(project.event);
+  console.log(project.event);*/
   axios({
     method:'GET',
     url: process.env.ZAPPIER_WEBHOOK_CLE_DE_VIE,
@@ -602,6 +624,7 @@ export async function sendNewStatusProject(project,commercial) {
       statuts_affaires: projet.status,
       date_dernier_statut: moment(projet.updatedAt).format('DD/MM/YYYY'),
       type:projet.type,
+      typeEvent: `${event ? event.type ? event.type:"":""}`,
       montant_commission:projet.commissionAmount ? (projet.commissionAmount/100):(""),
       commercial_poucentage:projet.commercialPourcentage ? (projet.commercialPourcentage/100):"",
       commercial_name:conseiller ? conseiller.displayName:"",//commercial ? commercial.displayName:"",
