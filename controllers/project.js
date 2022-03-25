@@ -2415,7 +2415,7 @@ export async function assignCommercial(req, res, next) {
     ).exec();
 
     sendAssignProjectNotification(commercial, project);
-    sendNewAffecteCommercial(project);
+    sendNewAffecteCommercial(project,commercial);
 
     return res.json({ success: true });
   } catch (e) {
