@@ -1,7 +1,7 @@
 import passport from "passport";
 import xmlparser from "express-xml-bodyparser";
 import cors from "cors";
-
+import {demandSignature} from "./controllers/urlWebhook"
 import {
   createAdmin,
   login,
@@ -125,6 +125,8 @@ import {
   removeContact,
   editContact
 } from "./controllers/contact";
+
+import {sendNewStatusProject} from "./services/webhook.service";
 
 const checkAdmin = (req, res, next) => checkRoles("admin", req, res, next);
 const checkAdminOrCommercial = (req, res, next) =>
@@ -303,6 +305,16 @@ export default (app) => {
   errorHandle
 
   )
+
+  app.post(
+    "/webhooks/:webhookId",
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    checkAccountDesactivated,
+    demandSignature,
+    errorHandle
+  );
+
 
   app.put("/dossierNotaire/:dossiernotaireId",
   passport.authenticate("jwt", { session: false }),
