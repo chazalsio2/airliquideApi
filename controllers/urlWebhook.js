@@ -11,11 +11,14 @@ export async function demandSignature(req, res, next) {
     const { webhookId } = req.params;
 
     const project = await Project.findById(webhookId).lean();
+    const demandeSignatureOA = "demande_Signature_Offre_dAchat";
+    const commercial = null;
+    const evenement = null;
     if (!project) {
         return next(generateError("Project not found", 404));
       }
 
-    sendNewStatusProject(project);
+    sendNewStatusProject(project, commercial, evenement, demandeSignatureOA);
 }
 catch (e) {
   next(generateError(e.message));

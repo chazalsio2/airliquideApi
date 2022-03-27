@@ -2136,6 +2136,7 @@ export async function uploadMandateForProject(req, res, next) {
         }
       }
     ).exec();
+    await sendNewStatusProject(project);
 
     const client = await Client.findById(project.clientId).lean();
     sendMessageToSlack({
