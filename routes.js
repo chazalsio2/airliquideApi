@@ -126,8 +126,6 @@ import {
   editContact
 } from "./controllers/contact";
 
-import {sendNewStatusProject} from "./services/webhook.service";
-
 const checkAdmin = (req, res, next) => checkRoles("admin", req, res, next);
 const checkAdminOrCommercial = (req, res, next) =>
   checkRoles(["admin", "commercial_agent"], req, res, next);

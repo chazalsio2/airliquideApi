@@ -576,8 +576,8 @@ export async function sendNewTrelloCard(projectId) {
           typeProject: project.type,
           cityProject: project.searchSheet.fullville,
           priceProject: project.searchSheet.budget,
-          propertyType: project.salesSheet.propertyType,
-          propertySize: project.salesSheet.propertySize,
+          propertyType: project.searchSheet.propertyType,
+          propertySize: project.searchSheet.propertySize,
         }
       })
     }
@@ -604,16 +604,12 @@ export async function sendNewAffecteCommercial(project,commercial){
   }})
 }
 
-export async function sendNewStatusProject(project,commercial,evenement) {
+  export async function sendNewStatusProject(project,commercial,evenement, demandeSignatureOA) {
   const projet = await Project.findById(project._id)
   const client = await Client.findById(project.clientId)
   const conseiller = await User.findById(project.commercialId)
-  const event = await ProjectEvent.findById(evenement);
+  const event = await ProjectEvent.findById(evenement);//evenement;
   
-  
-    //console.log(event);
-  /*console.log(project.event);
-  console.log(project.event);*/
   axios({
     method:'GET',
     url: process.env.ZAPPIER_WEBHOOK_CLE_DE_VIE,
@@ -625,12 +621,13 @@ export async function sendNewStatusProject(project,commercial,evenement) {
       date_dernier_statut: moment(projet.updatedAt).format('DD/MM/YYYY'),
       type:projet.type,
       typeEvent: `${event ? event.type ? event.type:"":""}`,
+      typeEvent1: `${demandeSignatureOA ? demandeSignatureOA :""}`,
       montant_commission:projet.commissionAmount ? (projet.commissionAmount/100):(""),
       commercial_poucentage:projet.commercialPourcentage ? (projet.commercialPourcentage/100):"",
       commercial_name:conseiller ? conseiller.displayName:"",//commercial ? commercial.displayName:"",
-      lien_aws: `${projet.status === "wait_loan_offer_validation" &&( projet.loanOfferDoc.url)||
-      projet.status === "wait_purchase_offer_validation" &&( projet.purchaseOfferDoc.url)||
-      projet.status === "wait_sales_agreement_validation" &&( projet.salesAgreementDoc.url)||
-      projet.status === "wait_sales_deed_validation" &&( projet.salesDeedDoc.url)||""}`,
+      lien_aws: `${projet.status === "wait_sales_deed" ?( projet.loanOfferDoc.url):
+      projet.status === "wait_sales_agreement" ?( projet.purchaseOfferDoc.url):
+      projet.status === "wait_loan_offer" ?( projet.salesAgreementDoc.url):
+      projet.status === "completed" ?( projet.salesDeedDoc.url):""}`,
   }})
 }
