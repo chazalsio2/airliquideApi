@@ -1190,7 +1190,7 @@ export async function saveSearchSheet(req, res, next) {
     const { projectId } = req.params;
     const project = await Project.findById(projectId).lean();
 
-    if (
+    /*if (
       !propertyType ||
       !investmentType ||
       !propertyArea ||
@@ -1199,7 +1199,7 @@ export async function saveSearchSheet(req, res, next) {
       !budget
     ) {
       return next(generateError("Invalid arguments", 401));
-    }
+    }*/
 
     if (!project) {
       return next(generateError("Project not found", 404));
@@ -1621,7 +1621,8 @@ export async function savePersonalSituation(req, res, next) {
       spousedate,
       birthday,
       lieux_de_naissance,
-      nationalite
+      nationalite,
+      readyToSign, allowSaveData, timeslots
     } = req.body;
 
     const { projectId } = req.params;
@@ -1706,6 +1707,37 @@ export async function savePersonalSituation(req, res, next) {
         $set: clientModifier
       }
     ).exec();
+    if(timeslots) {
+      await Client.updateOne(
+        {
+          _id: project.clientId
+        },
+        {
+          $set: {
+            availabilities: timeslots,
+            allowSaveData
+          }
+        }
+      ).exec();
+    }
+    await Project.updateOne(
+      { _id: projectId },
+      {
+        $set: {
+          readyToSign: readyToSign === "yes",
+          status: "wait_project_validation"
+        }
+      }
+    ).exec();
+
+    sendProjectWaitingValidationEmail(project);
+
+    await new ProjectEvent({
+      projectId: project._id,
+      type: "form_completion",
+      authorUserId: project.clientId
+    }).save();
+
     sendNewTrelloCard(project);
 
     // const client = await Client.findById(project.clientId).lean();
@@ -2104,6 +2136,7 @@ export async function uploadMandateForProject(req, res, next) {
         }
       }
     ).exec();
+    await sendNewStatusProject(project);
 
     const client = await Client.findById(project.clientId).lean();
     sendMessageToSlack({
