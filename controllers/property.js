@@ -456,7 +456,7 @@ export async function createProperty(req, res, next) {
       Honoraires_V_R,
       charges_properties,
       salesPrice,
-      code_postale,
+      code_postale:`${city.slice(-6,-1)}`,
       projectId,
       city,
       // landArea,
