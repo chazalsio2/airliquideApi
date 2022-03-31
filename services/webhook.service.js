@@ -43,7 +43,10 @@ export async function sendNewDocWebhook(documentId) {
       clientName: client.firstname, 
       filename: document.name,
       email: client.email,
-      location: document.url,
+      location:`${project.status === "wait_sales_deed" ?( project.loanOfferDoc.url):
+      project.status === "wait_sales_agreement" ?( project.purchaseOfferDoc.url):
+      project.status === "wait_loan_offer" ?( project.salesAgreementDoc.url):
+      project.status === "completed" ?( project.salesDeedDoc.url):""}`,
       typeProject: project.type,
       StatusProject: project.status,
       projectId: document.projectId || null

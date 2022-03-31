@@ -116,6 +116,9 @@ const SearchSheet = new mongoose.Schema({
     type: String,
     enum: ["lessthan30", "lessthan90", "morethan90"]
   },
+  propertyLandArea: {
+    type: Number
+  },
   additionalInfos: {
     type: String,
     required: false
