@@ -1321,7 +1321,7 @@ export async function editSearchProject(req, res, next) {
         $set: modifier
       }
     ).exec();
-
+    matchPropertiesForSearchMandate(projectId);
     return res.json({ success: true });
   } catch (e) {
     next(generateError(e.message));
