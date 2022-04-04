@@ -1176,6 +1176,7 @@ export async function saveSearchSheet(req, res, next) {
       propertySize,
       propertySizeDetail,
       propertyArea,
+      propertyLandArea,
       land,
       landArea,
       additionalInfos,
@@ -1213,6 +1214,7 @@ export async function saveSearchSheet(req, res, next) {
       additionalInfos,
       propertySizeDetail,
       propertyArea,
+      propertyLandArea,
       land,
       landArea,
       searchSector,
@@ -1258,6 +1260,7 @@ export async function editSearchProject(req, res, next) {
       otherInvestmentType,
       propertySize,
       propertyArea,
+      propertyLandArea,
       land,
       landArea,
       additionalInfos,
@@ -1286,6 +1289,7 @@ export async function editSearchProject(req, res, next) {
         propertyType,
         additionalInfos,
         propertyArea,
+        propertyLandArea,
         land,
         landArea,
         searchSector,
@@ -1317,7 +1321,7 @@ export async function editSearchProject(req, res, next) {
         $set: modifier
       }
     ).exec();
-
+    matchPropertiesForSearchMandate(projectId);
     return res.json({ success: true });
   } catch (e) {
     next(generateError(e.message));
