@@ -136,6 +136,9 @@ const schema = new mongoose.Schema(
       type: Number,
       required: false
     },
+    surface: {
+      type: Array 
+    },
     Honoraires_V_R:{
       type: String,
     },
