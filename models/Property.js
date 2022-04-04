@@ -179,6 +179,9 @@ const schema = new mongoose.Schema(
       type: Boolean,
       default: false
     },
+    surface: {
+      type:Array
+    },
     status: {
       type: String,
       default: "available",
