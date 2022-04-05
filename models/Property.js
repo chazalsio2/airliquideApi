@@ -180,7 +180,7 @@ const schema = new mongoose.Schema(
       default: false
     },
     surface: {
-      type:Array
+      type:Number
     },
     status: {
       type: String,
