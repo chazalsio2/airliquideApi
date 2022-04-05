@@ -71,6 +71,7 @@ export async function editProperty(req, res, next) {
       hotWater,
       airConditioner,
       equippedKitchen,
+      surface,
       // DPE,
       procedureInProgress,
       freeOfOccupation,
@@ -107,6 +108,7 @@ export async function editProperty(req, res, next) {
       salesPrice,
       code_postale,
       projectId,
+      surface,
       Honoraires_V_R,
       charges_properties,
       city,
@@ -409,6 +411,7 @@ export async function createProperty(req, res, next) {
       numberOfCoOwnershipLots,
       procedureInProgress,
       freeOfOccupation,
+      surface,
       typeOfInvestment,
       rent,
       coOwnershipCharge,
@@ -448,7 +451,7 @@ export async function createProperty(req, res, next) {
         Prix de vente: ${salesPrice}€ FAI ${charges_properties ? charges_properties ==="Acquéreur" ?"(dont honoraires Vision-R est de : "+Honoraires_V_R+"€)" :"":""}
         Honoraires charges ${charges_properties}
         
-
+        
         Votre contact Vision-R Immobilier :
         ${commercialName}:${commercialPhoneNumber}
         ${commercialEmail}`,
@@ -457,6 +460,7 @@ export async function createProperty(req, res, next) {
       charges_properties,
       salesPrice,
       code_postale,
+      surface,
       projectId,
       city,
       // landArea,

@@ -28,7 +28,7 @@ import {
   sendDeedAcceptedForSalesProject
 } from "../lib/email";
 import {
-  sendAgreementAcceptedWebhook, sendNewDocWebhook ,sendNewStatusProject, sendNewTrelloCard
+  sendAgreementAcceptedWebhook, sendNewDocWebhook ,sendNewStatusProject, sendNewTrelloCard, sendNewAffecteCommercial
 } from '../services/webhook.service'
 import { uploadFile } from "../lib/aws";
 import { sendMessageToSlack } from "../lib/slack";
@@ -708,20 +708,22 @@ export async function sendCompletedProjectEmail(req, res, next) {
 
     if (emailNumber === 5) {
       sendAcceptSalesDeedConfirmation(client, commercial);
-      await new ProjectEvent({
+      const event =  await new ProjectEvent({
         type: "project_completed_email_5",
         projectId,
         authorUserId: req.user._id
       }).save();
+      sendNewStatusProject(project,commercial,event._id);
     }
 
     if (emailNumber === 6) {
       sendProductionConfirmation(client, commercial);
-      await new ProjectEvent({
+      const event = await new ProjectEvent({
         type: "project_completed_email_6",
         projectId,
         authorUserId: req.user._id
       }).save();
+      sendNewStatusProject(project,commercial,event._id);
     }
 
     return res.json({ success: true });
@@ -1188,7 +1190,7 @@ export async function saveSearchSheet(req, res, next) {
     const { projectId } = req.params;
     const project = await Project.findById(projectId).lean();
 
-    if (
+    /*if (
       !propertyType ||
       !investmentType ||
       !propertyArea ||
@@ -1197,7 +1199,7 @@ export async function saveSearchSheet(req, res, next) {
       !budget
     ) {
       return next(generateError("Invalid arguments", 401));
-    }
+    }*/
 
     if (!project) {
       return next(generateError("Project not found", 404));
@@ -1619,7 +1621,8 @@ export async function savePersonalSituation(req, res, next) {
       spousedate,
       birthday,
       lieux_de_naissance,
-      nationalite
+      nationalite,
+      readyToSign, allowSaveData, timeslots
     } = req.body;
 
     const { projectId } = req.params;
@@ -1704,6 +1707,37 @@ export async function savePersonalSituation(req, res, next) {
         $set: clientModifier
       }
     ).exec();
+    if(timeslots) {
+      await Client.updateOne(
+        {
+          _id: project.clientId
+        },
+        {
+          $set: {
+            availabilities: timeslots,
+            allowSaveData
+          }
+        }
+      ).exec();
+    }
+    await Project.updateOne(
+      { _id: projectId },
+      {
+        $set: {
+          readyToSign: readyToSign === "yes",
+          status: "wait_project_validation"
+        }
+      }
+    ).exec();
+
+    sendProjectWaitingValidationEmail(project);
+
+    await new ProjectEvent({
+      projectId: project._id,
+      type: "form_completion",
+      authorUserId: project.clientId
+    }).save();
+
     sendNewTrelloCard(project);
 
     // const client = await Client.findById(project.clientId).lean();
@@ -2102,6 +2136,7 @@ export async function uploadMandateForProject(req, res, next) {
         }
       }
     ).exec();
+    await sendNewStatusProject(project);
 
     const client = await Client.findById(project.clientId).lean();
     sendMessageToSlack({
@@ -2413,7 +2448,7 @@ export async function assignCommercial(req, res, next) {
     ).exec();
 
     sendAssignProjectNotification(commercial, project);
-    //sendNewStatusProject(project,commercial);
+    sendNewAffecteCommercial(project,commercial);
 
     return res.json({ success: true });
   } catch (e) {

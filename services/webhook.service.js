@@ -5,6 +5,7 @@ import { getClient } from './client.service'
 import { getUser } from './user.service'
 import { getDocument } from './document.service'
 import { Client } from '../models'
+import { ProjectEvent } from '../models'
 import {DossierNotaire} from '../models'
 import {Property,Project,Document,User} from '../models'
 
@@ -575,23 +576,40 @@ export async function sendNewTrelloCard(projectId) {
           typeProject: project.type,
           cityProject: project.searchSheet.fullville,
           priceProject: project.searchSheet.budget,
-          propertyType: project.salesSheet.propertyType,
-          propertySize: project.salesSheet.propertySize,
+          propertyType: project.searchSheet.propertyType,
+          propertySize: project.searchSheet.propertySize,
         }
       })
     }
   }
 }
 
-export async function sendNewAffecteCommercial(project){
-
-}
-
-export async function sendNewStatusProject(project,commercial) {
+export async function sendNewAffecteCommercial(project,commercial){
+  console.log(commercial);
   const projet = await Project.findById(project._id)
   const client = await Client.findById(project.clientId)
   const conseiller = await User.findById(project.commercialId)
-  console.log(commercial);
+  //console.log(commercial);
+  axios({
+    method:'GET',
+    url: process.env.INTEGROMAT_WEBHOOK_ASSIGNMENT_TRELLO_CARD,
+    data:{
+      num_id:projet._id,
+      nom_clients:client.displayName,
+      e_mail:client.email,
+      statuts_affaires: projet.status,
+      type:projet.type,
+      commercial_name:commercial ? commercial.displayName:"",
+      commercial_email:commercial ? commercial.email:""
+  }})
+}
+
+  export async function sendNewStatusProject(project,commercial,evenement, demandeSignatureOA) {
+  const projet = await Project.findById(project._id)
+  const client = await Client.findById(project.clientId)
+  const conseiller = await User.findById(project.commercialId)
+  const event = await ProjectEvent.findById(evenement);//evenement;
+  
   axios({
     method:'GET',
     url: process.env.ZAPPIER_WEBHOOK_CLE_DE_VIE,
@@ -602,12 +620,14 @@ export async function sendNewStatusProject(project,commercial) {
       statuts_affaires: projet.status,
       date_dernier_statut: moment(projet.updatedAt).format('DD/MM/YYYY'),
       type:projet.type,
+      typeEvent: `${event ? event.type ? event.type:"":""}`,
+      typeEvent1: `${demandeSignatureOA ? demandeSignatureOA :""}`,
       montant_commission:projet.commissionAmount ? (projet.commissionAmount/100):(""),
       commercial_poucentage:projet.commercialPourcentage ? (projet.commercialPourcentage/100):"",
       commercial_name:conseiller ? conseiller.displayName:"",//commercial ? commercial.displayName:"",
-      lien_aws: `${projet.status === "wait_loan_offer_validation" &&( projet.loanOfferDoc.url)||
-      projet.status === "wait_purchase_offer_validation" &&( projet.purchaseOfferDoc.url)||
-      projet.status === "wait_sales_agreement_validation" &&( projet.salesAgreementDoc.url)||
-      projet.status === "wait_sales_deed_validation" &&( projet.salesDeedDoc.url)||""}`,
+      lien_aws: `${projet.status === "wait_sales_deed" ?( projet.loanOfferDoc.url):
+      projet.status === "wait_sales_agreement" ?( projet.purchaseOfferDoc.url):
+      projet.status === "wait_loan_offer" ?( projet.salesAgreementDoc.url):
+      projet.status === "completed" ?( projet.salesDeedDoc.url):""}`,
   }})
 }
