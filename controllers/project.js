@@ -1303,6 +1303,7 @@ export async function editSearchProject(req, res, next) {
       modifier.investAlone = investalone;
     }
 
+
     if (desiredgrossyield) {
       modifier.desiredGrossYield = desiredgrossyield;
     }
@@ -1323,6 +1324,36 @@ export async function editSearchProject(req, res, next) {
     ).exec();
     matchPropertiesForSearchMandate(projectId);
     return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+export async function editSearch(req, res, next) {
+  try{
+    const { projectId } = req.params;
+
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    const {
+      url_matching
+    } = req.body;
+
+    const modifier = {url_matching}
+
+    await Project.updateOne(
+      { _id: projectId },
+      {
+        $set: modifier
+      }
+    ).exec();
+
+    return res.json({ success: true });
+
   } catch (e) {
     next(generateError(e.message));
   }

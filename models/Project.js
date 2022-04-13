@@ -154,6 +154,7 @@ const SearchSheet = new mongoose.Schema({
     type: String,
     enum: ["optional", "priority"]
   },
+  
   delay: {
     type: String,
     enum: ["soonaspossible", "lessthan6", "morethan6"]
@@ -177,6 +178,9 @@ const schema = new mongoose.Schema(
     dossiernotaireId: {
       type: mongoose.Types.ObjectId,
       required: false
+    },
+    url_matching:{
+      type:String
     },
     commercialId:{
       type: mongoose.Types.ObjectId
