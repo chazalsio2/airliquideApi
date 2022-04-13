@@ -236,6 +236,7 @@ export async function editSalesSheet(req, res, next) {
     }
 
     const {
+      landconstcd,
       propertyType,
       propertySize,
       propertySizeDetails,
