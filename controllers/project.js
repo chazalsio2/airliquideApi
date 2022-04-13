@@ -236,8 +236,6 @@ export async function editSalesSheet(req, res, next) {
     }
 
     const {
-      url_matching,
-      landconstcd,
       propertyType,
       propertySize,
       propertySizeDetails,
@@ -284,7 +282,6 @@ export async function editSalesSheet(req, res, next) {
       workEstimate,
       fullAddress,
       fullcode_postale,
-      url_matching,
       fullville,
       proprietaire,
       terrai_y_n,
@@ -1265,7 +1262,6 @@ export async function editSearchProject(req, res, next) {
       propertyLandArea,
       land,
       landArea,
-      url_matching,
       additionalInfos,
       searchSector,
       searchSectorCities,
@@ -1306,16 +1302,6 @@ export async function editSearchProject(req, res, next) {
       modifier.investAlone = investalone;
     }
 
-    if (url_matching){
-      const url_matching = url_matching;
-
-      await Project.updateOne(
-        { _id: projectId },
-        {
-          url_matching: url_matching
-        }
-      ).exec();
-    }
 
     if (desiredgrossyield) {
       modifier.desiredGrossYield = desiredgrossyield;
