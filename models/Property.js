@@ -107,8 +107,11 @@ const schema = new mongoose.Schema(
       required: false
     },
     numberOfRooms: {
-      type: Number,
+      type: String,
       required: false
+    },
+    propertySizeDetail: {
+      type:String
     },
     ref: {
       type: String,

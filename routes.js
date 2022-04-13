@@ -81,6 +81,7 @@ import {
   saveSalesSheet,
   savePersonalSituationForSalesMandate,
   editSearchProject,
+  editSearch,
   editSalesSheet,
   preValidationAllStep
 } from "./controllers/project";
@@ -170,6 +171,7 @@ export default (app) => {
   );
 
   app.post("/projects/:projectId/search-sheet", saveSearchSheet, errorHandle);
+  app.post("/projects/:projectId/search", saveSearchSheet, errorHandle);
   app.post("/projects/:projectId/sales-sheet", saveSalesSheet, errorHandle);
 
   app.post(
@@ -832,6 +834,15 @@ app.put(
     editSearchProject,
     errorHandle
   );
+  app.put(
+    "/projects/:projectId/search",
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    checkAccountDesactivated,
+    editSearch,
+    errorHandle
+  );
+
 
   app.put(
     "/projects/:projectId/sales-sheet",

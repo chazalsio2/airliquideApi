@@ -56,6 +56,7 @@ export async function editProperty(req, res, next) {
       kitchenArea,
       bathroomArea,
       numberOfRooms,
+      propertySizeDetail,
       floor,
       outdoorParking,
       coveredParking,
@@ -107,6 +108,7 @@ export async function editProperty(req, res, next) {
       type,
       salesPrice,
       code_postale,
+      propertySizeDetail,
       projectId,
       Honoraires_V_R,
       charges_properties,
@@ -116,6 +118,7 @@ export async function editProperty(req, res, next) {
       // livingArea,
       propertyStatus
     };
+    console.log(propertyData);
 
     if (landArea) {
       propertyData.landArea = landArea;
@@ -291,7 +294,7 @@ export async function editProperty(req, res, next) {
     }
 
     if (numberOfRooms) {
-      propertyData.numberOfRooms = Number(numberOfRooms);
+      propertyData.numberOfRooms = numberOfRooms;
     }
 
     propertyData.name = `${getPropertyType(propertyData.type) || ""} ${propertyData.livingArea ? propertyData.livingArea+" m²" : ""}  ${propertyData.city || ""} ${propertyData.landArea ? propertyData.landArea+ " m²" : ""}`;
@@ -392,6 +395,7 @@ export async function createProperty(req, res, next) {
       kitchenArea,
       bathroomArea,
       numberOfRooms,
+      propertySizeDetail,
       floor,
       outdoorParking,
       coveredParking,
@@ -463,6 +467,7 @@ export async function createProperty(req, res, next) {
       code_postale:`${city.slice(-6,-1)}`,
       projectId,
       city,
+      propertySizeDetail,
       // landArea,
       // livingArea,
       propertyStatus,
@@ -598,7 +603,7 @@ export async function createProperty(req, res, next) {
     }
 
     if (numberOfRooms) {
-      propertyData.numberOfRooms = Number(numberOfRooms);
+      propertyData.numberOfRooms = numberOfRooms;
     }
 
     if (address) {
