@@ -25,7 +25,8 @@ import {
   sendSalesAgreementAcceptedForSalesProject,
   sendPurchaseOfferAcceptedForSalesProject,
   sendLoanOfferAcceptedForSalesProject,
-  sendDeedAcceptedForSalesProject
+  sendDeedAcceptedForSalesProject,
+  sendMatchPropertiesEmail
 } from "../lib/email";
 import {
   sendAgreementAcceptedWebhook, sendNewDocWebhook ,sendNewStatusProject, sendNewTrelloCard, sendNewAffecteCommercial
@@ -1351,8 +1352,9 @@ export async function editSearch(req, res, next) {
         $set: modifier
       }
     ).exec();
-
+   sendMatchPropertiesEmail(project)
     return res.json({ success: true });
+
 
   } catch (e) {
     next(generateError(e.message));
@@ -2022,7 +2024,6 @@ export async function addDocumentToProject(req, res, next) {
     ).exec();
 
     await sendNewDocWebhook(document._id)
-
     return res.json({ success: true });
   } catch (e) {
     next(generateError(e.message));

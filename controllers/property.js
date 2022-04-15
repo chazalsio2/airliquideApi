@@ -118,7 +118,6 @@ export async function editProperty(req, res, next) {
       // livingArea,
       propertyStatus
     };
-    console.log(propertyData);
 
     if (landArea) {
       propertyData.landArea = landArea;
