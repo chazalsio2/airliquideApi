@@ -35,7 +35,7 @@ import {
   deleteClient,
   deleteProject
 } from "./controllers/client";
-import { publicCreateClient } from "./controllers/public";
+import { publicCreateClient,publicCreateForm } from "./controllers/public";
 import { createDossierNotaire,editDossierNotaire,editFinaleDossierNotaire } from "./controllers/dossierNotaire"
 import {
   getDocument,
@@ -158,6 +158,7 @@ export default (app) => {
   app.post("/users/change-password", changePassword, errorHandle);
 
   app.post("/public/clients", cors(), publicCreateClient, errorHandle);
+  app.post("/publicForm/clients", cors(), publicCreateForm, errorHandle);
   //check email in signUP
   // app.post("/public/clients-checkEmail", cors(), publicCreateClient, errorHandle);
 
@@ -804,6 +805,12 @@ app.put(
     passport.authenticate("jwt", { session: false }),
     checkAdminOrCommercial,
     checkAccountDesactivated,
+    createClient,
+    errorHandle
+  );
+  app.post(
+    "/clients/taly",
+    passport.authenticate("jwt", { session: false }),
     createClient,
     errorHandle
   );
