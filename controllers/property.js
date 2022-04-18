@@ -367,6 +367,24 @@ export async function deletePhoto(req, res, next) {
     next(generateError(e.message));
   }
 }
+export async function PhotoCouv (req, res, next) {
+  const { photo } = req.body;
+  const { propertyId } = req.params;
+    const properties = await Property.findById(propertyId).lean();
+    properties.photos.splice(0,0,photo.photo)
+    properties.photos.splice(photo.photos+1,1,)
+    
+  try {
+    await Property.updateOne(
+      { _id: propertyId },
+      {photos: properties.photos }
+    ).exec();
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
 export async function createProperty(req, res, next) {
   try {
     const {
@@ -430,7 +448,6 @@ export async function createProperty(req, res, next) {
       equipment,
       agencyFees
     } = req.body;
-    console.log(projectId);
 
     if (
       !description ||
