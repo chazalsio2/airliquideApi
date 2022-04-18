@@ -97,6 +97,7 @@ import {
   getPublicProperty,
   getPublicPropertyRental,
   deletePhoto,
+  PhotoCouv,
   editPropertyStatus,
   deleteProperty
 } from "./controllers/property";
@@ -535,6 +536,16 @@ app.put(
     deletePhoto,
     errorHandle
   );
+
+  app.delete(
+    `/propertiesCouv/:propertyId/photos`,
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    checkAccountDesactivated,
+    PhotoCouv,
+    errorHandle
+  );
+
 
   app.post(
     `/projects/:projectId/accept`,
