@@ -123,6 +123,7 @@ export async function getProject(req, res, next) {
     const dossiernotaire = await DossierNotaire.findOne({ _id: project.dossiernotaireId }, null).lean();
 
 
+
     if (!client) {
       return next(generateError("Client not found", 404));
     }
@@ -137,6 +138,14 @@ export async function getProject(req, res, next) {
     if (!isAuthorized) {
       return next(generateError("Not authorized", 401));
     }
+    if (client.referalconseiller) {
+      client.commercial = await User.findById(
+        client.referalconseiller,
+        "displayName"
+      ).lean();
+      console.log(client.commercial);
+    }
+
 
     project.client = client;
     project.dossiernotaire = dossiernotaire;
