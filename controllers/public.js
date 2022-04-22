@@ -143,6 +143,7 @@ export async function publicCreateClient(req, res, next) {
       return next(generateError("Invalid service", 403));
     }
 
+    console.log(referalconseiller);
     const newClientData = {
       firstname,
       lastname,

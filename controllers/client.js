@@ -79,9 +79,9 @@ export async function getClient(req, res, next) {
         // status: { $nin: ["canceled", "completed"] }
       },
       null,
-      { sort: { createdAt: -1 } }
+      { sort: { createdAt: -1 } } 
     ).lean();
-
+   
     return res.json({
       success: true,
       data: client
