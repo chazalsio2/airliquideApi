@@ -1960,15 +1960,25 @@ export async function acceptProject(req, res, next) {
     if (project.status !== "wait_project_validation") {
       return next(generateError("Wrong state", 401));
     }
-    console.log(client.conseillerId);
+
 if (client.conseillerId){
+
   await Project.updateOne(
     { _id: projectId },
     { $set: { status: "wait_mandate",
               commercialId: client.conseillerId  
     } }
   ).exec();
+
+  const commercial = await User.findOne({
+    _id: client.conseillerId,
+    roles: "commercial_agent",
+    deactivated: { $ne: true }
+  });
+
+  sendNewAffecteCommercial(project,commercial);
 }else{
+  
   await Project.updateOne(
     { _id: projectId },
     { $set: { status: "wait_mandate"} }
