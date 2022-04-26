@@ -138,13 +138,14 @@ export async function getProject(req, res, next) {
     if (!isAuthorized) {
       return next(generateError("Not authorized", 401));
     }
-    if (client.referalconseiller) {
+    if (client.conseillerId) {
       client.commercial = await User.findById(
-        client.referalconseiller,
+        client.conseillerId,
         "displayName"
       ).lean();
       console.log(client.commercial);
     }
+    
 
 
     project.client = client;
@@ -1949,6 +1950,8 @@ export async function acceptProject(req, res, next) {
     const { projectId } = req.params;
 
     const project = await Project.findById(projectId).lean();
+    const client = await Client.findById(project.clientId).lean();
+    
 
     if (!project) {
       return next(generateError("Project not found", 404));
@@ -1957,11 +1960,23 @@ export async function acceptProject(req, res, next) {
     if (project.status !== "wait_project_validation") {
       return next(generateError("Wrong state", 401));
     }
+    console.log(client.conseillerId);
+if (client.conseillerId){
+  await Project.updateOne(
+    { _id: projectId },
+    { $set: { status: "wait_mandate",
+              commercialId: client.conseillerId  
+    } }
+  ).exec();
+}else{
+  await Project.updateOne(
+    { _id: projectId },
+    { $set: { status: "wait_mandate"} }
+  ).exec();
+}
 
-    await Project.updateOne(
-      { _id: projectId },
-      { $set: { status: "wait_mandate" } }
-    ).exec();
+
+    
 
     sendNewStatusProject(project);
 
@@ -1971,7 +1986,6 @@ export async function acceptProject(req, res, next) {
       authorUserId: req.user._id
     }).save();
 
-    const client = await Client.findById(project.clientId).lean();
     const user = await User.findById(req.user._id).lean();
 
     sendMessageToSlack({
