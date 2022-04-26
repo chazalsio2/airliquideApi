@@ -135,6 +135,10 @@ var schema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       required: false
     },
+    conseillerId:{
+      type: mongoose.Types.ObjectId,
+      required: false
+    },
     displayName: {
       type: String,
       required: false

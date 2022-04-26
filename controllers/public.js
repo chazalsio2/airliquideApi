@@ -18,6 +18,7 @@ export async function publicCreateForm(req, res, next) {
       phone,
       city,
       serviceType,
+      conseillerId
     } = req.body;
 
     if (projectTypes.indexOf(serviceType) === -1) {
@@ -30,7 +31,7 @@ export async function publicCreateForm(req, res, next) {
       email,
       phone,
       city,
-     
+      conseillerId
     };
 
       const client = await new Client(newClientData).save();
@@ -136,6 +137,7 @@ export async function publicCreateClient(req, res, next) {
       city,
       zipcode,
       referalconseiller,
+      conseillerId,
       referaldetails,lieux_de_naissance,nationalite
     } = req.body;
 
@@ -143,7 +145,7 @@ export async function publicCreateClient(req, res, next) {
       return next(generateError("Invalid service", 403));
     }
 
-    console.log(referalconseiller);
+    console.log(conseillerId);
     const newClientData = {
       firstname,
       lastname,
@@ -155,6 +157,7 @@ export async function publicCreateClient(req, res, next) {
       zipcode,
       referaldetails,
       referalconseiller,
+      conseillerId,
       lieux_de_naissance,nationalite
     };
 
