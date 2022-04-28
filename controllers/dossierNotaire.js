@@ -102,7 +102,7 @@ export async function createDossierNotaire(req, res, next) {
       } = req.body;
   
       //////////////
-      if (
+      /*if (
         //!contact_a_Id||
         !contact_v_Id||
         !client_vision_r||
@@ -121,7 +121,7 @@ export async function createDossierNotaire(req, res, next) {
         !phone
         ) {
           throw new Error("Champs manquants");
-      }
+      }*/
   
       const contact = await Contact.findById(
         contact_v_Id,contact_a_Id
