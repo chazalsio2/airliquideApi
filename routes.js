@@ -91,6 +91,7 @@ import {
   getPropertie,
   getProperty,
   editProperty,
+  PropertyUrl,
   updatePropertyVisibility,
   getPublicProperties,
   getPublicPropertiesRental,
@@ -500,6 +501,15 @@ app.put(
     refuseProject,
     errorHandle
   );
+
+  app.put(
+    '/UrlMatch/:propertyId/',
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    checkAccountDesactivated,
+    PropertyUrl,
+    errorHandle
+    )
 
   app.put(
     `/properties/:propertyId`,

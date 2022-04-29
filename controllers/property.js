@@ -5,6 +5,8 @@ import {
   isAdminOrCommercial
 } from "../lib/utils";
 import { uploadPhotos } from "../lib/cloudinary";
+import { sendMatchProjectEmail, } from "../lib/email";
+
 import Property, { getPropertyType } from "../models/Property";
 import PropertyCont from "../models/PropertyCont";
 
@@ -28,6 +30,32 @@ export async function deleteProperty(req, res, next) {
     await Property.deleteOne({ _id: propertyId }).exec();
 
     return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+export async function PropertyUrl(req, res, next) {
+
+  try{
+    const {
+      url_matching
+    } = req.body;
+
+    const { propertyId } = req.params;
+
+    console.log(propertyId);
+
+    const property = await Property.findById(propertyId).lean();
+
+    const propertyEdited = await Property.updateOne(
+      { _id: propertyId },
+       {url_matching:url_matching} 
+    ).exec();
+
+    sendMatchProjectEmail( property,url_matching);
+
+    return res.json({ success: true, data: propertyEdited });
   } catch (e) {
     next(generateError(e.message));
   }

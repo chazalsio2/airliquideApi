@@ -17,6 +17,15 @@ const schema = new mongoose.Schema(
       type: String,
       required: false
     },
+    matchedProject: {
+      type: Array
+    },
+    "matchedProject.$": {
+      type: mongoose.Types.ObjectId
+    },
+    url_matching: {
+      type:String
+    },
     floor: {
       type: String,
       required: false
