@@ -626,6 +626,7 @@ export async function sendNewAffecteCommercial(project,commercial){
       commercial_poucentage:projet.commercialPourcentage ? (projet.commercialPourcentage/100):"",
       commercial_name:conseiller ? conseiller.displayName:"",//commercial ? commercial.displayName:"",
       lien_aws: `${projet.status === "wait_sales_deed" ?( projet.loanOfferDoc.url):
+      projet.status === "wait_purchase_offer" ?( projet.mandateDoc.url):
       projet.status === "wait_sales_agreement" ?( projet.purchaseOfferDoc.url):
       projet.status === "wait_loan_offer" ?( projet.salesAgreementDoc.url):
       projet.status === "completed" ?( projet.salesDeedDoc.url):""}`,
