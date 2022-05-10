@@ -608,9 +608,10 @@ export async function sendNewAffecteCommercial(project,commercial){
 }
 
   export async function sendNewStatusProject(project,commercial,evenement, demandeSignatureOA) {
+    let conseiller;
   const projet = await Project.findById(project._id)
   const client = await Client.findById(project.clientId)
-  const conseiller = await User.findById(project.commercialId)
+  if (project.commercialId) {return  conseiller = await User.findById(project.commercialId)};
   const event = await ProjectEvent.findById(evenement);//evenement;
   
   axios({
