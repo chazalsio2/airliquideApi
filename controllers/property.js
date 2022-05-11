@@ -57,9 +57,9 @@ export async function PropertyUrl(req, res, next) {
     }
 
     const propertyEdited = await Property.updateOne(
-      { _id: propertyId,
-         public: true },
-      { url_matching:url_matching }
+      { _id: propertyId},
+      { public: !!true , 
+        url_matching: url_matching }
     ).exec();
 
 
