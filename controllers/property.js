@@ -48,16 +48,46 @@ export async function PropertyUrl(req, res, next) {
 
     const property = await Property.findById(propertyId).lean();
 
+    if (property.propertyStatus === "forsale")  {
+      try {
+        checkMatchingForProperty(property._id);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
     const propertyEdited = await Property.updateOne(
-      { _id: propertyId },
-       {url_matching:url_matching} 
+      { _id: propertyId,
+         public: true },
+      { url_matching:url_matching }
     ).exec();
 
-    sendMatchProjectEmail( property,url_matching);
 
+    
+    /*function delay(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+    delay(20000).then(() =>  {*/
+    const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+    await delay(10000);
+    const properties = await Property.findById(propertyId).lean();
+      
+      console.log(properties);
+      
+      if (properties.matchedProject){
+
+      sendMatchProjectEmail( properties,url_matching);
+  
+        }else(console.log("y'a pas zebi"))
+  //);
+
+     
     return res.json({ success: true, data: propertyEdited });
+
   } catch (e) {
+
     next(generateError(e.message));
+
   }
 }
 
@@ -340,6 +370,7 @@ export async function editProperty(req, res, next) {
 export async function updatePropertyVisibility(req, res, next) {
   const { propertyId } = req.params;
 
+  console.log(req.body.public);
   try {
     const property = await Property.findOne({ _id: propertyId }).lean();
 
@@ -352,13 +383,13 @@ export async function updatePropertyVisibility(req, res, next) {
       { $set: { public: !!req.body.public } }
     ).exec();
 
-    if (req.body.public && property.propertyStatus === "forsale")  {
+    /*if (req.body.public && property.propertyStatus === "forsale")  {
       try {
         checkMatchingForProperty(property._id);
       } catch (e) {
         console.error(e);
       }
-    }
+    }*/
 
     return res.json({ success: true });
   } catch (e) {
