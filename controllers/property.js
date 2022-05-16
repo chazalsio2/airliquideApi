@@ -66,7 +66,7 @@ export async function PropertyUrl(req, res, next) {
     }
     delay(20000).then(() =>  {*/
     const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
-    await delay(10000);
+    await delay(60000);
     const properties = await Property.findById(propertyId).lean();
       
       if (properties.matchedProject){
