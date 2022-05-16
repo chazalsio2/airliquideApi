@@ -5,14 +5,13 @@ import {
   isAdminOrCommercial
 } from "../lib/utils";
 import { uploadPhotos } from "../lib/cloudinary";
-import { sendMatchProjectEmail, } from "../lib/email";
 
 import Property, { getPropertyType } from "../models/Property";
 import PropertyCont from "../models/PropertyCont";
 
 import { sendMessageToSlack } from "../lib/slack";
 import { checkMatchingForProperty } from "../lib/matching";
-import {sendNewDProprieteWebhook} from '../services/webhook.service';
+import {sendNewDProprieteWebhook,sendMatchProjectEmail} from '../services/webhook.service';
 
 
 const LIMIT_BY_PAGE = 12;
@@ -49,11 +48,9 @@ export async function PropertyUrl(req, res, next) {
     const property = await Property.findById(propertyId).lean();
 
     if (property.propertyStatus === "forsale")  {
-      try {
+     
         checkMatchingForProperty(property._id);
-      } catch (e) {
-        console.error(e);
-      }
+      
     }
 
     const propertyEdited = await Property.updateOne(
@@ -72,16 +69,13 @@ export async function PropertyUrl(req, res, next) {
     await delay(10000);
     const properties = await Property.findById(propertyId).lean();
       
-      console.log(properties);
-      
       if (properties.matchedProject){
 
-      sendMatchProjectEmail( properties,url_matching);
+        sendMatchProjectEmail( properties,url_matching );
   
-        }else(console.log("y'a pas zebi"))
+        }
   //);
 
-     
     return res.json({ success: true, data: propertyEdited });
 
   } catch (e) {
@@ -351,7 +345,7 @@ export async function editProperty(req, res, next) {
     }
 
     if (numberOfRooms) {
-      propertyData.numberOfRooms = numberOfRooms;
+      propertyData.numberOfRooms =Number(numberOfRooms);
     }
 
     propertyData.name = `${getPropertyType(propertyData.type) || ""} ${propertyData.livingArea ? propertyData.livingArea+" m²" : ""}  ${propertyData.city || ""} ${propertyData.landArea ? propertyData.landArea+ " m²" : ""}`;
@@ -515,7 +509,7 @@ export async function createProperty(req, res, next) {
       !city ||
       // !landArea ||
       // !livingArea ||
-      !photos
+      !photos[0]
     ) {
       return next(generateError("Invalid request", 401));
     }
@@ -678,7 +672,7 @@ export async function createProperty(req, res, next) {
     }
 
     if (numberOfRooms) {
-      propertyData.numberOfRooms = numberOfRooms;
+      propertyData.numberOfRooms = Number(numberOfRooms);
     }
 
     if (address) {
