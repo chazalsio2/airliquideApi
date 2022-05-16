@@ -284,7 +284,7 @@ export async function editSalesSheet(req, res, next) {
 */
     const newSalesSheetEdited = {
       propertyType,
-      propertySize,
+      propertySize : Number(propertySize),
       propertySizeDetails,
       // livingArea,
       // landArea,
@@ -391,7 +391,7 @@ export async function saveSalesSheet(req, res, next) {
 */
     const salesSheet = {
       propertyType,
-      propertySize,
+      propertySize : Number(propertySize),
       propertySizeDetails,
       // livingArea,
       //landArea,
@@ -1220,7 +1220,7 @@ export async function saveSearchSheet(req, res, next) {
     const searchSheet = {
       investmentType:
         investmentType === "other" ? otherInvestmentType : investmentType,
-      propertySize,
+        propertySize : Number(propertySize),
       propertyType,
       additionalInfos,
       propertySizeDetail,
@@ -1296,7 +1296,7 @@ export async function editSearchProject(req, res, next) {
       searchSheet: {
         investmentType:
           investmentType === "other" ? otherInvestmentType : investmentType,
-        propertySize,
+          propertySize : Number(propertySize),
         propertyType,
         additionalInfos,
         propertyArea,
