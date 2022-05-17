@@ -7,7 +7,8 @@ import {
 import { uploadPhotos } from "../lib/cloudinary";
 import Property, { getPropertyType } from "../models/Property";
 import PropertyCont from "../models/PropertyCont";
-
+import Project from "../models/Project"; 
+import Client from "../models/Client"; 
 import { sendMessageToSlack } from "../lib/slack";
 import { checkMatchingForProperty } from "../lib/matching";
 import {sendNewDProprieteWebhook} from '../services/webhook.service';
@@ -724,6 +725,15 @@ export async function getProperty(req, res, next) {
       return next(generateError("Property not found", 404));
     }
 
+
+    if (property.projectId){    
+      const project = await Project.findOne({ _id: property.projectId }, null).lean();
+      property.project = project;
+      const client = await Client.findOne({ _id: project.clientId}, null).lean();
+      property.client = client;
+    }
+
+
     if (!isAdminOrCommercial(req.user)) {
       delete property.address;
     }
@@ -829,6 +839,7 @@ export async function getPublicProperty(req, res, next) {
     if (!property) {
       return next(generateError("Property not found", 404));
     }
+
     return res.json({ success: true, data: property });
   } catch (e) {
     next(generateError(e.message));
