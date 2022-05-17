@@ -158,7 +158,7 @@ export default (app) => {
   app.post("/users/create-password", createPassword, errorHandle);
   app.post("/users/forgot-password", forgotPassword, errorHandle);
   app.post("/users/change-password", changePassword, errorHandle);
-
+  app.post("/publicForm/clients", cors(), publicCreateForm, errorHandle);
   app.post("/public/clients", cors(), publicCreateClient, errorHandle);
   app.post("/publicForm/clients", cors(), publicCreateForm, errorHandle);
   //check email in signUP
