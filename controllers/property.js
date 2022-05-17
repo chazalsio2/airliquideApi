@@ -7,6 +7,8 @@ import {
 import { uploadPhotos } from "../lib/cloudinary";
 
 import Property, { getPropertyType } from "../models/Property";
+import Project from "../models/Project"; 
+import Client from "../models/Client"; 
 import PropertyCont from "../models/PropertyCont";
 
 import { sendMessageToSlack } from "../lib/slack";
@@ -787,7 +789,7 @@ export async function getProperty(req, res, next) {
     }
 
     const selector = { _id: propertyId };
-
+    
     if ((isSearchClient(req.user) || isSearchClientVip(req.user)) && !isAdminOrCommercial(req.user)) {
       selector.propertyStatus = "hunting";
     }
@@ -796,6 +798,13 @@ export async function getProperty(req, res, next) {
 
     if (!property) {
       return next(generateError("Property not found", 404));
+    }
+
+    if (property.projectId){    
+      const project = await Project.findOne({ _id: property.projectId }, null).lean();
+      property.project = project;
+      const client = await Client.findOne({ _id: project.clientId}, null).lean();
+      property.client = client;
     }
 
     if (!isAdminOrCommercial(req.user)) {
