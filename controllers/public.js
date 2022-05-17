@@ -8,7 +8,6 @@ import { sendNewClientEmail } from "../lib/email";
 import { sendMessageToSlack } from "../lib/slack";
 import {sendNewClientWebhook, sendNewTrelloCard} from "../services/webhook.service";
 
-
 export async function publicCreateForm(req, res, next) {
   try {
     const {
@@ -122,7 +121,6 @@ export async function publicCreateForm(req, res, next) {
     next(generateError(e.message));
   }
 }
-
 
 export async function publicCreateClient(req, res, next) {
   try {
