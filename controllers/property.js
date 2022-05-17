@@ -789,9 +789,7 @@ export async function getProperty(req, res, next) {
     }
 
     const selector = { _id: propertyId };
-
     
-
     if ((isSearchClient(req.user) || isSearchClientVip(req.user)) && !isAdminOrCommercial(req.user)) {
       selector.propertyStatus = "hunting";
     }
