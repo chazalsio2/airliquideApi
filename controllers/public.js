@@ -145,7 +145,7 @@ export async function publicCreateClient(req, res, next) {
       return next(generateError("Invalid service", 403));
     }
 
-    console.log(conseillerId);
+    //console.log(conseillerId);
     const newClientData = {
       firstname,
       lastname,
@@ -160,13 +160,23 @@ export async function publicCreateClient(req, res, next) {
       conseillerId,
       lieux_de_naissance,nationalite
     };
+  
+    //console.log(newClientData);
+
+    const clients = await Client.find({email:email}).exec();
+
+    if (clients[0]) {
+      console.log(clients);
+      return next(generateError("Vous vous êtes déjà inscrit."));
+    }
+
 
       const client = await new Client(newClientData).save();
 
 
       sendNewClientEmail(client);
 
-      sendMessageToSlack({
+     sendMessageToSlack({
         message: `Le prospect ${client.firstname} ${client.lastname} a été ajouté : ${process.env.APP_URL}/clients/${client._id}`,
       });
 
