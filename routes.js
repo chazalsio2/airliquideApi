@@ -59,6 +59,7 @@ import {
   acceptProject,
   addDocumentToProject,
   assignCommercial,
+  assignPropertie,
   uploadAgreementForProject,
   uploadDeedForProject,
   refuseAgreement,
@@ -572,6 +573,15 @@ app.put(
     checkAdmin,
     checkAccountDesactivated,
     assignCommercial,
+    errorHandle
+  );
+
+  app.post(
+    `/projects/:projectId/assign-propertie`,
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    assignPropertie,
     errorHandle
   );
 

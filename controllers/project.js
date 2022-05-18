@@ -171,6 +171,12 @@ export async function getProject(req, res, next) {
       ).lean();
     }
 
+    if (project.propertiesId) {
+      project.properties = await Property.findById(
+        project.propertiesId
+      ).lean();
+    }
+
     if (project.matchedProperties) {
       const properties = await Promise.all(
         project.matchedProperties.map(async (propertyId) => {
@@ -2520,6 +2526,61 @@ export async function assignCommercial(req, res, next) {
 
     sendAssignProjectNotification(commercial, project);
     sendNewAffecteCommercial(project,commercial);
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+export async function assignPropertie(req, res, next) {
+  try {
+    const { projectId } = req.params;
+    const { propertiesId } = req.body;
+
+
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    /*const allowedStatus = [
+      "missing_information",
+      "wait_project_validation",
+      "wait_mandate",
+      "wait_mandate_validation",
+      "wait_purchase_offer",
+      "wait_purchase_offer_validation",
+      "wait_sales_agreement",
+      "wait_sales_agreement_validation"
+    ];
+
+    if (allowedStatus.indexOf(project.status) === -1) {
+      throw new Error("Wrong state");
+    }*/
+
+    const propertie = await Property.findOne({
+      _id: propertiesId
+    });
+
+    console.log(propertiesId);
+
+    if (!propertie) {
+      return next(generateError("Propertie not found", 404));
+    }
+
+    await Project.updateOne(
+      { _id: projectId },
+      { $set: { propertiesId } }
+    ).exec();
+
+    await Property.updateOne(
+      { _id: propertiesId },
+      { $set: { projectId } }
+    ).exec();
+
+   // sendAssignProjectNotification(commercial, project);
+   // sendNewAffecteCommercial(project,commercial);
 
     return res.json({ success: true });
   } catch (e) {
