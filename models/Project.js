@@ -184,6 +184,9 @@ const schema = new mongoose.Schema(
     commercialId:{
       type: mongoose.Types.ObjectId
     },
+    propertiesId:{
+      type: mongoose.Types.ObjectId
+    },
     type: {
       type: String,
       enum: projectTypes
