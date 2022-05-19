@@ -165,15 +165,15 @@ export async function publicCreateClient(req, res, next) {
 
     if (clients[0]) {
 
-      const client0 = clients[0];
+      console.log(clients.length);
+      console.log(clients);
+
+
+      const client0 = clients[clients.length-1];
 
       const project = await Project.find({clientId:client0._id}).exec();
 
       const project0 = project[0];
-
-      console.log(project0._id);
-
-      console.log(client0._id);
 
       return res.json({
         success: false,
