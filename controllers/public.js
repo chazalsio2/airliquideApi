@@ -165,9 +165,6 @@ export async function publicCreateClient(req, res, next) {
 
     if (clients[0]) {
 
-      console.log(clients.length);
-      console.log(clients);
-
 
       const client0 = clients[clients.length-1];
 
