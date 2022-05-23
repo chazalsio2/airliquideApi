@@ -212,6 +212,7 @@ export async function editClient(req, res, next) {
       spousenationalite,
       spousefirstname,
       spouseaddress,
+      spouselieuxdenaissance,
       spouseemail,
       spouseincome,
       spouseindustry,
@@ -233,6 +234,7 @@ export async function editClient(req, res, next) {
         phone: spousephone,
         date:spousedate,
         address: spouseaddress,
+        lieu:spouselieuxdenaissance,
         seniority: spouseseniority,
         situation: spousesituation
       };

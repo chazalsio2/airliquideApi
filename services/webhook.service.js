@@ -43,7 +43,10 @@ export async function sendNewDocWebhook(documentId) {
       clientName: client.firstname, 
       filename: document.name,
       email: client.email,
-      location: document.url,
+      location:`${project.status === "wait_sales_deed" ?( project.loanOfferDoc.url):
+      project.status === "wait_sales_agreement" ?( project.purchaseOfferDoc.url):
+      project.status === "wait_loan_offer" ?( project.salesAgreementDoc.url):
+      project.status === "completed" ?( project.salesDeedDoc.url):""}`,
       typeProject: project.type,
       StatusProject: project.status,
       projectId: document.projectId || null
@@ -605,9 +608,10 @@ export async function sendNewAffecteCommercial(project,commercial){
 }
 
   export async function sendNewStatusProject(project,commercial,evenement, demandeSignatureOA) {
+    let conseiller;
   const projet = await Project.findById(project._id)
   const client = await Client.findById(project.clientId)
-  const conseiller = await User.findById(project.commercialId)
+  if (project.commercialId) {return  conseiller = await User.findById(project.commercialId)};
   const event = await ProjectEvent.findById(evenement);//evenement;
   
   axios({
@@ -632,3 +636,110 @@ export async function sendNewAffecteCommercial(project,commercial){
       projet.status === "completed" ?( projet.salesDeedDoc.url):""}`,
   }})
 }
+
+  export async function sendMatchProjectEmail(property,url_matching){
+
+    let commercial;
+
+    const project = await Promise.all(
+      property.matchedProject.map(async (project) => {
+        return await Project.findById(project).lean();
+      }
+    ))
+     
+/*    const v = await Promise.all(
+     project.forEach(async (project) => {
+
+
+     return { templateId: 3919215,
+        variables: {
+          firstname: client.firstname
+          },
+        email: client.email,
+        name: client.displayName,
+        cc: commercial ? commercial.email ? commercial.email :"":"",
+      }
+
+}))
+console.log(v);
+
+/*var arr = [1, 2, 3, 4, 5];
+
+var results: mail[] = await Promise.all(arr.map(async (item): Promise<mail> => {
+    await callAsynchronousOperation(item);
+    return item + 1;
+}));
+
+v.map((values)=> {
+  console.log(values);
+
+})*/
+/*
+let promises = [];
+//foreach
+
+
+  let commercial;
+  
+    if(project.commercialId){
+      commercial = await User.findById(project.commercialId).lean();
+     }
+     const client = await Promise.all(
+      project.forEach(async(project) => {
+        return await Client.findById(project.clientId).lean();
+      }
+    ))
+  for (let i = 0; i < project.length; i++) {
+  promises.push(
+    [{ 
+      templateId: 3919215,
+        variables: {
+          firstname: client.firstname
+          },
+        email: client.email,
+        name: client.displayName,
+        cc: commercial ? commercial.email ? commercial.email :"":"",
+      
+    }]
+  )
+}
+//})
+console.log(promises);*/
+project.forEach(async (project) => {
+
+  const client = await Client.findById(project.clientId).lean();
+
+  if(project.commercialId){
+    commercial = await User.findById(project.commercialId).lean();
+   }
+
+    axios({
+      method:'GET',
+      url: process.env.ZAPPIER_WEBHOOK_MATCH_R,
+      data:{
+        
+    templateId: 3919215,
+    variables: {
+      firstname: client.firstname
+    },
+    email: client.email,
+    name: client.displayName,
+    cc: commercial.email,
+    status:project.status,
+    bien_immos: [{ 
+      img :property.photos[0],
+      name:property.name,
+      price :property.salesPrice,
+      lien_site:url_matching,
+      conseiller: property.commercialName,
+      tel:property.commercialPhoneNumber,
+      mail:property.commercialEmail
+     }],
+    ccVision: "direction@vision-r.re",
+    ccCommerciaux: "commercial.email",
+    subject: "Ensemble, nous sommes arrivés au bout de votre projet immobilier!",
+    quantite:1
+   
+  }})
+})
+  }
