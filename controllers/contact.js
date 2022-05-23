@@ -150,10 +150,10 @@ export async function editContact(req, res, next) {
           address
         } = modifier;
 
-      if (!contactCategoryId || !phone || !firstname || !lastname ||
+      /*if (!contactCategoryId || !phone || !firstname || !lastname ||
         !description || !email ||!address) {
         return next(generateError("Cannot update some fields", 403));
-      }
+      }*/
 
       const { contactId } = req.params;
       const opts = { runValidators: true };
