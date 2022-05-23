@@ -10,7 +10,8 @@ import Property, { getPropertyType } from "../models/Property";
 import Project from "../models/Project"; 
 import Client from "../models/Client"; 
 import PropertyCont from "../models/PropertyCont";
-
+import Project from "../models/Project"; 
+import Client from "../models/Client"; 
 import { sendMessageToSlack } from "../lib/slack";
 import { checkMatchingForProperty } from "../lib/matching";
 import {sendNewDProprieteWebhook,sendMatchProjectEmail} from '../services/webhook.service';
@@ -912,6 +913,7 @@ export async function getPublicProperty(req, res, next) {
     if (!property) {
       return next(generateError("Property not found", 404));
     }
+
     return res.json({ success: true, data: property });
   } catch (e) {
     next(generateError(e.message));
