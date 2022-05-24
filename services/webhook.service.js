@@ -177,12 +177,13 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
         profession2_a:dossiernotaire.profession1_conj,
         regime_matrimonial1_a:dossiernotaire.regime_matrimonial1_a||"",
         regime_matrimonial2_a:`${dossiernotaire.nom_c && (dossiernotaire.regime_matrimonial1_a)||""}`,
-        date_regime1_a:`${dossiernotaire.date_regime_matrimonial && ( moment(dossiernotaire.date_regime_matrimonial).format("DD/MM/YYYY"))||""}`,
-        date_regime2_a:`${dossiernotaire.date_regime_matrimonial && ( moment(dossiernotaire.date_regime_matrimonial).format("DD/MM/YYYY"))||""}`,
+        date_regime1_a:`${ dossiernotaire.date_regime_matrimonial && ( moment(dossiernotaire.date_regime_matrimonial).format("DD/MM/YYYY"))||""}`,
+        date_regime2_a:`${dossiernotaire.nom_c && ( moment(dossiernotaire.date_regime_matrimonial).format("DD/MM/YYYY"))||""}`,
         num_tel1_a:dossiernotaire.num1_a,
         num_tel2_a:dossiernotaire.tel1_a,
         res_fiscale1_a:dossiernotaire.res_fiscale1_a,
         res_fiscale2_a:dossiernotaire.res_conj,
+       /////////////////////////////////////////////////////////
         designation_b:`${properties.type === "apartment" && ("Appartement")||        
          properties.type === "commercial" && ("Local commercial")||
          properties.type === "construction_land" && ("Terrain de construction")||
