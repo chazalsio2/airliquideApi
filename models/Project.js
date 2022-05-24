@@ -27,7 +27,7 @@ const SalesSheet = new mongoose.Schema({
     type: String
   },
   propertySize: {
-    type: Number
+    type: Number||String
   },
   propertySizeDetails:{
     type: String
@@ -105,10 +105,10 @@ const SearchSheet = new mongoose.Schema({
     type: String
   },
   propertySize: {
-    type: Number,
+    type: String,
   },
   propertySizeDetail: {
-    type: String,
+    type: Number,
     required: false
   },
   propertyArea: {

@@ -9,9 +9,7 @@ import { uploadPhotos } from "../lib/cloudinary";
 import Property, { getPropertyType } from "../models/Property";
 import Project from "../models/Project"; 
 import Client from "../models/Client"; 
-import PropertyCont from "../models/PropertyCont";
-import Project from "../models/Project"; 
-import Client from "../models/Client"; 
+import PropertyCont from "../models/PropertyCont"; 
 import { sendMessageToSlack } from "../lib/slack";
 import { checkMatchingForProperty } from "../lib/matching";
 import {sendNewDProprieteWebhook,sendMatchProjectEmail} from '../services/webhook.service';
@@ -163,7 +161,6 @@ export async function editProperty(req, res, next) {
       type,
       salesPrice,
       code_postale,
-      propertySizeDetail,
       projectId,
       Honoraires_V_R,
       charges_properties,
@@ -348,7 +345,7 @@ export async function editProperty(req, res, next) {
     }
 
     if (numberOfRooms) {
-      propertyData.numberOfRooms =Number(numberOfRooms);
+      propertyData.numberOfRooms = numberOfRooms === "bigger" ? propertySizeDetail : Number(numberOfRooms);
     }
 
     propertyData.name = `${getPropertyType(propertyData.type) || ""} ${propertyData.livingArea ? propertyData.livingArea+" m²" : ""}  ${propertyData.city || ""} ${propertyData.landArea ? propertyData.landArea+ " m²" : ""}`;
@@ -539,7 +536,6 @@ export async function createProperty(req, res, next) {
       code_postale:`${city.slice(-6,-1)}`,
       projectId,
       city,
-      propertySizeDetail,
       // landArea,
       // livingArea,
       propertyStatus,
@@ -675,7 +671,8 @@ export async function createProperty(req, res, next) {
     }
 
     if (numberOfRooms) {
-      propertyData.numberOfRooms = Number(numberOfRooms);
+
+      propertyData.numberOfRooms = numberOfRooms === "bigger" ? propertySizeDetail : Number(numberOfRooms);
     }
 
     if (address) {

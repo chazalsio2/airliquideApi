@@ -187,32 +187,6 @@ export async function publicCreateClient(req, res, next) {
   }
 
 
-    const clients = await Client.find({email:email}).exec();
-
-    if (clients[0]) {
-
-
-      const client0 = clients[clients.length-1];
-
-      const project = await Project.find({clientId:client0._id}).exec();
-
-      const project0 = project[0];
-
-      return res.json({
-        success: false,
-        data: {
-          projectId: project0._id,
-          completed: false,
-        },
-      });
-
-      return next(generateError("Vous vous êtes déjà inscrit."));
-      /*
-*/
-    
-  }
-
-
       const client = await new Client(newClientData).save();
 
 
