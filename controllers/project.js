@@ -1308,6 +1308,7 @@ export async function editSearchProject(req, res, next) {
 
 
     const modifier = {
+      
       searchSheet: {
         investmentType:
           investmentType === "other" ? otherInvestmentType : investmentType,
