@@ -120,7 +120,7 @@ const schema = new mongoose.Schema(
       required: false
     },
     propertySizeDetail: {
-      type:String
+      type:Number
     },
     ref: {
       type: String,

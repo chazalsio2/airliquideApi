@@ -290,7 +290,7 @@ export async function editSalesSheet(req, res, next) {
 */
     const newSalesSheetEdited = {
       propertyType,
-      propertySize : Number(propertySize),
+      propertySize : propertySize === "bigger" ? "bigger" : Number(propertySize),
       propertySizeDetails,
       // livingArea,
       // landArea,
@@ -394,10 +394,12 @@ export async function saveSalesSheet(req, res, next) {
     ) {
       throw new Error("Missing fields");
     }
+
 */
+console.log(propertySize);
     const salesSheet = {
       propertyType,
-      propertySize : Number(propertySize),
+      propertySize : propertySize === "bigger" ? "bigger" : Number(propertySize),
       propertySizeDetails,
       // livingArea,
       //landArea,
@@ -1226,8 +1228,8 @@ export async function saveSearchSheet(req, res, next) {
     const searchSheet = {
       investmentType:
         investmentType === "other" ? otherInvestmentType : investmentType,
-        propertySize : Number(propertySize),
-      propertyType,
+        propertySize : propertySize === "bigger" ? "bigger" : Number(propertySize),
+        propertyType,
       additionalInfos,
       propertySizeDetail,
       propertyArea,
@@ -1302,8 +1304,8 @@ export async function editSearchProject(req, res, next) {
       searchSheet: {
         investmentType:
           investmentType === "other" ? otherInvestmentType : investmentType,
-          propertySize : Number(propertySize),
-        propertyType,
+          propertySize : propertySize === "bigger" ? "bigger" : Number(propertySize),
+          propertyType,
         additionalInfos,
         propertyArea,
         propertyLandArea,
