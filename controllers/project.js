@@ -256,7 +256,7 @@ export async function editSalesSheet(req, res, next) {
       landconstcd,
       propertyType,
       propertySize,
-      propertySizeDetails,
+      propertySizeDetail,
       livingArea,
       landArea,
       workNeeded,
@@ -288,10 +288,13 @@ export async function editSalesSheet(req, res, next) {
       throw new Error("Missing fields");
     }
 */
+
+    console.log(propertySize);
+
     const newSalesSheetEdited = {
       propertyType,
-      propertySize : propertySize === "bigger" ? "bigger" : Number(propertySize),
-      propertySizeDetails,
+      propertySize : propertySize === "bigger" ? propertySizeDetail : Number(propertySize),
+      propertySizeDetail,
       // livingArea,
       // landArea,
       reasonForTheSale,
@@ -360,7 +363,7 @@ export async function saveSalesSheet(req, res, next) {
       landconstcd,
       propertyType,
       propertySize,
-      propertySizeDetails,
+      propertySizeDetail,
       livingArea,
       landArea,
       workNeeded,
@@ -399,8 +402,7 @@ export async function saveSalesSheet(req, res, next) {
 console.log(propertySize);
     const salesSheet = {
       propertyType,
-      propertySize : propertySize === "bigger" ? "bigger" : Number(propertySize),
-      propertySizeDetails,
+      propertySize : propertySize === "bigger" ? propertySizeDetail : Number(propertySize),
       // livingArea,
       //landArea,
       workNeeded,
@@ -1225,10 +1227,13 @@ export async function saveSearchSheet(req, res, next) {
       return next(generateError("Project not found", 404));
     }
 
+    console.log(propertySize);
+
+
     const searchSheet = {
       investmentType:
         investmentType === "other" ? otherInvestmentType : investmentType,
-        propertySize : propertySize === "bigger" ? "bigger" : Number(propertySize),
+        propertySize : propertySize === "bigger" ? propertySizeDetail : Number(propertySize),
         propertyType,
       additionalInfos,
       propertySizeDetail,
@@ -1278,6 +1283,7 @@ export async function editSearchProject(req, res, next) {
       investmentType,
       otherInvestmentType,
       propertySize,
+      propertySizeDetail,
       propertyArea,
       propertyLandArea,
       land,
@@ -1300,11 +1306,12 @@ export async function editSearchProject(req, res, next) {
       return next(generateError("Project not found", 404));
     }
 
+
     const modifier = {
       searchSheet: {
         investmentType:
           investmentType === "other" ? otherInvestmentType : investmentType,
-          propertySize : propertySize === "bigger" ? "bigger" : Number(propertySize),
+          propertySize : propertySize === "bigger" ? propertySizeDetail : Number(propertySize),
           propertyType,
         additionalInfos,
         propertyArea,
