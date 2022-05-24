@@ -183,7 +183,6 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
         num_tel2_a:dossiernotaire.tel1_a,
         res_fiscale1_a:dossiernotaire.res_fiscale1_a,
         res_fiscale2_a:dossiernotaire.res_conj,
-       /////////////////////////////////////////////////////////
         designation_b:`${properties.type === "apartment" && ("Appartement")||        
          properties.type === "commercial" && ("Local commercial")||
          properties.type === "construction_land" && ("Terrain de construction")||
