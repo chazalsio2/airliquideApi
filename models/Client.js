@@ -123,6 +123,9 @@ var schema = new mongoose.Schema(
       type: String,
       required: false
     },
+    conseillerId:{
+      type: mongoose.Types.ObjectId,
+    },
     userId: {
       type: mongoose.Types.ObjectId,
       required: false

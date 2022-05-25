@@ -1905,7 +1905,7 @@ export async function acceptProject(req, res, next) {
     const { projectId } = req.params;
 
     const project = await Project.findById(projectId).lean();
-
+    const client = await Client.findById(project.clientId).lean();
     if (!project) {
       return next(generateError("Project not found", 404));
     }
@@ -1914,10 +1914,29 @@ export async function acceptProject(req, res, next) {
       return next(generateError("Wrong state", 401));
     }
 
-    await Project.updateOne(
-      { _id: projectId },
-      { $set: { status: "wait_mandate" } }
-    ).exec();
+    if (client.conseillerId){
+
+      await Project.updateOne(
+        { _id: projectId },
+        { $set: { status: "wait_mandate",
+                  commercialId: client.conseillerId  
+        } }
+      ).exec();
+    
+      const commercial = await User.findOne({
+        _id: client.conseillerId,
+        roles: "commercial_agent",
+        deactivated: { $ne: true }
+      });
+    
+      sendNewAffecteCommercial(project,commercial);
+    }else{
+      
+      await Project.updateOne(
+        { _id: projectId },
+        { $set: { status: "wait_mandate"} }
+      ).exec();
+    }
 
     sendNewStatusProject(project);
 
@@ -1927,7 +1946,7 @@ export async function acceptProject(req, res, next) {
       authorUserId: req.user._id
     }).save();
 
-    const client = await Client.findById(project.clientId).lean();
+    
     const user = await User.findById(req.user._id).lean();
 
     sendMessageToSlack({
