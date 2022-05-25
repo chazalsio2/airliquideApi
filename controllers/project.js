@@ -137,6 +137,10 @@ export async function getProject(req, res, next) {
       return next(generateError("Not authorized", 401));
     }
 
+    if(client.conseillerId){
+      client.user = await User.findById(client.conseillerId).lean();
+   }
+
     project.client = client;
     project.dossiernotaire = dossiernotaire;
     project.events = await ProjectEvent.find({ projectId }, null, {
