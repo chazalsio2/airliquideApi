@@ -186,6 +186,7 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
         num_tel2_a:dossiernotaire.tel1_a,
         res_fiscale1_a:dossiernotaire.res_fiscale1_a,
         res_fiscale2_a:dossiernotaire.res_conj,
+       /////////////////////////////////////////////////////////
         designation_b:`${properties.type === "apartment" && ("Appartement")||        
          properties.type === "commercial" && ("Local commercial")||
          properties.type === "construction_land" && ("Terrain de construction")||
@@ -199,7 +200,7 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
         code_postal_b: properties.city,
         commune_b:properties.city,
         ref_cadastrales_b: dossiernotaire.ref_cadastrales_properties,
-        descriptif_b: properties.descriptif_b,
+        descriptif_b: dossiernotaire.descriptif_b,
         etat_occupation_b: dossiernotaire.etat_occupation_b,
         nu_meuble_b: `${dossiernotaire.mobilier_p_properties > 0 ? ("meublé"):("nu")}`,
         prix_fai_p: conversionEUR(dossiernotaire.Prix_de_vente_FAI),
@@ -362,7 +363,7 @@ export async function sendNewDosiierNtaire(dossiernotaireId){
        code_postal_b: properties.city,
        commune_b:properties.city,
        ref_cadastrales_b: dossiernotaire.ref_cadastrales_properties,
-       descriptif_b: properties.description,
+       descriptif_b: dossiernotaire.descriptif_b,
        etat_occupation_b: dossiernotaire.etat_occupation_b,
        nu_meuble_b: `${dossiernotaire.mobilier_p_properties > 0 ? ("meublé"):("nu")}`,
        prix_fai_p: conversionEUR(dossiernotaire.Prix_de_vente_FAI),

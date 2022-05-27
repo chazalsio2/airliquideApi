@@ -148,6 +148,10 @@ export async function getProject(req, res, next) {
     
 
 
+    if(client.conseillerId){
+      client.user = await User.findById(client.conseillerId).lean();
+   }
+
     project.client = client;
     project.dossiernotaire = dossiernotaire;
     project.events = await ProjectEvent.find({ projectId }, null, {
@@ -1969,8 +1973,6 @@ export async function acceptProject(req, res, next) {
 
     const project = await Project.findById(projectId).lean();
     const client = await Client.findById(project.clientId).lean();
-    
-
     if (!project) {
       return next(generateError("Project not found", 404));
     }
@@ -1979,32 +1981,29 @@ export async function acceptProject(req, res, next) {
       return next(generateError("Wrong state", 401));
     }
 
-if (client.conseillerId){
+    if (client.conseillerId){
 
-  await Project.updateOne(
-    { _id: projectId },
-    { $set: { status: "wait_mandate",
-              commercialId: client.conseillerId  
-    } }
-  ).exec();
-
-  const commercial = await User.findOne({
-    _id: client.conseillerId,
-    roles: "commercial_agent",
-    deactivated: { $ne: true }
-  });
-
-  sendNewAffecteCommercial(project,commercial);
-}else{
-  
-  await Project.updateOne(
-    { _id: projectId },
-    { $set: { status: "wait_mandate"} }
-  ).exec();
-}
-
-
+      await Project.updateOne(
+        { _id: projectId },
+        { $set: { status: "wait_mandate",
+                  commercialId: client.conseillerId  
+        } }
+      ).exec();
     
+      const commercial = await User.findOne({
+        _id: client.conseillerId,
+        roles: "commercial_agent",
+        deactivated: { $ne: true }
+      });
+    
+      sendNewAffecteCommercial(project,commercial);
+    }else{
+      
+      await Project.updateOne(
+        { _id: projectId },
+        { $set: { status: "wait_mandate"} }
+      ).exec();
+    }
 
     sendNewStatusProject(project);
 

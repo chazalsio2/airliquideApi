@@ -73,6 +73,10 @@ export async function getClient(req, res, next) {
       return next(generateError("Client not found", 404));
     }
 
+    if(client.conseillerId){
+       client.user = await User.findById(client.conseillerId).lean();
+    }
+
     client.projects = await Project.find(
       {
         clientId: client._id,

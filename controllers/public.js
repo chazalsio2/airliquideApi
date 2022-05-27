@@ -25,6 +25,7 @@ export async function publicCreateForm(req, res, next) {
     }
 
     const newClientData = {
+      extern:"yes",
       firstname,
       lastname,
       email,
@@ -142,6 +143,7 @@ export async function publicCreateClient(req, res, next) {
     if (projectTypes.indexOf(serviceType) === -1) {
       return next(generateError("Invalid service", 403));
     }
+    console.log(conseillerId);
 
     //console.log(conseillerId);
     const newClientData = {
@@ -189,6 +191,7 @@ export async function publicCreateClient(req, res, next) {
 
       const client = await new Client(newClientData).save();
 
+      console.log(client);
 
       sendNewClientEmail(client);
 
