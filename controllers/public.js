@@ -24,6 +24,7 @@ export async function publicCreateForm(req, res, next) {
     }
 
     const newClientData = {
+      extern:"yes",
       firstname,
       lastname,
       email,
