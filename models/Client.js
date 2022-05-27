@@ -141,7 +141,12 @@ var schema = new mongoose.Schema(
       type: String,
     },
     referalconseiller:{
-      type: String,
+      type: mongoose.Types.ObjectId,
+      required: false
+    },
+    conseillerId:{
+      type: mongoose.Types.ObjectId,
+      required: false
     },
     displayName: {
       type: String,
