@@ -488,7 +488,10 @@ export async function sendNewDProprieteWebhook(propertyId) {
       works:proprietes.works,
       financialExpense:proprietes.financialExpense,
       equipment:proprietes.equipment,
-      agencyFees:proprietes.agencyFees
+      agencyFees:proprietes.agencyFees,
+      commercialEmail:proprietes.commercialEmail,
+      commercialName:proprietes.commercialName,
+      commercialPhoneNumber:proprietes.commercialPhoneNumber,
     }
   })
 }
