@@ -1,5 +1,6 @@
 import moment from "moment";
 import Client from "../models/Client";
+import User from "../models/User";
 import { generateError } from "../lib/utils";
 import Project, { projectTypes } from "../models/Project";
 import ProjectEvent from "../models/ProjectEvent";
