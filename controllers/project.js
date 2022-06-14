@@ -2050,14 +2050,14 @@ export async function addDocumentToProjectByExtrenPlatform(req, res, next) {
       visibility
     }).save();
 
-    // const location = await uploadFile(
-    //   `project__${projectId}/${document._id}_${document.name}`,
-    //   fileData,
-    //   contentType
-    // );
+    const location = await uploadFile(
+      `project__${projectId}/${document._id}_${document.name}`,
+      fileData,
+      contentType
+    );
     await Document.updateOne(
       { _id: document._id },
-      { $set: { url: fileData } }
+      { $set: { url: location } }
     ).exec();
 
     await sendNewDocWebhook(document._id)
