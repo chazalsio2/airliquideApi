@@ -58,6 +58,7 @@ import {
   refuseProject,
   acceptProject,
   addDocumentToProject,
+  addDocumentToProjectByExtrenPlatform,
   assignCommercial,
   uploadAgreementForProject,
   uploadDeedForProject,
@@ -905,6 +906,14 @@ app.put(
     checkAccountDesactivated,
     addDocumentToProject,
     errorHandle
+  );
+
+  app.post(
+    "/ExternProjects/:projectId/documents",
+    //passport.authenticate("jwt", { session: false }),
+    //checkAccountDesactivated,
+    addDocumentToProjectByExtrenPlatform,
+    //errorHandle
   );
 
   app.post(
