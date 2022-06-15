@@ -92,6 +92,9 @@ var schema = new mongoose.Schema(
     lastname: {
       type: String
     },
+    extern:{
+      type: String
+    },
     lieux_de_naissance:{
       type: String
     },
@@ -138,7 +141,12 @@ var schema = new mongoose.Schema(
       type: String,
     },
     referalconseiller:{
-      type: String,
+      type: mongoose.Types.ObjectId,
+      required: false
+    },
+    conseillerId:{
+      type: mongoose.Types.ObjectId,
+      required: false
     },
     displayName: {
       type: String,

@@ -28,7 +28,7 @@ const SalesSheet = new mongoose.Schema({
     type: String
   },
   propertySize: {
-    type: String
+    type: Number
   },
   propertySizeDetails:{
     type: String
@@ -106,16 +106,18 @@ const SearchSheet = new mongoose.Schema({
     type: String
   },
   propertySize: {
-    type: String,
-    enum: ["studio", "T2", "T3", "T4", "bigger"]
+    type: Number,
   },
   propertySizeDetail: {
-    type: String,
+    type: Number,
     required: false
   },
   propertyArea: {
     type: String,
     enum: ["lessthan30", "lessthan90", "morethan90"]
+  },
+  propertyLandArea: {
+    type: Number
   },
   additionalInfos: {
     type: String,
@@ -152,6 +154,7 @@ const SearchSheet = new mongoose.Schema({
     type: String,
     enum: ["optional", "priority"]
   },
+  
   delay: {
     type: String,
     enum: ["soonaspossible", "lessthan6", "morethan6"]
@@ -176,7 +179,13 @@ const schema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       required: false
     },
+    url_matching:{
+      type:String
+    },
     commercialId:{
+      type: mongoose.Types.ObjectId
+    },
+    propertiesId:{
       type: mongoose.Types.ObjectId
     },
     type: {
