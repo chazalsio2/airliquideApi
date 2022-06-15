@@ -15,6 +15,7 @@ const citiesList = cities.map(c => `${c["COMMUNE"]} (${c["CODE POSTAL"]})`)
 export const projectTypes = ["management", "sales", "search", "coaching"];
 
 const DocSubset = new mongoose.Schema({
+  originNameMandate: String,
   name: String,
   url: String
 });
