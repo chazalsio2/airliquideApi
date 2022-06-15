@@ -43,14 +43,17 @@ export async function sendNewDocWebhook(documentId) {
       clientName: client.firstname, 
       filename: document.name,
       email: client.email,
-      location: document.url,
+      location:`${projet.status === "wait_sales_deed" ?( projet.loanOfferDoc.url):
+      projet.status === "wait_purchase_offer" ?( projet.mandateDoc.url):
+      projet.status === "wait_sales_agreement" ?( projet.purchaseOfferDoc.url):
+      projet.status === "wait_loan_offer" ?( projet.salesAgreementDoc.url):
+      projet.status === "completed" ?( projet.salesDeedDoc.url):""}`,
       typeProject: project.type,
       StatusProject: project.status,
       projectId: document.projectId || null
     }
   })
 }
-
 
 export async function sendNewClientWebhook(projectId) {
   const project = await getProject(projectId)
@@ -625,6 +628,8 @@ export async function sendNewAffecteCommercial(project,commercial){
       montant_commission:projet.commissionAmount ? (projet.commissionAmount/100):(""),
       commercial_poucentage:projet.commercialPourcentage ? (projet.commercialPourcentage/100):"",
       commercial_name:conseiller ? conseiller.displayName:"",//commercial ? commercial.displayName:"",
+      orinige_name:projet.status === "wait_purchase_offer" ? projet.mandateDoc.originNameMandate:"",
+      fileName:projet.status === "wait_purchase_offer" ?projet.mandateDoc.name:"",
       lien_aws: `${projet.status === "wait_sales_deed" ?( projet.loanOfferDoc.url):
       projet.status === "wait_purchase_offer" ?( projet.mandateDoc.url):
       projet.status === "wait_sales_agreement" ?( projet.purchaseOfferDoc.url):
