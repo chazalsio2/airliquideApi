@@ -2108,7 +2108,7 @@ export async function addDocumentToProjectByExtrenPlatform(req, res, next) {
       //authorUserId: req.user._id,
       projectId,
       contentType,
-      visibility
+      visibility:project.type === "search" ? "public" : "private"
     }).save();
 
     // const location = await uploadFile(
