@@ -759,6 +759,7 @@ export async function sendCompletedProjectEmail(req, res, next) {
 
 export async function acceptMandate(req, res, next) {
   try {
+    console.log("accepte le mandat")
     const { projectId } = req.params;
     const userId = req.user._id;
 
@@ -1969,6 +1970,7 @@ export async function refuseProject(req, res, next) {
 
 export async function acceptProject(req, res, next) {
   try {
+    console.log("accepte le project")
     const { projectId } = req.params;
 
     const project = await Project.findById(projectId).lean();
@@ -2213,6 +2215,7 @@ export async function uploadLoanOfferForProject(req, res, next) {
 
 export async function uploadMandateForProject(req, res, next) {
   try {
+    console.log("ajout du mandat")
     const { projectId } = req.params;
     const { fileName, fileData, contentType,originNameMandate } = req.body;
     const user = await User.findById(req.user._id).lean();
