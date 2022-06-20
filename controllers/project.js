@@ -2260,7 +2260,6 @@ export async function uploadMandateForProject(req, res, next) {
       { $set: { url: location } }
     ).exec();
 
-    await sendNewDocWebhook(document._id)
 
     await Project.updateOne(
       { _id: projectId },
@@ -2291,6 +2290,8 @@ export async function uploadMandateForProject(req, res, next) {
       authorUserId: req.user._id,
       documentId: document._id
     }).save();
+    
+    await sendNewDocWebhook(document._id)
 
     return res.json({ success: true });
   } catch (e) {
