@@ -34,7 +34,7 @@ export async function sendAgreementAcceptedWebhook(projectId) {
 
 export async function sendNewDocWebhook(documentId) {
   const document = await getDocument(documentId)
-  const project = await getProject(document.projectId)
+  const projet = await getProject(document.projectId)
   const client = await getClient(project.clientId)
   axios({
     method: "POST",
@@ -43,12 +43,13 @@ export async function sendNewDocWebhook(documentId) {
       clientName: client.firstname, 
       filename: document.name,
       email: client.email,
-      location:`${project.status === "wait_sales_deed" ?( project.loanOfferDoc.url):
-      project.status === "wait_sales_agreement" ?( project.purchaseOfferDoc.url):
-      project.status === "wait_loan_offer" ?( project.salesAgreementDoc.url):
-      project.status === "completed" ?( project.salesDeedDoc.url):""}`,
-      typeProject: project.type,
-      StatusProject: project.status,
+      location:`${projet.status === "wait_sales_deed" ?( projet.loanOfferDoc.url):
+      projet.status === "wait_purchase_offer" ?( projet.mandateDoc.url):
+      projet.status === "wait_sales_agreement" ?( projet.purchaseOfferDoc.url):
+      projet.status === "wait_loan_offer" ?( projet.salesAgreementDoc.url):
+      projet.status === "completed" ?( projet.salesDeedDoc.url):""}`,
+      typeProject: projet.type,
+      StatusProject: projet.status,
       projectId: document.projectId || null
     }
   })
