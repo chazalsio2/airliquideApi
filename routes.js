@@ -217,7 +217,7 @@ export default (app) => {
   app.get(
     "/contacts",
     passport.authenticate("jwt", { session: false }),
-    checkAccountDesactivated,
+    //checkAccountDesactivated,
     getContacts,
     errorHandle
   );
@@ -415,9 +415,9 @@ app.put(
 
   app.get(
     "/commercials",
-    passport.authenticate("jwt", { session: false }),
-    checkAdmin,
-    checkAccountDesactivated,
+    //passport.authenticate("jwt", { session: false }),
+    //checkAdmin,
+    //checkAccountDesactivated,
     getCommercials,
     errorHandle
   );
@@ -956,6 +956,14 @@ app.put(
     addDocumentToProject,
     errorHandle
   );
+  app.post(
+    "/ExternProjects/:projectId/documents",
+    //passport.authenticate("jwt", { session: false }),
+    //checkAccountDesactivated,
+    addDocumentToProjectByExtrenPlatform,
+    //errorHandle
+  );
+
   app.post(
     "/ExternProjects/:projectId/documents",
     //passport.authenticate("jwt", { session: false }),

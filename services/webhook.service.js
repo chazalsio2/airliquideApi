@@ -54,7 +54,6 @@ export async function sendNewDocWebhook(documentId) {
   })
 }
 
-
 export async function sendNewClientWebhook(projectId) {
   const project = await getProject(projectId)
   const client = await getClient(project.clientId)
@@ -632,6 +631,8 @@ export async function sendNewAffecteCommercial(project,commercial){
       montant_commission:projet.commissionAmount ? (projet.commissionAmount/100):(""),
       commercial_poucentage:projet.commercialPourcentage ? (projet.commercialPourcentage/100):"",
       commercial_name:conseiller ? conseiller.displayName:"",//commercial ? commercial.displayName:"",
+      orinige_name:projet.status === "wait_purchase_offer" ? projet.mandateDoc.originNameMandate:"",
+      fileName:projet.status === "wait_purchase_offer" ?projet.mandateDoc.name:"",
       lien_aws: `${projet.status === "wait_sales_deed" ?( projet.loanOfferDoc.url):
       projet.status === "wait_purchase_offer" ?( projet.mandateDoc.url):
       projet.status === "wait_sales_agreement" ?( projet.purchaseOfferDoc.url):

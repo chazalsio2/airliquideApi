@@ -2108,7 +2108,7 @@ export async function addDocumentToProjectByExtrenPlatform(req, res, next) {
       //authorUserId: req.user._id,
       projectId,
       contentType,
-      visibility
+      visibility:project.type === "search" ? "public" : "private"
     }).save();
 
     // const location = await uploadFile(
@@ -2214,7 +2214,7 @@ export async function uploadLoanOfferForProject(req, res, next) {
 export async function uploadMandateForProject(req, res, next) {
   try {
     const { projectId } = req.params;
-    const { fileName, fileData, contentType } = req.body;
+    const { fileName, fileData, contentType,originNameMandate } = req.body;
     const user = await User.findById(req.user._id).lean();
 
     const project = await Project.findById(projectId).lean();
@@ -2239,6 +2239,7 @@ export async function uploadMandateForProject(req, res, next) {
     }
 
     const document = await new Document({
+      originNameMandate,
       name: fileName,
       authorUserId: req.user._id,
       projectId,
@@ -2250,6 +2251,7 @@ export async function uploadMandateForProject(req, res, next) {
       fileData,
       contentType
     );
+    console.log(document._id);
     await Document.updateOne(
       { _id: document._id },
       { $set: { url: location } }
@@ -2263,6 +2265,7 @@ export async function uploadMandateForProject(req, res, next) {
         $set: {
           mandateDocId: document._id,
           mandateDoc: {
+            originNameMandate:originNameMandate,
             name: document.name,
             url: location
           },
