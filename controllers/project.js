@@ -2075,7 +2075,7 @@ export async function addDocumentToProject(req, res, next) {
       { $set: { url: location } }
     ).exec();
 
-    await sendNewDocWebhook(document._id)
+    sendNewDocWebhook(document._id)
     return res.json({ success: true });
   } catch (e) {
     next(generateError(e.message));
@@ -2123,7 +2123,7 @@ export async function addDocumentToProjectByExtrenPlatform(req, res, next) {
       { $set: { url: fileData } }
     ).exec();
 
-    await sendNewDocWebhook(document._id)
+    sendNewDocWebhook(document._id)
     return res.json({ success: true });
   } catch (e) {
     next(generateError(e.message));
@@ -2260,7 +2260,7 @@ export async function uploadMandateForProject(req, res, next) {
       { $set: { url: location } }
     ).exec();
 
-    await sendNewDocWebhook(document._id)
+    sendNewDocWebhook(document._id)
 
 
     await Project.updateOne(
@@ -2343,7 +2343,7 @@ export async function uploadPurchaseOfferForProject(req, res, next) {
       { $set: { url: location } }
     ).exec();
 
-    await sendNewDocWebhook(document._id)
+    sendNewDocWebhook(document._id)
 
     await Project.updateOne(
       { _id: projectId },
@@ -2510,7 +2510,7 @@ export async function uploadDeedForProject(req, res, next) {
       { $set: { url: location } }
     ).exec();
 
-    await sendNewDocWebhook(document._id)
+    sendNewDocWebhook(document._id)
 
     await Project.updateOne(
       { _id: projectId },
