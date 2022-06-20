@@ -2121,14 +2121,12 @@ export async function addDocumentToProjectByExtrenPlatform(req, res, next) {
       { $set: { url: fileData } }
     ).exec();
 
-    
     await sendNewDocWebhook(document._id)
     return res.json({ success: true });
   } catch (e) {
     next(generateError(e.message));
   }
 }
-
 
 export async function uploadLoanOfferForProject(req, res, next) {
   try {
