@@ -2123,7 +2123,6 @@ export async function addDocumentToProjectByExtrenPlatform(req, res, next) {
       { $set: { url: fileData } }
     ).exec();
 
-    sendNewDocWebhook(document._id)
     return res.json({ success: true });
   } catch (e) {
     next(generateError(e.message));
