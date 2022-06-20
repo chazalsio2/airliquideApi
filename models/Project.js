@@ -15,7 +15,6 @@ const citiesList = cities.map(c => `${c["COMMUNE"]} (${c["CODE POSTAL"]})`)
 export const projectTypes = ["management", "sales", "search", "coaching"];
 
 const DocSubset = new mongoose.Schema({
-  originNameMandate: String,
   name: String,
   url: String
 });
@@ -28,7 +27,7 @@ const SalesSheet = new mongoose.Schema({
     type: String
   },
   propertySize: {
-    type: Number
+    type: String
   },
   propertySizeDetails:{
     type: String
@@ -106,18 +105,16 @@ const SearchSheet = new mongoose.Schema({
     type: String
   },
   propertySize: {
-    type: Number,
+    type: String,
+    enum: ["studio", "T2", "T3", "T4", "bigger"]
   },
   propertySizeDetail: {
-    type: Number,
+    type: String,
     required: false
   },
   propertyArea: {
     type: String,
     enum: ["lessthan30", "lessthan90", "morethan90"]
-  },
-  propertyLandArea: {
-    type: Number
   },
   additionalInfos: {
     type: String,
@@ -154,7 +151,6 @@ const SearchSheet = new mongoose.Schema({
     type: String,
     enum: ["optional", "priority"]
   },
-  
   delay: {
     type: String,
     enum: ["soonaspossible", "lessthan6", "morethan6"]
@@ -179,13 +175,7 @@ const schema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       required: false
     },
-    url_matching:{
-      type:String
-    },
     commercialId:{
-      type: mongoose.Types.ObjectId
-    },
-    propertiesId:{
       type: mongoose.Types.ObjectId
     },
     type: {

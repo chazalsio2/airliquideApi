@@ -17,15 +17,6 @@ const schema = new mongoose.Schema(
       type: String,
       required: false
     },
-    matchedProject: {
-      type: Array
-    },
-    "matchedProject.$": {
-      type: mongoose.Types.ObjectId
-    },
-    url_matching: {
-      type:String
-    },
     floor: {
       type: String,
       required: false
@@ -119,9 +110,6 @@ const schema = new mongoose.Schema(
       type: Number,
       required: false
     },
-    propertySizeDetail: {
-      type:Number
-    },
     ref: {
       type: String,
       required: false
@@ -147,9 +135,6 @@ const schema = new mongoose.Schema(
     yearOfConstruction: {
       type: Number,
       required: false
-    },
-    surface: {
-      type: Array 
     },
     Honoraires_V_R:{
       type: String,
