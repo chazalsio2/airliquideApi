@@ -94,6 +94,9 @@ var schema = new mongoose.Schema(
     },
     extern:{
       type: String
+    }, 
+    FormExtern:{
+      type: String
     },
     lieux_de_naissance:{
       type: String
