@@ -104,6 +104,12 @@ var schema = new mongoose.Schema(
     nationalite:{
         type: String
     },
+    commentaire:{
+      type: String
+    },
+    lien:{
+    type: String
+    },
     email: {
       type: String
     },
