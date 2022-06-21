@@ -155,7 +155,7 @@ export async function publicCreateFormExtern(req, res, next) {
       sendNewClientEmail(client);
 
       sendMessageToSlack({
-        message: `Le prospect ${client.firstname} ${client.lastname} a été ajouté : ${process.env.APP_URL}/clients/${client._id}`,
+        message: `L'insul-R' ${client.firstname} ${client.lastname} a été ajouté : ${process.env.APP_URL}/clients/${client._id}`,
       });
       const {
         propertyType,
