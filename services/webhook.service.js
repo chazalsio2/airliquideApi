@@ -613,7 +613,7 @@ export async function sendNewAffecteCommercial(project,commercial){
     let conseiller;
   const projet = await Project.findById(project._id)
   const client = await Client.findById(project.clientId)
-  if (project.commercialId) {return  conseiller = await User.findById(project.commercialId)};
+  if (project.commercialId) {  conseiller = await User.findById(project.commercialId)};
   const event = await ProjectEvent.findById(evenement);//evenement;
   
   axios({
