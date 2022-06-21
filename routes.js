@@ -35,7 +35,7 @@ import {
   deleteClient,
   deleteProject
 } from "./controllers/client";
-import { publicCreateClient,publicCreateForm } from "./controllers/public";
+import { publicCreateClient,publicCreateForm,publicCreateFormExtern } from "./controllers/public";
 import { createDossierNotaire,editDossierNotaire,editFinaleDossierNotaire } from "./controllers/dossierNotaire"
 import {
   getDocument,
@@ -161,8 +161,8 @@ export default (app) => {
   app.post("/users/forgot-password", forgotPassword, errorHandle);
   app.post("/users/change-password", changePassword, errorHandle);
   app.post("/publicForm/clients", cors(), publicCreateForm, errorHandle);
+  app.post("/publicFormExtern/clients", cors(), publicCreateFormExtern, errorHandle);
   app.post("/public/clients", cors(), publicCreateClient, errorHandle);
-  app.post("/publicForm/clients", cors(), publicCreateForm, errorHandle);
   //check email in signUP
   // app.post("/public/clients-checkEmail", cors(), publicCreateClient, errorHandle);
 
