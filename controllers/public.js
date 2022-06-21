@@ -177,8 +177,7 @@ export async function publicCreateFormExtern(req, res, next) {
       } = req.body;
 
       const searchSheet = {
-        investmentType:
-        investmentType === "other" ? otherInvestmentType : investmentType,
+       
         propertySize,
         propertyType,
         additionalInfos,
@@ -193,7 +192,7 @@ export async function publicCreateFormExtern(req, res, next) {
         searchSectorCities: searchSectorCities || []
       };
 
-      if (["search"].indexOf(serviceType) !== -1) {
+     /* if (["search"].indexOf(serviceType) !== -1) {
         const project = await Project({
           clientId: client,
           type: serviceType,
@@ -230,7 +229,7 @@ export async function publicCreateFormExtern(req, res, next) {
             completed: true,
           },
         });
-      }
+      }*/
 
       return res.json({ success: true, data: { completed: true } });
   } catch (e) {
