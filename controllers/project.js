@@ -780,6 +780,8 @@ export async function acceptMandate(req, res, next) {
       return next(generateError("Client not found", 404));
     }
 
+    sendNewStatusProject(project);
+
     await Project.updateOne(
       { _id: projectId },
       {
@@ -789,7 +791,6 @@ export async function acceptMandate(req, res, next) {
         }
       }
     ).exec();
-    sendNewStatusProject(project);
     new ProjectEvent({
       projectId,
       type: "mandate_accepted",
