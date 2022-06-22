@@ -146,7 +146,11 @@ export async function getProject(req, res, next) {
       console.log(client.commercial);
     }
     
+    const properties = await Property.find({projectId: project._id},null).lean();
 
+    if (properties){
+      project.properties = properties;
+    }
 
     if(client.conseillerId){
       client.user = await User.findById(client.conseillerId).lean();
