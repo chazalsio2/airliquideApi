@@ -131,7 +131,12 @@ export async function publicCreateFormExtern(req, res, next) {
       email,
       phone,
       city,
+      zipcode,
+      address,
+      referaldetails,
       serviceType,
+      commentaire,
+      lien,
       conseillerId
     } = req.body;
 
@@ -145,7 +150,12 @@ export async function publicCreateFormExtern(req, res, next) {
       lastname,
       email,
       phone,
+      address,
+      referaldetails,
+      zipcode,
       city,
+      commentaire,
+      lien,
       conseillerId
     };
 
