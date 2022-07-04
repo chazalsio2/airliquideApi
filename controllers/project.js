@@ -738,6 +738,7 @@ export async function sendCompletedProjectEmail(req, res, next) {
 
 export async function acceptMandate(req, res, next) {
   try {
+    console.log("accepte le mandat")
     const { projectId } = req.params;
     const userId = req.user._id;
 
@@ -758,6 +759,7 @@ export async function acceptMandate(req, res, next) {
       return next(generateError("Client not found", 404));
     }
 
+
     await Project.updateOne(
       { _id: projectId },
       {
@@ -767,7 +769,9 @@ export async function acceptMandate(req, res, next) {
         }
       }
     ).exec();
+
     sendNewStatusProject(project);
+
     new ProjectEvent({
       projectId,
       type: "mandate_accepted",
@@ -1906,6 +1910,7 @@ export async function refuseProject(req, res, next) {
 
 export async function acceptProject(req, res, next) {
   try {
+    console.log("accepte le project")
     const { projectId } = req.params;
 
     const project = await Project.findById(projectId).lean();
@@ -1957,9 +1962,9 @@ export async function acceptProject(req, res, next) {
       message: `Le projet du prospect ${client.displayName} a été accepté par ${user.displayName}`//validé projet
     });
 
-    if (project.type === "search") {
-      await matchPropertiesForSearchMandate(project._id);
-    }
+    // if (project.type === "search") {
+    //   await matchPropertiesForSearchMandate(project._id);
+    // }
 
     // if (project.type === "search vip") {
     //   await matchPropertiesForSearchMandate(project._id);
@@ -2011,7 +2016,7 @@ export async function addDocumentToProject(req, res, next) {
       { $set: { url: location } }
     ).exec();
 
-    await sendNewDocWebhook(document._id)
+    sendNewDocWebhook(document._id)
     return res.json({ success: true });
   } catch (e) {
     next(generateError(e.message));
@@ -2150,6 +2155,7 @@ export async function uploadLoanOfferForProject(req, res, next) {
 
 export async function uploadMandateForProject(req, res, next) {
   try {
+    console.log("ajout du mandat")
     const { projectId } = req.params;
     const { fileName, fileData, contentType,originNameMandate } = req.body;
     const user = await User.findById(req.user._id).lean();
@@ -2193,7 +2199,8 @@ export async function uploadMandateForProject(req, res, next) {
       { $set: { url: location } }
     ).exec();
 
-    await sendNewDocWebhook(document._id)
+    sendNewDocWebhook(document._id)
+
 
     await Project.updateOne(
       { _id: projectId },
@@ -2224,6 +2231,7 @@ export async function uploadMandateForProject(req, res, next) {
       authorUserId: req.user._id,
       documentId: document._id
     }).save();
+    
 
     return res.json({ success: true });
   } catch (e) {
@@ -2274,7 +2282,7 @@ export async function uploadPurchaseOfferForProject(req, res, next) {
       { $set: { url: location } }
     ).exec();
 
-    await sendNewDocWebhook(document._id)
+    sendNewDocWebhook(document._id)
 
     await Project.updateOne(
       { _id: projectId },
@@ -2441,7 +2449,7 @@ export async function uploadDeedForProject(req, res, next) {
       { $set: { url: location } }
     ).exec();
 
-    await sendNewDocWebhook(document._id)
+    sendNewDocWebhook(document._id)
 
     await Project.updateOne(
       { _id: projectId },

@@ -92,11 +92,23 @@ var schema = new mongoose.Schema(
     lastname: {
       type: String
     },
+    extern:{
+      type: String
+    }, 
+    FormExtern:{
+      type: String
+    },
     lieux_de_naissance:{
       type: String
     },
     nationalite:{
         type: String
+    },
+    commentaire:{
+      type: String
+    },
+    lien:{
+    type: String
     },
     email: {
       type: String
