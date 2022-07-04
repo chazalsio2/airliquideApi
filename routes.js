@@ -58,7 +58,9 @@ import {
   refuseProject,
   acceptProject,
   addDocumentToProject,
+  addDocumentToProjectByExtrenPlatform,
   assignCommercial,
+  assignPropertie,
   uploadAgreementForProject,
   uploadDeedForProject,
   refuseAgreement,
@@ -81,6 +83,7 @@ import {
   saveSalesSheet,
   savePersonalSituationForSalesMandate,
   editSearchProject,
+  editSearch,
   editSalesSheet,
   preValidationAllStep
 } from "./controllers/project";
@@ -90,12 +93,14 @@ import {
   getPropertie,
   getProperty,
   editProperty,
+  PropertyUrl,
   updatePropertyVisibility,
   getPublicProperties,
   getPublicPropertiesRental,
   getPublicProperty,
   getPublicPropertyRental,
   deletePhoto,
+  PhotoCouv,
   editPropertyStatus,
   deleteProperty
 } from "./controllers/property";
@@ -157,6 +162,7 @@ export default (app) => {
   app.post("/users/change-password", changePassword, errorHandle);
   app.post("/publicForm/clients", cors(), publicCreateForm, errorHandle);
   app.post("/public/clients", cors(), publicCreateClient, errorHandle);
+  app.post("/publicForm/clients", cors(), publicCreateForm, errorHandle);
   //check email in signUP
   // app.post("/public/clients-checkEmail", cors(), publicCreateClient, errorHandle);
 
@@ -497,6 +503,15 @@ app.put(
     errorHandle
   );
 
+  // app.put(
+  //   '/UrlMatch/:propertyId/',
+  //   passport.authenticate("jwt", { session: false }),
+  //   checkAdminOrCommercial,
+  //   checkAccountDesactivated,
+  //   PropertyUrl,
+  //   errorHandle
+  //   )
+
   app.put(
     `/properties/:propertyId`,
     passport.authenticate("jwt", { session: false }),
@@ -533,6 +548,16 @@ app.put(
     errorHandle
   );
 
+  // app.delete(
+  //   `/propertiesCouv/:propertyId/photos`,
+  //   passport.authenticate("jwt", { session: false }),
+  //   checkAdminOrCommercial,
+  //   checkAccountDesactivated,
+  //   PhotoCouv,
+  //   errorHandle
+  // );
+
+
   app.post(
     `/projects/:projectId/accept`,
     passport.authenticate("jwt", { session: false }),
@@ -548,6 +573,15 @@ app.put(
     checkAdmin,
     checkAccountDesactivated,
     assignCommercial,
+    errorHandle
+  );
+
+  app.post(
+    `/projects/:projectId/assign-propertie`,
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    assignPropertie,
     errorHandle
   );
 
@@ -805,6 +839,12 @@ app.put(
     createClient,
     errorHandle
   );
+  app.post(
+    "/clients/taly",
+    passport.authenticate("jwt", { session: false }),
+    createClient,
+    errorHandle
+  );
 //check email in visionR
   app.post(
     "/clients-checkEmail",
@@ -832,6 +872,15 @@ app.put(
     editSearchProject,
     errorHandle
   );
+  // app.put(
+  //   "/projects/:projectId/search",
+  //   passport.authenticate("jwt", { session: false }),
+  //   checkAdminOrCommercial,
+  //   checkAccountDesactivated,
+  //   editSearch,
+  //   errorHandle
+  // );
+
 
   app.put(
     "/projects/:projectId/sales-sheet",
@@ -905,6 +954,11 @@ app.put(
     checkAccountDesactivated,
     addDocumentToProject,
     errorHandle
+  );
+
+  app.post(
+    "/ExternProjects/:projectId/documents",
+    addDocumentToProjectByExtrenPlatform,
   );
 
   app.post(
