@@ -2639,7 +2639,7 @@ export async function assignPropertie(req, res, next) {
     if (!propertie) {
       return next(generateError("Propertie not found", 404));
     }
-
+//devdans master 
     await Project.updateOne(
       { _id: projectId },
       { $set: { propertiesId } }
