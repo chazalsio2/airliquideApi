@@ -637,109 +637,109 @@ export async function sendNewAffecteCommercial(project,commercial){
   }})
 }
 
-  export async function sendMatchProjectEmail(property,url_matching){
+//   export async function sendMatchProjectEmail(property,url_matching){
 
-    let commercial;
+//     let commercial;
 
-    const project = await Promise.all(
-      property.matchedProject.map(async (project) => {
-        return await Project.findById(project).lean();
-      }
-    ))
+//     const project = await Promise.all(
+//       property.matchedProject.map(async (project) => {
+//         return await Project.findById(project).lean();
+//       }
+//     ))
      
-/*    const v = await Promise.all(
-     project.forEach(async (project) => {
+// /*    const v = await Promise.all(
+//      project.forEach(async (project) => {
 
 
-     return { templateId: 3919215,
-        variables: {
-          firstname: client.firstname
-          },
-        email: client.email,
-        name: client.displayName,
-        cc: commercial ? commercial.email ? commercial.email :"":"",
-      }
+//      return { templateId: 3919215,
+//         variables: {
+//           firstname: client.firstname
+//           },
+//         email: client.email,
+//         name: client.displayName,
+//         cc: commercial ? commercial.email ? commercial.email :"":"",
+//       }
 
-}))
-console.log(v);
+// }))
+// console.log(v);
 
-/*var arr = [1, 2, 3, 4, 5];
+// /*var arr = [1, 2, 3, 4, 5];
 
-var results: mail[] = await Promise.all(arr.map(async (item): Promise<mail> => {
-    await callAsynchronousOperation(item);
-    return item + 1;
-}));
+// var results: mail[] = await Promise.all(arr.map(async (item): Promise<mail> => {
+//     await callAsynchronousOperation(item);
+//     return item + 1;
+// }));
 
-v.map((values)=> {
-  console.log(values);
+// v.map((values)=> {
+//   console.log(values);
 
-})*/
-/*
-let promises = [];
-//foreach
+// })*/
+// /*
+// let promises = [];
+// //foreach
 
 
-  let commercial;
+//   let commercial;
   
-    if(project.commercialId){
-      commercial = await User.findById(project.commercialId).lean();
-     }
-     const client = await Promise.all(
-      project.forEach(async(project) => {
-        return await Client.findById(project.clientId).lean();
-      }
-    ))
-  for (let i = 0; i < project.length; i++) {
-  promises.push(
-    [{ 
-      templateId: 3919215,
-        variables: {
-          firstname: client.firstname
-          },
-        email: client.email,
-        name: client.displayName,
-        cc: commercial ? commercial.email ? commercial.email :"":"",
+//     if(project.commercialId){
+//       commercial = await User.findById(project.commercialId).lean();
+//      }
+//      const client = await Promise.all(
+//       project.forEach(async(project) => {
+//         return await Client.findById(project.clientId).lean();
+//       }
+//     ))
+//   for (let i = 0; i < project.length; i++) {
+//   promises.push(
+//     [{ 
+//       templateId: 3919215,
+//         variables: {
+//           firstname: client.firstname
+//           },
+//         email: client.email,
+//         name: client.displayName,
+//         cc: commercial ? commercial.email ? commercial.email :"":"",
       
-    }]
-  )
-}
-//})
-console.log(promises);*/
-project.forEach(async (project) => {
+//     }]
+//   )
+// }
+// //})
+// console.log(promises);*/
+// project.forEach(async (project) => {
 
-  const client = await Client.findById(project.clientId).lean();
+//   const client = await Client.findById(project.clientId).lean();
 
-  if(project.commercialId){
-    commercial = await User.findById(project.commercialId).lean();
-   }
+//   if(project.commercialId){
+//     commercial = await User.findById(project.commercialId).lean();
+//    }
 
-    axios({
-      method:'GET',
-      url: process.env.ZAPPIER_WEBHOOK_MATCH_R,
-      data:{
+//     axios({
+//       method:'GET',
+//       url: process.env.ZAPPIER_WEBHOOK_MATCH_R,
+//       data:{
         
-    templateId: 3919215,
-    variables: {
-      firstname: client.firstname
-    },
-    email: client.email,
-    name: client.displayName,
-    cc: commercial.email,
-    status:project.status,
-    bien_immos: [{ 
-      img :property.photos[0],
-      name:property.name,
-      price :property.salesPrice,
-      lien_site:url_matching,
-      conseiller: property.commercialName,
-      tel:property.commercialPhoneNumber,
-      mail:property.commercialEmail
-     }],
-    ccVision: "direction@vision-r.re",
-    ccCommerciaux: "commercial.email",
-    subject: "Ensemble, nous sommes arrivés au bout de votre projet immobilier!",
-    quantite:1
+//     templateId: 3919215,
+//     variables: {
+//       firstname: client.firstname
+//     },
+//     email: client.email,
+//     name: client.displayName,
+//     cc: commercial.email,
+//     status:project.status,
+//     bien_immos: [{ 
+//       img :property.photos[0],
+//       name:property.name,
+//       price :property.salesPrice,
+//       lien_site:url_matching,
+//       conseiller: property.commercialName,
+//       tel:property.commercialPhoneNumber,
+//       mail:property.commercialEmail
+//      }],
+//     ccVision: "direction@vision-r.re",
+//     ccCommerciaux: "commercial.email",
+//     subject: "Ensemble, nous sommes arrivés au bout de votre projet immobilier!",
+//     quantite:1
    
-  }})
-})
-  }
+//   }})
+// })
+//   }
