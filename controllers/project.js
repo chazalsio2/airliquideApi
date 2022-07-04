@@ -2078,6 +2078,52 @@ export async function addDocumentToProject(req, res, next) {
     ).exec();
 
     await sendNewDocWebhook(document._id)
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+export async function addDocumentToProjectByExtrenPlatform(req, res, next) {
+  try {
+    const { projectId } = req.params;
+    const { fileName, fileData, contentType, visibility } = req.body;
+
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    if (!fileName || !fileData || !contentType) {
+      return next(generateError("Invalid request", 403));
+    }
+    console.log(contentType);
+
+    /*const isAuthorized =
+      isAdminOrCommercial(req.user) || project.clientId === req.user._id;
+
+    if (!isAuthorized) {
+      return next(generateError("Not authorized", 401));
+    }*/
+
+    const document = await new Document({
+      name: fileName,
+      //authorUserId: req.user._id,
+      projectId,
+      contentType,
+      visibility:project.type === "search" ? "public" : "private"
+    }).save();
+
+    // const location = await uploadFile(
+    //   `project__${projectId}/${document._id}_${document.name}`,
+    //   fileData,
+    //   contentType
+    // );
+    await Document.updateOne(
+      { _id: document._id },
+      { $set: { url: fileData } }
+    ).exec();
 
     return res.json({ success: true });
   } catch (e) {
