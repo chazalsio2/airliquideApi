@@ -34,8 +34,8 @@ export async function sendAgreementAcceptedWebhook(projectId) {
 
 export async function sendNewDocWebhook(documentId) {
   const document = await getDocument(documentId)
-  const project = await getProject(document.projectId)
-  const client = await getClient(project.clientId)
+  const projet = await getProject(document.projectId)
+  const client = await getClient(projet.clientId)
   axios({
     method: "POST",
     url: process.env.ZAPPIER_FILE_WEBHOOK_URL,
@@ -43,12 +43,9 @@ export async function sendNewDocWebhook(documentId) {
       clientName: client.firstname, 
       filename: document.name,
       email: client.email,
-      location:`${project.status === "wait_sales_deed" ?( project.loanOfferDoc.url):
-      project.status === "wait_sales_agreement" ?( project.purchaseOfferDoc.url):
-      project.status === "wait_loan_offer" ?( project.salesAgreementDoc.url):
-      project.status === "completed" ?( project.salesDeedDoc.url):""}`,
-      typeProject: project.type,
-      StatusProject: project.status,
+      location:document.url,
+      typeProject: projet.type,
+      StatusProject: projet.status,
       projectId: document.projectId || null
     }
   })
@@ -613,9 +610,8 @@ export async function sendNewAffecteCommercial(project,commercial){
     let conseiller;
   const projet = await Project.findById(project._id)
   const client = await Client.findById(project.clientId)
-  if (project.commercialId) {  conseiller = await User.findById(project.commercialId)};
+  if (project.commercialId) {conseiller = await User.findById(project.commercialId)};
   const event = await ProjectEvent.findById(evenement);//evenement;
-  
   axios({
     method:'GET',
     url: process.env.ZAPPIER_WEBHOOK_CLE_DE_VIE,
