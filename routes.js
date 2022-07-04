@@ -959,10 +959,7 @@ app.put(
 
   app.post(
     "/ExternProjects/:projectId/documents",
-    //passport.authenticate("jwt", { session: false }),
-    //checkAccountDesactivated,
     addDocumentToProjectByExtrenPlatform,
-    //errorHandle
   );
 
   app.post(
