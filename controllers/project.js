@@ -25,8 +25,7 @@ import {
   sendSalesAgreementAcceptedForSalesProject,
   sendPurchaseOfferAcceptedForSalesProject,
   sendLoanOfferAcceptedForSalesProject,
-  sendDeedAcceptedForSalesProject,
-  sendMatchPropertiesEmail
+  sendDeedAcceptedForSalesProject
 } from "../lib/email";
 import {
   sendAgreementAcceptedWebhook, sendNewDocWebhook ,sendNewStatusProject, sendNewTrelloCard, sendNewAffecteCommercial
@@ -123,7 +122,6 @@ export async function getProject(req, res, next) {
     const dossiernotaire = await DossierNotaire.findOne({ _id: project.dossiernotaireId }, null).lean();
 
 
-
     if (!client) {
       return next(generateError("Client not found", 404));
     }
@@ -138,15 +136,6 @@ export async function getProject(req, res, next) {
     if (!isAuthorized) {
       return next(generateError("Not authorized", 401));
     }
-    if (client.conseillerId) {
-      client.commercial = await User.findById(
-        client.conseillerId,
-        "displayName"
-      ).lean();
-      console.log(client.commercial);
-    }
-    
-
 
     if(client.conseillerId){
       client.user = await User.findById(client.conseillerId).lean();
@@ -172,12 +161,6 @@ export async function getProject(req, res, next) {
       project.commercial = await User.findById(
         project.commercialId,
         "displayName"
-      ).lean();
-    }
-
-    if (project.propertiesId) {
-      project.properties = await Property.findById(
-        project.propertiesId
       ).lean();
     }
 
@@ -260,7 +243,7 @@ export async function editSalesSheet(req, res, next) {
       landconstcd,
       propertyType,
       propertySize,
-      propertySizeDetail,
+      propertySizeDetails,
       livingArea,
       landArea,
       workNeeded,
@@ -292,13 +275,10 @@ export async function editSalesSheet(req, res, next) {
       throw new Error("Missing fields");
     }
 */
-
-    console.log(propertySize);
-
     const newSalesSheetEdited = {
       propertyType,
-      propertySize : propertySize === "bigger" ? propertySizeDetail : Number(propertySize),
-      propertySizeDetail,
+      propertySize,
+      propertySizeDetails,
       // livingArea,
       // landArea,
       reasonForTheSale,
@@ -367,7 +347,7 @@ export async function saveSalesSheet(req, res, next) {
       landconstcd,
       propertyType,
       propertySize,
-      propertySizeDetail,
+      propertySizeDetails,
       livingArea,
       landArea,
       workNeeded,
@@ -401,12 +381,11 @@ export async function saveSalesSheet(req, res, next) {
     ) {
       throw new Error("Missing fields");
     }
-
 */
-console.log(propertySize);
     const salesSheet = {
       propertyType,
-      propertySize : propertySize === "bigger" ? propertySizeDetail : Number(propertySize),
+      propertySize,
+      propertySizeDetails,
       // livingArea,
       //landArea,
       workNeeded,
@@ -1201,7 +1180,6 @@ export async function saveSearchSheet(req, res, next) {
       propertySize,
       propertySizeDetail,
       propertyArea,
-      propertyLandArea,
       land,
       landArea,
       additionalInfos,
@@ -1231,18 +1209,14 @@ export async function saveSearchSheet(req, res, next) {
       return next(generateError("Project not found", 404));
     }
 
-    console.log(propertySize);
-
-
     const searchSheet = {
       investmentType:
         investmentType === "other" ? otherInvestmentType : investmentType,
-        propertySize : propertySize === "bigger" ? propertySizeDetail : Number(propertySize),
-        propertyType,
+      propertySize,
+      propertyType,
       additionalInfos,
       propertySizeDetail,
       propertyArea,
-      propertyLandArea,
       land,
       landArea,
       searchSector,
@@ -1287,9 +1261,7 @@ export async function editSearchProject(req, res, next) {
       investmentType,
       otherInvestmentType,
       propertySize,
-      propertySizeDetail,
       propertyArea,
-      propertyLandArea,
       land,
       landArea,
       additionalInfos,
@@ -1310,17 +1282,14 @@ export async function editSearchProject(req, res, next) {
       return next(generateError("Project not found", 404));
     }
 
-
     const modifier = {
-      
       searchSheet: {
         investmentType:
           investmentType === "other" ? otherInvestmentType : investmentType,
-          propertySize : propertySize === "bigger" ? propertySizeDetail : Number(propertySize),
-          propertyType,
+        propertySize,
+        propertyType,
         additionalInfos,
         propertyArea,
-        propertyLandArea,
         land,
         landArea,
         searchSector,
@@ -1333,7 +1302,6 @@ export async function editSearchProject(req, res, next) {
     if (!_.isUndefined(investalone)) {
       modifier.investAlone = investalone;
     }
-
 
     if (desiredgrossyield) {
       modifier.desiredGrossYield = desiredgrossyield;
@@ -1353,39 +1321,8 @@ export async function editSearchProject(req, res, next) {
         $set: modifier
       }
     ).exec();
-    matchPropertiesForSearchMandate(projectId);
+
     return res.json({ success: true });
-  } catch (e) {
-    next(generateError(e.message));
-  }
-}
-
-export async function editSearch(req, res, next) {
-  try{
-    const { projectId } = req.params;
-
-    const project = await Project.findById(projectId).lean();
-
-    if (!project) {
-      return next(generateError("Project not found", 404));
-    }
-
-    const {
-      url_matching
-    } = req.body;
-
-    const modifier = {url_matching}
-
-    await Project.updateOne(
-      { _id: projectId },
-      {
-        $set: modifier
-      }
-    ).exec();
-   sendMatchPropertiesEmail(project)
-    return res.json({ success: true });
-
-
   } catch (e) {
     next(generateError(e.message));
   }
@@ -2013,6 +1950,7 @@ export async function acceptProject(req, res, next) {
       authorUserId: req.user._id
     }).save();
 
+    
     const user = await User.findById(req.user._id).lean();
 
     sendMessageToSlack({
@@ -2121,14 +2059,11 @@ export async function addDocumentToProjectByExtrenPlatform(req, res, next) {
       { $set: { url: fileData } }
     ).exec();
 
-    
-    await sendNewDocWebhook(document._id)
     return res.json({ success: true });
   } catch (e) {
     next(generateError(e.message));
   }
 }
-
 
 export async function uploadLoanOfferForProject(req, res, next) {
   try {
@@ -2216,7 +2151,7 @@ export async function uploadLoanOfferForProject(req, res, next) {
 export async function uploadMandateForProject(req, res, next) {
   try {
     const { projectId } = req.params;
-    const { fileName, fileData, contentType } = req.body;
+    const { fileName, fileData, contentType,originNameMandate } = req.body;
     const user = await User.findById(req.user._id).lean();
 
     const project = await Project.findById(projectId).lean();
@@ -2241,6 +2176,7 @@ export async function uploadMandateForProject(req, res, next) {
     }
 
     const document = await new Document({
+      originNameMandate,
       name: fileName,
       authorUserId: req.user._id,
       projectId,
@@ -2265,6 +2201,7 @@ export async function uploadMandateForProject(req, res, next) {
         $set: {
           mandateDocId: document._id,
           mandateDoc: {
+            originNameMandate:originNameMandate,
             name: document.name,
             url: location
           },
@@ -2585,61 +2522,6 @@ export async function assignCommercial(req, res, next) {
 
     sendAssignProjectNotification(commercial, project);
     sendNewAffecteCommercial(project,commercial);
-
-    return res.json({ success: true });
-  } catch (e) {
-    next(generateError(e.message));
-  }
-}
-export async function assignPropertie(req, res, next) {
-  try {
-    const { projectId } = req.params;
-    const { propertiesId } = req.body;
-
-
-    const project = await Project.findById(projectId).lean();
-
-    if (!project) {
-      return next(generateError("Project not found", 404));
-    }
-
-    /*const allowedStatus = [
-      "missing_information",
-      "wait_project_validation",
-      "wait_mandate",
-      "wait_mandate_validation",
-      "wait_purchase_offer",
-      "wait_purchase_offer_validation",
-      "wait_sales_agreement",
-      "wait_sales_agreement_validation"
-    ];
-
-    if (allowedStatus.indexOf(project.status) === -1) {
-      throw new Error("Wrong state");
-    }*/
-
-    const propertie = await Property.findOne({
-      _id: propertiesId
-    });
-
-    console.log(propertiesId);
-
-    if (!propertie) {
-      return next(generateError("Propertie not found", 404));
-    }
-
-    await Project.updateOne(
-      { _id: projectId },
-      { $set: { propertiesId } }
-    ).exec();
-
-    await Property.updateOne(
-      { _id: propertiesId },
-      { $set: { projectId } }
-    ).exec();
-
-   // sendAssignProjectNotification(commercial, project);
-   // sendNewAffecteCommercial(project,commercial);
 
     return res.json({ success: true });
   } catch (e) {
