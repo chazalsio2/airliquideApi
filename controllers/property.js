@@ -649,17 +649,34 @@ export async function createProperty(req, res, next) {
 }
 
 export async function getProperties(req, res, next) {
-  const { page = "", type = "" } = req.query;
+  const { page = "", type = "" ,typeBien="" } = req.query;
   const pageNumber = Number(page) || 1;
 
   const selector = {};
 
+  if (typeBien) {
+    selector.type=typeBien;
+    }
+
+  if(type === "user") {
+    selector.commercialEmail = req.user.email;
+ if (typeBien) {
+    selector.type=typeBien;
+    }
+  }
+
   if (type === "forsale") {
     selector.propertyStatus = "forsale";
+ if (typeBien) {
+    selector.type=typeBien;
+    }
   }
 
   if (type === "rental") {
-    selector.propertyStatus = "rental"
+    selector.propertyStatus = "rental";
+ if (typeBien) {
+    selector.type=typeBien;
+    }
     ;
   }
 
@@ -668,10 +685,15 @@ export async function getProperties(req, res, next) {
     ((isSearchClient(req.user) || isSearchClientVip(req.user)) && !isAdminOrCommercial(req.user))
   ) {
     selector.propertyStatus = "hunting";
+ if (typeBien) {
+    selector.type=typeBien;
+    }
   }
 
   const propertiesCount = await Property.countDocuments(selector).exec();
   const pageCount = Math.ceil(propertiesCount / LIMIT_BY_PAGE);
+
+  console.log(selector);
 
   try {
     const properties = await Property.find(
