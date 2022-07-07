@@ -2,7 +2,6 @@ import moment from "moment";
 
 import { generateError } from "../lib/utils";
 import Client from "../models/Client";
-import Insul_r from "../models/Insul_r";
 import Project, { projectTypes } from "../models/Project";
 import { sendNewClientEmail } from "../lib/email";
 import { sendMessageToSlack } from "../lib/slack";
@@ -25,7 +24,6 @@ export async function publicCreateForm(req, res, next) {
     }
 
     const newClientData = {
-      extern:"yes",
       firstname,
       lastname,
       email,
@@ -269,7 +267,6 @@ export async function publicCreateClient(req, res, next) {
     }
     console.log(conseillerId);
 
-    //console.log(conseillerId);
     const newClientData = {
       firstname,
       lastname,
@@ -284,8 +281,6 @@ export async function publicCreateClient(req, res, next) {
       conseillerId,
       lieux_de_naissance,nationalite
     };
-  
-    //console.log(newClientData);
 
     const clients = await Client.find({email:email}).exec();
 
@@ -319,7 +314,7 @@ export async function publicCreateClient(req, res, next) {
 
       sendNewClientEmail(client);
 
-     sendMessageToSlack({
+      sendMessageToSlack({
         message: `Le prospect ${client.firstname} ${client.lastname} a été ajouté : ${process.env.APP_URL}/clients/${client._id}`,
       });
 

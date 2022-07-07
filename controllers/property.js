@@ -5,14 +5,13 @@ import {
   isAdminOrCommercial
 } from "../lib/utils";
 import { uploadPhotos } from "../lib/cloudinary";
-
 import Property, { getPropertyType } from "../models/Property";
+import PropertyCont from "../models/PropertyCont";
 import Project from "../models/Project"; 
 import Client from "../models/Client"; 
-import PropertyCont from "../models/PropertyCont"; 
 import { sendMessageToSlack } from "../lib/slack";
 import { checkMatchingForProperty } from "../lib/matching";
-import {sendNewDProprieteWebhook,sendMatchProjectEmail} from '../services/webhook.service';
+import {sendNewDProprieteWebhook} from '../services/webhook.service';
 
 
 const LIMIT_BY_PAGE = 12;
@@ -35,57 +34,6 @@ export async function deleteProperty(req, res, next) {
   }
 }
 
-export async function PropertyUrl(req, res, next) {
-
-  try{
-    const {
-      url_matching
-    } = req.body;
-
-    const { propertyId } = req.params;
-
-    console.log(propertyId);
-
-    const property = await Property.findById(propertyId).lean();
-
-    if (property.propertyStatus === "forsale")  {
-     
-        checkMatchingForProperty(property._id);
-      
-    }
-
-    const propertyEdited = await Property.updateOne(
-      { _id: propertyId},
-      { public: !!true , 
-        url_matching: url_matching }
-    ).exec();
-
-
-    
-    /*function delay(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
-    }
-    delay(20000).then(() =>  {*/
-    const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
-    await delay(60000);
-    const properties = await Property.findById(propertyId).lean();
-      
-      if (properties.matchedProject){
-
-        sendMatchProjectEmail( properties,url_matching );
-  
-        }
-  //);
-
-    return res.json({ success: true, data: propertyEdited });
-
-  } catch (e) {
-
-    next(generateError(e.message));
-
-  }
-}
-
 export async function editProperty(req, res, next) {
   try {
     const {
@@ -101,7 +49,6 @@ export async function editProperty(req, res, next) {
       landconstcd,
       varangueArea,
       type,
-      surface,
       virtualVisitLink,
       propertyStatus,
       yearOfConstruction,
@@ -109,7 +56,6 @@ export async function editProperty(req, res, next) {
       kitchenArea,
       bathroomArea,
       numberOfRooms,
-      propertySizeDetail,
       floor,
       outdoorParking,
       coveredParking,
@@ -126,6 +72,7 @@ export async function editProperty(req, res, next) {
       hotWater,
       airConditioner,
       equippedKitchen,
+      surface,
       // DPE,
       procedureInProgress,
       freeOfOccupation,
@@ -162,9 +109,9 @@ export async function editProperty(req, res, next) {
       salesPrice,
       code_postale,
       projectId,
+      surface,
       Honoraires_V_R,
       charges_properties,
-      surface,
       city,
       //landArea,
       // livingArea,
@@ -345,7 +292,7 @@ export async function editProperty(req, res, next) {
     }
 
     if (numberOfRooms) {
-      propertyData.numberOfRooms = numberOfRooms === "bigger" ? propertySizeDetail : Number(numberOfRooms);
+      propertyData.numberOfRooms = Number(numberOfRooms);
     }
 
     propertyData.name = `${getPropertyType(propertyData.type) || ""} ${propertyData.livingArea ? propertyData.livingArea+" m²" : ""}  ${propertyData.city || ""} ${propertyData.landArea ? propertyData.landArea+ " m²" : ""}`;
@@ -364,7 +311,6 @@ export async function editProperty(req, res, next) {
 export async function updatePropertyVisibility(req, res, next) {
   const { propertyId } = req.params;
 
-  console.log(req.body.public);
   try {
     const property = await Property.findOne({ _id: propertyId }).lean();
 
@@ -377,13 +323,13 @@ export async function updatePropertyVisibility(req, res, next) {
       { $set: { public: !!req.body.public } }
     ).exec();
 
-    /*if (req.body.public && property.propertyStatus === "forsale")  {
+    if (req.body.public && property.propertyStatus === "forsale")  {
       try {
         checkMatchingForProperty(property._id);
       } catch (e) {
         console.error(e);
       }
-    }*/
+    }
 
     return res.json({ success: true });
   } catch (e) {
@@ -420,24 +366,6 @@ export async function deletePhoto(req, res, next) {
     next(generateError(e.message));
   }
 }
-export async function PhotoCouv (req, res, next) {
-  const { photo } = req.body;
-  const { propertyId } = req.params;
-    const properties = await Property.findById(propertyId).lean();
-    properties.photos.splice(0,0,photo.photo)
-    properties.photos.splice(photo.photos+1,1,)
-    
-  try {
-    await Property.updateOne(
-      { _id: propertyId },
-      {photos: properties.photos }
-    ).exec();
-
-    return res.json({ success: true });
-  } catch (e) {
-    next(generateError(e.message));
-  }
-}
 export async function createProperty(req, res, next) {
   try {
     const {
@@ -456,7 +384,6 @@ export async function createProperty(req, res, next) {
       type,
       virtualVisitLink,
       yearOfConstruction,
-      surface,
       Honoraires_V_R,
       charges_properties,
       city,
@@ -465,7 +392,6 @@ export async function createProperty(req, res, next) {
       kitchenArea,
       bathroomArea,
       numberOfRooms,
-      propertySizeDetail,
       floor,
       outdoorParking,
       coveredParking,
@@ -486,6 +412,7 @@ export async function createProperty(req, res, next) {
       numberOfCoOwnershipLots,
       procedureInProgress,
       freeOfOccupation,
+      surface,
       typeOfInvestment,
       rent,
       coOwnershipCharge,
@@ -501,6 +428,7 @@ export async function createProperty(req, res, next) {
       equipment,
       agencyFees
     } = req.body;
+    console.log(projectId);
 
     if (
       !description ||
@@ -509,7 +437,7 @@ export async function createProperty(req, res, next) {
       !city ||
       // !landArea ||
       // !livingArea ||
-      !photos[0]
+      !photos
     ) {
       return next(generateError("Invalid request", 401));
     }
@@ -532,8 +460,8 @@ export async function createProperty(req, res, next) {
       Honoraires_V_R,
       charges_properties,
       salesPrice,
+      code_postale,
       surface,
-      code_postale:`${city.slice(-6,-1)}`,
       projectId,
       city,
       // landArea,
@@ -671,8 +599,7 @@ export async function createProperty(req, res, next) {
     }
 
     if (numberOfRooms) {
-
-      propertyData.numberOfRooms = numberOfRooms === "bigger" ? propertySizeDetail : Number(numberOfRooms);
+      propertyData.numberOfRooms = Number(numberOfRooms);
     }
 
     if (address) {
@@ -722,17 +649,34 @@ export async function createProperty(req, res, next) {
 }
 
 export async function getProperties(req, res, next) {
-  const { page = "", type = "" } = req.query;
+  const { page = "", type = "" ,typeBien="" } = req.query;
   const pageNumber = Number(page) || 1;
 
   const selector = {};
 
+  if (typeBien) {
+    selector.type=typeBien;
+    }
+
+  if(type === "user") {
+    selector.commercialEmail = req.user.email;
+ if (typeBien) {
+    selector.type=typeBien;
+    }
+  }
+
   if (type === "forsale") {
     selector.propertyStatus = "forsale";
+ if (typeBien) {
+    selector.type=typeBien;
+    }
   }
 
   if (type === "rental") {
-    selector.propertyStatus = "rental"
+    selector.propertyStatus = "rental";
+ if (typeBien) {
+    selector.type=typeBien;
+    }
     ;
   }
 
@@ -741,10 +685,15 @@ export async function getProperties(req, res, next) {
     ((isSearchClient(req.user) || isSearchClientVip(req.user)) && !isAdminOrCommercial(req.user))
   ) {
     selector.propertyStatus = "hunting";
+ if (typeBien) {
+    selector.type=typeBien;
+    }
   }
 
   const propertiesCount = await Property.countDocuments(selector).exec();
   const pageCount = Math.ceil(propertiesCount / LIMIT_BY_PAGE);
+
+  console.log(selector);
 
   try {
     const properties = await Property.find(
@@ -787,7 +736,7 @@ export async function getProperty(req, res, next) {
     }
 
     const selector = { _id: propertyId };
-    
+
     if ((isSearchClient(req.user) || isSearchClientVip(req.user)) && !isAdminOrCommercial(req.user)) {
       selector.propertyStatus = "hunting";
     }
@@ -798,12 +747,14 @@ export async function getProperty(req, res, next) {
       return next(generateError("Property not found", 404));
     }
 
+
     if (property.projectId){    
       const project = await Project.findOne({ _id: property.projectId }, null).lean();
       property.project = project;
       const client = await Client.findOne({ _id: project.clientId}, null).lean();
       property.client = client;
     }
+
 
     if (!isAdminOrCommercial(req.user)) {
       delete property.address;
