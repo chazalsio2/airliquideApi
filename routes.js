@@ -504,14 +504,14 @@ app.put(
     errorHandle
   );
 
-  // app.put(
-  //   '/UrlMatch/:propertyId/',
-  //   passport.authenticate("jwt", { session: false }),
-  //   checkAdminOrCommercial,
-  //   checkAccountDesactivated,
-  //   PropertyUrl,
-  //   errorHandle
-  //   )
+  app.put(
+    '/UrlMatch/:propertyId/',
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    checkAccountDesactivated,
+    PropertyUrl,
+    errorHandle
+    )
 
   app.put(
     `/properties/:propertyId`,
