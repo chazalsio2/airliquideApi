@@ -649,14 +649,26 @@ export async function createProperty(req, res, next) {
 }
 
 export async function getProperties(req, res, next) {
-  const { page = "", type = "" ,typeBien="" } = req.query;
+  const { page = "", type = "" ,typeBien="",PrixMin="", PrixMax="",city=""} = req.query;
   const pageNumber = Number(page) || 1;
 
   const selector = {};
 
-  if (typeBien) {
-    selector.type=typeBien;
-    }
+  if (typeBien||PrixMin||PrixMax||city) {
+    if (typeBien) {
+      selector.type=typeBien;
+      }
+    if (PrixMin) {
+      selector.salesPrice= { $gte: PrixMin };
+      }
+    if (PrixMax) {
+      selector.salesPrice= { $lte: PrixMax };
+      }  
+    if (city) {
+      selector.city=city;
+      }
+      
+  }
 
   if(type === "user") {
     selector.commercialEmail = req.user.email;
