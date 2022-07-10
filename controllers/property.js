@@ -764,7 +764,6 @@ export async function getProperties(req, res, next) {
 
   if (type === "forsale") {
     selector.propertyStatus = "forsale";
-<<<<<<< HEAD
     if (typeBien||PrixMin||PrixMax||city) {
       if (typeBien) {
         selector.type=typeBien;
@@ -799,12 +798,6 @@ export async function getProperties(req, res, next) {
         }
         
     }
-=======
-  }
-
-  if (type === "rental") {
-    selector.propertyStatus = "rental"
->>>>>>> d90f8089cfda30d56bec55ede4cbbf1ef86d564d
     ;
   }
 
@@ -813,7 +806,6 @@ export async function getProperties(req, res, next) {
     ((isSearchClient(req.user) || isSearchClientVip(req.user)) && !isAdminOrCommercial(req.user))
   ) {
     selector.propertyStatus = "hunting";
-<<<<<<< HEAD
     if (typeBien||PrixMin||PrixMax||city) {
       if (typeBien) {
         selector.type=typeBien;
@@ -829,8 +821,6 @@ export async function getProperties(req, res, next) {
         }
         
     }
-=======
->>>>>>> d90f8089cfda30d56bec55ede4cbbf1ef86d564d
   }
 
   const propertiesCount = await Property.countDocuments(selector).exec();
