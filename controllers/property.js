@@ -731,11 +731,18 @@ export async function getProperties(req, res, next) {
     if (typeBien) {
       selector.type=typeBien;
       }
+      if(PrixMin && PrixMax){
+        selector.salesPrice= { $gte: PrixMin },{ $lte: PrixMax }
+      }
     if (PrixMin) {
+      if(!PrixMax){
       selector.salesPrice= { $gte: PrixMin };
+    }
       }
     if (PrixMax) {
+      if(!PrixMin){
       selector.salesPrice= { $lte: PrixMax };
+      }
       }  
     if (city) {
       selector.city=city;
