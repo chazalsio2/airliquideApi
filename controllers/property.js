@@ -521,10 +521,12 @@ export async function createProperty(req, res, next) {
         ${description}
 
 
-        Prix de vente: ${salesPrice}€ FAI ${charges_properties ? charges_properties ==="Acquéreur" ?"(dont honoraires Vision-R est de : "+Honoraires_V_R+"€)" :"":""}
-        Honoraires charges ${charges_properties}
+        Prix de vente: ${salesPrice}€ Frais d'agence inclus ${charges_properties ? charges_properties ==="Acquéreur" ?"(dont honoraires Vision-R est de : "+Honoraires_V_R+"€)" :"":""}
+        ${charges_properties === "Vendeur" ? "Les honoraires sont à la charge du "+charges_properties:"Les honoraires sont à la charge de l'"+charges_properties}
         
-        
+        Ref annonce : 
+        Non soumis au diagnostic de performance énergétique
+
         Votre contact Vision-R Immobilier :
         ${commercialName}:${commercialPhoneNumber}
         ${commercialEmail}`,
@@ -757,9 +759,9 @@ export async function getProperties(req, res, next) {
       if (typeBien) {
         selector.type=typeBien;
         }
-        if(PrixMin && PrixMax){
-          selector.salesPrice = {$and: [ { $gte: PrixMin } ,  { $lte: PrixMax } ]};
-        }
+       // if(PrixMin && PrixMax){
+      //   selector.salesPrice = {$and: [ { $gte: PrixMin } , { $lte: PrixMax } ]};
+      // }
       if (PrixMin) {
         if(!PrixMax){
         selector.salesPrice= { $gte: PrixMin };
@@ -783,9 +785,9 @@ export async function getProperties(req, res, next) {
       if (typeBien) {
         selector.type=typeBien;
         }
-        if(PrixMin && PrixMax){
-          selector.salesPrice = {$and: [ { $gte: PrixMin } ,  { $lte: PrixMax } ]};
-        }
+       // if(PrixMin && PrixMax){
+      //   selector.salesPrice = {$and: [ { $gte: PrixMin } , { $lte: PrixMax } ]};
+      // }
       if (PrixMin) {
         if(!PrixMax){
         selector.salesPrice= { $gte: PrixMin };
@@ -809,9 +811,9 @@ export async function getProperties(req, res, next) {
       if (typeBien) {
         selector.type=typeBien;
         }
-        if(PrixMin && PrixMax){
-          selector.salesPrice = {$and: [ { $gte: PrixMin } ,  { $lte: PrixMax } ]};
-        }
+       // if(PrixMin && PrixMax){
+      //   selector.salesPrice = {$and: [ { $gte: PrixMin } , { $lte: PrixMax } ]};
+      // }
       if (PrixMin) {
         if(!PrixMax){
         selector.salesPrice= { $gte: PrixMin };
@@ -839,9 +841,9 @@ export async function getProperties(req, res, next) {
       if (typeBien) {
         selector.type=typeBien;
         }
-        if(PrixMin && PrixMax){
-          selector.salesPrice = {$and: [ { $gte: PrixMin } ,  { $lte: PrixMax } ]};
-        }
+       // if(PrixMin && PrixMax){
+      //   selector.salesPrice = {$and: [ { $gte: PrixMin } , { $lte: PrixMax } ]};
+      // }
       if (PrixMin) {
         if(!PrixMax){
         selector.salesPrice= { $gte: PrixMin };
