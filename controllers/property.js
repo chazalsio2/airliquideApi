@@ -70,11 +70,11 @@ export async function PropertyUrl(req, res, next) {
     await delay(60000);
     const properties = await Property.findById(propertyId).lean();
       
-      if (properties.matchedProject){
+      // if (properties.matchedProject){
 
-        sendMatchProjectEmail( properties,url_matching );
+      //   sendMatchProjectEmail( properties,url_matching );
   
-        }
+      //   }
   //);
 
     return res.json({ success: true, data: propertyEdited });
@@ -521,10 +521,12 @@ export async function createProperty(req, res, next) {
         ${description}
 
 
-        Prix de vente: ${salesPrice}€ FAI ${charges_properties ? charges_properties ==="Acquéreur" ?"(dont honoraires Vision-R est de : "+Honoraires_V_R+"€)" :"":""}
-        Honoraires charges ${charges_properties}
+        Prix de vente: ${salesPrice}€ Frais d'agence inclus ${charges_properties ? charges_properties ==="Acquéreur" ?"(dont honoraires Vision-R est de : "+Honoraires_V_R+"€)" :"":""}
+        ${charges_properties === "Vendeur" ? "Les honoraires sont à la charge du "+charges_properties:"Les honoraires sont à la charge de l'"+charges_properties}
         
-        
+        Ref annonce : 
+        Non soumis au diagnostic de performance énergétique
+
         Votre contact Vision-R Immobilier :
         ${commercialName}:${commercialPhoneNumber}
         ${commercialEmail}`,
@@ -722,17 +724,111 @@ export async function createProperty(req, res, next) {
 }
 
 export async function getProperties(req, res, next) {
-  const { page = "", type = "" } = req.query;
+  const { page = "", type = "" ,typeBien="",PrixMin, PrixMax,city=""} = req.query;
   const pageNumber = Number(page) || 1;
 
+  let selectorPrix;
   const selector = {};
+
+  if (typeBien||PrixMin||PrixMax||city) {
+    if (typeBien) {
+      selector.type=typeBien;
+      }
+      if(PrixMin && PrixMax){
+        selector.salesPrice = {$and: [ { $gte: PrixMin } , { $lte: PrixMax } ]};
+      }
+    if (PrixMin) {
+      if(!PrixMax){
+        selector.salesPrice= { $gte: PrixMin };
+    }
+      }
+    if (PrixMax) {
+      if(!PrixMin){
+      selector.salesPrice= { $lte: PrixMax };
+      }
+      }  
+    if (city) {
+      selector.city=city;
+      }
+      
+  }
+
+  if(type === "user") {
+    selector.commercialEmail = req.user.email;
+    if (typeBien||PrixMin||PrixMax||city) {
+      if (typeBien) {
+        selector.type=typeBien;
+        }
+       // if(PrixMin && PrixMax){
+      //   selector.salesPrice = {$and: [ { $gte: PrixMin } , { $lte: PrixMax } ]};
+      // }
+      if (PrixMin) {
+        if(!PrixMax){
+        selector.salesPrice= { $gte: PrixMin };
+      }
+        }
+      if (PrixMax) {
+        if(!PrixMin){
+        selector.salesPrice= { $lte: PrixMax };
+        }
+        }  
+      if (city) {
+        selector.city=city;
+        }
+        
+    }
+  }
 
   if (type === "forsale") {
     selector.propertyStatus = "forsale";
+    if (typeBien||PrixMin||PrixMax||city) {
+      if (typeBien) {
+        selector.type=typeBien;
+        }
+       // if(PrixMin && PrixMax){
+      //   selector.salesPrice = {$and: [ { $gte: PrixMin } , { $lte: PrixMax } ]};
+      // }
+      if (PrixMin) {
+        if(!PrixMax){
+        selector.salesPrice= { $gte: PrixMin };
+      }
+        }
+      if (PrixMax) {
+        if(!PrixMin){
+        selector.salesPrice= { $lte: PrixMax };
+        }
+        }  
+      if (city) {
+        selector.city=city;
+        }
+        
+    }
   }
 
   if (type === "rental") {
-    selector.propertyStatus = "rental"
+    selector.propertyStatus = "rental";
+    if (typeBien||PrixMin||PrixMax||city) {
+      if (typeBien) {
+        selector.type=typeBien;
+        }
+       // if(PrixMin && PrixMax){
+      //   selector.salesPrice = {$and: [ { $gte: PrixMin } , { $lte: PrixMax } ]};
+      // }
+      if (PrixMin) {
+        if(!PrixMax){
+        selector.salesPrice= { $gte: PrixMin };
+      }
+        }
+      if (PrixMax) {
+        if(!PrixMin){
+        selector.salesPrice= { $lte: PrixMax };
+        }
+        }  
+      if (city) {
+        selector.city=city;
+        }
+        
+    }
     ;
   }
 
@@ -741,11 +837,33 @@ export async function getProperties(req, res, next) {
     ((isSearchClient(req.user) || isSearchClientVip(req.user)) && !isAdminOrCommercial(req.user))
   ) {
     selector.propertyStatus = "hunting";
+    if (typeBien||PrixMin||PrixMax||city) {
+      if (typeBien) {
+        selector.type=typeBien;
+        }
+       // if(PrixMin && PrixMax){
+      //   selector.salesPrice = {$and: [ { $gte: PrixMin } , { $lte: PrixMax } ]};
+      // }
+      if (PrixMin) {
+        if(!PrixMax){
+        selector.salesPrice= { $gte: PrixMin };
+      }
+        }
+      if (PrixMax) {
+        if(!PrixMin){
+        selector.salesPrice= { $lte: PrixMax };
+        }
+        }  
+      if (city) {
+        selector.city=city;
+        }
+        
+    }
   }
 
   const propertiesCount = await Property.countDocuments(selector).exec();
   const pageCount = Math.ceil(propertiesCount / LIMIT_BY_PAGE);
-
+  console.log(selector)
   try {
     const properties = await Property.find(
       selector,

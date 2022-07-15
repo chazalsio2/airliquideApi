@@ -163,6 +163,7 @@ export default (app) => {
   app.post("/publicForm/clients", cors(), publicCreateForm, errorHandle);
   app.post("/publicFormExtern/clients", cors(), publicCreateFormExtern, errorHandle);
   app.post("/public/clients", cors(), publicCreateClient, errorHandle);
+  app.post("/publicForm/clients", cors(), publicCreateForm, errorHandle);
   //check email in signUP
   // app.post("/public/clients-checkEmail", cors(), publicCreateClient, errorHandle);
 
@@ -176,7 +177,6 @@ export default (app) => {
   );
 
   app.post("/projects/:projectId/search-sheet", saveSearchSheet, errorHandle);
-  app.post("/projects/:projectId/search", saveSearchSheet, errorHandle);
   app.post("/projects/:projectId/sales-sheet", saveSalesSheet, errorHandle);
 
   app.post(
@@ -549,14 +549,14 @@ app.put(
     errorHandle
   );
 
-  app.delete(
-    `/propertiesCouv/:propertyId/photos`,
-    passport.authenticate("jwt", { session: false }),
-    checkAdminOrCommercial,
-    checkAccountDesactivated,
-    PhotoCouv,
-    errorHandle
-  );
+  // app.delete(
+  //   `/propertiesCouv/:propertyId/photos`,
+  //   passport.authenticate("jwt", { session: false }),
+  //   checkAdminOrCommercial,
+  //   checkAccountDesactivated,
+  //   PhotoCouv,
+  //   errorHandle
+  // );
 
 
   app.post(
@@ -873,14 +873,14 @@ app.put(
     editSearchProject,
     errorHandle
   );
-  app.put(
-    "/projects/:projectId/search",
-    passport.authenticate("jwt", { session: false }),
-    checkAdminOrCommercial,
-    checkAccountDesactivated,
-    editSearch,
-    errorHandle
-  );
+  // app.put(
+  //   "/projects/:projectId/search",
+  //   passport.authenticate("jwt", { session: false }),
+  //   checkAdminOrCommercial,
+  //   checkAccountDesactivated,
+  //   editSearch,
+  //   errorHandle
+  // );
 
 
   app.put(
@@ -959,10 +959,7 @@ app.put(
 
   app.post(
     "/ExternProjects/:projectId/documents",
-    //passport.authenticate("jwt", { session: false }),
-    //checkAccountDesactivated,
     addDocumentToProjectByExtrenPlatform,
-    //errorHandle
   );
 
   app.post(
