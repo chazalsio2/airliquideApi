@@ -928,13 +928,28 @@ export async function acceptAgreement(req, res, next) {
       return next(generateError("Project not found", 404));
     }
 
-    if (project.status !== "wait_sales_agreement_validation") {
-      return next(generateError("Wrong state", 403));
-    }
+    // if (project.status !== "wait_sales_agreement_validation") {
+    //   return next(generateError("Wrong state", 403));
+    // }
 
     if (!commission || !commercialPourcentage) {
       return next(generateError("Missing fields", 401));
     }
+
+
+    if(user.roles.indexOf("commercial_agent") !==-1 ){
+      await Project.updateOne(
+        { _id: projectId },
+        {
+          $set: {
+            commissionAmount: Number(commission) * 100,
+            commercialPourcentage: Number(commercialPourcentage),
+            salesAgreementDate: moment()
+          }
+        }
+      ).exec();
+    }else{
+
 
     await Project.updateOne(
       { _id: projectId },
@@ -966,6 +981,7 @@ export async function acceptAgreement(req, res, next) {
     }
 
     await sendAgreementAcceptedWebhook(projectId)
+  }
 
     return res.json({ success: true });
   } catch (e) {

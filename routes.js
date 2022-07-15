@@ -549,14 +549,14 @@ app.put(
     errorHandle
   );
 
-  // app.delete(
-  //   `/propertiesCouv/:propertyId/photos`,
-  //   passport.authenticate("jwt", { session: false }),
-  //   checkAdminOrCommercial,
-  //   checkAccountDesactivated,
-  //   PhotoCouv,
-  //   errorHandle
-  // );
+  app.delete(
+    `/propertiesCouv/:propertyId/photos`,
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    checkAccountDesactivated,
+    PhotoCouv,
+    errorHandle
+  );
 
 
   app.post(
@@ -598,7 +598,7 @@ app.put(
   app.post(
     `/projects/:projectId/accept-agreement`,
     passport.authenticate("jwt", { session: false }),
-    checkAdmin,
+    checkAdminOrCommercial,
     checkAccountDesactivated,
     acceptAgreement,
     errorHandle
