@@ -937,7 +937,7 @@ export async function acceptAgreement(req, res, next) {
     }
 
 
-    if(user.roles.indexOf("commercial_agent") !==-1 ){
+    if(project.status ==="wait_purchase_offer"){
       await Project.updateOne(
         { _id: projectId },
         {
