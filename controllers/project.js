@@ -1094,8 +1094,10 @@ export async function getProjects2(req, res, next) {
   try {
     const { page = "", mandate = "", order = "desc" } = req.query;
     const orderCreatedAt = order === "desc" ? -1 : 1;
-
-    const projects = await Project.find().lean();
+    const selector = {};
+    const projects = await Project.find(selector, null, {
+      sort: { createdAt: -1 },
+    }).lean();
 
     const clientEnrichedPromises = projects.map(async (projects) => {
       projects.client = await Client.findById(projects.clientId).lean();
