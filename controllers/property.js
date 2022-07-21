@@ -95,6 +95,7 @@ export async function editProperty(req, res, next) {
       projectId,
       charges_properties,
       city,
+      propertyStatus,
       address,
       landArea,
       livingArea,
@@ -103,7 +104,6 @@ export async function editProperty(req, res, next) {
       type,
       surface,
       virtualVisitLink,
-      propertyStatus,
       yearOfConstruction,
       Honoraires_V_R,
       kitchenArea,
@@ -171,6 +171,7 @@ export async function editProperty(req, res, next) {
       propertyStatus
     };
 
+    console.log(propertyStatus);
     if (landArea) {
       propertyData.landArea = landArea;
     }

@@ -87,6 +87,7 @@ import {
   editSalesSheet,
   preValidationAllStep
 } from "./controllers/project";
+import {matchProperties} from "./controllers/matchR";
 import {
   createProperty,
   getProperties,
@@ -195,6 +196,16 @@ export default (app) => {
     confirmSearchMandate,
     errorHandle
   );
+
+//Match
+app.post (
+  "/match_r",
+    passport.authenticate("jwt", { session: false }),
+    checkAccountDesactivated,
+    checkAdminOrCommercial,
+    matchProperties,
+    errorHandle
+)
 
   // Authentified
   app.get(
