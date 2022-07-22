@@ -87,6 +87,7 @@ import {
   editSalesSheet,
   preValidationAllStep
 } from "./controllers/project";
+import {matchProperties} from "./controllers/matchR";
 import {
   createProperty,
   getProperties,
@@ -195,6 +196,16 @@ export default (app) => {
     confirmSearchMandate,
     errorHandle
   );
+
+//Match
+app.post (
+  "/match_r",
+    passport.authenticate("jwt", { session: false }),
+    checkAccountDesactivated,
+    checkAdminOrCommercial,
+    matchProperties,
+    errorHandle
+)
 
   // Authentified
   app.get(
@@ -549,14 +560,14 @@ app.put(
     errorHandle
   );
 
-  // app.delete(
-  //   `/propertiesCouv/:propertyId/photos`,
-  //   passport.authenticate("jwt", { session: false }),
-  //   checkAdminOrCommercial,
-  //   checkAccountDesactivated,
-  //   PhotoCouv,
-  //   errorHandle
-  // );
+  app.delete(
+    `/propertiesCouv/:propertyId/photos`,
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    checkAccountDesactivated,
+    PhotoCouv,
+    errorHandle
+  );
 
 
   app.post(
@@ -598,7 +609,7 @@ app.put(
   app.post(
     `/projects/:projectId/accept-agreement`,
     passport.authenticate("jwt", { session: false }),
-    checkAdmin,
+    checkAdminOrCommercial,
     checkAccountDesactivated,
     acceptAgreement,
     errorHandle

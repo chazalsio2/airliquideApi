@@ -928,13 +928,28 @@ export async function acceptAgreement(req, res, next) {
       return next(generateError("Project not found", 404));
     }
 
-    if (project.status !== "wait_sales_agreement_validation") {
-      return next(generateError("Wrong state", 403));
-    }
+    // if (project.status !== "wait_sales_agreement_validation") {
+    //   return next(generateError("Wrong state", 403));
+    // }
 
     if (!commission || !commercialPourcentage) {
       return next(generateError("Missing fields", 401));
     }
+
+
+    if(project.status ==="wait_purchase_offer"){
+      await Project.updateOne(
+        { _id: projectId },
+        {
+          $set: {
+            commissionAmount: Number(commission) * 100,
+            commercialPourcentage: Number(commercialPourcentage),
+            salesAgreementDate: moment()
+          }
+        }
+      ).exec();
+    }else{
+
 
     await Project.updateOne(
       { _id: projectId },
@@ -966,6 +981,7 @@ export async function acceptAgreement(req, res, next) {
     }
 
     await sendAgreementAcceptedWebhook(projectId)
+  }
 
     return res.json({ success: true });
   } catch (e) {
@@ -1078,8 +1094,10 @@ export async function getProjects2(req, res, next) {
   try {
     const { page = "", mandate = "", order = "desc" } = req.query;
     const orderCreatedAt = order === "desc" ? -1 : 1;
-
-    const projects = await Project.find().lean();
+    const selector = {};
+    const projects = await Project.find(selector, null, {
+      sort: { createdAt: -1 },
+    }).lean();
 
     const clientEnrichedPromises = projects.map(async (projects) => {
       projects.client = await Client.findById(projects.clientId).lean();
