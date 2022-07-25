@@ -728,7 +728,7 @@ export async function getProperties(req, res, next) {
   const { page = "", type = "" ,typeBien="",PrixMin, PrixMax,city=""} = req.query;
   const pageNumber = Number(page) || 1;
 
-  console.log(req.body);
+  console.log(req);
   let selectorPrix;
   const selector = {};
 
