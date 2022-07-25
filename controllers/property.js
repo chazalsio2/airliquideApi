@@ -875,6 +875,7 @@ export async function getProperties(req, res, next) {
         limit: LIMIT_BY_PAGE
       }
     ).lean();
+    console.log(properties);
     return res.json({
       success: true,
       data: { properties, pageCount, total: propertiesCount }
