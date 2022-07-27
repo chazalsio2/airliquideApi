@@ -708,7 +708,7 @@ app.put(
 
   app.get(
     "/properties",
-    //passport.authenticate("jwt", { session: false }),
+    passport.authenticate("jwt", { session: false }),
     checkAdminOrCommercialOrSearchClientOrclientcoaching,
     checkAccountDesactivated,
     getProperties,
