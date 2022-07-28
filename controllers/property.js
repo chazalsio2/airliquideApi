@@ -869,7 +869,7 @@ export async function getProperties(req, res, next) {
   try {
     const properties = await Property.find(
       selector,
-      "photos name ref description city propertyStatus",
+      "photos name ref description city propertyStatus salesPrice",
       {
         sort: { createdAt: -1 },
         skip: (pageNumber - 1) * LIMIT_BY_PAGE,
