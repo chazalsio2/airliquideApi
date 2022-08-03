@@ -35,6 +35,7 @@ import { uploadFile } from "../lib/aws";
 import { sendMessageToSlack } from "../lib/slack";
 import { matchPropertiesForSearchMandate } from "../lib/matching";
 import Property from "../models/Property";
+import Insul_r from "../models/Insul_r";
 
 const LIMIT_BY_PAGE = 10;
 
@@ -119,7 +120,7 @@ export async function getProject(req, res, next) {
       return next(generateError("Project not found", 404));
     }
 
-    const client = await Client.findOne({ _id: project.clientId }, null).lean();
+    const client = (await Client.findOne({ _id: project.clientId }, null).lean()||await Insul_r.findOne({ _id: project.clientId }, null).lean());
     const dossiernotaire = await DossierNotaire.findOne({ _id: project.dossiernotaireId }, null).lean();
 
 
@@ -1069,7 +1070,7 @@ export async function getProjects(req, res, next) {
     }).lean();
 
     const clientEnrichedPromises = projects.map(async (project) => {
-      project.client = await Client.findById(project.clientId).lean();
+      project.client = (await Client.findById(project.clientId).lean()||await Insul_r.findById(project.clientId).lean())
       if (project.commercialId) {
         project.commercial = await User.findById(
           project.commercialId,
