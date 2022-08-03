@@ -1,5 +1,6 @@
 import moment from "moment";
 import Client from "../models/Client";
+import Insul_r from "../models/Insul_r";
 import User from "../models/User";
 import { generateError } from "../lib/utils";
 import Project, { projectTypes } from "../models/Project";
@@ -69,27 +70,59 @@ export async function getClient(req, res, next) {
   try {
     const { clientId } = req.params;
     const client = await Client.findById(clientId).lean();
+    const insul_r = await Insul_r.findById(clientId).lean();
+
+    console.log(client||insul_r);
 
     if (!client) {
-      return next(generateError("Client not found", 404));
+      if (insul_r) {
+        
+      }else{
+        return next(generateError("Client not found", 404));
+    }
+    }
+    if (!insul_r) {
+      if (client) {
+        
+      }else{
+        return next(generateError("Client not found", 404));
+    }
     }
 
-    if(client.conseillerId){
-       client.user = await User.findById(client.conseillerId).lean();
+    if (client) {
+  
+      if(client.conseillerId){
+         client.user = await User.findById(client.conseillerId).lean();
+      }
+  
+      client.projects = await Project.find(
+        {
+          clientId: client._id,
+          //status: {$nin: ["canceled", "completed"]}
+        },
+        null,
+        { sort: { createdAt: -1 } }
+      ).lean();
+  
+      console.log("insul_r");
+    }else{
+      if(insul_r.conseillerId){
+        insul_r.user = await User.findById(insul_r.conseillerId).lean();
+     }
+ 
+     insul_r.projects = await Project.find(
+       {
+         clientId: insul_r._id,
+         //status: {$nin: ["canceled", "completed"]}
+       },
+       null,
+       { sort: { createdAt: -1 } }
+     ).lean();
     }
-
-    client.projects = await Project.find(
-      {
-        clientId: client._id,
-        // status: { $nin: ["canceled", "completed"] }
-      },
-      null,
-      { sort: { createdAt: -1 } }
-    ).lean();
 
     return res.json({
       success: true,
-      data: client
+      data: {client:client,insul_r:insul_r}
     });
   } catch (e) {
     return res.status(500).json({ success: false });
@@ -167,19 +200,42 @@ export async function addProject(req, res, next) {
     }
 
     const client = await Client.findById(clientId).lean();
+    const insul_r = await Insul_r.findById(clientId).lean();
 
     if (!client) {
-      return next(generateError("Client not found", 404));
+      if (insul_r) {
+        
+      }else{
+        return next(generateError("Client not found", 404));
     }
-
+    }
+    if (!insul_r) {
+      if (client) {
+        
+      }else{
+        return next(generateError("Client not found", 404));
+    }
+    }
     const project = await new Project({ clientId, type: projectType }).save();
-    console.log(project);
-    await Client.updateOne({ _id: clientId }, { $addToSet: { projectTypes: projectType } }).exec()
 
-    await ProjectEvent({
-      projectId: project._id,
-      type: "project_creation"
-    }).save();
+
+    if (client) {
+      console.log(project);
+      await Client.updateOne({ _id: clientId }, { $addToSet: { projectTypes: projectType } }).exec()
+
+      await ProjectEvent({
+        projectId: project._id,
+        type: "project_creation"
+      }).save();
+    }else{
+        console.log(project);
+        await Insul_r.updateOne({ _id: clientId }, { $addToSet: { projectTypes: projectType } }).exec()
+
+        await ProjectEvent({
+        projectId: project._id,
+        type: "project_creation"
+        }).save();
+    }
 
     return res.json({ success: true, data: { projectId: project._id } });
     console.log(res);
