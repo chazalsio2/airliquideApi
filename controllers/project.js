@@ -1079,6 +1079,7 @@ export async function getProjects(req, res, next) {
     });
 
     const projectsEnriched = await Promise.all(clientEnrichedPromises);
+    console.log(projectsEnriched);
 
     return res.json({
       success: true,
