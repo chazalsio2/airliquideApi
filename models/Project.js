@@ -17,7 +17,9 @@ export const projectTypes = ["management", "sales", "search", "coaching"];
 const DocSubset = new mongoose.Schema({
 originNameMandate: String,
   name: String,
-  url: String
+  url: String,
+  num_mandat:String,
+  date_mandat:String
 });
 
 const SalesSheet = new mongoose.Schema({

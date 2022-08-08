@@ -1,5 +1,9 @@
 import Property from "../models/Property";
 import Project from "../models/Project";
+import Client from "../models/Client";
+import Insul_r from "../models/Insul_r";
+import User from "../models/User";
+
 
 export async function matchProperties(req, res, next) {
   
@@ -31,7 +35,7 @@ export async function matchProperties(req, res, next) {
       try {
         const {
           propertyArea,
-          propertyLandArea,
+          landArea,
           searchSectorCities,
           budget,
           livingArea,
@@ -78,7 +82,7 @@ export async function matchProperties(req, res, next) {
         conditions.public = true;
         conditions.salesPrice = { $lte: (budget * 1.15).toFixed(0) };
         if (ProjectType == terrGar(ProjectType)){
-           conditions.landArea = { $gte: propertyLandArea-(propertyLandArea * 0.15) };
+           conditions.landArea = { $gte: landArea-(landArea * 0.15) };
         }
         if (ProjectType == setvalue(ProjectType)){
             conditions.livingArea = { $gte: livingArea-(livingArea * 0.15) };
@@ -136,7 +140,7 @@ export async function matchProperties(req, res, next) {
         //   { $set: { matchedProperties: matchedPropertiesId } }
         // ).exec();
       
-        return res.json({ success: true,data: matchedProperties });
+        return res.json({ success: true,data: matchedProperties > 0 ?matchedProperties:null ,body:true});
     } catch (e) {
       next(generateError(e.message));
     }
@@ -226,9 +230,21 @@ export async function matchProperties(req, res, next) {
         //   console.log(searchProjects._id);
           console.log(conditions)
           const project = await Project.find(conditions).exec();
+          const clientEnrichedPromises = project.map(async (project) => {
+            project.client = (await Client.findById(project.clientId).lean()||await Insul_r.findById(project.clientId).lean())
+            if (project.commercialId) {
+              project.commercial = await User.findById(
+                project.commercialId,
+                "displayName"
+              ).lean();
+            }
+            return project;
+          });
+      
+          const projectsEnriched = await Promise.all(clientEnrichedPromises);
           
-          if (project) {
-            const pro = project.filter(projects=>{
+          if (projectsEnriched) {
+            const projects = projectsEnriched.filter(projects=>{
             
               let isCitiesMatch = false;
               let isPropertyAreaMatch = false;
@@ -248,7 +264,6 @@ export async function matchProperties(req, res, next) {
                   }
                 }
   
-          
             if(ProjectType === terrGar(ProjectType)){
               isPropertyAreaMatch = projects.searchSheet.propertyLandArea >= landArea - (landArea * 0.15);
             }
@@ -294,10 +309,13 @@ export async function matchProperties(req, res, next) {
                   return projects
                 }
               })
-    console.log(pro)
-    return res.json({ success: true,project: pro });
 
+             
+          
 
+    console.log(projects);
+    console.log(projectsEnriched);
+    return res.json({ success: true,project: projects.length > 0 ? projects : null ,body:true});
           }
           
 
