@@ -28,7 +28,10 @@ const SalesSheet = new mongoose.Schema({
     type: String
   },
   propertySize: {
-    type: String
+    type: Number
+  },
+  propertyLandArea:{
+    type: Number
   },
   propertySizeDetails:{
     type: String
@@ -106,8 +109,10 @@ const SearchSheet = new mongoose.Schema({
     type: String
   },
   propertySize: {
-    type: String,
-    enum: ["studio", "T2", "T3", "T4", "bigger"]
+    type: Number,
+  },
+  propertyLandArea:{
+    type: Number
   },
   propertySizeDetail: {
     type: String,

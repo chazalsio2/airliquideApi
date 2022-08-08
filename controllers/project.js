@@ -298,11 +298,10 @@ export async function editSalesSheet(req, res, next) {
     }
 */
 
-    console.log(propertySize);
 
     const newSalesSheetEdited = {
       propertyType,
-      propertySize : propertySize === "bigger" ? propertySizeDetail : Number(propertySize),
+      propertySize : propertySize && propertySize === "bigger" ? propertySizeDetail : Number(propertySize),
       propertySizeDetail,
       // livingArea,
       // landArea,
@@ -408,10 +407,9 @@ export async function saveSalesSheet(req, res, next) {
     }
 
 */
-console.log(propertySize);
     const salesSheet = {
       propertyType,
-      propertySize : propertySize === "bigger" ? propertySizeDetail : Number(propertySize),
+      propertySize : propertySize && propertySize === "bigger" ? propertySizeDetail : Number(propertySize),
       // livingArea,
       //landArea,
       workNeeded,
@@ -1258,18 +1256,17 @@ export async function saveSearchSheet(req, res, next) {
       return next(generateError("Project not found", 404));
     }
 
-    console.log(propertySize);
 
 
     const searchSheet = {
       investmentType:
         investmentType === "other" ? otherInvestmentType : investmentType,
-        propertySize : propertySize === "bigger" ? propertySizeDetail : Number(propertySize),
+        propertySize : propertySize && propertySize === "bigger" ? propertySizeDetail : Number(propertySize),
         propertyType,
       additionalInfos,
       propertySizeDetail,
       propertyArea,
-      propertyLandArea,
+      propertyLandArea:propertyLandArea && Number(propertyLandArea),
       land,
       landArea,
       searchSector,
@@ -1329,6 +1326,7 @@ export async function editSearchProject(req, res, next) {
       desiredgrossyield,
       budget
     } = req.body;
+    console.log(propertySize && propertySize);
 
     const { projectId } = req.params;
     const project = await Project.findById(projectId).lean();
@@ -1337,17 +1335,18 @@ export async function editSearchProject(req, res, next) {
       return next(generateError("Project not found", 404));
     }
 
+    const ps =  propertySize ? propertySize === "bigger" ? propertySizeDetail : Number(propertySize):null;
 
     const modifier = {
       
       searchSheet: {
         investmentType:
           investmentType === "other" ? otherInvestmentType : investmentType,
-          propertySize : propertySize === "bigger" ? propertySizeDetail : Number(propertySize),
+          propertySize :  ps ,
           propertyType,
         additionalInfos,
         propertyArea,
-        propertyLandArea,
+        propertyLandArea:propertyLandArea && Number(propertyLandArea),
         land,
         landArea,
         searchSector,
@@ -1356,6 +1355,8 @@ export async function editSearchProject(req, res, next) {
         searchSectorCities: searchSectorCities || []
       }
     };
+    console.log(modifier);
+
 
     if (!_.isUndefined(investalone)) {
       modifier.investAlone = investalone;
