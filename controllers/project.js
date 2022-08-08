@@ -1092,14 +1092,14 @@ export async function getProjects(req, res, next) {
 export async function getProjects2(req, res, next) {
   try {
     const { page = "", mandate = "", order = "desc" } = req.query;
-    const orderCreatedAt = order === "desc" ? -1 : 1;
+    const orderCreatedAt = order ===  -1 ;
     const selector = {};
     const projects = await Project.find(selector, null, {
       sort: { createdAt: -1 },
     }).lean();
 
     const clientEnrichedPromises = projects.map(async (projects) => {
-      projects.client = await Client.findById(projects.clientId).lean();
+      projects.client = (await Client.findById(projects.clientId).lean()||await Insul_r.findById(projects.clientId).lean())
       return projects;
     });
 
