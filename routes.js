@@ -9,7 +9,7 @@ import {
   forgotPassword,
   changePassword
 } from "./controllers/authentification";
-
+import {getInsul_rs,deleteInsul_r} from "./controllers/Insul_r"
 import { getUsers, createUser, editUser } from "./controllers/administration";
 import {
   createSimulation,
@@ -813,6 +813,15 @@ app.put(
     getClients,
     errorHandle
   );
+  app.get(
+    "/insul_r",
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    checkAccountDesactivated,
+    getInsul_rs,
+    errorHandle
+  );
+  
 
   app.post(
     "/clients/:clientId/projects",
@@ -834,7 +843,15 @@ app.put(
     //deleteProject,
     errorHandle
   );
-
+  app.delete(
+    "/insul_r/:insul_rId",
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    checkAccountDesactivated,
+    deleteInsul_r,
+    //deleteProject,
+    errorHandle
+  );
   app.delete(
     "/projects/:projectId",
     passport.authenticate("jwt", { session: false }),

@@ -2,6 +2,7 @@ import moment from "moment";
 
 import { generateError } from "../lib/utils";
 import Client from "../models/Client";
+import Insul_r from "../models/Insul_r";
 import Project, { projectTypes } from "../models/Project";
 import { sendNewClientEmail } from "../lib/email";
 import { sendMessageToSlack } from "../lib/slack";
@@ -157,7 +158,7 @@ export async function publicCreateFormExtern(req, res, next) {
       conseillerId
     };
 
-      const client = await new Client(newClientData).save();
+      const client = await new Insul_r(newClientData).save();
 
 
       sendNewClientEmail(client);

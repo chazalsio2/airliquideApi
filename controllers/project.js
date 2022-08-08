@@ -35,6 +35,7 @@ import { uploadFile } from "../lib/aws";
 import { sendMessageToSlack } from "../lib/slack";
 import { matchPropertiesForSearchMandate } from "../lib/matching";
 import Property from "../models/Property";
+import Insul_r from "../models/Insul_r";
 
 const LIMIT_BY_PAGE = 10;
 
@@ -119,7 +120,7 @@ export async function getProject(req, res, next) {
       return next(generateError("Project not found", 404));
     }
 
-    const client = await Client.findOne({ _id: project.clientId }, null).lean();
+    const client = (await Client.findOne({ _id: project.clientId }, null).lean()||await Insul_r.findOne({ _id: project.clientId }, null).lean());
     const dossiernotaire = await DossierNotaire.findOne({ _id: project.dossiernotaireId }, null).lean();
 
 
@@ -297,11 +298,10 @@ export async function editSalesSheet(req, res, next) {
     }
 */
 
-    console.log(propertySize);
 
     const newSalesSheetEdited = {
       propertyType,
-      propertySize : propertySize === "bigger" ? propertySizeDetail : Number(propertySize),
+      propertySize : propertySize && propertySize === "bigger" ? propertySizeDetail : Number(propertySize),
       propertySizeDetail,
       // livingArea,
       // landArea,
@@ -407,10 +407,9 @@ export async function saveSalesSheet(req, res, next) {
     }
 
 */
-console.log(propertySize);
     const salesSheet = {
       propertyType,
-      propertySize : propertySize === "bigger" ? propertySizeDetail : Number(propertySize),
+      propertySize : propertySize && propertySize === "bigger" ? propertySizeDetail : Number(propertySize),
       // livingArea,
       //landArea,
       workNeeded,
@@ -1069,7 +1068,7 @@ export async function getProjects(req, res, next) {
     }).lean();
 
     const clientEnrichedPromises = projects.map(async (project) => {
-      project.client = await Client.findById(project.clientId).lean();
+      project.client = (await Client.findById(project.clientId).lean()||await Insul_r.findById(project.clientId).lean())
       if (project.commercialId) {
         project.commercial = await User.findById(
           project.commercialId,
@@ -1093,14 +1092,14 @@ export async function getProjects(req, res, next) {
 export async function getProjects2(req, res, next) {
   try {
     const { page = "", mandate = "", order = "desc" } = req.query;
-    const orderCreatedAt = order === "desc" ? -1 : 1;
+    const orderCreatedAt = order ===  -1 ;
     const selector = {};
     const projects = await Project.find(selector, null, {
       sort: { createdAt: -1 },
     }).lean();
 
     const clientEnrichedPromises = projects.map(async (projects) => {
-      projects.client = await Client.findById(projects.clientId).lean();
+      projects.client = (await Client.findById(projects.clientId).lean()||await Insul_r.findById(projects.clientId).lean())
       return projects;
     });
 
@@ -1257,18 +1256,17 @@ export async function saveSearchSheet(req, res, next) {
       return next(generateError("Project not found", 404));
     }
 
-    console.log(propertySize);
 
 
     const searchSheet = {
       investmentType:
         investmentType === "other" ? otherInvestmentType : investmentType,
-        propertySize : propertySize === "bigger" ? propertySizeDetail : Number(propertySize),
+        propertySize : propertySize && propertySize === "bigger" ? propertySizeDetail : Number(propertySize),
         propertyType,
       additionalInfos,
       propertySizeDetail,
       propertyArea,
-      propertyLandArea,
+      propertyLandArea:propertyLandArea && Number(propertyLandArea),
       land,
       landArea,
       searchSector,
@@ -1328,6 +1326,7 @@ export async function editSearchProject(req, res, next) {
       desiredgrossyield,
       budget
     } = req.body;
+    console.log(propertySize && propertySize);
 
     const { projectId } = req.params;
     const project = await Project.findById(projectId).lean();
@@ -1336,17 +1335,18 @@ export async function editSearchProject(req, res, next) {
       return next(generateError("Project not found", 404));
     }
 
+    const ps =  propertySize ? propertySize === "bigger" ? propertySizeDetail : Number(propertySize):null;
 
     const modifier = {
       
       searchSheet: {
         investmentType:
           investmentType === "other" ? otherInvestmentType : investmentType,
-          propertySize : propertySize === "bigger" ? propertySizeDetail : Number(propertySize),
+          propertySize :  ps ,
           propertyType,
         additionalInfos,
         propertyArea,
-        propertyLandArea,
+        propertyLandArea:propertyLandArea && Number(propertyLandArea),
         land,
         landArea,
         searchSector,
@@ -1355,6 +1355,8 @@ export async function editSearchProject(req, res, next) {
         searchSectorCities: searchSectorCities || []
       }
     };
+    console.log(modifier);
+
 
     if (!_.isUndefined(investalone)) {
       modifier.investAlone = investalone;

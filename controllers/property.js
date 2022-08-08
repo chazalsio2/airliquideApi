@@ -44,7 +44,7 @@ export async function PropertyUrl(req, res, next) {
 
     const { propertyId } = req.params;
 
-    console.log(propertyId);
+    //console.log(propertyId);
 
     const property = await Property.findById(propertyId).lean();
 
@@ -171,7 +171,7 @@ export async function editProperty(req, res, next) {
       propertyStatus
     };
 
-    console.log(propertyStatus);
+    //console.log(propertyStatus);
     if (landArea) {
       propertyData.landArea = landArea;
     }
@@ -365,7 +365,7 @@ export async function editProperty(req, res, next) {
 export async function updatePropertyVisibility(req, res, next) {
   const { propertyId } = req.params;
 
-  console.log(req.body.public);
+  //console.log(req.body.public);
   try {
     const property = await Property.findOne({ _id: propertyId }).lean();
 
@@ -728,6 +728,7 @@ export async function getProperties(req, res, next) {
   const { page = "", type = "" ,typeBien="",PrixMin, PrixMax,city=""} = req.query;
   const pageNumber = Number(page) || 1;
 
+  console.log(req);
   let selectorPrix;
   const selector = {};
 
@@ -835,7 +836,7 @@ export async function getProperties(req, res, next) {
 
   if (
     type === "hunting" ||
-    ((isSearchClient(req.user) || isSearchClientVip(req.user)) && !isAdminOrCommercial(req.user))
+    ((isSearchClient(req.user||req.body) || isSearchClientVip(req.user||req.body)) && !isAdminOrCommercial(req.user||req.body))
   ) {
     selector.propertyStatus = "hunting";
     if (typeBien||PrixMin||PrixMax||city) {
@@ -864,17 +865,18 @@ export async function getProperties(req, res, next) {
 
   const propertiesCount = await Property.countDocuments(selector).exec();
   const pageCount = Math.ceil(propertiesCount / LIMIT_BY_PAGE);
-  console.log(selector)
+  //console.log(selector)
   try {
     const properties = await Property.find(
       selector,
-      "photos name ref description city",
+      "photos name ref description city propertyStatus salesPrice",
       {
         sort: { createdAt: -1 },
         skip: (pageNumber - 1) * LIMIT_BY_PAGE,
         limit: LIMIT_BY_PAGE
       }
     ).lean();
+    //console.log(properties);
     return res.json({
       success: true,
       data: { properties, pageCount, total: propertiesCount }
