@@ -686,10 +686,12 @@ export async function acceptLoanOffer(req, res, next) {
         }/projects/${project._id}`
     });//validation pret
 
+    const com = await User.findById(project.commercialId).lean();
+
     if (project.type === "sales") {
-      sendLoanOfferAcceptedForSalesProject(client);
+      sendLoanOfferAcceptedForSalesProject(client,com);
     } else {
-      sendAcceptLoanOfferConfirmation(client);
+      sendAcceptLoanOfferConfirmation(client,com);
     }
 
     return res.json({ success: true });
@@ -735,7 +737,9 @@ export async function sendCompletedProjectEmail(req, res, next) {
     }
 
     if (emailNumber === 5) {
+
       sendAcceptSalesDeedConfirmation(client, commercial);
+
       const event =  await new ProjectEvent({
         type: "project_completed_email_5",
         projectId,
@@ -807,10 +811,12 @@ export async function acceptMandate(req, res, next) {
         }/projects/${projectId}`
     });//validation mandat
 
+    const com = await User.findById(project.commercialId).lean();
+
     if (project.type === "sales") {
-      sendMandateSignedForSalesProject(client);
+      sendMandateSignedForSalesProject(client,com);
     } else {
-      sendMandateSignatureConfirmation(client);
+      sendMandateSignatureConfirmation(client,com);
     }
 
     const alreadyUser = await User.findOne({
@@ -873,6 +879,7 @@ export async function acceptPurchaseOffer(req, res, next) {
     const project = await Project.findById(projectId).lean();
     const user = await User.findById(req.user._id).lean();
     const client = await Client.findOne({ _id: project.clientId }).lean();
+    const com = await User.findOne({ _id: project.commercialId }).lean();
 
     if (!project) {
       return next(generateError("Project not found", 404));
@@ -901,9 +908,9 @@ export async function acceptPurchaseOffer(req, res, next) {
     });//validation offre achat
 
     if (project.type === "sales") {
-      sendPurchaseOfferAcceptedForSalesProject(client);
+      sendPurchaseOfferAcceptedForSalesProject(client,com);
     } else {
-      sendAcceptPurchaseOfferConfirmation(client);
+      sendAcceptPurchaseOfferConfirmation(client,com);
     }
 
     return res.json({ success: true });
@@ -922,6 +929,7 @@ export async function acceptAgreement(req, res, next) {
     const project = await Project.findById(projectId).lean();
     const user = await User.findById(req.user._id).lean();
     const client = await Client.findById(project.clientId).lean();
+    const com = await User.findById(project.commercialId).lean();
 
     if (!project) {
       return next(generateError("Project not found", 404));
@@ -974,9 +982,9 @@ export async function acceptAgreement(req, res, next) {
     });//validation compromis  
 
     if (project.type === "sales") {
-      sendSalesAgreementAcceptedForSalesProject(client);
+      sendSalesAgreementAcceptedForSalesProject(client,com);
     } else {
-      sendAcceptSalesAgreementConfirmation(client);
+      sendAcceptSalesAgreementConfirmation(client,com);
     }
 
     await sendAgreementAcceptedWebhook(projectId)
@@ -1034,9 +1042,10 @@ export async function acceptDeed(req, res, next) {
       authorUserId: userId
     }).save();
 
+    const com = await User.findById(project.commercialId).lean();
 
     if (project.type === "sales") {
-      sendDeedAcceptedForSalesProject(client);
+      sendDeedAcceptedForSalesProject(client,com);
     }
 
     return res.json({ success: true });
@@ -1410,7 +1419,8 @@ export async function editSearch(req, res, next) {
         $set: modifier
       }
     ).exec();
-   sendMatchPropertiesEmail(project)
+    const com = await User.findById(project.commercialId).lean();
+   sendMatchPropertiesEmail(project,com)
     return res.json({ success: true });
 
 
