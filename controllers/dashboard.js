@@ -96,12 +96,6 @@ export async function getDashboardData(req, res, next) {
           commercialId: userId
         }
     );
-    var log= moment().startOf("year");
-    var log2 ={
-      completedAt: { $gt: moment().startOf("year") },
-      status: "completed"
-    }
-    console.log(log2);
 
     const salesDeedCount = await Project.countDocuments(
       isUserAdmin
