@@ -5,6 +5,10 @@ import Project from "../models/Project";
 import moment from "moment";
 import _ from "underscore";
 
+export async function status(){
+
+}
+
 export async function getDashboardData(req, res, next) {
   try {
     const userId = req.user._id;
@@ -92,6 +96,12 @@ export async function getDashboardData(req, res, next) {
           commercialId: userId
         }
     );
+    var log= moment().startOf("year");
+    var log2 ={
+      completedAt: { $gt: moment().startOf("year") },
+      status: "completed"
+    }
+    console.log(log2);
 
     const salesDeedCount = await Project.countDocuments(
       isUserAdmin
@@ -138,6 +148,9 @@ export async function getDashboardData(req, res, next) {
       (project) =>
         project.status !== "completed" &&
         project.status !== "canceled" &&
+        project.status !=="wait_purchase_offer_validation"&&
+        project.status !=="wait_sales_agreement"&&
+        project.status !=="wait_sales_agreement_validation"&&
         !!project.commissionAmount
     );
 
@@ -151,7 +164,6 @@ export async function getDashboardData(req, res, next) {
         ),
       0
     );
-
     const provisionalCommission = _.reduce(
       projectsNotCompleted,
       (memo, project) =>
@@ -162,6 +174,7 @@ export async function getDashboardData(req, res, next) {
         ),
       0
     );
+    console.log(provisionalCommission);
 
     return res.json({
       success: true,
