@@ -162,6 +162,51 @@ export async function editContact(req, res, next) {
         { $set: modifier },
         opts
       ).exec();
+console.log(firstname,
+  lastname,
+  phone,
+  contactCategoryId,
+  description,
+  email,
+  address);
+      return res.json({ success: true, data: contact });
+    }
+  }
+  catch (e) {
+    next(generateError(e.message));
+  }
+}
+export async function blackListeContact(req, res, next) {
+  try {
+    const isAuthorized =
+    isAdminOrCommercial(req.user);
+
+    if (isAuthorized) {
+      const modifier = req.body;
+        const {
+          blackListe
+        } = modifier;
+
+        console.log(blackListe);
+
+      /*if (!contactCategoryId || !phone || !firstname || !lastname ||
+        !description || !email ||!address) {
+        return next(generateError("Cannot update some fields", 403));
+      }*/
+
+      const { contactId } = req.params;
+      const opts = { runValidators: true };
+
+
+      const contact = await Contact.updateOne(
+        { _id: contactId },
+      { $addToSet: {descriptionBloced: blackListe}}
+      ).exec();
+      const contact2 = await Contact.updateOne(
+        { _id: contactId },
+        {$addToSet:{userId: req.user._id }}
+      ).exec();
+
 
       return res.json({ success: true, data: contact });
     }
