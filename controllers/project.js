@@ -689,9 +689,9 @@ export async function acceptLoanOffer(req, res, next) {
     const com = await User.findById(project.commercialId).lean();
 
     if (project.type === "sales") {
-      sendLoanOfferAcceptedForSalesProject(client,com);
+      sendLoanOfferAcceptedForSalesProject(client,com?com:null);
     } else {
-      sendAcceptLoanOfferConfirmation(client,com);
+      sendAcceptLoanOfferConfirmation(client,com?com:null);
     }
 
     return res.json({ success: true });
@@ -814,9 +814,9 @@ export async function acceptMandate(req, res, next) {
     const com = await User.findById(project.commercialId).lean();
 
     if (project.type === "sales") {
-      sendMandateSignedForSalesProject(client,com);
+      sendMandateSignedForSalesProject(client,com?com:null);
     } else {
-      sendMandateSignatureConfirmation(client,com);
+      sendMandateSignatureConfirmation(client,com?com:null);
     }
 
     const alreadyUser = await User.findOne({
@@ -908,9 +908,9 @@ export async function acceptPurchaseOffer(req, res, next) {
     });//validation offre achat
 
     if (project.type === "sales") {
-      sendPurchaseOfferAcceptedForSalesProject(client,com);
+      sendPurchaseOfferAcceptedForSalesProject(client,com?com:null);
     } else {
-      sendAcceptPurchaseOfferConfirmation(client,com);
+      sendAcceptPurchaseOfferConfirmation(client,com?com:null);
     }
 
     return res.json({ success: true });
@@ -982,9 +982,9 @@ export async function acceptAgreement(req, res, next) {
     });//validation compromis  
 
     if (project.type === "sales") {
-      sendSalesAgreementAcceptedForSalesProject(client,com);
+      sendSalesAgreementAcceptedForSalesProject(client,com?com:null);
     } else {
-      sendAcceptSalesAgreementConfirmation(client,com);
+      sendAcceptSalesAgreementConfirmation(client,com?com:null);
     }
 
     await sendAgreementAcceptedWebhook(projectId)
@@ -1045,7 +1045,7 @@ export async function acceptDeed(req, res, next) {
     const com = await User.findById(project.commercialId).lean();
 
     if (project.type === "sales") {
-      sendDeedAcceptedForSalesProject(client,com);
+      sendDeedAcceptedForSalesProject(client,com?com:null);
     }
 
     return res.json({ success: true });
@@ -1420,7 +1420,7 @@ export async function editSearch(req, res, next) {
       }
     ).exec();
     const com = await User.findById(project.commercialId).lean();
-   sendMatchPropertiesEmail(project,com)
+   sendMatchPropertiesEmail(project,com?com:null)
     return res.json({ success: true });
 
 
