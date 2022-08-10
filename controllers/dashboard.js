@@ -168,7 +168,6 @@ export async function getDashboardData(req, res, next) {
         ),
       0
     );
-    console.log(provisionalCommission);
 
     return res.json({
       success: true,
