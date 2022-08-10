@@ -129,7 +129,8 @@ import {
   getContactCategories,
   getContacts,
   removeContact,
-  editContact
+  editContact,
+  blackListeContact
 } from "./controllers/contact";
 
 const checkAdmin = (req, res, next) => checkRoles("admin", req, res, next);
@@ -240,6 +241,14 @@ app.post (
     checkAccountDesactivated,
     checkAdminOrCommercial,
     editContact,
+    errorHandle
+  )
+  app.put(
+    "/contacts/:contactId/blacklistecontact",
+    passport.authenticate("jwt", { session: false }),
+    checkAccountDesactivated,
+    checkAdminOrCommercial,
+    blackListeContact,
     errorHandle
   )
 
