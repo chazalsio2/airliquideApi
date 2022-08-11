@@ -85,7 +85,8 @@ import {
   editSearchProject,
   editSearch,
   editSalesSheet,
-  preValidationAllStep
+  preValidationAllStep,
+  uploadMandateForProjectExterne
 } from "./controllers/project";
 import {matchProperties} from "./controllers/matchR";
 import {
@@ -1020,6 +1021,11 @@ app.put(
     passport.authenticate("jwt", { session: false }),
     checkAccountDesactivated,
     uploadMandateForProject,
+    errorHandle
+  );
+  app.post(
+    "/projects/:projectId/mandateExterne",
+    uploadMandateForProjectExterne,
     errorHandle
   );
 
