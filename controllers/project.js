@@ -2114,7 +2114,7 @@ export async function addDocumentToProjectByExtrenPlatform(req, res, next) {
 
     const document = await new Document({
       name: fileName,
-      //authorUserId: req.user._id,
+      authorUserId: "62f4db00a19c48055a3ab571",
       projectId,
       contentType,
       visibility:project.type === "search" ? "public" : "private"
@@ -2305,7 +2305,92 @@ export async function uploadMandateForProject(req, res, next) {
     next(generateError(e.message));
   }
 }
+export async function uploadMandateForProjectExterne(req, res, next) {
+  try {
+    console.log("ajout du mandat")
+    const { projectId } = req.params;
+    const { fileName, fileData, contentType,originNameMandate } = req.body;
+    // const user = await User.findById(req.user._id).lean();
 
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    if (!fileName || !fileData || !contentType) {
+      return next(generateError("Invalid request", 403));
+    }
+
+    // const isAuthorized =
+    //   isAdminOrCommercial(req.user) || project.clientId === req.user._id;
+
+    // if (!isAuthorized) {
+    //   return next(generateError("Not authorized", 401));
+    // }
+
+    if (project.status !== "wait_mandate") {
+      return next(generateError("Wrong state for project", 403));
+    }
+
+    const document = await new Document({
+      originNameMandate,
+      name: fileName,
+      authorUserId: "62f4db00a19c48055a3ab571",
+      projectId,
+      contentType
+    }).save();
+
+    // const location = await uploadFile(
+    //   `project__${projectId}/${document._id}_${document.name}`,
+    //   fileData,
+    //   contentType
+    // );
+    console.log(document._id);
+    await Document.updateOne(
+      { _id: document._id },
+      { $set: { url: fileData } }
+    ).exec();
+
+    sendNewDocWebhook(document._id)
+
+
+    await Project.updateOne(
+      { _id: projectId },
+      {
+        $set: {
+          mandateDocId: document._id,
+          mandateDoc: {
+            originNameMandate:originNameMandate,
+            name: document.name,
+            url: fileData
+          },
+          status: "wait_mandate_validation"
+        }
+      }
+    ).exec();
+    await sendNewStatusProject(project);
+
+    const client = await Client.findById(project.clientId).lean();
+    sendMessageToSlack({
+      message: `Le mandat de ${project.type === "search" ? "recherche" : "vente"
+        } pour le client ${client.displayName} est en attente de validation : ${process.env.APP_URL
+        }/projects/${projectId}`
+    });
+
+    await new ProjectEvent({
+      projectId,
+      type: "mandate_added",
+      authorUserId: "62f4db00a19c48055a3ab571",
+      documentId: document._id
+    }).save();
+    
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
 export async function uploadPurchaseOfferForProject(req, res, next) {
   try {
     const { projectId } = req.params;
