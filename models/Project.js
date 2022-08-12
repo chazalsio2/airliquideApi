@@ -176,9 +176,6 @@ const schema = new mongoose.Schema(
     clientId: {
       type: mongoose.Types.ObjectId
     },
-    clientId: {
-      type: mongoose.Types.ObjectId
-    },
     dossiernotaireId: {
       type: mongoose.Types.ObjectId,
       required: false

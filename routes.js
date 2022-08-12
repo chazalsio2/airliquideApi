@@ -85,7 +85,8 @@ import {
   editSearchProject,
   editSearch,
   editSalesSheet,
-  preValidationAllStep
+  preValidationAllStep,
+  uploadMandateForProjectExterne
 } from "./controllers/project";
 import {matchProperties} from "./controllers/matchR";
 import {
@@ -129,7 +130,8 @@ import {
   getContactCategories,
   getContacts,
   removeContact,
-  editContact
+  editContact,
+  blackListeContact
 } from "./controllers/contact";
 
 const checkAdmin = (req, res, next) => checkRoles("admin", req, res, next);
@@ -240,6 +242,14 @@ app.post (
     checkAccountDesactivated,
     checkAdminOrCommercial,
     editContact,
+    errorHandle
+  )
+  app.put(
+    "/contacts/:contactId/blacklistecontact",
+    passport.authenticate("jwt", { session: false }),
+    checkAccountDesactivated,
+    checkAdminOrCommercial,
+    blackListeContact,
     errorHandle
   )
 
@@ -1011,6 +1021,11 @@ app.put(
     passport.authenticate("jwt", { session: false }),
     checkAccountDesactivated,
     uploadMandateForProject,
+    errorHandle
+  );
+  app.post(
+    "/projects/:projectId/mandateExterne",
+    uploadMandateForProjectExterne,
     errorHandle
   );
 

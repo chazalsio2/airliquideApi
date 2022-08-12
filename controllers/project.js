@@ -2218,7 +2218,7 @@ export async function uploadLoanOfferForProject(req, res, next) {
 export async function uploadMandateForProject(req, res, next) {
   try {
     const { projectId } = req.params;
-    const { fileName, fileData, contentType,originNameMandate } = req.body;
+    const { fileName, fileData, contentType,originNameMandate, num_mandat, date_mandat } = req.body;
     const user = await User.findById(req.user._id).lean();
 
     const project = await Project.findById(projectId).lean();
@@ -2247,7 +2247,9 @@ export async function uploadMandateForProject(req, res, next) {
       name: fileName,
       authorUserId: req.user._id,
       projectId,
-      contentType
+      contentType,
+      num_mandat: num_mandat,
+      date_mandat: date_mandat
     }).save();
 
     const location = await uploadFile(
@@ -2271,7 +2273,9 @@ export async function uploadMandateForProject(req, res, next) {
           mandateDoc: {
             originNameMandate:originNameMandate,
             name: document.name,
-            url: location
+            url: location,
+            num_mandat: num_mandat,
+            date_mandat: date_mandat
           },
           status: "wait_mandate_validation"
         }
@@ -2301,6 +2305,8 @@ export async function uploadMandateForProject(req, res, next) {
 }
 export async function uploadMandateForProjectExterne(req, res, next) {
   try {
+
+    console.log("ajout du mandat")
     const { projectId } = req.params;
     const { fileName, fileData, contentType,originNameMandate } = req.body;
     // const user = await User.findById(req.user._id).lean();
@@ -2339,6 +2345,7 @@ export async function uploadMandateForProjectExterne(req, res, next) {
     //   fileData,
     //   contentType
     // );
+
     await Document.updateOne(
       { _id: document._id },
       { $set: { url: fileData } }
