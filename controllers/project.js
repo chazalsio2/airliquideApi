@@ -3,6 +3,8 @@ import { generateError, isAdmin, isAdminOrCommercial } from "../lib/utils";
 import User from "../models/User";
 import Project from "../models/Project";
 import Client from "../models/Client";
+import Insul_r from "../models/Insul_r";
+
 import DossierNotaire from "../models/DossierNotaire";
 import Document from "../models/Document";
 import ProjectEvent from "../models/ProjectEvent";
@@ -35,7 +37,6 @@ import { uploadFile } from "../lib/aws";
 import { sendMessageToSlack } from "../lib/slack";
 import { matchPropertiesForSearchMandate } from "../lib/matching";
 import Property from "../models/Property";
-import Insul_r from "../models/Insul_r";
 
 const LIMIT_BY_PAGE = 10;
 
@@ -120,7 +121,7 @@ export async function getProject(req, res, next) {
       return next(generateError("Project not found", 404));
     }
 
-    const client = (await Client.findOne({ _id: project.clientId }, null).lean()||await Insul_r.findOne({ _id: project.clientId }, null).lean());
+    const client = await Client.findOne({ _id: project.clientId }, null).lean();
     const dossiernotaire = await DossierNotaire.findOne({ _id: project.dossiernotaireId }, null).lean();
 
 
@@ -144,7 +145,6 @@ export async function getProject(req, res, next) {
         client.conseillerId,
         "displayName"
       ).lean();
-      console.log(client.commercial);
     }
     
     const properties = await Property.find({projectId: project._id},null).lean();
@@ -301,7 +301,7 @@ export async function editSalesSheet(req, res, next) {
 
     const newSalesSheetEdited = {
       propertyType,
-      propertySize : propertySize && propertySize === "bigger" ? propertySizeDetail : Number(propertySize),
+      propertySize : propertySize === "bigger" ? propertySizeDetail : Number(propertySize),
       propertySizeDetail,
       // livingArea,
       // landArea,
@@ -409,7 +409,7 @@ export async function saveSalesSheet(req, res, next) {
 */
     const salesSheet = {
       propertyType,
-      propertySize : propertySize && propertySize === "bigger" ? propertySizeDetail : Number(propertySize),
+      propertySize : propertySize === "bigger" ? propertySizeDetail : Number(propertySize),
       // livingArea,
       //landArea,
       workNeeded,
@@ -686,12 +686,10 @@ export async function acceptLoanOffer(req, res, next) {
         }/projects/${project._id}`
     });//validation pret
 
-    const com = await User.findById(project.commercialId).lean();
-
     if (project.type === "sales") {
-      sendLoanOfferAcceptedForSalesProject(client,com?com:null);
+      sendLoanOfferAcceptedForSalesProject(client);
     } else {
-      sendAcceptLoanOfferConfirmation(client,com?com:null);
+      sendAcceptLoanOfferConfirmation(client);
     }
 
     return res.json({ success: true });
@@ -737,9 +735,7 @@ export async function sendCompletedProjectEmail(req, res, next) {
     }
 
     if (emailNumber === 5) {
-
       sendAcceptSalesDeedConfirmation(client, commercial);
-
       const event =  await new ProjectEvent({
         type: "project_completed_email_5",
         projectId,
@@ -766,7 +762,6 @@ export async function sendCompletedProjectEmail(req, res, next) {
 
 export async function acceptMandate(req, res, next) {
   try {
-    console.log("accepte le mandat")
     const { projectId } = req.params;
     const userId = req.user._id;
 
@@ -811,12 +806,10 @@ export async function acceptMandate(req, res, next) {
         }/projects/${projectId}`
     });//validation mandat
 
-    const com = await User.findById(project.commercialId).lean();
-
     if (project.type === "sales") {
-      sendMandateSignedForSalesProject(client,com?com:null);
+      sendMandateSignedForSalesProject(client);
     } else {
-      sendMandateSignatureConfirmation(client,com?com:null);
+      sendMandateSignatureConfirmation(client);
     }
 
     const alreadyUser = await User.findOne({
@@ -879,7 +872,6 @@ export async function acceptPurchaseOffer(req, res, next) {
     const project = await Project.findById(projectId).lean();
     const user = await User.findById(req.user._id).lean();
     const client = await Client.findOne({ _id: project.clientId }).lean();
-    const com = await User.findOne({ _id: project.commercialId }).lean();
 
     if (!project) {
       return next(generateError("Project not found", 404));
@@ -908,9 +900,9 @@ export async function acceptPurchaseOffer(req, res, next) {
     });//validation offre achat
 
     if (project.type === "sales") {
-      sendPurchaseOfferAcceptedForSalesProject(client,com?com:null);
+      sendPurchaseOfferAcceptedForSalesProject(client);
     } else {
-      sendAcceptPurchaseOfferConfirmation(client,com?com:null);
+      sendAcceptPurchaseOfferConfirmation(client);
     }
 
     return res.json({ success: true });
@@ -929,34 +921,18 @@ export async function acceptAgreement(req, res, next) {
     const project = await Project.findById(projectId).lean();
     const user = await User.findById(req.user._id).lean();
     const client = await Client.findById(project.clientId).lean();
-    const com = await User.findById(project.commercialId).lean();
 
     if (!project) {
       return next(generateError("Project not found", 404));
     }
 
-    // if (project.status !== "wait_sales_agreement_validation") {
-    //   return next(generateError("Wrong state", 403));
-    // }
+    if (project.status !== "wait_sales_agreement_validation") {
+      return next(generateError("Wrong state", 403));
+    }
 
     if (!commission || !commercialPourcentage) {
       return next(generateError("Missing fields", 401));
     }
-
-
-    if(project.status ==="wait_purchase_offer"){
-      await Project.updateOne(
-        { _id: projectId },
-        {
-          $set: {
-            commissionAmount: Number(commission) * 100,
-            commercialPourcentage: Number(commercialPourcentage),
-            salesAgreementDate: moment()
-          }
-        }
-      ).exec();
-    }else{
-
 
     await Project.updateOne(
       { _id: projectId },
@@ -982,13 +958,12 @@ export async function acceptAgreement(req, res, next) {
     });//validation compromis  
 
     if (project.type === "sales") {
-      sendSalesAgreementAcceptedForSalesProject(client,com?com:null);
+      sendSalesAgreementAcceptedForSalesProject(client);
     } else {
-      sendAcceptSalesAgreementConfirmation(client,com?com:null);
+      sendAcceptSalesAgreementConfirmation(client);
     }
 
     await sendAgreementAcceptedWebhook(projectId)
-  }
 
     return res.json({ success: true });
   } catch (e) {
@@ -1022,7 +997,6 @@ export async function acceptDeed(req, res, next) {
         }
       }
     ).exec();
-    console.log(project);
     sendNewStatusProject(project);
     new ProjectEvent({
       projectId,
@@ -1042,10 +1016,9 @@ export async function acceptDeed(req, res, next) {
       authorUserId: userId
     }).save();
 
-    const com = await User.findById(project.commercialId).lean();
 
     if (project.type === "sales") {
-      sendDeedAcceptedForSalesProject(client,com?com:null);
+      sendDeedAcceptedForSalesProject(client);
     }
 
     return res.json({ success: true });
@@ -1077,7 +1050,7 @@ export async function getProjects(req, res, next) {
     }).lean();
 
     const clientEnrichedPromises = projects.map(async (project) => {
-      project.client = (await Client.findById(project.clientId).lean()||await Insul_r.findById(project.clientId).lean())
+      project.client = await Client.findById(project.clientId).lean();
       if (project.commercialId) {
         project.commercial = await User.findById(
           project.commercialId,
@@ -1101,11 +1074,9 @@ export async function getProjects(req, res, next) {
 export async function getProjects2(req, res, next) {
   try {
     const { page = "", mandate = "", order = "desc" } = req.query;
-    const orderCreatedAt = order ===  -1 ;
-    const selector = {};
-    const projects = await Project.find(selector, null, {
-      sort: { createdAt: -1 },
-    }).lean();
+    const orderCreatedAt = order === "desc" ? -1 : 1;
+
+    const projects = await Project.find().lean();
 
     const clientEnrichedPromises = projects.map(async (projects) => {
       projects.client = (await Client.findById(projects.clientId).lean()||await Insul_r.findById(projects.clientId).lean())
@@ -1270,12 +1241,12 @@ export async function saveSearchSheet(req, res, next) {
     const searchSheet = {
       investmentType:
         investmentType === "other" ? otherInvestmentType : investmentType,
-        propertySize : propertySize && propertySize === "bigger" ? propertySizeDetail : Number(propertySize),
+        propertySize : propertySize === "bigger" ? propertySizeDetail : Number(propertySize),
         propertyType,
       additionalInfos,
       propertySizeDetail,
       propertyArea,
-      propertyLandArea:propertyLandArea && Number(propertyLandArea),
+      propertyLandArea,
       land,
       landArea,
       searchSector,
@@ -1335,7 +1306,6 @@ export async function editSearchProject(req, res, next) {
       desiredgrossyield,
       budget
     } = req.body;
-    console.log(propertySize && propertySize);
 
     const { projectId } = req.params;
     const project = await Project.findById(projectId).lean();
@@ -1344,18 +1314,17 @@ export async function editSearchProject(req, res, next) {
       return next(generateError("Project not found", 404));
     }
 
-    const ps =  propertySize ? propertySize === "bigger" ? propertySizeDetail : Number(propertySize):null;
 
     const modifier = {
       
       searchSheet: {
         investmentType:
           investmentType === "other" ? otherInvestmentType : investmentType,
-          propertySize :  ps ,
+          propertySize : propertySize === "bigger" ? propertySizeDetail : Number(propertySize),
           propertyType,
         additionalInfos,
         propertyArea,
-        propertyLandArea:propertyLandArea && Number(propertyLandArea),
+        propertyLandArea,
         land,
         landArea,
         searchSector,
@@ -1364,8 +1333,6 @@ export async function editSearchProject(req, res, next) {
         searchSectorCities: searchSectorCities || []
       }
     };
-    console.log(modifier);
-
 
     if (!_.isUndefined(investalone)) {
       modifier.investAlone = investalone;
@@ -1419,8 +1386,7 @@ export async function editSearch(req, res, next) {
         $set: modifier
       }
     ).exec();
-    const com = await User.findById(project.commercialId).lean();
-   sendMatchPropertiesEmail(project,com?com:null)
+   sendMatchPropertiesEmail(project)
     return res.json({ success: true });
 
 
@@ -2007,7 +1973,6 @@ export async function refuseProject(req, res, next) {
 
 export async function acceptProject(req, res, next) {
   try {
-    console.log("accepte le project")
     const { projectId } = req.params;
 
     const project = await Project.findById(projectId).lean();
@@ -2102,6 +2067,8 @@ export async function addDocumentToProject(req, res, next) {
       visibility
     }).save();
 
+    console.log( contentType);
+
     const location = await uploadFile(
       `project__${projectId}/${document._id}_${document.name}`,
       fileData,
@@ -2133,7 +2100,6 @@ export async function addDocumentToProjectByExtrenPlatform(req, res, next) {
     if (!fileName || !fileData || !contentType) {
       return next(generateError("Invalid request", 403));
     }
-    console.log(contentType);
 
     /*const isAuthorized =
       isAdminOrCommercial(req.user) || project.clientId === req.user._id;
@@ -2144,7 +2110,7 @@ export async function addDocumentToProjectByExtrenPlatform(req, res, next) {
 
     const document = await new Document({
       name: fileName,
-      //authorUserId: req.user._id,
+      authorUserId: "62f4db00a19c48055a3ab571",
       projectId,
       contentType,
       visibility:project.type === "search" ? "public" : "private"
@@ -2251,7 +2217,6 @@ export async function uploadLoanOfferForProject(req, res, next) {
 
 export async function uploadMandateForProject(req, res, next) {
   try {
-    console.log("ajout du mandat")
     const { projectId } = req.params;
     const { fileName, fileData, contentType,originNameMandate } = req.body;
     const user = await User.findById(req.user._id).lean();
@@ -2290,7 +2255,6 @@ export async function uploadMandateForProject(req, res, next) {
       fileData,
       contentType
     );
-    console.log(document._id);
     await Document.updateOne(
       { _id: document._id },
       { $set: { url: location } }
@@ -2335,7 +2299,90 @@ export async function uploadMandateForProject(req, res, next) {
     next(generateError(e.message));
   }
 }
+export async function uploadMandateForProjectExterne(req, res, next) {
+  try {
+    const { projectId } = req.params;
+    const { fileName, fileData, contentType,originNameMandate } = req.body;
+    // const user = await User.findById(req.user._id).lean();
 
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    if (!fileName || !fileData || !contentType) {
+      return next(generateError("Invalid request", 403));
+    }
+
+    // const isAuthorized =
+    //   isAdminOrCommercial(req.user) || project.clientId === req.user._id;
+
+    // if (!isAuthorized) {
+    //   return next(generateError("Not authorized", 401));
+    // }
+
+    if (project.status !== "wait_mandate") {
+      return next(generateError("Wrong state for project", 403));
+    }
+
+    const document = await new Document({
+      originNameMandate,
+      name: fileName,
+      authorUserId: "62f4db00a19c48055a3ab571",
+      projectId,
+      contentType
+    }).save();
+
+    // const location = await uploadFile(
+    //   `project__${projectId}/${document._id}_${document.name}`,
+    //   fileData,
+    //   contentType
+    // );
+    await Document.updateOne(
+      { _id: document._id },
+      { $set: { url: fileData } }
+    ).exec();
+
+    sendNewDocWebhook(document._id)
+
+
+    await Project.updateOne(
+      { _id: projectId },
+      {
+        $set: {
+          mandateDocId: document._id,
+          mandateDoc: {
+            originNameMandate:originNameMandate,
+            name: document.name,
+            url: fileData
+          },
+          status: "wait_mandate_validation"
+        }
+      }
+    ).exec();
+    await sendNewStatusProject(project);
+
+    const client = await Client.findById(project.clientId).lean();
+    sendMessageToSlack({
+      message: `Le mandat de ${project.type === "search" ? "recherche" : "vente"
+        } pour le client ${client.displayName} est en attente de validation : ${process.env.APP_URL
+        }/projects/${projectId}`
+    });
+
+    await new ProjectEvent({
+      projectId,
+      type: "mandate_added",
+      authorUserId: "62f4db00a19c48055a3ab571",
+      documentId: document._id
+    }).save();
+    
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
 export async function uploadPurchaseOfferForProject(req, res, next) {
   try {
     const { projectId } = req.params;
@@ -2664,7 +2711,6 @@ export async function assignPropertie(req, res, next) {
       _id: propertiesId
     });
 
-    console.log(propertiesId);
 
     if (!propertie) {
       return next(generateError("Propertie not found", 404));

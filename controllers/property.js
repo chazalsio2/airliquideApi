@@ -5,6 +5,7 @@ import {
   isAdminOrCommercial
 } from "../lib/utils";
 import { uploadPhotos } from "../lib/cloudinary";
+import { uploadFile } from "../lib/aws";
 
 import Property, { getPropertyType } from "../models/Property";
 import Project from "../models/Project"; 
@@ -514,9 +515,15 @@ export async function createProperty(req, res, next) {
     ) {
       return next(generateError("Invalid request", 401));
     }
+    console.log(photos)
+    // const results = await uploadFile(
+    //   `propriété__/${document._id}_${document.name}`,
+    //   fileData,
+    //   contentType
+    // );
 
     const results = await uploadPhotos(photos);
-
+    console.log(results);
     const propertyData = {
       description:`
         ${description}
@@ -542,7 +549,7 @@ export async function createProperty(req, res, next) {
       // landArea,
       // livingArea,
       propertyStatus,
-      photos: results.map((r) => r.url)
+      photos: results.map((r) => r)
     };
     if (landArea) {
       propertyData.landArea = landArea;
@@ -728,7 +735,6 @@ export async function getProperties(req, res, next) {
   const { page = "", type = "" ,typeBien="",PrixMin, PrixMax,city=""} = req.query;
   const pageNumber = Number(page) || 1;
 
-  console.log(req);
   let selectorPrix;
   const selector = {};
 

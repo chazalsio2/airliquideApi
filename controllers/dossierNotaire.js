@@ -219,7 +219,6 @@ export async function createDossierNotaire(req, res, next) {
       
       const dossiernotaire = await new DossierNotaire(DossierNotaireData).save();
 
-      console.log(dossiernotaire._id);
          await Project.updateOne(
           { _id: projectId },
           { $set: { dossiernotaireId: dossiernotaire._id } }
