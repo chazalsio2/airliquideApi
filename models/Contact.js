@@ -2,6 +2,15 @@ import mongoose from "mongoose";
 
 var schema = new mongoose.Schema(
   {
+    userId:{
+      type: Array
+    },
+    "userId.$": {
+      type: mongoose.Types.ObjectId
+    },
+    descriptionBloced:{
+      type:Array,
+    },
     firstname: {
       type: String
     },
