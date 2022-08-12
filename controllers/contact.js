@@ -1,5 +1,5 @@
 import _ from "underscore";
-
+import moment from "moment";
 import ContactCategory from "../models/ContactCategory";
 import { allowedRoles } from "../models/User";
 import Contact from "../models/Contact";
@@ -162,13 +162,7 @@ export async function editContact(req, res, next) {
         { $set: modifier },
         opts
       ).exec();
-console.log(firstname,
-  lastname,
-  phone,
-  contactCategoryId,
-  description,
-  email,
-  address);
+
       return res.json({ success: true, data: contact });
     }
   }
@@ -197,16 +191,22 @@ export async function blackListeContact(req, res, next) {
       const { contactId } = req.params;
       const opts = { runValidators: true };
 
-
       const contact = await Contact.updateOne(
         { _id: contactId },
       { $addToSet: {descriptionBloced: blackListe}}
       ).exec();
       const contact2 = await Contact.updateOne(
         { _id: contactId },
-        {$addToSet:{userId: req.user._id }}
+        {$addToSet:{userId: req.user._id }},
+        
       ).exec();
-
+      const contact3 = await Contact.updateOne(
+        { _id: contactId },
+        {$set: {
+          dateblocageAt:new Date()
+        }}
+      ).exec();
+     
 
       return res.json({ success: true, data: contact });
     }
