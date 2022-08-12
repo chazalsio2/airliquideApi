@@ -14,7 +14,6 @@ const allowedRoles = [
 ];
 
 export async function getUsers(req, res, next) {
-  console.log("roles");
   const LIMIT_BY_PAGE = 10;
   const { page = "", filter = "" } = req.query;
   const pageNumber = Number(page) || 1;
@@ -86,7 +85,6 @@ export async function editUser(req, res, next) {
     }
 
     if (!_.isArray(roles) || !roles.length) {
-      console.info( "roles " + roles);
       return next(generateError("Wrong arguments", 401));
     }
 

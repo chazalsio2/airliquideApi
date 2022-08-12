@@ -72,7 +72,6 @@ export async function getClient(req, res, next) {
     const client = await Client.findById(clientId).lean();
     const insul_r = await Insul_r.findById(clientId).lean();
 
-    console.log(client||insul_r);
 
     if (!client) {
       if (insul_r) {
@@ -104,7 +103,6 @@ export async function getClient(req, res, next) {
         { sort: { createdAt: -1 } }
       ).lean();
   
-      console.log("insul_r");
     }else{
       if(insul_r.conseillerId){
         insul_r.user = await User.findById(insul_r.conseillerId).lean();
@@ -220,7 +218,6 @@ export async function addProject(req, res, next) {
 
 
     if (client) {
-      console.log(project);
       await Client.updateOne({ _id: clientId }, { $addToSet: { projectTypes: projectType } }).exec()
 
       await ProjectEvent({
@@ -228,7 +225,6 @@ export async function addProject(req, res, next) {
         type: "project_creation"
       }).save();
     }else{
-        console.log(project);
         await Insul_r.updateOne({ _id: clientId }, { $addToSet: { projectTypes: projectType } }).exec()
 
         await ProjectEvent({

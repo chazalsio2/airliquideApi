@@ -266,7 +266,6 @@ export async function publicCreateClient(req, res, next) {
     if (projectTypes.indexOf(serviceType) === -1) {
       return next(generateError("Invalid service", 403));
     }
-    console.log(conseillerId);
 
     const newClientData = {
       firstname,
@@ -311,7 +310,6 @@ export async function publicCreateClient(req, res, next) {
 
       const client = await new Client(newClientData).save();
 
-      console.log(client);
 
       sendNewClientEmail(client);
 

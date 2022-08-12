@@ -100,11 +100,8 @@ export async function matchProperties(req, res, next) {
         conditions.numberOfRooms = { $gte: 3 };
       }
         }
-        console.log(conditions);
          properties = await Property.find(conditions).exec();
-        console.log(properties);
      
-        console.log("Recherche des property selon les conditions");
       
       
         // if (!properties.length) {
@@ -228,8 +225,8 @@ export async function matchProperties(req, res, next) {
         //     //sendMatchProjectEmail(searchProjects, property);
     
         //   console.log(searchProjects._id);
-          console.log(conditions)
           const project = await Project.find(conditions).exec();
+          
           const clientEnrichedPromises = project.map(async (project) => {
             project.client = (await Client.findById(project.clientId).lean()||await Insul_r.findById(project.clientId).lean())
             if (project.commercialId) {
@@ -313,8 +310,6 @@ export async function matchProperties(req, res, next) {
              
           
 
-    console.log(projects);
-    console.log(projectsEnriched);
     return res.json({ success: true,project: projects.length > 0 ? projects : null ,body:true});
           }
           
