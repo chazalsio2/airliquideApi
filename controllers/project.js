@@ -81,7 +81,7 @@ export async function getPublicProject(req, res, next) {
       return next(generateError("Project not found", 404));
     }
 
-    const client = await Client.findOne({ _id: project.clientId }, null).lean();
+    const client = (await Client.findOne({ _id: project.clientId }, null).lean()||await Insul_r.findOne({ _id: project.clientId }, null).lean());
     const dossiernotaire = await DossierNotaire.findOne({ _id: project.dossiernotaireId }, null).lean();
 
 
@@ -478,7 +478,7 @@ export async function getMyProjects(req, res, next) {
       throw new Error("User not found", 404);
     }
 
-    const client = await Client.findById(user.clientId).lean();
+    const client = (await Client.findById(user.clientId).lean()||await Insul_r.findById(user.clientId).lean());
 
     if (!client) {
       throw new Error("Client not found", 404);
@@ -657,7 +657,7 @@ export async function acceptLoanOffer(req, res, next) {
     const userId = req.user._id;
 
     const project = await Project.findById(projectId).lean();
-    const client = await Client.findById(project.clientId).lean();
+    const client = (await Client.findById(project.clientId).lean()||await Insul_r.findById(project.clientId).lean());
     const user = await User.findById(req.user._id).lean();
 
     if (!project) {
@@ -729,7 +729,7 @@ export async function sendCompletedProjectEmail(req, res, next) {
       throw new Error("Not authorized");
     }
 
-    const client = await Client.findById(project.clientId).lean();
+    const client = (await Client.findById(project.clientId).lean()||await Insul_r.findById(project.clientId).lean());
     const commercial = await User.findById(project.commercialId).lean();
 
     if (!client) {
@@ -781,7 +781,7 @@ export async function acceptMandate(req, res, next) {
       return next(generateError("Wrong state", 403));
     }
 
-    const client = await Client.findById(project.clientId).lean();
+    const client = (await Client.findById(project.clientId).lean()||await Insul_r.findById(project.clientId).lean());
 
     if (!client) {
       return next(generateError("Client not found", 404));
@@ -878,7 +878,7 @@ export async function acceptPurchaseOffer(req, res, next) {
 
     const project = await Project.findById(projectId).lean();
     const user = await User.findById(req.user._id).lean();
-    const client = await Client.findOne({ _id: project.clientId }).lean();
+    const client = (await Client.findOne({ _id: project.clientId }).lean()||await Insul_r.findOne({ _id: project.clientId }).lean());
     const com = await User.findOne({ _id: project.commercialId }).lean();
 
     if (!project) {
@@ -928,7 +928,7 @@ export async function acceptAgreement(req, res, next) {
 
     const project = await Project.findById(projectId).lean();
     const user = await User.findById(req.user._id).lean();
-    const client = await Client.findById(project.clientId).lean();
+    const client = (await Client.findById(project.clientId).lean()||await Insul_r.findById(project.clientId).lean());
     const com = await User.findById(project.commercialId).lean();
 
     if (!project) {
@@ -1003,7 +1003,7 @@ export async function acceptDeed(req, res, next) {
 
     const project = await Project.findById(projectId).lean();
     const user = await User.findById(req.user._id).lean();
-    const client = await Client.findById(project.clientId).lean();
+    const client = (await Client.findById(project.clientId).lean()||await Insul_r.findById(project.clientId).lean());
 
     if (!project) {
       return next(generateError("Project not found", 404));
@@ -1444,7 +1444,7 @@ export async function confirmSearchMandate(req, res, next) {
       return next(generateError("Missing argument", 403));
     }
 
-    const client = await Client.findById(project.clientId).lean();
+    const client = (await Client.findById(project.clientId).lean()||await Insul_r.findById(project.clientId).lean());
 
     if (!client) {
       return next(generateError("Client not found", 404));
@@ -1981,7 +1981,7 @@ export async function refuseProject(req, res, next) {
       authorUserId: req.user._id
     }).save();
 
-    const client = await Client.findById(project.clientId).lean();
+    const client = (await Client.findById(project.clientId).lean()||await Insul_r.findById(project.clientId).lean());
 
     const user = await User.findById(req.user._id).lean();
 
@@ -2011,7 +2011,7 @@ export async function acceptProject(req, res, next) {
     const { projectId } = req.params;
 
     const project = await Project.findById(projectId).lean();
-    const client = await Client.findById(project.clientId).lean();
+    const client = (await Client.findById(project.clientId).lean()||await Insul_r.findById(project.clientId).lean());
     if (!project) {
       return next(generateError("Project not found", 404));
     }
@@ -2173,7 +2173,7 @@ export async function uploadLoanOfferForProject(req, res, next) {
     const user = await User.findById(req.user._id).lean();
 
     const project = await Project.findById(projectId).lean();
-    const client = await Client.findById(project.clientId).lean();
+    const client = (await Client.findById(project.clientId).lean()||await Insul_r.findById(project.clientId).lean());
 
     if (!project) {
       return next(generateError("Project not found", 404));
@@ -2319,7 +2319,7 @@ export async function uploadMandateForProject(req, res, next) {
     ).exec();
     await sendNewStatusProject(project);
 
-    const client = await Client.findById(project.clientId).lean();
+    const client = (await Client.findById(project.clientId).lean()||await Insul_r.findById(project.clientId).lean());
     sendMessageToSlack({
       message: `Le mandat de ${project.type === "search" ? "recherche" : "vente"
         } pour le client ${client.displayName} est en attente de validation : ${process.env.APP_URL
@@ -2405,7 +2405,7 @@ export async function uploadMandateForProjectExterne(req, res, next) {
     ).exec();
     await sendNewStatusProject(project);
 
-    const client = await Client.findById(project.clientId).lean();
+    const client = (await Client.findById(project.clientId).lean()||await Insul_r.findById(project.clientId).lean());
     sendMessageToSlack({
       message: `Le mandat de ${project.type === "search" ? "recherche" : "vente"
         } pour le client ${client.displayName} est en attente de validation : ${process.env.APP_URL
@@ -2484,7 +2484,7 @@ export async function uploadPurchaseOfferForProject(req, res, next) {
       }
     ).exec();
     sendNewStatusProject(project);
-    const client = await Client.findById(project.clientId).lean();
+    const client = (await Client.findById(project.clientId).lean()||await Insul_r.findById(project.clientId).lean());
     const user = await User.findById(req.user._id).lean();
     sendMessageToSlack({
       message: `L'offre d'achat pour le mandat de ${project.type === "search" ? "recherche" : "vente"
@@ -2513,7 +2513,7 @@ export async function uploadAgreementForProject(req, res, next) {
     const { fileName, fileData, contentType } = req.body;
 
     const project = await Project.findById(projectId).lean();
-    const client = await Client.findById(project.clientId).lean();
+    const client = (await Client.findById(project.clientId).lean()||await Insul_r.findById(project.clientId).lean());
     const user = await User.findById(req.user._id).lean();
 
     if (!project) {
@@ -2596,7 +2596,7 @@ export async function uploadDeedForProject(req, res, next) {
     const { fileName, fileData, contentType } = req.body;
 
     const project = await Project.findById(projectId).lean();
-    const client = await Client.findById(project.clientId).lean();
+    const client = (await Client.findById(project.clientId).lean()||await Insul_r.findById(project.clientId).lean());
     const user = await User.findById(req.user._id).lean();
 
     if (!project) {
