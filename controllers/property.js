@@ -234,7 +234,7 @@ export async function editProperty(req, res, next) {
     if (photos && photos.length) {
       const results = await uploadPhotos(photos);
 
-      propertyData.photos = results.map((r) => r.url).concat(property.photos);
+      propertyData.photos = results.map((r) => r).concat(property.photos);
     }
 
     if (floor) {
