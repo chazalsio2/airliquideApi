@@ -534,7 +534,7 @@ app.put(
     PropertyUrl,
     errorHandle
     )
-    app.put(
+    app.post(
       '/like/:propertyId/',
       passport.authenticate("jwt", { session: false }),
       checkAdminOrCommercial,
