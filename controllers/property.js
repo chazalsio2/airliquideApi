@@ -87,6 +87,45 @@ export async function PropertyUrl(req, res, next) {
   }
 }
 
+export async function PropertyLike(req, res, next) {
+
+  try{
+    const {
+      like
+    } = req.body;
+
+    const { propertyId } = req.params;
+
+    console.log(like + "  "+propertyId);
+
+    //console.log(propertyId);
+
+    const property = await Property.findById(propertyId).lean();
+
+    let likes;
+
+    if(like === true){
+       likes = await Property.updateOne(
+      { _id: propertyId },
+      {$addToSet:{LikeId: req.user._id }},
+      
+    ).exec();
+    }else{
+       likes = await Property.updateOne(
+        { _id: propertyId },
+        { $pull: { LikeId: { $in: [req.user._id] }}}
+      ).exec();
+    }
+
+    return res.json({ success: true, data: likes });
+
+  } catch (e) {
+
+    next(generateError(e.message));
+
+  }
+}
+
 export async function editProperty(req, res, next) {
   try {
     const {
