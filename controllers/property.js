@@ -87,7 +87,7 @@ export async function PropertyUrl(req, res, next) {
   }
 }
 
-export async function PropertyLike(req, res, next) {
+export async function propertyLike(req, res, next) {
 
   try{
     const {
