@@ -151,6 +151,7 @@ export async function editProperty(req, res, next) {
       numberOfRooms,
       propertySizeDetail,
       floor,
+      level,
       outdoorParking,
       coveredParking,
       swimmingPool,
@@ -278,6 +279,9 @@ export async function editProperty(req, res, next) {
 
     if (floor) {
       propertyData.floor = floor;
+    }
+    if (level) {
+      propertyData.level = level;
     }
     // if (DPE) {
     //   propertyData.DPE = DPE === "Soumis";
@@ -508,6 +512,7 @@ export async function createProperty(req, res, next) {
       numberOfRooms,
       propertySizeDetail,
       floor,
+      level,
       outdoorParking,
       coveredParking,
       swimmingPool,
@@ -688,6 +693,9 @@ export async function createProperty(req, res, next) {
 
     if (floor) {
       propertyData.floor = floor;
+    }
+    if (level) {
+      propertyData.level = level;
     }
     if (outdoorParking) {
       propertyData.outdoorParking = outdoorParking;
@@ -982,7 +990,7 @@ export async function getProperty(req, res, next) {
 }
 
 const propertiesPublicFields =
-  "ref name description type yearOfConstruction landArea livingArea salesPrice varangueArea photos virtualVisitLink financialSheet coOwnershipCharge assurancePNO propertyTax accounting cga divers propertyPrice notaryFees works financialExpense equipment financialSheet numberOfRooms kitchenArea roomDescription bathroomArea floor outdoorParking coveredParking swimmingPool secureEntrance intercom commercialName commercialPhoneNumber sanitation hotWater doubleGlazing electricRollerShutters airConditioner view equippedKitchen freeOfOccupation procedureInProgress numberOfCoOwnershipLots typeOfInvestment rent coOwnershipCharge assurancePNO propertyTax accounting cga divers notaryFees visionRFees works financialExpense equipment agencyFees";
+  "ref name description type yearOfConstruction landArea livingArea salesPrice varangueArea photos virtualVisitLink financialSheet coOwnershipCharge assurancePNO propertyTax accounting cga divers propertyPrice notaryFees works financialExpense equipment financialSheet numberOfRooms kitchenArea roomDescription bathroomArea floor level outdoorParking coveredParking swimmingPool secureEntrance intercom commercialName commercialPhoneNumber sanitation hotWater doubleGlazing electricRollerShutters airConditioner view equippedKitchen freeOfOccupation procedureInProgress numberOfCoOwnershipLots typeOfInvestment rent coOwnershipCharge assurancePNO propertyTax accounting cga divers notaryFees visionRFees works financialExpense equipment agencyFees";
 
 export async function getPublicProperties(req, res, next) {
   try {

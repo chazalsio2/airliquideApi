@@ -36,6 +36,10 @@ const schema = new mongoose.Schema(
       type: String,
       required: false
     },
+    level: {
+      type: String,
+      required: false
+    },
     outdoorParking: {
       type: String,
       required: false
