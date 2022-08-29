@@ -107,13 +107,13 @@ export async function propertyLike(req, res, next) {
     if(like === true){
        likes = await Property.updateOne(
       { _id: propertyId },
-      {$addToSet:{LikeId: req.user._id }},
+      {$addToSet:{LikeId: "req.user._id" }},
       
     ).exec();
     }else{
        likes = await Property.updateOne(
         { _id: propertyId },
-        { $pull: { LikeId:req.user._id }}
+        { $pull: { LikeId:"req.user._id" }}
       ).exec();
     }
 
