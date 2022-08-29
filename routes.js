@@ -536,11 +536,11 @@ app.put(
     )
     app.post(
       '/like/:propertyId/',
-      passport.authenticate("jwt", { session: false }),
-      checkAdminOrCommercial,
-      checkAccountDesactivated,
+      // passport.authenticate("jwt", { session: false }),
+      // checkAdminOrCommercial,
+      // checkAccountDesactivated,
       propertyLike,
-      errorHandle
+      // errorHandle
       )
   app.put(
     `/properties/:propertyId`,
