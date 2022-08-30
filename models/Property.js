@@ -13,10 +13,10 @@ export function getPropertyType(type) {
 
 const schema = new mongoose.Schema(
   {
-    LikeId:{
+    likeId:{
       type: Array
     },
-    "LikeId.$": {
+    "likeId.$": {
       type: mongoose.Types.ObjectId
     },
     name: {
