@@ -1,7 +1,7 @@
-import { Client,DossierNotaire } from '../models'
+import { Client,DossierNotaire,Insul_r } from '../models'
 
 export async function getClient(clientId) {
-  const client = await Client.findById(clientId)
+  const client = (await Client.findById(clientId)||await Insul_r.findById(clientId))
 
   return client
 }

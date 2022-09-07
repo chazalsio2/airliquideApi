@@ -85,6 +85,7 @@ import {
   editSearchProject,
   editSearch,
   editSalesSheet,
+  backToStatus,
   preValidationAllStep,
   uploadMandateForProjectExterne
 } from "./controllers/project";
@@ -227,7 +228,13 @@ app.post (
     sendCompletedProjectEmail,
     errorHandle
   );
-
+  app.post(
+    "/projects/:projectId/return-statut",
+    passport.authenticate("jwt", { session: false }),
+    checkAccountDesactivated,
+    backToStatus,
+    errorHandle
+  );
   app.get(
     "/contacts",
     passport.authenticate("jwt", { session: false }),

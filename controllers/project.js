@@ -704,6 +704,47 @@ export async function acceptLoanOffer(req, res, next) {
   }
 }
 
+export async function backToStatus(req, res, next) {
+  try {
+    const { projectId } = req.params;
+    const userId = req.user._id;
+
+    const project = await Project.findById(projectId).lean();
+    const client = (await Client.findById(project.clientId).lean()||await Insul_r.findById(project.clientId).lean());
+    const user = await User.findById(req.user._id).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    // if (project.status !== "wait_loan_offer_validation") {
+    //   return next(generateError("Wrong state", 403));
+    // }
+
+    await Project.updateOne(
+      { _id: projectId },
+      {
+        $set: { status: "wait_purchase_offer" }
+      }
+    ).exec();
+    // sendNewStatusProject(project);
+    new ProjectEvent({
+      projectId,
+      type: "return to status wait_purchase_offer",
+      authorUserId: userId
+    }).save();
+    // sendMessageToSlack({
+    //   message: `L'offre de prêt pour mandat de ${project.type === "search" ? "recherche" : "vente"
+    //     } du client ${client.displayName} a été accepté par ${user.displayName}: ${process.env.APP_URL
+    //     }/projects/${project._id}`
+    // });//validation pret
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
 export async function sendCompletedProjectEmail(req, res, next) {
   try {
     const { projectId } = req.params;
@@ -2555,7 +2596,6 @@ export async function uploadAgreementForProject(req, res, next) {
       { _id: document._id },
       { $set: { url: location } }
     ).exec();
-
     await sendNewDocWebhook(document._id)
 
     await Project.updateOne(

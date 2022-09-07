@@ -1,3 +1,4 @@
+export { default as Insul_r } from './Insul_r'
 export { default as Client } from './Client'
 export { default as Contact } from './Contact'
 export { default as ContactCategory } from './ContactCategory'
