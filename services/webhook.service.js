@@ -589,7 +589,7 @@ export async function sendNewTrelloCard(projectId) {
 export async function sendNewAffecteCommercial(project,commercial){
   console.log(commercial);
   const projet = await Project.findById(project._id)
-  const client = await Client.findById(project.clientId)
+  const client = await getClient(project.clientId)
   const conseiller = await User.findById(project.commercialId)
   //console.log(commercial);
   axios({
@@ -609,7 +609,7 @@ export async function sendNewAffecteCommercial(project,commercial){
   export async function sendNewStatusProject(project,commercial,evenement, demandeSignatureOA) {
     let conseiller;
   const projet = await Project.findById(project._id)
-  const client = await Client.findById(project.clientId)
+  const client = await getClient(project.clientId)
   if (project.commercialId) {conseiller = await User.findById(project.commercialId)};
   const event = await ProjectEvent.findById(evenement);//evenement;
   axios({
@@ -686,7 +686,7 @@ export async function sendNewAffecteCommercial(project,commercial){
 //      }
 //      const client = await Promise.all(
 //       project.forEach(async(project) => {
-//         return await Client.findById(project.clientId).lean();
+//         return await getClient(project.clientId).lean();
 //       }
 //     ))
 //   for (let i = 0; i < project.length; i++) {
@@ -707,7 +707,7 @@ export async function sendNewAffecteCommercial(project,commercial){
 // console.log(promises);*/
 // project.forEach(async (project) => {
 
-//   const client = await Client.findById(project.clientId).lean();
+//   const client = await getClient(project.clientId).lean();
 
 //   if(project.commercialId){
 //     commercial = await User.findById(project.commercialId).lean();
