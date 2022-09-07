@@ -407,9 +407,10 @@ export async function saveSalesSheet(req, res, next) {
     }
 
 */
+console.log(propertySize);
+
     const salesSheet = {
       propertyType,
-      propertySize : propertySize && propertySize === "bigger" ? propertySizeDetail : Number(propertySize),
       // livingArea,
       //landArea,
       workNeeded,
@@ -425,6 +426,9 @@ export async function saveSalesSheet(req, res, next) {
       zone,
       landconstcd
     };
+    if (propertySize) {
+      salesSheet.propertySize = propertySize !== undefined && propertySize === "bigger" ? propertySizeDetail : Number(propertySize)
+    }
 
     if (workEstimate) {
       salesSheet.workEstimate = workEstimate;

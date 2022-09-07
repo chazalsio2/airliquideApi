@@ -13,6 +13,12 @@ export function getPropertyType(type) {
 
 const schema = new mongoose.Schema(
   {
+    likeId:{
+      type: Array
+    },
+    "likeId.$": {
+      type: mongoose.Types.ObjectId
+    },
     name: {
       type: String,
       required: false

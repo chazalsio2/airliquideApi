@@ -87,6 +87,49 @@ export async function PropertyUrl(req, res, next) {
   }
 }
 
+export async function propertyLike(req, res, next) {
+
+  try{
+    const {
+      like
+    } = req.body;
+
+    const { propertyId } = req.params;
+
+    console.log(like + "  "+propertyId);
+
+    //console.log(propertyId);
+
+
+    let likes;
+
+    if(like === true){
+        await Property.updateOne(
+      { _id: propertyId },
+      {$addToSet:{likeId: req.body.user._id }},
+    ).lean();
+    likes = await Property.findById(propertyId).lean();
+    console.log("likes ",likes)
+
+
+    }else{
+       await Property.updateOne(
+        { _id: propertyId },
+        { $pull: { likeId:req.body.user._id }}
+      ).lean();
+      likes = await Property.findById(propertyId).lean();
+
+    }
+
+    return res.json({ success: true, data: likes });
+
+  } catch (e) {
+
+    next(generateError(e.message));
+
+  }
+}
+
 export async function editProperty(req, res, next) {
   try {
     const {
@@ -520,7 +563,6 @@ export async function createProperty(req, res, next) {
     ) {
       return next(generateError("Invalid request", 401));
     }
-    console.log(photos)
     // const results = await uploadFile(
     //   `propriété__/${document._id}_${document.name}`,
     //   fileData,
@@ -528,7 +570,6 @@ export async function createProperty(req, res, next) {
     // );
 
     const results = await uploadPhotos(photos);
-    console.log(results);
     const propertyData = {
       description:`
         ${description}
@@ -883,7 +924,7 @@ export async function getProperties(req, res, next) {
   try {
     const properties = await Property.find(
       selector,
-      "photos name ref description city propertyStatus salesPrice",
+      "photos name ref description city propertyStatus salesPrice likeId",
       {
         sort: { createdAt: -1 },
         skip: (pageNumber - 1) * LIMIT_BY_PAGE,

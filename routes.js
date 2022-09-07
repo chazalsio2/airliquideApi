@@ -96,6 +96,7 @@ import {
   getProperty,
   editProperty,
   PropertyUrl,
+  propertyLike,
   updatePropertyVisibility,
   getPublicProperties,
   getPublicPropertiesRental,
@@ -533,7 +534,14 @@ app.put(
     PropertyUrl,
     errorHandle
     )
-
+    app.post(
+      '/like/:propertyId/',
+      // passport.authenticate("jwt", { session: false }),
+      // checkAdminOrCommercial,
+      // checkAccountDesactivated,
+      propertyLike,
+      // errorHandle
+      )
   app.put(
     `/properties/:propertyId`,
     passport.authenticate("jwt", { session: false }),
