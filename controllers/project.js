@@ -2388,7 +2388,7 @@ export async function uploadMandateForProjectExterne(req, res, next) {
   try {
     console.log("ajout du mandat")
     const { projectId } = req.params;
-    const { fileName, fileData, contentType,originNameMandate } = req.body;
+    const { fileName, fileData, contentType,originNameMandate, num_mandat, date_mandat } = req.body;
     // const user = await User.findById(req.user._id).lean();
 
     const project = await Project.findById(projectId).lean();
@@ -2417,7 +2417,9 @@ export async function uploadMandateForProjectExterne(req, res, next) {
       name: fileName,
       authorUserId: "62f4db00a19c48055a3ab571",
       projectId,
-      contentType
+      contentType,
+      num_mandat: num_mandat,
+      date_mandat: date_mandat
     }).save();
 
     // const location = await uploadFile(
@@ -2442,7 +2444,9 @@ export async function uploadMandateForProjectExterne(req, res, next) {
           mandateDoc: {
             originNameMandate:originNameMandate,
             name: document.name,
-            url: fileData
+            url: fileData,
+            num_mandat: num_mandat,
+            date_mandat: date_mandat
           },
           status: "wait_mandate_validation"
         }
