@@ -711,7 +711,7 @@ export async function backToStatus(req, res, next) {
 
     const project = await Project.findById(projectId).lean();
     // const client = (await Client.findById(project.clientId).lean()||await Insul_r.findById(project.clientId).lean());
-    // const user = await User.findById(req.user._id).lean();
+     const user = await User.findById(req.user._id).lean();
 
     if (!project) {
       return next(generateError("Project not found", 404));
@@ -733,11 +733,10 @@ export async function backToStatus(req, res, next) {
       type: "return_to_status_wait_purchase_offer",
       authorUserId: userId
     }).save();
-    // sendMessageToSlack({
-    //   message: `L'offre de prêt pour mandat de ${project.type === "search" ? "recherche" : "vente"
-    //     } du client ${client.displayName} a été accepté par ${user.displayName}: ${process.env.APP_URL
-    //     }/projects/${project._id}`
-    // });//validation pret
+    sendMessageToSlack({
+      message: `Retour au statut initial demandé par ${user.displayName} pour le projet: ${process.env.APP_URL
+        }/projects/${project._id}`
+    });//validation pret
 
     return res.json({ success: true });
   } catch (e) {
