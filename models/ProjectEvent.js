@@ -38,7 +38,8 @@ var schema = new mongoose.Schema(
         "project_completed",
         "project_canceled",
         "project_completed_email_5",
-        "project_completed_email_6"
+        "project_completed_email_6",
+        "return_to_status_wait_purchase_offer"
       ]
     },
     authorUserId: {

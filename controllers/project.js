@@ -710,8 +710,8 @@ export async function backToStatus(req, res, next) {
     const userId = req.user._id;
 
     const project = await Project.findById(projectId).lean();
-    const client = (await Client.findById(project.clientId).lean()||await Insul_r.findById(project.clientId).lean());
-    const user = await User.findById(req.user._id).lean();
+    // const client = (await Client.findById(project.clientId).lean()||await Insul_r.findById(project.clientId).lean());
+    // const user = await User.findById(req.user._id).lean();
 
     if (!project) {
       return next(generateError("Project not found", 404));
@@ -730,7 +730,7 @@ export async function backToStatus(req, res, next) {
     // sendNewStatusProject(project);
     new ProjectEvent({
       projectId,
-      type: "return to status wait_purchase_offer",
+      type: "return_to_status_wait_purchase_offer",
       authorUserId: userId
     }).save();
     // sendMessageToSlack({
