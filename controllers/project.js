@@ -704,6 +704,46 @@ export async function acceptLoanOffer(req, res, next) {
   }
 }
 
+export async function backToStatus(req, res, next) {
+  try {
+    const { projectId } = req.params;
+    const userId = req.user._id;
+
+    const project = await Project.findById(projectId).lean();
+    // const client = (await Client.findById(project.clientId).lean()||await Insul_r.findById(project.clientId).lean());
+     const user = await User.findById(req.user._id).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    // if (project.status !== "wait_loan_offer_validation") {
+    //   return next(generateError("Wrong state", 403));
+    // }
+
+    await Project.updateOne(
+      { _id: projectId },
+      {
+        $set: { status: "wait_purchase_offer" }
+      }
+    ).exec();
+    // sendNewStatusProject(project);
+    new ProjectEvent({
+      projectId,
+      type: "return_to_status_wait_purchase_offer",
+      authorUserId: userId
+    }).save();
+    sendMessageToSlack({
+      message: `Retour au statut initial demandé par ${user.displayName} pour le projet: ${process.env.APP_URL
+        }/projects/${project._id}`
+    });//validation pret
+
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
 export async function sendCompletedProjectEmail(req, res, next) {
   try {
     const { projectId } = req.params;
@@ -1274,7 +1314,6 @@ export async function saveSearchSheet(req, res, next) {
     const searchSheet = {
       investmentType:
         investmentType === "other" ? otherInvestmentType : investmentType,
-        propertySize : propertySize && propertySize === "bigger" ? propertySizeDetail : Number(propertySize),
         propertyType,
       additionalInfos,
       propertySizeDetail,
@@ -1287,6 +1326,10 @@ export async function saveSearchSheet(req, res, next) {
       budget,
       searchSectorCities: searchSectorCities || []
     };
+
+    if (propertySize) {
+      searchSheet.propertySize = propertySize && propertySize === "bigger" ? propertySizeDetail : Number(propertySize)
+    }
 
     if (swimmingpool) {
       searchSheet.swimmingpool = swimmingpool;
@@ -1348,14 +1391,12 @@ export async function editSearchProject(req, res, next) {
       return next(generateError("Project not found", 404));
     }
 
-    const ps =  propertySize ? propertySize === "bigger" ? propertySizeDetail : Number(propertySize):null;
 
     const modifier = {
       
       searchSheet: {
         investmentType:
           investmentType === "other" ? otherInvestmentType : investmentType,
-          propertySize :  ps ,
           propertyType,
         additionalInfos,
         propertyArea,
@@ -1375,6 +1416,9 @@ export async function editSearchProject(req, res, next) {
       modifier.investAlone = investalone;
     }
 
+    if (propertySize) {
+      modifier.propertySize =  propertySize ? propertySize === "bigger" ? propertySizeDetail : Number(propertySize):null;
+    }
 
     if (desiredgrossyield) {
       modifier.desiredGrossYield = desiredgrossyield;
@@ -2163,6 +2207,7 @@ export async function addDocumentToProjectByExtrenPlatform(req, res, next) {
       { _id: document._id },
       { $set: { url: fileData } }
     ).exec();
+    sendNewDocWebhook(document._id)
 
     return res.json({ success: true });
   } catch (e) {
@@ -2347,7 +2392,7 @@ export async function uploadMandateForProjectExterne(req, res, next) {
   try {
     console.log("ajout du mandat")
     const { projectId } = req.params;
-    const { fileName, fileData, contentType,originNameMandate } = req.body;
+    const { fileName, fileData, contentType,originNameMandate, num_mandat, date_mandat } = req.body;
     // const user = await User.findById(req.user._id).lean();
 
     const project = await Project.findById(projectId).lean();
@@ -2376,7 +2421,9 @@ export async function uploadMandateForProjectExterne(req, res, next) {
       name: fileName,
       authorUserId: "62f4db00a19c48055a3ab571",
       projectId,
-      contentType
+      contentType,
+      num_mandat: num_mandat,
+      date_mandat: date_mandat
     }).save();
 
     // const location = await uploadFile(
@@ -2390,7 +2437,7 @@ export async function uploadMandateForProjectExterne(req, res, next) {
       { $set: { url: fileData } }
     ).exec();
 
-    sendNewDocWebhook(document._id)
+    //sendNewDocWebhook(document._id)
 
 
     await Project.updateOne(
@@ -2401,13 +2448,17 @@ export async function uploadMandateForProjectExterne(req, res, next) {
           mandateDoc: {
             originNameMandate:originNameMandate,
             name: document.name,
-            url: fileData
+            url: fileData,
+            num_mandat: num_mandat,
+            date_mandat: date_mandat
           },
           status: "wait_mandate_validation"
         }
       }
     ).exec();
     await sendNewStatusProject(project);
+     sendNewDocWebhook(document._id);
+     console.log("document.id :",document._id);
 
     const client = (await Client.findById(project.clientId).lean()||await Insul_r.findById(project.clientId).lean());
     sendMessageToSlack({
@@ -2555,7 +2606,6 @@ export async function uploadAgreementForProject(req, res, next) {
       { _id: document._id },
       { $set: { url: location } }
     ).exec();
-
     await sendNewDocWebhook(document._id)
 
     await Project.updateOne(
