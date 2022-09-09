@@ -1314,7 +1314,6 @@ export async function saveSearchSheet(req, res, next) {
     const searchSheet = {
       investmentType:
         investmentType === "other" ? otherInvestmentType : investmentType,
-        propertySize : propertySize && propertySize === "bigger" ? propertySizeDetail : Number(propertySize),
         propertyType,
       additionalInfos,
       propertySizeDetail,
@@ -1327,6 +1326,10 @@ export async function saveSearchSheet(req, res, next) {
       budget,
       searchSectorCities: searchSectorCities || []
     };
+
+    if (propertySize) {
+      searchSheet.propertySize = propertySize && propertySize === "bigger" ? propertySizeDetail : Number(propertySize)
+    }
 
     if (swimmingpool) {
       searchSheet.swimmingpool = swimmingpool;
@@ -1388,14 +1391,12 @@ export async function editSearchProject(req, res, next) {
       return next(generateError("Project not found", 404));
     }
 
-    const ps =  propertySize ? propertySize === "bigger" ? propertySizeDetail : Number(propertySize):null;
 
     const modifier = {
       
       searchSheet: {
         investmentType:
           investmentType === "other" ? otherInvestmentType : investmentType,
-          propertySize :  ps ,
           propertyType,
         additionalInfos,
         propertyArea,
@@ -1415,6 +1416,9 @@ export async function editSearchProject(req, res, next) {
       modifier.investAlone = investalone;
     }
 
+    if (propertySize) {
+      modifier.propertySize =  propertySize ? propertySize === "bigger" ? propertySizeDetail : Number(propertySize):null;
+    }
 
     if (desiredgrossyield) {
       modifier.desiredGrossYield = desiredgrossyield;
