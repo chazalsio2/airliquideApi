@@ -2432,7 +2432,7 @@ export async function uploadMandateForProjectExterne(req, res, next) {
       { $set: { url: fileData } }
     ).exec();
 
-    sendNewDocWebhook(document._id)
+    //sendNewDocWebhook(document._id)
 
 
     await Project.updateOne(
@@ -2452,6 +2452,8 @@ export async function uploadMandateForProjectExterne(req, res, next) {
       }
     ).exec();
     await sendNewStatusProject(project);
+     sendNewDocWebhook(document._id);
+     console.log("document.id :",document._id);
 
     const client = (await Client.findById(project.clientId).lean()||await Insul_r.findById(project.clientId).lean());
     sendMessageToSlack({
