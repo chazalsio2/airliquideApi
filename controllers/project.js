@@ -29,7 +29,7 @@ import {
   sendMatchPropertiesEmail
 } from "../lib/email";
 import {
-  sendAgreementAcceptedWebhook, sendNewDocWebhook ,sendNewStatusProject, sendNewTrelloCard, sendNewAffecteCommercial
+  sendAgreementAcceptedWebhook, sendNewDocWebhook ,sendNewStatusProject, sendNewTrelloCard, sendNewAffecteCommercial, returnBackToStatusMandate
 } from '../services/webhook.service'
 import { uploadFile } from "../lib/aws";
 import { sendMessageToSlack } from "../lib/slack";
@@ -728,6 +728,7 @@ export async function backToStatus(req, res, next) {
       }
     ).exec();
     // sendNewStatusProject(project);
+    returnBackToStatusMandate(project)
     new ProjectEvent({
       projectId,
       type: "return_to_status_wait_purchase_offer",
