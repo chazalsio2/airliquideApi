@@ -724,7 +724,8 @@ export async function backToStatus(req, res, next) {
     await Project.updateOne(
       { _id: projectId },
       {
-        $set: { status: "wait_purchase_offer" }
+        $set: { status: "wait_purchase_offer" },
+        $unset: { commissionAmount: "", commercialPourcentage: "" }
       }
     ).exec();
     // sendNewStatusProject(project);
