@@ -78,7 +78,7 @@ export async function matchProperties(req, res, next) {
         const conditions = {};
         conditions.type = ProjectType;
         conditions.status = "available";
-        conditions.propertyStatus = typeProject;
+        conditions.propertyStatus = "forsale";
         conditions.public = true;
         conditions.salesPrice = { $lte: (budget * 1.15).toFixed(0) };
         if (ProjectType == terrGar(ProjectType)){
@@ -100,8 +100,10 @@ export async function matchProperties(req, res, next) {
         conditions.numberOfRooms = { $gte: 3 };
       }
         }
+        console.log(conditions);
          properties = await Property.find(conditions).exec();
      
+         console.log(properties);
       
       
         // if (!properties.length) {
@@ -137,13 +139,13 @@ export async function matchProperties(req, res, next) {
         //   { $set: { matchedProperties: matchedPropertiesId } }
         // ).exec();
       
-        return res.json({ success: true,data: matchedProperties > 0 ?matchedProperties:null ,body:true});
+        return res.json({ success: true,data: properties.length > 0 ?properties:null ,body:true});
     } catch (e) {
       next(generateError(e.message));
     }
     }else if(typeProject=="Project"){
-
-      // const searchProjects = await Project.find({
+      try {
+        // const searchProjects = await Project.find({
       //   type: "search",
       //   status: {
       //     $in: [
@@ -153,167 +155,172 @@ export async function matchProperties(req, res, next) {
       //   }
       // }).lean();
 
-        const {
-          landArea,
-          budget,
-          livingArea,
-          ProjectSize,
-          ProjectType,
-        } = req.body;
+      const {
+        landArea,
+        budget,
+        livingArea,
+        ProjectSize,
+        ProjectType,
+      } = req.body;
+
+      
+    const conditions = {
+    };
+    // searchSheet: {
+    //   propertyArea:ProjectType === setvalue(ProjectType) ? livingArea < 30 ? {$in:["lessthan30","lessthan90","morethan90"]}:livingArea >76 ? {$in:["lessthan90","morethan90"]}:{$in:["lessthan30","lessthan90","morethan90"]}:null,
+    //   propertyLandArea:ProjectType === terrGar(ProjectType) ? { $gte:landArea - (landArea * 0.15)}:null,
+    //   propertySize:ProjectType == AppartMaison(ProjectType) ? ProjectSize > 4 ?{ $gte: 4}: ProjectSize === 2?{ $gte: 1}:ProjectSize === 1?{ $gte: 1}:ProjectSize === 3? {$gte: 2}: {$gte: 3}:null,
+    //   propertyType:ProjectType,
+    //   budget:{ $lte: (budget * 1.15).toFixed(0)}
+    // }
+    //   if(ProjectType === setvalue(ProjectType)){
+    //   if (livingArea < 30) {
+    //     // isPropertyAreaMatch = property.livingArea >0;
+    //     conditions = {'searchSheet.propertyArea':{$in:["lessthan30","lessthan90","morethan90"]}};
+    //   } else if (livingArea >76) {
+    //     // isPropertyAreaMatch = property.livingArea > 76;
+    //     conditions={'searchSheet.propertyArea':{$in:["lessthan90","morethan90"]}};
+    //   } else {
+    //    // isPropertyAreaMatch = property.livingArea > 22 ;
+    //     conditions={'searchSheet.propertyArea':{$in:["lessthan30","lessthan90","morethan90"]}};
+
+    //   }
+    // }
+  
+    // if(ProjectType === terrGar(ProjectType)){
+    //   conditions ={'searchSheet.propertyArea': { $gte:landArea - (landArea * 0.15)}};
+    // }
+  
+      // if (searchSectorCities && !!searchSectorCities.length) {
+      //   isCitiesMatch = searchSectorCities.indexOf(property.city) !== -1;
+      // }
+  
+  //     if (ProjectType == AppartMaison(ProjectType)){
+  //       if(ProjectSize > 4){
+  //         conditions = {'searchSheet.propertySize':{ $gte: 4}};
+  //       }else if (ProjectSize === 1){
+  //         conditions ={'searchSheet.propertySize': { $gte: 1}};
+  //      }else if (ProjectSize === 2){
+  //         conditions={'searchSheet.propertySize': { $gte: 1}};
+  //     }else if (ProjectSize === 3){
+  //         conditions={'searchSheet.propertySize':{ $gte: 2}};
+  //   }else if (ProjectSize === 4){
+  //       conditions={'searchSheet.propertySize':{ $gte: 3}};
+  // }
+  //     }   
+  
+      // conditions= {'searchSheet.propertyType':ProjectType};
+      // conditions ={'searchSheet.budget':{ $lte: (budget * 1.15).toFixed(0)}};
+      conditions.type="search"
+      conditions.status={$in: ["wait_mandate","wait_mandate_validation","wait_purchase_offer"]}
+      let isCitiesMatch = false;
+          let isPropertyAreaMatch = false;
+          let propertySizeCondition;
+      // if (
+      //   isPropertyMatch &&
+      //   isBudgetMatch &&
+      //   isPropertyAreaMatch&&
+      //   propertySizeCondition||
+      //   isPropertyMatch &&
+      //   isBudgetMatch &&
+      //   isPropertyAreaMatch){
+      //     //sendMatchProjectEmail(searchProjects, property);
+  
+      //   console.log(searchProjects._id);
+        const project = await Project.find(conditions).lean();
+        
+        const clientEnrichedPromises = project.map(async (project) => {
+          project.client = (await Client.findById(project.clientId).lean()||await Insul_r.findById(project.clientId).lean())
+          if (project.commercialId) {
+            project.commercial = await User.findById(
+              project.commercialId,
+              "displayName"
+            ).lean();
+          }
+          return project;
+        });
+    
+        const projectsEnriched = await Promise.all(clientEnrichedPromises);
+        console.log(projectsEnriched);
 
         
-      const conditions = {
-      };
-      // searchSheet: {
-      //   propertyArea:ProjectType === setvalue(ProjectType) ? livingArea < 30 ? {$in:["lessthan30","lessthan90","morethan90"]}:livingArea >76 ? {$in:["lessthan90","morethan90"]}:{$in:["lessthan30","lessthan90","morethan90"]}:null,
-      //   propertyLandArea:ProjectType === terrGar(ProjectType) ? { $gte:landArea - (landArea * 0.15)}:null,
-      //   propertySize:ProjectType == AppartMaison(ProjectType) ? ProjectSize > 4 ?{ $gte: 4}: ProjectSize === 2?{ $gte: 1}:ProjectSize === 1?{ $gte: 1}:ProjectSize === 3? {$gte: 2}: {$gte: 3}:null,
-      //   propertyType:ProjectType,
-      //   budget:{ $lte: (budget * 1.15).toFixed(0)}
-      // }
-      //   if(ProjectType === setvalue(ProjectType)){
-      //   if (livingArea < 30) {
-      //     // isPropertyAreaMatch = property.livingArea >0;
-      //     conditions = {'searchSheet.propertyArea':{$in:["lessthan30","lessthan90","morethan90"]}};
-      //   } else if (livingArea >76) {
-      //     // isPropertyAreaMatch = property.livingArea > 76;
-      //     conditions={'searchSheet.propertyArea':{$in:["lessthan90","morethan90"]}};
-      //   } else {
-      //    // isPropertyAreaMatch = property.livingArea > 22 ;
-      //     conditions={'searchSheet.propertyArea':{$in:["lessthan30","lessthan90","morethan90"]}};
-
-      //   }
-      // }
-    
-      // if(ProjectType === terrGar(ProjectType)){
-      //   conditions ={'searchSheet.propertyArea': { $gte:landArea - (landArea * 0.15)}};
-      // }
-    
-        // if (searchSectorCities && !!searchSectorCities.length) {
-        //   isCitiesMatch = searchSectorCities.indexOf(property.city) !== -1;
-        // }
-    
-    //     if (ProjectType == AppartMaison(ProjectType)){
-    //       if(ProjectSize > 4){
-    //         conditions = {'searchSheet.propertySize':{ $gte: 4}};
-    //       }else if (ProjectSize === 1){
-    //         conditions ={'searchSheet.propertySize': { $gte: 1}};
-    //      }else if (ProjectSize === 2){
-    //         conditions={'searchSheet.propertySize': { $gte: 1}};
-    //     }else if (ProjectSize === 3){
-    //         conditions={'searchSheet.propertySize':{ $gte: 2}};
-    //   }else if (ProjectSize === 4){
-    //       conditions={'searchSheet.propertySize':{ $gte: 3}};
-    // }
-    //     }   
-    
-        // conditions= {'searchSheet.propertyType':ProjectType};
-        // conditions ={'searchSheet.budget':{ $lte: (budget * 1.15).toFixed(0)}};
-        conditions.type="search"
-        conditions.status={$in: ["wait_mandate","wait_mandate_validation","wait_purchase_offer"]}
-        let isCitiesMatch = false;
+        if (projectsEnriched) {
+          const projects = projectsEnriched.filter(projects=>{
+          
+            let isCitiesMatch = false;
             let isPropertyAreaMatch = false;
             let propertySizeCondition;
-        // if (
-        //   isPropertyMatch &&
-        //   isBudgetMatch &&
-        //   isPropertyAreaMatch&&
-        //   propertySizeCondition||
-        //   isPropertyMatch &&
-        //   isBudgetMatch &&
-        //   isPropertyAreaMatch){
-        //     //sendMatchProjectEmail(searchProjects, property);
-    
-        //   console.log(searchProjects._id);
-          const project = await Project.find(conditions).exec();
-          
-          const clientEnrichedPromises = project.map(async (project) => {
-            project.client = (await Client.findById(project.clientId).lean()||await Insul_r.findById(project.clientId).lean())
-            if (project.commercialId) {
-              project.commercial = await User.findById(
-                project.commercialId,
-                "displayName"
-              ).lean();
-            }
-            return project;
-          });
-      
-          const projectsEnriched = await Promise.all(clientEnrichedPromises);
-          
-          if (projectsEnriched) {
-            const projects = projectsEnriched.filter(projects=>{
+
+            if(ProjectType === setvalue(ProjectType)){
+                if (livingArea < 30) {
+                  isPropertyAreaMatch = projects.searchSheet.propertyArea ==="lessthan30"||"lessthan90"||"morethan90";
+                  // conditions = {'searchSheet.propertyArea':{$in:["lessthan30","lessthan90","morethan90"]}};
+                } else if (livingArea >76) {
+                  isPropertyAreaMatch = projects.searchSheet.propertyArea ==="lessthan30"||"morethan90";
+                  // conditions={'searchSheet.propertyArea':{$in:["lessthan90","morethan90"]}};
+                } else {
+                  isPropertyAreaMatch = projects.searchSheet.propertyArea ==="lessthan30"||"lessthan90"||"morethan90";
+                  // conditions={'searchSheet.propertyArea':{$in:["lessthan30","lessthan90","morethan90"]}};
+        
+                }
+              }
+
+          if(ProjectType === terrGar(ProjectType)){
+            isPropertyAreaMatch = projects.searchSheet.propertyLandArea >= landArea - (landArea * 0.15);
+          }
+        
+            // if (searchSectorCities && !!searchSectorCities.length) {
+            //   isCitiesMatch = searchSectorCities.indexOf(property.city) !== -1;
+            // }
+        
+            if (ProjectType == AppartMaison(ProjectType)){
+              if(ProjectSize > 4){
+              propertySizeCondition = projects.searchSheet.propertySize >= 4;
+              }else if (ProjectSize === 1){
+                propertySizeCondition = projects.searchSheet.propertySize >= 1  ;
+             }else if (ProjectSize === 2){
+              propertySizeCondition = projects.searchSheet.propertySize >= 1 ;
+            }else if (ProjectSize === 3){
+              propertySizeCondition = projects.searchSheet.propertySize >= 2 ;
+          }else if (ProjectSize === 4){
+            propertySizeCondition = projects.searchSheet.propertySize >= 3 ;
+        }
+            }   
             
-              let isCitiesMatch = false;
-              let isPropertyAreaMatch = false;
-              let propertySizeCondition;
-  
-              if(ProjectType === setvalue(ProjectType)){
-                  if (livingArea < 30) {
-                    isPropertyAreaMatch = projects.searchSheet.propertyArea ==="lessthan30"||"lessthan90"||"morethan90";
-                    // conditions = {'searchSheet.propertyArea':{$in:["lessthan30","lessthan90","morethan90"]}};
-                  } else if (livingArea >76) {
-                    isPropertyAreaMatch = projects.searchSheet.propertyArea ==="lessthan30"||"morethan90";
-                    // conditions={'searchSheet.propertyArea':{$in:["lessthan90","morethan90"]}};
-                  } else {
-                    isPropertyAreaMatch = projects.searchSheet.propertyArea ==="lessthan30"||"lessthan90"||"morethan90";
-                    // conditions={'searchSheet.propertyArea':{$in:["lessthan30","lessthan90","morethan90"]}};
-          
-                  }
-                }
-  
-            if(ProjectType === terrGar(ProjectType)){
-              isPropertyAreaMatch = projects.searchSheet.propertyLandArea >= landArea - (landArea * 0.15);
-            }
-          
-              // if (searchSectorCities && !!searchSectorCities.length) {
-              //   isCitiesMatch = searchSectorCities.indexOf(property.city) !== -1;
-              // }
-          
-              if (ProjectType == AppartMaison(ProjectType)){
-                if(ProjectSize > 4){
-                propertySizeCondition = projects.searchSheet.propertySize >= 4;
-                }else if (ProjectSize === 1){
-                  propertySizeCondition = projects.searchSheet.propertySize >= 1  ;
-               }else if (ProjectSize === 2){
-                propertySizeCondition = projects.searchSheet.propertySize >= 1 ;
-              }else if (ProjectSize === 3){
-                propertySizeCondition = projects.searchSheet.propertySize >= 2 ;
-            }else if (ProjectSize === 4){
-              propertySizeCondition = projects.searchSheet.propertySize >= 3 ;
+            const isPropertyMatch = projects.searchSheet.propertyType === ProjectType;
+            const isBudgetMatch = projects.searchSheet.budget <= budget * 1.15;
+            //const is
+            /*console.log(isPropertyMatch &&
+              isBudgetMatch &&
+              isPropertyAreaMatch&&
+              propertySizeCondition||
+              isPropertyMatch &&
+              isBudgetMatch &&
+              isPropertyAreaMatch );*/
+            
+            if (
+              isPropertyMatch &&
+              isBudgetMatch &&
+              isPropertyAreaMatch&&
+              propertySizeCondition||
+              isPropertyMatch &&
+              isBudgetMatch &&
+              isPropertyAreaMatch){
+                //sendMatchProjectEmail(searchProjects, property);
+                return projects
+              }
+            })
+
+           
+        
+
+  return res.json({ success: true,project: projects.length > 0 ? projects : null ,body:true});
+      }
+
+      
+          }catch (e) {
+            next(generateError(e.message));
           }
-              }   
-              
-              const isPropertyMatch = projects.searchSheet.propertyType === ProjectType;
-              const isBudgetMatch = projects.searchSheet.budget <= budget * 1.15;
-              //const is
-              /*console.log(isPropertyMatch &&
-                isBudgetMatch &&
-                isPropertyAreaMatch&&
-                propertySizeCondition||
-                isPropertyMatch &&
-                isBudgetMatch &&
-                isPropertyAreaMatch );*/
-              
-              if (
-                isPropertyMatch &&
-                isBudgetMatch &&
-                isPropertyAreaMatch&&
-                propertySizeCondition||
-                isPropertyMatch &&
-                isBudgetMatch &&
-                isPropertyAreaMatch){
-                  //sendMatchProjectEmail(searchProjects, property);
-                  return projects
-                }
-              })
-
-             
-          
-
-    return res.json({ success: true,project: projects.length > 0 ? projects : null ,body:true});
-          }
-          
-
           // }
     
         /*if (
