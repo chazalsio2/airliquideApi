@@ -606,6 +606,23 @@ export async function sendNewAffecteCommercial(project,commercial){
   }})
 }
 
+export async function returnBackToStatusMandate(project){
+  const projet = await Project.findById(project._id)
+  const client = await getClient(project.clientId)
+  //const conseiller = await User.findById(project.commercialId)
+  //console.log(commercial);
+  axios({
+    method:'POST',
+    url: process.env.INTEGROMAT_WEBHOOK_BACK_TO_MANDATE_TRELLO_CARD,
+    data:{
+      num_id:projet._id,
+      nom_clients:client.displayName,
+      e_mail:client.email,
+      statuts_affaires: projet.status,
+      type:projet.type
+  }})
+}
+
   export async function sendNewStatusProject(project,commercial,evenement, demandeSignatureOA) {
     let conseiller;
   const projet = await Project.findById(project._id)
