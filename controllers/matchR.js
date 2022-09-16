@@ -139,7 +139,7 @@ export async function matchProperties(req, res, next) {
         //   { $set: { matchedProperties: matchedPropertiesId } }
         // ).exec();
       
-        return res.json({ success: true,data: properties.length > 0 ?properties:null ,body:true});
+        return res.json({ success: true,data: properties.length > 0 ?properties:null ,body:true,search:req.body});
     } catch (e) {
       next(generateError(e.message));
     }
@@ -212,7 +212,7 @@ export async function matchProperties(req, res, next) {
       // conditions= {'searchSheet.propertyType':ProjectType};
       // conditions ={'searchSheet.budget':{ $lte: (budget * 1.15).toFixed(0)}};
       conditions.type="search"
-      conditions.status={$in: ["wait_mandate","wait_mandate_validation","wait_purchase_offer"]}
+      conditions.status={$in: ["missing_information","wait_mandate","wait_mandate_validation","wait_purchase_offer"]}
       let isCitiesMatch = false;
           let isPropertyAreaMatch = false;
           let propertySizeCondition;
@@ -253,20 +253,20 @@ export async function matchProperties(req, res, next) {
 
             if(ProjectType === setvalue(ProjectType)){
                 if (livingArea < 30) {
-                  isPropertyAreaMatch = projects.searchSheet.propertyArea ==="lessthan30"||"lessthan90"||"morethan90";
+                  isPropertyAreaMatch = projects.searchSheet.propertyArea ==="lessthan30";
                   // conditions = {'searchSheet.propertyArea':{$in:["lessthan30","lessthan90","morethan90"]}};
-                } else if (livingArea >76) {
-                  isPropertyAreaMatch = projects.searchSheet.propertyArea ==="lessthan30"||"morethan90";
+                } else if (livingArea >90) {
+                  isPropertyAreaMatch = projects.searchSheet.propertyArea ==="lessthan30"||"lessthan90"||"morethan90";
                   // conditions={'searchSheet.propertyArea':{$in:["lessthan90","morethan90"]}};
                 } else {
-                  isPropertyAreaMatch = projects.searchSheet.propertyArea ==="lessthan30"||"lessthan90"||"morethan90";
+                  isPropertyAreaMatch = projects.searchSheet.propertyArea ==="lessthan30"||"lessthan90";
                   // conditions={'searchSheet.propertyArea':{$in:["lessthan30","lessthan90","morethan90"]}};
         
                 }
               }
 
           if(ProjectType === terrGar(ProjectType)){
-            isPropertyAreaMatch = projects.searchSheet.propertyLandArea >= landArea - (landArea * 0.15);
+            isPropertyAreaMatch = projects.searchSheet.propertyLandArea <= landArea - (landArea * 0.15);
           }
         
             // if (searchSectorCities && !!searchSectorCities.length) {
@@ -275,20 +275,20 @@ export async function matchProperties(req, res, next) {
         
             if (ProjectType == AppartMaison(ProjectType)){
               if(ProjectSize > 4){
-              propertySizeCondition = projects.searchSheet.propertySize >= 4;
+              propertySizeCondition = projects.searchSheet.propertySize <= ProjectSize+1;
               }else if (ProjectSize === 1){
-                propertySizeCondition = projects.searchSheet.propertySize >= 1  ;
+                propertySizeCondition = projects.searchSheet.propertySize <= 2 ;
              }else if (ProjectSize === 2){
-              propertySizeCondition = projects.searchSheet.propertySize >= 1 ;
+              propertySizeCondition = projects.searchSheet.propertySize <= 3 ;
             }else if (ProjectSize === 3){
-              propertySizeCondition = projects.searchSheet.propertySize >= 2 ;
+              propertySizeCondition = projects.searchSheet.propertySize <= 4 ;
           }else if (ProjectSize === 4){
-            propertySizeCondition = projects.searchSheet.propertySize >= 3 ;
+            propertySizeCondition = projects.searchSheet.propertySize <= 5 ;
         }
             }   
             
             const isPropertyMatch = projects.searchSheet.propertyType === ProjectType;
-            const isBudgetMatch = projects.searchSheet.budget <= budget * 1.15;
+            const isBudgetMatch = projects.searchSheet.budget >= budget * 1.15;
             //const is
             /*console.log(isPropertyMatch &&
               isBudgetMatch &&
@@ -314,7 +314,7 @@ export async function matchProperties(req, res, next) {
            
         
 
-  return res.json({ success: true,project: projects.length > 0 ? projects : null ,body:true});
+  return res.json({ success: true,project: projects.length > 0 ? projects : null ,body:true,search:req.body});
       }
 
       
