@@ -1314,6 +1314,7 @@ export async function saveSearchSheet(req, res, next) {
 
 
     const searchSheet = {
+      propertySize :propertySize === "bigger" ? Number(propertySizeDetail) : Number(propertySize),
       investmentType:
         investmentType === "other" ? otherInvestmentType : investmentType,
         propertyType,
@@ -1328,10 +1329,6 @@ export async function saveSearchSheet(req, res, next) {
       budget,
       searchSectorCities: searchSectorCities || []
     };
-
-    if (propertySize) {
-      searchSheet.propertySize = propertySize && propertySize === "bigger" ? propertySizeDetail : Number(propertySize)
-    }
 
     if (swimmingpool) {
       searchSheet.swimmingpool = swimmingpool;
@@ -1384,7 +1381,7 @@ export async function editSearchProject(req, res, next) {
       desiredgrossyield,
       budget
     } = req.body;
-    console.log(propertySize && propertySize);
+    console.log(propertySize );
 
     const { projectId } = req.params;
     const project = await Project.findById(projectId).lean();
@@ -1397,6 +1394,8 @@ export async function editSearchProject(req, res, next) {
     const modifier = {
       
       searchSheet: {
+      propertySize :propertySize === "bigger" ? Number(propertySizeDetail) : Number(propertySize),
+
         investmentType:
           investmentType === "other" ? otherInvestmentType : investmentType,
           propertyType,
@@ -1411,7 +1410,7 @@ export async function editSearchProject(req, res, next) {
         searchSectorCities: searchSectorCities || []
       }
     };
-    console.log(modifier);
+    // console.log(modifier);
 
 
     if (!_.isUndefined(investalone)) {
@@ -1419,7 +1418,7 @@ export async function editSearchProject(req, res, next) {
     }
 
     if (propertySize) {
-      modifier.propertySize =  propertySize ? propertySize === "bigger" ? propertySizeDetail : Number(propertySize):null;
+      console.log(modifier);
     }
 
     if (desiredgrossyield) {
@@ -1440,7 +1439,7 @@ export async function editSearchProject(req, res, next) {
         $set: modifier
       }
     ).exec();
-    matchPropertiesForSearchMandate(projectId);
+    // matchPropertiesForSearchMandate(projectId);
     return res.json({ success: true });
   } catch (e) {
     next(generateError(e.message));
