@@ -88,7 +88,7 @@ export async function matchProperties(req, res, next) {
             conditions.livingArea = { $gte: livingArea-(livingArea * 0.15) };
          }
         if (ProjectType == AppartMaison(ProjectType)){
-          if(ProjectSize > 4){
+          if(ProjectSize === "bigger"){
              conditions.numberOfRooms = { $gte: 4 };
           }else if (ProjectSize === 1){
              conditions.numberOfRooms = { $gte: 1 } ;
@@ -161,6 +161,7 @@ export async function matchProperties(req, res, next) {
         livingArea,
         ProjectSize,
         ProjectType,
+        ProjectSizeDetail
       } = req.body;
 
       
@@ -212,7 +213,7 @@ export async function matchProperties(req, res, next) {
       // conditions= {'searchSheet.propertyType':ProjectType};
       // conditions ={'searchSheet.budget':{ $lte: (budget * 1.15).toFixed(0)}};
       conditions.type="search"
-      conditions.status={$in: ["missing_information","wait_mandate","wait_mandate_validation","wait_purchase_offer"]}
+      conditions.status={$in: ["missing_information","wait_mandate","wait_mandate_validation","wait_purchase_offer","wait_project_validation"]}
       let isCitiesMatch = false;
           let isPropertyAreaMatch = false;
           let propertySizeCondition;
@@ -241,7 +242,6 @@ export async function matchProperties(req, res, next) {
         });
     
         const projectsEnriched = await Promise.all(clientEnrichedPromises);
-        console.log(projectsEnriched);
 
         
         if (projectsEnriched) {
@@ -273,9 +273,10 @@ export async function matchProperties(req, res, next) {
             //   isCitiesMatch = searchSectorCities.indexOf(property.city) !== -1;
             // }
         
+            console.log(ProjectSizeDetail);
             if (ProjectType == AppartMaison(ProjectType)){
-              if(ProjectSize > 4){
-              propertySizeCondition = projects.searchSheet.propertySize <= ProjectSize+1;
+              if(ProjectSize === "bigger"){
+              propertySizeCondition = projects.searchSheet.propertySize <= ProjectSizeDetail+1;
               }else if (ProjectSize === 1){
                 propertySizeCondition = projects.searchSheet.propertySize <= 2 ;
              }else if (ProjectSize === 2){
@@ -297,7 +298,12 @@ export async function matchProperties(req, res, next) {
               isPropertyMatch &&
               isBudgetMatch &&
               isPropertyAreaMatch );*/
-            
+               
+              console.log(projects._id +"  "+ isPropertyMatch + " "+
+              isBudgetMatch + " "+
+              isPropertyAreaMatch+ " "+
+              propertySizeCondition);
+
             if (
               isPropertyMatch &&
               isBudgetMatch &&
