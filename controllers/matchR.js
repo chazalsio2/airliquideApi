@@ -299,10 +299,10 @@ export async function matchProperties(req, res, next) {
               isBudgetMatch &&
               isPropertyAreaMatch );*/
                
-              console.log(projects._id +"  "+ isPropertyMatch + " "+
-              isBudgetMatch + " "+
-              isPropertyAreaMatch+ " "+
-              propertySizeCondition);
+              // console.log(projects._id +"  "+ isPropertyMatch + " "+
+              // isBudgetMatch + " "+
+              // isPropertyAreaMatch+ " "+
+              // propertySizeCondition);
 
             if (
               isPropertyMatch &&
