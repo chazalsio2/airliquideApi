@@ -307,6 +307,7 @@ export async function matchProperties(req, res, next) {
               }
             })
 
+            console.log(projects);
   return res.json({ success: true,project: projects.length > 0 ? projects : null ,body:true,search:req.body});
       }
 
