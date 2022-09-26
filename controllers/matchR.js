@@ -45,14 +45,9 @@ export async function matchProperties(req, res, next) {
           ProjectSizeDetail
         } = req.body;
     
-        
         let propertyAreaCondition;
         let ProjectSizeCondition;
         let properties;
-      
-      
-        
-      
       
           if (typeProject == setvalue(typeProject)){
       
@@ -71,10 +66,6 @@ export async function matchProperties(req, res, next) {
         //   if (typeProject == terrGar(typeProject)){
         //       propertyAreaCondition = { landArea: { $gte: propertyLandArea-(propertyLandArea * 0.15) } };
         //     }
-              
-        
-      
-      
         const conditions = {};
         conditions.type = ProjectType;
         conditions.status = "available";
@@ -115,7 +106,6 @@ export async function matchProperties(req, res, next) {
         //     return;
         //   }
         //   return;}
-      
         const matchedProperties = properties.filter((property) => {
           if (!searchSectorCities || !searchSectorCities.length) return property;
           return searchSectorCities.indexOf(property.city) !== -1;
@@ -287,7 +277,7 @@ export async function matchProperties(req, res, next) {
             propertySizeCondition = projects.searchSheet.propertySize <= 5 ;
         }
             }   
-            
+
             const isPropertyMatch = projects.searchSheet.propertyType === ProjectType;
             const isBudgetMatch = projects.searchSheet.budget >= budget * 1.15;
             //const is
@@ -316,9 +306,6 @@ export async function matchProperties(req, res, next) {
                 return projects
               }
             })
-
-           
-        
 
   return res.json({ success: true,project: projects.length > 0 ? projects : null ,body:true,search:req.body});
       }
