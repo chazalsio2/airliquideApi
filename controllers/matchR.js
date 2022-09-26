@@ -153,6 +153,12 @@ export async function matchProperties(req, res, next) {
         ProjectType,
         ProjectSizeDetail
       } = req.body;
+      console.log(landArea);
+      console.log(budget);
+      console.log(livingArea);
+      console.log(ProjectSize);
+      console.log(ProjectType);
+      console.log(ProjectSizeDetail);
 
       
     const conditions = {
@@ -219,6 +225,8 @@ export async function matchProperties(req, res, next) {
   
       //   console.log(searchProjects._id);
         const project = await Project.find(conditions).lean();
+
+        console.log(project);
         
         const clientEnrichedPromises = project.map(async (project) => {
           project.client = (await Client.findById(project.clientId).lean()||await Insul_r.findById(project.clientId).lean())
@@ -231,7 +239,9 @@ export async function matchProperties(req, res, next) {
           return project;
         });
     
+
         const projectsEnriched = await Promise.all(clientEnrichedPromises);
+        console.log(projectsEnriched);
 
         
         if (projectsEnriched) {
