@@ -45,14 +45,9 @@ export async function matchProperties(req, res, next) {
           ProjectSizeDetail
         } = req.body;
     
-        
         let propertyAreaCondition;
         let ProjectSizeCondition;
         let properties;
-      
-      
-        
-      
       
           if (typeProject == setvalue(typeProject)){
       
@@ -71,10 +66,6 @@ export async function matchProperties(req, res, next) {
         //   if (typeProject == terrGar(typeProject)){
         //       propertyAreaCondition = { landArea: { $gte: propertyLandArea-(propertyLandArea * 0.15) } };
         //     }
-              
-        
-      
-      
         const conditions = {};
         conditions.type = ProjectType;
         conditions.status = "available";
@@ -115,7 +106,6 @@ export async function matchProperties(req, res, next) {
         //     return;
         //   }
         //   return;}
-      
         const matchedProperties = properties.filter((property) => {
           if (!searchSectorCities || !searchSectorCities.length) return property;
           return searchSectorCities.indexOf(property.city) !== -1;
@@ -143,7 +133,7 @@ export async function matchProperties(req, res, next) {
     } catch (e) {
       next(generateError(e.message));
     }
-    }else if(typeProject=="Project"){
+    }else if(typeProject==="Project"){
       try {
         // const searchProjects = await Project.find({
       //   type: "search",
@@ -163,7 +153,7 @@ export async function matchProperties(req, res, next) {
         ProjectType,
         ProjectSizeDetail
       } = req.body;
-
+ console.log(ProjectType);
       
     const conditions = {
     };
@@ -214,9 +204,7 @@ export async function matchProperties(req, res, next) {
       // conditions ={'searchSheet.budget':{ $lte: (budget * 1.15).toFixed(0)}};
       conditions.type="search"
       conditions.status={$in: ["missing_information","wait_mandate","wait_mandate_validation","wait_purchase_offer","wait_project_validation"]}
-      let isCitiesMatch = false;
-          let isPropertyAreaMatch = false;
-          let propertySizeCondition;
+     
       // if (
       //   isPropertyMatch &&
       //   isBudgetMatch &&
@@ -229,6 +217,7 @@ export async function matchProperties(req, res, next) {
   
       //   console.log(searchProjects._id);
         const project = await Project.find(conditions).lean();
+
         
         const clientEnrichedPromises = project.map(async (project) => {
           project.client = (await Client.findById(project.clientId).lean()||await Insul_r.findById(project.clientId).lean())
@@ -241,15 +230,16 @@ export async function matchProperties(req, res, next) {
           return project;
         });
     
+
         const projectsEnriched = await Promise.all(clientEnrichedPromises);
 
         
         if (projectsEnriched) {
-          const projects = projectsEnriched.filter(projects=>{
-          
+          const projectes = projectsEnriched.filter(projects=>{
+          if(projects.searchSheet){
             let isCitiesMatch = false;
             let isPropertyAreaMatch = false;
-            let propertySizeCondition;
+            let propertySizeCondition ;
 
             if(ProjectType === setvalue(ProjectType)){
                 if (livingArea < 30) {
@@ -272,22 +262,26 @@ export async function matchProperties(req, res, next) {
             // if (searchSectorCities && !!searchSectorCities.length) {
             //   isCitiesMatch = searchSectorCities.indexOf(property.city) !== -1;
             // }
-        
-            console.log(ProjectSizeDetail);
+            // console.log("ProjectSizeDetail  "+ ProjectSizeDetail);
             if (ProjectType == AppartMaison(ProjectType)){
+              if(projects.searchSheet.propertySize){
               if(ProjectSize === "bigger"){
               propertySizeCondition = projects.searchSheet.propertySize <= ProjectSizeDetail+1;
-              }else if (ProjectSize === 1){
+              } if (ProjectSize === "1"){
                 propertySizeCondition = projects.searchSheet.propertySize <= 2 ;
-             }else if (ProjectSize === 2){
+             } if (ProjectSize === "2"){
+              console.log("2      ");
               propertySizeCondition = projects.searchSheet.propertySize <= 3 ;
-            }else if (ProjectSize === 3){
+            } if (ProjectSize === "3"){
               propertySizeCondition = projects.searchSheet.propertySize <= 4 ;
-          }else if (ProjectSize === 4){
+          } if (ProjectSize === "4"){
             propertySizeCondition = projects.searchSheet.propertySize <= 5 ;
         }
+      }
             }   
-            
+
+
+
             const isPropertyMatch = projects.searchSheet.propertyType === ProjectType;
             const isBudgetMatch = projects.searchSheet.budget >= budget * 1.15;
             //const is
@@ -303,24 +297,34 @@ export async function matchProperties(req, res, next) {
               // isBudgetMatch + " "+
               // isPropertyAreaMatch+ " "+
               // propertySizeCondition);
+              console.log("_id            " +projects._id) 
+              console.log("isPropertyMatch            " +isPropertyMatch) 
+              console.log("isBudgetMatch             "+isBudgetMatch) 
+                console.log("isPropertyAreaMatch            "+projects.searchSheet.propertyType +"       "+ ProjectType)
+                console.log("propertySizeCondition         "+propertySizeCondition)
 
-            if (
-              isPropertyMatch &&
-              isBudgetMatch &&
-              isPropertyAreaMatch&&
-              propertySizeCondition||
-              isPropertyMatch &&
-              isBudgetMatch &&
-              isPropertyAreaMatch){
-                //sendMatchProjectEmail(searchProjects, property);
-                return projects
+              if(ProjectType == AppartMaison(ProjectType)){
+                if (isPropertyMatch &&
+                    isBudgetMatch &&
+                    isPropertyAreaMatch&&
+                    propertySizeCondition){
+                    // console.log(projects);
+                    //sendMatchProjectEmail(searchProjects, property);
+                    return projects
+                  }
               }
-            })
+              if(ProjectType === terrGar(ProjectType)){
+                if (isPropertyMatch &&
+                  isBudgetMatch &&
+                  isPropertyAreaMatch){
+                  console.log(projects);
+                  //sendMatchProjectEmail(searchProjects, property);
+                  return projects
+                }
+              }
+        }})
 
-           
-        
-
-  return res.json({ success: true,project: projects.length > 0 ? projects : null ,body:true,search:req.body});
+  return res.json({ success: true,project: projectes.length > 0 ? projectes : null ,body:true,search:req.body});
       }
 
       
