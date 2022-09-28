@@ -490,6 +490,7 @@ export async function PhotoCouv (req, res, next) {
 export async function createProperty(req, res, next) {
   try {
     const {
+      ZoneSector,
       description,
       propertyStatus,
       salesPrice,
@@ -571,6 +572,7 @@ export async function createProperty(req, res, next) {
 
     const results = await uploadPhotos(photos);
     const propertyData = {
+      ZoneSector,
       description:`
         ${description}
 
@@ -809,7 +811,16 @@ export async function getProperties(req, res, next) {
       }
       
   }
-
+  
+  if (req.user.ZoneSector.indexOf("reunion") !== -1 ) {
+    selector.ZoneSector = "reunion"
+  }
+  if (req.user.ZoneSector.indexOf("maurice") !== -1 ) {
+    selector.ZoneSector = "maurice"
+  }
+  if (req.user.ZoneSector.indexOf("alsace") !== -1 ) {
+    selector.ZoneSector = "alsace"
+  }
   if(type === "user") {
     selector.commercialEmail = req.user.email;
     if (typeBien||PrixMin||PrixMax||city) {
@@ -835,6 +846,7 @@ export async function getProperties(req, res, next) {
         
     }
   }
+ 
 
   if (type === "forsale") {
     selector.propertyStatus = "forsale";

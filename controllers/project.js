@@ -1105,6 +1105,15 @@ export async function getProjects(req, res, next) {
     const { page = "", mandate = "", order = "desc" } = req.query;
     const pageNumber = Number(page) || 1;
     const selector = {};
+    if (req.user.ZoneSector.indexOf("reunion") !== -1 ) {
+      selector.ZoneSector = "reunion"
+    }
+    if (req.user.ZoneSector.indexOf("maurice") !== -1 ) {
+      selector.ZoneSector = "maurice"
+    }
+    if (req.user.ZoneSector.indexOf("alsace") !== -1 ) {
+      selector.ZoneSector = "alsace"
+    }
 
     if (mandate === "sales") {
       selector.type = "sales";
