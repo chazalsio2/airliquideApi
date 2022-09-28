@@ -61,7 +61,7 @@ export async function login(req, res, next) {
   const isPasswordMatch = await bcrypt.compare(password, user.password);
 
   if (isPasswordMatch) {
-    const payload = { userId: user._id, roles: user.roles };
+    const payload = { userId: user._id, roles: user.roles ,ZoneSector: user.zoneSector };
     const jwtGenerated = jwt.sign(payload, process.env.JWT_SECRET);
 
     return res.json({
@@ -69,6 +69,7 @@ export async function login(req, res, next) {
       data: {
         jwt: jwtGenerated,
         displayName: user.displayName,
+        ZoneSector: user.ZoneSector,
         Numphone:user.phone,
         roles: user.roles,
         deactivated: user.deactivated,
@@ -141,6 +142,7 @@ export async function createPassword(req, res, next) {
       roles: user.roles,
       Numphone:user.phone,
       deactivated: user.deactivated,
+      ZoneSector:user.ZoneSector
     },
   });
 }

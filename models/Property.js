@@ -23,6 +23,10 @@ const schema = new mongoose.Schema(
       type: String,
       required: false
     },
+    ZoneSector:{
+      type: String,
+      enum: ["reunion", "maurice", "alsace"]
+    },
     matchedProject: {
       type: Array
     },

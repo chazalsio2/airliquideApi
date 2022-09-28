@@ -187,6 +187,10 @@ const schema = new mongoose.Schema(
       type: String,
       enum: projectTypes
     },
+    ZoneSector:{
+      type: String,
+      enum: ["reunion", "maurice", "alsace"]
+    },
     searchSheet: {
       type: SearchSheet,
       required: false,
