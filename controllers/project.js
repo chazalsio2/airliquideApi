@@ -1115,6 +1115,7 @@ export async function getProjects(req, res, next) {
       selector.ZoneSector = "alsace"
     }
 
+    
     if (mandate === "sales") {
       selector.type = "sales";
     }
