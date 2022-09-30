@@ -123,6 +123,10 @@ var schema = new mongoose.Schema(
       type: String,
       enum: ["north", "east", "west", "south"]
     },
+    ZoneSector:{
+      type: String,
+      enum: ["reunion", "maurice", "alsace"]
+    },
     address: {
       type: String,
       required: false

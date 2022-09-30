@@ -69,6 +69,7 @@ export async function login(req, res, next) {
       data: {
         jwt: jwtGenerated,
         displayName: user.displayName,
+        ZoneSector: user.ZoneSector,
         Numphone:user.phone,
         roles: user.roles,
         deactivated: user.deactivated,
@@ -141,6 +142,7 @@ export async function createPassword(req, res, next) {
       roles: user.roles,
       Numphone:user.phone,
       deactivated: user.deactivated,
+      ZoneSector:user.ZoneSector
     },
   });
 }

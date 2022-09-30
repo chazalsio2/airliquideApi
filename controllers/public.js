@@ -255,6 +255,7 @@ export async function publicCreateClient(req, res, next) {
       phone,
       serviceType,
       geographicSector,
+      ZoneSector,
       referral,
       city,
       zipcode,
@@ -271,6 +272,7 @@ export async function publicCreateClient(req, res, next) {
       firstname,
       lastname,
       geographicSector,
+      ZoneSector,
       email,
       phone,
       referral,
@@ -321,6 +323,7 @@ export async function publicCreateClient(req, res, next) {
         const project = await Project({
           clientId: client,
           type: serviceType,
+          ZoneSector:ZoneSector
         }).save();
         await sendNewClientWebhook(project);
         //sendNewTrelloCard(project);
@@ -340,6 +343,7 @@ export async function publicCreateClient(req, res, next) {
         const project = await Project({
           clientId: client,
           type: serviceType,
+          ZoneSector:ZoneSector
         }).save(); 
         await sendNewClientWebhook(project);
         //sendNewTrelloCard(project);

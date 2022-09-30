@@ -51,7 +51,14 @@ var schema = new mongoose.Schema(
     deactivated: {
       type: Boolean,
       default: false
-    }
+    },
+    ZoneSector: {
+      type: Array
+    },
+    "ZoneSector.$":{
+      type: String,
+      enum: ["reunion", "maurice", "alsace"]
+    },
   },
   {
     timestamps: true,
