@@ -3,6 +3,7 @@ import Project from "../models/Project";
 import Client from "../models/Client";
 import Insul_r from "../models/Insul_r";
 import User from "../models/User";
+import { generateError, isAdmin, isAdminOrCommercial } from "../lib/utils";
 
 
 export async function matchProperties(req, res, next) {
@@ -153,7 +154,17 @@ export async function matchProperties(req, res, next) {
         ProjectType,
         ProjectSizeDetail
       } = req.body;
- console.log(ProjectType);
+ console.log(req.body);
+
+//  if (!landArea||
+//   !budget||
+//   !livingArea||
+//   !ProjectSize||
+//   !ProjectType||
+//   !ProjectSizeDetail) {
+
+//     return next(generateError( 403));
+//  }
       
     const conditions = {
     };
@@ -270,7 +281,6 @@ export async function matchProperties(req, res, next) {
               } if (ProjectSize === "1"){
                 propertySizeCondition = projects.searchSheet.propertySize <= 2 ;
              } if (ProjectSize === "2"){
-              console.log("2      ");
               propertySizeCondition = projects.searchSheet.propertySize <= 3 ;
             } if (ProjectSize === "3"){
               propertySizeCondition = projects.searchSheet.propertySize <= 4 ;
@@ -297,11 +307,11 @@ export async function matchProperties(req, res, next) {
               // isBudgetMatch + " "+
               // isPropertyAreaMatch+ " "+
               // propertySizeCondition);
-              console.log("_id            " +projects._id) 
-              console.log("isPropertyMatch            " +isPropertyMatch) 
-              console.log("isBudgetMatch             "+isBudgetMatch) 
-                console.log("isPropertyAreaMatch            "+projects.searchSheet.propertyType +"       "+ ProjectType)
-                console.log("propertySizeCondition         "+propertySizeCondition)
+              // console.log("_id            " +projects._id) 
+              // console.log("isPropertyMatch            " +isPropertyMatch) 
+              // console.log("isBudgetMatch             "+isBudgetMatch) 
+              //   console.log("isPropertyAreaMatch            "+projects.searchSheet.propertyType +"       "+ ProjectType)
+              //   console.log("propertySizeCondition         "+propertySizeCondition)
 
               if(ProjectType == AppartMaison(ProjectType)){
                 if (isPropertyMatch &&
@@ -324,7 +334,9 @@ export async function matchProperties(req, res, next) {
               }
         }})
 
-  return res.json({ success: true,project: projectes.length > 0 ? projectes : null ,body:true,search:req.body});
+        console.log(projectes.length);
+
+  return res.json({ status:400, success: true,project: projectes.length > 0 ? projectes : null ,body:true,search:req.body});
       }
 
       

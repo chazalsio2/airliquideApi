@@ -1068,7 +1068,7 @@ export async function acceptDeed(req, res, next) {
         }
       }
     ).exec();
-    console.log(project);
+    ;
     sendNewStatusProject(project);
     new ProjectEvent({
       projectId,
@@ -1105,15 +1105,16 @@ export async function getProjects(req, res, next) {
     const { page = "", mandate = "", order = "desc" } = req.query;
     const pageNumber = Number(page) || 1;
     const selector = {};
-    if (req.user.ZoneSector.indexOf("reunion") !== -1 ) {
-      selector.ZoneSector = "reunion"
-    }
-    if (req.user.ZoneSector.indexOf("maurice") !== -1 ) {
-      selector.ZoneSector = "maurice"
-    }
-    if (req.user.ZoneSector.indexOf("alsace") !== -1 ) {
-      selector.ZoneSector = "alsace"
-    }
+    // if (req.user.ZoneSector.indexOf("reunion") !== -1 ) {
+    //   selector.ZoneSector = "reunion"
+    // }
+    // if (req.user.ZoneSector.indexOf("maurice") !== -1 ) {
+    //   selector.ZoneSector = "maurice"
+    // }
+    // if (req.user.ZoneSector.indexOf("alsace") !== -1 ) {
+    //   selector.ZoneSector = "alsace"
+    // }
+    selector.ZoneSector = {$in:req.user.ZoneSector}
 
     
     if (mandate === "sales") {
