@@ -10,7 +10,7 @@ import {
   changePassword
 } from "./controllers/authentification";
 import {getInsul_rs,deleteInsul_r} from "./controllers/Insul_r"
-import { getUsers, createUser, editUser } from "./controllers/administration";
+import { getUsers, createUser, editUser,ChangeZoneUser } from "./controllers/administration";
 import {
   createSimulation,
   deleteSimulation,
@@ -204,11 +204,11 @@ export default (app) => {
 //Match
 app.post (
   "/match_r",
-    passport.authenticate("jwt", { session: false }),
-    checkAccountDesactivated,
-    checkAdminOrCommercial,
+    // passport.authenticate("jwt", { session: false }),
+    // checkAccountDesactivated,
+    // checkAdminOrCommercial,
     matchProperties,
-    errorHandle
+    // errorHandle
 )
 
   // Authentified
@@ -475,6 +475,14 @@ app.put(
     checkAdmin,
     checkAccountDesactivated,
     editUser,
+    errorHandle
+  );
+  app.put(
+    "/admin/changeZone",
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    ChangeZoneUser,
     errorHandle
   );
 

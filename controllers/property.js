@@ -812,15 +812,15 @@ export async function getProperties(req, res, next) {
       
   }
   
-  if (req.user.ZoneSector.indexOf("reunion") !== -1 ) {
-    selector.ZoneSector = "reunion"
-  }
-  if (req.user.ZoneSector.indexOf("maurice") !== -1 ) {
-    selector.ZoneSector = "maurice"
-  }
-  if (req.user.ZoneSector.indexOf("alsace") !== -1 ) {
-    selector.ZoneSector = "alsace"
-  }
+  // if (req.user.ZoneSector.indexOf("reunion") !== -1 ) {
+    selector.ZoneSector = {$in:req.user.ZoneSector}
+  // }
+  // if (req.user.ZoneSector.indexOf("maurice") !== -1 ) {
+  //   selector.ZoneSector = "maurice"
+  // }
+  // if (req.user.ZoneSector.indexOf("alsace") !== -1 ) {
+  //   selector.ZoneSector = "alsace"
+  // }
   if(type === "user") {
     selector.commercialEmail = req.user.email;
     if (typeBien||PrixMin||PrixMax||city) {

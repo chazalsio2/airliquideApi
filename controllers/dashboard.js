@@ -35,10 +35,21 @@ export async function getDashboardData(req, res, next) {
       "wait_mandate",
       "wait_mandate_validation"
     ];
+    let zone;
+
+    if (req.user.ZoneSector.indexOf("reunion") !== -1 ) {
+      zone = "reunion"
+    }
+    if (req.user.ZoneSector.indexOf("maurice") !== -1 ) {
+      zone = "maurice"
+    }
+    if (req.user.ZoneSector.indexOf("alsace") !== -1 ) {
+      zone = "alsace"
+    }
 
     const salesMandatesCount = await Project.countDocuments(
       isUserAdmin
-        ? { type: "", type: "sales", status: { $nin: notActiveState } }
+        ? { type: "", type: "sales",ZoneSector:{$in:req.user.ZoneSector}, status: { $nin: notActiveState } }
         : {
           commercialId: userId,
           type: "sales",
@@ -48,27 +59,30 @@ export async function getDashboardData(req, res, next) {
 
     const managementMandatesCount = await Project.countDocuments(
       isUserAdmin
-        ? { status: { $nin: notActiveState }, type: "management" }
+        ? { status: { $nin: notActiveState },ZoneSector:{$in:req.user.ZoneSector}, type: "management" }
         : {
           commercialId: userId,
           type: "management",
+          ZoneSector:{$in:req.user.ZoneSector},
           status: { $nin: notActiveState }
         }
     ).exec();
 
     const searchMandatesCount = await Project.countDocuments(
       isUserAdmin
-        ? { status: { $nin: notActiveState }, type: "search" }
+        ? { status: { $nin: notActiveState },ZoneSector:{$in:req.user.ZoneSector}, type: "search" }
         : {
           commercialId: userId,
           type: "search",
+          ZoneSector:{$in:req.user.ZoneSector},
           status: { $nin: notActiveState }
         }
     ).exec();
 
     const propertiesPublishedCount = await Property.countDocuments({
       status: "available",
-      propertyStatus: "forsale"
+      propertyStatus: "forsale",
+      ZoneSector:{$in:req.user.ZoneSector},
       // public: true
     }).exec();
 
@@ -88,10 +102,12 @@ export async function getDashboardData(req, res, next) {
       isUserAdmin
         ? {
           // createdAt: { $gt: moment().startOf("year") },
+          ZoneSector:{$in:req.user.ZoneSector},
           status: { $in: salesAgreementStatus }
         }
         : {
           // createdAt: { $gt: moment().startOf("year") },
+          ZoneSector:{$in:req.user.ZoneSector},
           status: { $in: salesAgreementStatus },
           commercialId: userId
         }
@@ -100,10 +116,12 @@ export async function getDashboardData(req, res, next) {
     const salesDeedCount = await Project.countDocuments(
       isUserAdmin
         ? {
+          ZoneSector:{$in:req.user.ZoneSector},
           completedAt: { $gt: moment().startOf("year") },
           status: "completed"
         }
         : {
+          ZoneSector:{$in:req.user.ZoneSector},
           completedAt: { $gt: moment().startOf("year") },
           status: "completed",
           commercialId: userId
@@ -113,6 +131,7 @@ export async function getDashboardData(req, res, next) {
     // we search for projects still opened (not completed, refused or canceled)
     // or projects created this current year
     const projectSelector = {
+      ZoneSector:{$in:req.user.ZoneSector},
       $or: [
         {
           completedAt: { $gt: moment().startOf("year") },
