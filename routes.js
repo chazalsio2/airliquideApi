@@ -28,6 +28,7 @@ import { getProfile } from "./controllers/account";
 import { searchTerm } from "./controllers/search";
 import {
   getClients,
+  getClientInsulR,
   getClient,
   createClient,
   addProject,
@@ -844,6 +845,14 @@ app.put(
     checkAdminOrCommercial,
     checkAccountDesactivated,
     getClients,
+    errorHandle
+  );
+  app.get(
+    "/clientnsulR",
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    checkAccountDesactivated,
+    getClientInsulR,
     errorHandle
   );
   app.get(
