@@ -36,6 +36,7 @@ export async function getClients(req, res, next) {
       const typesSplitted = types.split(',')
       selector.projectTypes = { $elemMatch: { $in: typesSplitted } }
     }
+    selector.status = { $nin: ["canceled", "completed",'missing_information', 'wait_mandate','wait_mandate_validation']}
     const clientCount = await Client.countDocuments(selector).exec();
 
     const clients = await Client.find(selector, null, {
@@ -103,6 +104,7 @@ export async function getClientInsulR(req, res, next) {
       const typesSplitted = types.split(',')
       selector.projectTypes = { $elemMatch: { $in: typesSplitted } }
     }
+    selector.status = { $in: ['missing_information', 'wait_mandate','wait_mandate_validation'] }
     const clientCount = await Client.countDocuments(selector).exec();
 
     const clients = await Client.find(selector, null, {
@@ -127,8 +129,6 @@ export async function getClientInsulR(req, res, next) {
         ; 
       })
     );
-
-    console.log(clientsWithProjects);
 
     const pageCount = Math.ceil(clientCount / LIMIT_BY_PAGE);
 
