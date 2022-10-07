@@ -10,7 +10,7 @@ import {
   changePassword
 } from "./controllers/authentification";
 import {getInsul_rs,deleteInsul_r} from "./controllers/Insul_r"
-import { getUsers, createUser, editUser } from "./controllers/administration";
+import { getUsers, createUser, editUser,ChangeZoneUser } from "./controllers/administration";
 import {
   createSimulation,
   deleteSimulation,
@@ -28,6 +28,7 @@ import { getProfile } from "./controllers/account";
 import { searchTerm } from "./controllers/search";
 import {
   getClients,
+  getClientInsulR,
   getClient,
   createClient,
   addProject,
@@ -204,11 +205,11 @@ export default (app) => {
 //Match
 app.post (
   "/match_r",
-    passport.authenticate("jwt", { session: false }),
-    checkAccountDesactivated,
-    checkAdminOrCommercial,
+    // passport.authenticate("jwt", { session: false }),
+    // checkAccountDesactivated,
+    // checkAdminOrCommercial,
     matchProperties,
-    errorHandle
+    // errorHandle
 )
 
   // Authentified
@@ -475,6 +476,14 @@ app.put(
     checkAdmin,
     checkAccountDesactivated,
     editUser,
+    errorHandle
+  );
+  app.put(
+    "/admin/changeZone",
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    ChangeZoneUser,
     errorHandle
   );
 
@@ -836,6 +845,14 @@ app.put(
     checkAdminOrCommercial,
     checkAccountDesactivated,
     getClients,
+    errorHandle
+  );
+  app.get(
+    "/clientnsulR",
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    checkAccountDesactivated,
+    getClientInsulR,
     errorHandle
   );
   app.get(

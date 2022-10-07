@@ -117,3 +117,31 @@ export async function editUser(req, res, next) {
     return res.status(500).json({ success: false, reason: e.message });
   }
 }
+export async function ChangeZoneUser(req, res, next) {
+  try {
+    const { roles, displayName, userId, deactivated, phone,ZoneSector } = req.body;
+
+    const user = await User.findOne({ _id: req.user._id }).exec();
+
+    if (!user) {
+      return next(generateError("User not found", 404));
+    }
+
+    await User.updateOne(
+      { _id: req.user._id },
+      { $set: { ZoneSector } }
+    ).exec();
+
+    const userUpdated = await User.findOne(
+      { _id: req.user._id },
+      "email roles createdAt active displayName active deactivated ZoneSector" 
+    ).lean();
+
+    // const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+    // await delay(5000);
+
+    return res.json({ success: true, data: userUpdated });
+  } catch (e) {
+    return res.status(500).json({ success: false, reason: e.message });
+  }
+}

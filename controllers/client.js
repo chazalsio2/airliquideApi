@@ -48,12 +48,87 @@ export async function getClients(req, res, next) {
       clients.map(async (client) => {
         const projects = await Project.find({
           clientId: client._id,
-          status: { $nin: ["canceled", "completed"] }
+          status: { $nin: ["canceled", "completed",'missing_information', 'wait_mandate','wait_mandate_validation'] }
         }).lean();
-        client.projects = projects;
-        return client;
+
+          if(projects.length > 0){
+          client.projects = projects
+          return client;
+
+          }
+        
+        ; 
       })
     );
+
+    console.log(clientsWithProjects);
+
+    const pageCount = Math.ceil(clientCount / LIMIT_BY_PAGE);
+
+    return res.json({
+      success: true,
+      data: { clients: clientsWithProjects, pageCount, total: clientCount }
+    });
+  } catch (e) {
+    return next(generateError(e.message));
+  }
+}
+
+export async function getClientInsulR(req, res, next) {
+  try {
+    const LIMIT_BY_PAGE = 10;
+    const { page = "", filter = "", types } = req.query;
+    const pageNumber = Number(page) || 1;
+    const selector = {
+      $or: [
+        {
+          firstname: { $regex: filter, $options: "i" }
+        },
+        {
+          lastname: { $regex: filter, $options: "i" }
+        },
+        {
+          displayName: { $regex: filter, $options: "i" }
+        },
+        {
+          email: { $regex: filter, $options: "i" }
+        },
+        {
+          phone: { $regex: filter, $options: "i" }
+        }
+      ]
+    };
+
+    if (types) {
+      const typesSplitted = types.split(',')
+      selector.projectTypes = { $elemMatch: { $in: typesSplitted } }
+    }
+    const clientCount = await Client.countDocuments(selector).exec();
+
+    const clients = await Client.find(selector, null, {
+      limit: LIMIT_BY_PAGE,
+      skip: (pageNumber - 1) * LIMIT_BY_PAGE,
+      sort: { createdAt: -1 }
+    }).lean();
+
+    const clientsWithProjects = await Promise.all(
+      clients.map(async (client) => {
+        const projects = await Project.find({
+          clientId: client._id,
+          status: { $in: ['missing_information', 'wait_mandate','wait_mandate_validation'] }
+        }).lean();
+
+          if(projects.length > 0){
+          client.projects = projects
+          return client;
+
+          }
+        
+        ; 
+      })
+    );
+
+    console.log(clientsWithProjects);
 
     const pageCount = Math.ceil(clientCount / LIMIT_BY_PAGE);
 
