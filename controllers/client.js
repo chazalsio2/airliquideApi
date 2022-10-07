@@ -12,6 +12,16 @@ export async function getClients(req, res, next) {
     const LIMIT_BY_PAGE = 10;
     const { page = "", filter = "", types } = req.query;
     const pageNumber = Number(page) || 1;
+
+    const projects = await Project.find({
+      status: { $nin: ["canceled", "completed",'missing_information', 'wait_mandate','wait_mandate_validation',"wait_project_validation"] }
+    }).lean()
+
+    
+
+    const clients5 = projects.map(p => p.clientId)
+
+
     const selector = {
       $or: [
         {
@@ -36,20 +46,25 @@ export async function getClients(req, res, next) {
       const typesSplitted = types.split(',')
       selector.projectTypes = { $elemMatch: { $in: typesSplitted } }
     }
-    selector.status = { $nin: ["canceled", "completed",'missing_information', 'wait_mandate','wait_mandate_validation']}
+
+    selector._id = { $in: clients5 }
+
+    
+        const client = await Client.find(selector, null, {
+          limit: LIMIT_BY_PAGE,
+          skip: (pageNumber - 1) * LIMIT_BY_PAGE,
+          sort: { createdAt: -1 }
+        }).lean();
+  
+
     const clientCount = await Client.countDocuments(selector).exec();
 
-    const clients = await Client.find(selector, null, {
-      limit: LIMIT_BY_PAGE,
-      skip: (pageNumber - 1) * LIMIT_BY_PAGE,
-      sort: { createdAt: -1 }
-    }).lean();
 
     const clientsWithProjects = await Promise.all(
-      clients.map(async (client) => {
+      client.map(async (client) => {
         const projects = await Project.find({
           clientId: client._id,
-          status: { $nin: ["canceled", "completed",'missing_information', 'wait_mandate','wait_mandate_validation'] }
+          status: { $nin: ["canceled", "completed",'missing_information', 'wait_mandate','wait_mandate_validation','wait_project_validation'] }
         }).lean();
 
           if(projects.length > 0){
@@ -62,7 +77,6 @@ export async function getClients(req, res, next) {
       })
     );
 
-    console.log(clientsWithProjects);
 
     const pageCount = Math.ceil(clientCount / LIMIT_BY_PAGE);
 
@@ -80,6 +94,16 @@ export async function getClientInsulR(req, res, next) {
     const LIMIT_BY_PAGE = 10;
     const { page = "", filter = "", types } = req.query;
     const pageNumber = Number(page) || 1;
+
+    const projects = await Project.find({
+      status: { $in: ['missing_information', 'wait_mandate','wait_mandate_validation','wait_project_validation'] }
+    }).lean()
+
+    
+
+    const clients5 = projects.map(p => p.clientId)
+
+
     const selector = {
       $or: [
         {
@@ -104,20 +128,25 @@ export async function getClientInsulR(req, res, next) {
       const typesSplitted = types.split(',')
       selector.projectTypes = { $elemMatch: { $in: typesSplitted } }
     }
-    selector.status = { $in: ['missing_information', 'wait_mandate','wait_mandate_validation'] }
+
+    selector._id = { $in: clients5 }
+
+    
+        const client = await Client.find(selector, null, {
+          limit: LIMIT_BY_PAGE,
+          skip: (pageNumber - 1) * LIMIT_BY_PAGE,
+          sort: { createdAt: -1 }
+        }).lean();
+  
+
     const clientCount = await Client.countDocuments(selector).exec();
 
-    const clients = await Client.find(selector, null, {
-      limit: LIMIT_BY_PAGE,
-      skip: (pageNumber - 1) * LIMIT_BY_PAGE,
-      sort: { createdAt: -1 }
-    }).lean();
 
     const clientsWithProjects = await Promise.all(
-      clients.map(async (client) => {
+      client.map(async (client) => {
         const projects = await Project.find({
           clientId: client._id,
-          status: { $in: ['missing_information', 'wait_mandate','wait_mandate_validation'] }
+          status: { $in: ['missing_information', 'wait_mandate','wait_mandate_validation','wait_project_validation'] }
         }).lean();
 
           if(projects.length > 0){
@@ -130,8 +159,10 @@ export async function getClientInsulR(req, res, next) {
       })
     );
 
-    const pageCount = Math.ceil(clientCount / LIMIT_BY_PAGE);
 
+    const pageCount = Math.ceil(clientCount / LIMIT_BY_PAGE);
+          
+       
     return res.json({
       success: true,
       data: { clients: clientsWithProjects, pageCount, total: clientCount }
