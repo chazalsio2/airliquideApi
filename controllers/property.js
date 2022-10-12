@@ -813,7 +813,7 @@ export async function getProperties(req, res, next) {
   }
   
   // if (req.user.ZoneSector.indexOf("reunion") !== -1 ) {
-    selector.ZoneSector = {$in:req.user.ZoneSector}
+    // selector.ZoneSector = {$in:req.user.ZoneSector}
   // }
   // if (req.user.ZoneSector.indexOf("maurice") !== -1 ) {
   //   selector.ZoneSector = "maurice"
