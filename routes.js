@@ -66,6 +66,7 @@ import {
   uploadDeedForProject,
   refuseAgreement,
   acceptAgreement,
+  nameProject,
   refuseDeed,
   acceptDeed,
   acceptPurchaseOffer,
@@ -941,6 +942,14 @@ app.put(
     checkAdminOrCommercial,
     checkAccountDesactivated,
     editSearchProject,
+    errorHandle
+  );
+  app.put(
+    "/projects/:projectId/name-project",
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    checkAccountDesactivated,
+    nameProject,
     errorHandle
   );
   // app.put(
