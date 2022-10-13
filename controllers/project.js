@@ -251,6 +251,7 @@ export async function refuseMandate(req, res, next) {
 export async function editSalesSheet(req, res, next) {
   try {
     const { projectId } = req.params;
+    console.log(projectId);
 
     const project = await Project.findOne({
       type: "sales",
@@ -1364,6 +1365,29 @@ export async function saveSearchSheet(req, res, next) {
     //   message: `${client.displayName} à compléter sa fiche de recherche : ${process.env.APP_URL}/clients/${client._id}`
     // });
 
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+export async function nameProject(req, res, next) {
+  try{
+    const{projectname} = req.body;
+    const { projectId } = req.params;
+    const project = await Project.findById(projectId).lean();
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+    const implemenattion ={
+      projectname:projectname
+    }
+    await Project.updateOne(
+      { _id: projectId },
+      {
+        $set: implemenattion
+      }
+    ).exec();
     return res.json({ success: true });
   } catch (e) {
     next(generateError(e.message));
