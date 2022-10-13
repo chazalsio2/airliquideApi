@@ -787,6 +787,9 @@ export async function getProperties(req, res, next) {
   const pageNumber = Number(page) || 1;
 
   let selectorPrix;
+
+  console.log(zone);
+
   const selector = {};
 
   if (typeBien||PrixMin||PrixMax||city||zone) {
