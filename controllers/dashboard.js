@@ -1,7 +1,9 @@
 import { generateError, isAdmin } from "../lib/utils";
 import Property from "../models/Property";
 import Project from "../models/Project";
+import Client from "../models/Client";
 
+import User from "../models/User";
 import moment from "moment";
 import _ from "underscore";
 
@@ -151,13 +153,26 @@ export async function getDashboardData(req, res, next) {
 
     const projects = await Project.find(projectSelector).lean();
 
+    const clientEnrichedPromises = projects.map(async (project) => {
+      project.client = (await Client.findById(project.clientId).lean()||await Insul_r.findById(project.clientId).lean())
+      if (project.commercialId) {
+        project.commercial = await User.findById(
+          project.commercialId,
+          "displayName"
+        ).lean();
+      }
+      return project;
+    });
+
+    const projectsEnriched = await Promise.all(clientEnrichedPromises);
+
     const projectsCompleted = _.filter(
-      projects,
+      projectsEnriched,
       (project) => project.status === "completed" && !!project.commissionAmount
     );
 
     const projectsNotCompleted = _.filter(
-      projects,
+      projectsEnriched,
       (project) =>
         project.status !== "completed" &&
         project.status !== "canceled" &&
@@ -198,7 +213,9 @@ export async function getDashboardData(req, res, next) {
         salesDeedCount,
         salesAgreementCount,
         provisionalCommission: Math.round(provisionalCommission * 100) / 100,
-        commission: Math.round(commission * 100) / 100
+        provisionalCommissionProjects:projectsNotCompleted,
+        commission: Math.round(commission * 100) / 100,
+        commissionProjects:projectsCompleted
       }
     });
   } catch (e) {
