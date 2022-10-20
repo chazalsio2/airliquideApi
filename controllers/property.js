@@ -571,6 +571,7 @@ export async function createProperty(req, res, next) {
     // );
 
     const results = await uploadPhotos(photos);
+    console.log(results);
     const propertyData = {
       ZoneSector,
       description:`

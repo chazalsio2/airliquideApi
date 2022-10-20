@@ -295,7 +295,7 @@ export async function createClient(req, res, next) {
 export async function addProject(req, res, next) {
   try {
     const { clientId } = req.params;
-    const { projectType } = req.body;
+    const { projectType,ZoneSector } = req.body;
 
     if (
       !clientId ||
@@ -322,7 +322,7 @@ export async function addProject(req, res, next) {
         return next(generateError("Client not found", 404));
     }
     }
-    const project = await new Project({ clientId, type: projectType }).save();
+    const project = await new Project({ clientId, type: projectType,ZoneSector:ZoneSector }).save();
 
 
     if (client) {
