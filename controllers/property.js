@@ -921,7 +921,7 @@ export async function getProperties(req, res, next) {
     type === "hunting" ||
     ((isSearchClient(req.user||req.body) || isSearchClientVip(req.user||req.body)) && !isAdminOrCommercial(req.user||req.body))
   ) {
-    selector.propertyStatus = "hunting";
+    selector.propertyStatus = "forsale";
     if (typeBien||PrixMin||PrixMax||city) {
       if (typeBien) {
         selector.type=typeBien;

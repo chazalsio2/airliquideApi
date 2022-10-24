@@ -80,6 +80,9 @@ export async function createUser(req, res, next) {
 export async function editUser(req, res, next) {
   try {
     const { roles, displayName, userId, deactivated, phone,ZoneSector } = req.body;
+    if (req.user.roles.indexOf("admin")) {
+      
+    }
     if (!userId || !displayName || !phone) {      
       return next(generateError("Missing fields", 400));
     }
@@ -98,6 +101,12 @@ export async function editUser(req, res, next) {
     }
 
     const user = await User.findOne({ _id: userId }).exec();
+
+    if (user.roles.indexOf("admin")!== -1) {
+      if (roles.indexOf("admin")=== -1) {
+        return next(generateError("Missing fields", 400));
+      }
+    }
 
     if (!user) {
       return next(generateError("User not found", 404));
