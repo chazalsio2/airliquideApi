@@ -638,6 +638,7 @@ export async function returnBackToStatusMandate(project){
   const client = await getClient(project.clientId)
   if (project.commercialId) {conseiller = await User.findById(project.commercialId)};
   const event = await ProjectEvent.findById(evenement);//evenement;
+    console.log("project : ZoneSector", project.ZoneSector)
   axios({
     method:'GET',
     url: process.env.ZAPPIER_WEBHOOK_CLE_DE_VIE,
