@@ -26,6 +26,7 @@ export async function sendAgreementAcceptedWebhook(projectId) {
       commercialPhone: commercial ? commercial.phone : null,
       mandateDate: project.mandateDate ? moment(project.mandateDate).toISOString() : null,
       mandateUrl: project.mandateDoc ? project.mandateDoc.url : null,
+      zoneSector: project.ZoneSector,
       salesAgreementDate: project.salesAgreementDate ? moment(project.salesAgreementDate).toISOString() : null,
       salesAgreementUrl: project.salesAgreementDoc ? project.salesAgreementDoc.url : null
     }
@@ -46,6 +47,7 @@ export async function sendNewDocWebhook(documentId) {
       location:document.url,
       typeProject: projet.type,
       StatusProject: projet.status,
+      zoneSector: projet.ZoneSector,
       projectId: document.projectId || null
     }
   })
@@ -62,6 +64,7 @@ export async function sendNewClientWebhook(projectId) {
       clientFirstName: client.firstname,
       clientEmail: client.email,
       typeProject: project.type,
+      zoneSector: project.ZoneSector
 
     }
   })
@@ -527,6 +530,7 @@ export async function sendNewTrelloCard(projectId) {
           clientEmail: client.email,
           clientPhone: client.phone,
           idProject: project._id,
+          zoneSector: project.ZoneSector,
           typeProject: project.type 
         }
       })
@@ -541,6 +545,7 @@ export async function sendNewTrelloCard(projectId) {
           clientPhone: client.phone,
           idProject: project._id,
           typeProject: project.type,
+          zoneSector: project.ZoneSector,
           cityProject: project.salesSheet.fullville,
           priceProject: project.salesSheet.priceEstimate,
           propertyType: project.salesSheet.propertyType,
@@ -562,6 +567,7 @@ export async function sendNewTrelloCard(projectId) {
           clientEmail: client.email,
           clientPhone: client.phone,
           idProject: project._id,
+          zoneSector: project.ZoneSector,
           typeProject: project.type
         }
       })
@@ -575,6 +581,7 @@ export async function sendNewTrelloCard(projectId) {
           clientEmail: client.email,
           clientPhone: client.phone,
           idProject: project._id,
+          zoneSector: project.ZoneSector,
           typeProject: project.type,
           cityProject: project.searchSheet.fullville,
           priceProject: project.searchSheet.budget,
@@ -601,6 +608,7 @@ export async function sendNewAffecteCommercial(project,commercial){
       e_mail:client.email,
       statuts_affaires: projet.status,
       type:projet.type,
+      zoneSector: project.ZoneSector,
       commercial_name:commercial ? commercial.displayName:"",
       commercial_email:commercial ? commercial.email:""
   }})
@@ -618,6 +626,7 @@ export async function returnBackToStatusMandate(project){
       num_id:projet._id,
       nom_clients:client.displayName,
       e_mail:client.email,
+      zoneSector: project.ZoneSector,
       statuts_affaires: projet.status,
       type:projet.type
   }})
@@ -639,6 +648,7 @@ export async function returnBackToStatusMandate(project){
       statuts_affaires: projet.status,
       date_dernier_statut: moment(projet.updatedAt).format('DD/MM/YYYY'),
       type:projet.type,
+      zoneSector: project.ZoneSector,
       typeEvent: `${event ? event.type ? event.type:"":""}`,
       typeEvent1: `${demandeSignatureOA ? demandeSignatureOA :""}`,
       montant_commission:projet.commissionAmount ? (projet.commissionAmount/100):(""),
