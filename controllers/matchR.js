@@ -293,7 +293,7 @@ export async function matchProperties(req, res, next) {
 
 
             const isPropertyMatch = projects.searchSheet.propertyType === ProjectType;
-            const isBudgetMatch = projects.searchSheet.budget >= budget * 1.15;
+            const isBudgetMatch = projects.searchSheet.budget >= budget * 0.15;
             //const is
             /*console.log(isPropertyMatch &&
               isBudgetMatch &&
