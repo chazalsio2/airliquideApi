@@ -96,10 +96,6 @@ export async function propertyLike(req, res, next) {
 
     const { propertyId } = req.params;
 
-    console.log(like + "  "+propertyId);
-
-    //console.log(propertyId);
-
 
     let likes;
 
