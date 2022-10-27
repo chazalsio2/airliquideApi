@@ -10,6 +10,7 @@ import { uploadFile } from "../lib/aws";
 import Property, { getPropertyType } from "../models/Property";
 import Project from "../models/Project"; 
 import Client from "../models/Client"; 
+import Insul_r from "../models/Insul_r"; 
 import PropertyCont from "../models/PropertyCont"; 
 import { sendMessageToSlack } from "../lib/slack";
 import { checkMatchingForProperty } from "../lib/matching";
@@ -95,10 +96,6 @@ export async function propertyLike(req, res, next) {
     } = req.body;
 
     const { propertyId } = req.params;
-
-    console.log(like + "  "+propertyId);
-
-    //console.log(propertyId);
 
 
     let likes;
@@ -789,16 +786,17 @@ export async function getProperties(req, res, next) {
 
   let selectorPrix;
 
-  console.log(zone);
+  console.log(PrixMax);
+  console.log(PrixMin);
+const stats=1000000000000000000000000000000000000000000000000000;
 
-  const selector = {};
+  const selector = {
+    $and:[ { salesPrice:{$gte: PrixMin ? PrixMin:0} } , { salesPrice:{$lte: PrixMax?PrixMax:stats}}]
+  };
 
   if (typeBien||PrixMin||PrixMax||city||zone) {
     if (typeBien) {
       selector.type=typeBien;
-      }
-      if(PrixMin && PrixMax){
-        selector.salesPrice = {$and: [ { $gte: PrixMin } , { $lte: PrixMax } ]};
       }
     if (PrixMin) {
       if(!PrixMax){
@@ -816,7 +814,6 @@ export async function getProperties(req, res, next) {
       if (zone) {
         selector.ZoneSector=zone;
         }
-      
   }
   
   // if (req.user.ZoneSector.indexOf("reunion") !== -1 ) {
@@ -948,7 +945,6 @@ export async function getProperties(req, res, next) {
         
     }
   }
-
   const propertiesCount = await Property.countDocuments(selector).exec();
   const pageCount = Math.ceil(propertiesCount / LIMIT_BY_PAGE);
   //console.log(selector)
@@ -1005,12 +1001,15 @@ export async function getProperty(req, res, next) {
       return next(generateError("Property not found", 404));
     }
 
-    if (property.projectId){    
+    if (property.projectId){  
       const project = await Project.findOne({ _id: property.projectId }, null).lean();
-      property.project = project;
-      const client = await Client.findOne({ _id: project.clientId}, null).lean();
-      property.client = client;
+      if (project) {
+        property.project = project;
+      
+      const client = (await Client.findOne({ _id: project.clientId}, null).lean()||await Insul_r.findOne({ _id: project.clientId},null).lean());
+        property.client = client;
     }
+  }
 
     if (!isAdminOrCommercial(req.user)) {
       delete property.address;
