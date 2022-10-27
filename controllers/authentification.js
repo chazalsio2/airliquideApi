@@ -117,13 +117,13 @@ export async function createPassword(req, res, next) {
   if (!user) {
     return next(generateError("Invalid token", 404));
   }
-
+//si le mdp est conforme
   if (!password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/)) {
     return next(generateError("Weak password", 401));
   }
-
+//hachage
   const hash = await bcrypt.hash(password, SALT_ROUNDS);
-
+//insertion de mdp 
   User.updateOne(
     { token },
     { $set: { active: true, password: hash, token: uuidv4() } }
