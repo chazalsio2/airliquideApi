@@ -102,8 +102,12 @@ export async function editUser(req, res, next) {
 
     const user = await User.findOne({ _id: userId }).exec();
 
+    console.log(deactivated);
     if (user.roles.indexOf("admin")!== -1) {
       if (roles.indexOf("admin")=== -1) {
+        return next(generateError("Missing fields", 400));
+      }
+      if (deactivated === true) {
         return next(generateError("Missing fields", 400));
       }
     }
