@@ -790,6 +790,15 @@ export async function getProperties(req, res, next) {
   console.log(PrixMin);
 const stats=1000000000000000000000000000000000000000000000000000;
 
+  const val = {
+    page: page,
+    type : type,
+    typeBien: typeBien,
+    PrixMin: PrixMin, 
+    PrixMax: PrixMax,
+    city: city,
+    zone: zone,
+  }
   const selector = {
     $and:[ { salesPrice:{$gte: PrixMin ? PrixMin:0} } , { salesPrice:{$lte: PrixMax?PrixMax:stats}}]
   };
@@ -961,7 +970,7 @@ const stats=1000000000000000000000000000000000000000000000000000;
     //console.log(properties);
     return res.json({
       success: true,
-      data: { properties, pageCount, total: propertiesCount }
+      data: { properties, pageCount, total: propertiesCount ,val}
     });
   } catch (e) {
     next(generateError(e.message));
