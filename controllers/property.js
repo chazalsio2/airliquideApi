@@ -793,7 +793,7 @@ const stats=1000000000000000000000000000000000000000000000000000;
   const val = {
     page: page,
     type : type,
-    typeBien: typeBien,
+    propertyType: typeBien,
     PrixMin: PrixMin, 
     PrixMax: PrixMax,
     city: city,
