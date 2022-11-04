@@ -2,6 +2,8 @@ import { generateError, isAdmin } from "../lib/utils";
 import Property from "../models/Property";
 import Project from "../models/Project";
 import Client from "../models/Client";
+import Insul_r from "../models/Insul_r";
+
 
 import User from "../models/User";
 import moment from "moment";
