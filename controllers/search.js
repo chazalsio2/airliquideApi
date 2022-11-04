@@ -24,36 +24,36 @@ export async function searchTerm(req, res, next) {
     { limit: 50, sort: { createdAt: -1 } }
   ).lean();
 
-  const documentsFormatted = documents.map((doc) => ({
-    _id: doc._id,
-    type: "document",
-    context: "Document",
-    name: doc.name,
-    externalLink: doc.url,
-  }));
+  // const documentsFormatted = documents.map((doc) => ({
+  //   _id: doc._id,
+  //   type: "document",
+  //   context: "Document",
+  //   name: doc.name,
+  //   externalLink: doc.url,
+  // }));
 
-  results.push(...documentsFormatted);
+  // results.push(...documentsFormatted);
 
   // Property
 
-  if (isAdminOrCommercial(req.user)) {
-    const properties = await Property.find(
-      {
-        name: { $regex: t, $options: "i" },
-      },
-      null,
-      { limit: 50, sort: { createdAt: -1 } }
-    ).lean();
+  // if (isAdminOrCommercial(req.user)) {
+  //   const properties = await Property.find(
+  //     {
+  //       name: { $regex: t, $options: "i" },
+  //     },
+  //     null,
+  //     { limit: 50, sort: { createdAt: -1 } }
+  //   ).lean();
 
-    const propertiesFormatted = properties.map((doc) => ({
-      _id: doc._id,
-      type: "property",
-      context: "Bien immobilier",
-      name: doc.name,
-    }));
+  //   const propertiesFormatted = properties.map((doc) => ({
+  //     _id: doc._id,
+  //     type: "property",
+  //     context: "Bien immobilier",
+  //     name: doc.name,
+  //   }));
 
-    results.push(...propertiesFormatted);
-  }
+  //   results.push(...propertiesFormatted);
+  // }
 
   // Project
   // if (isAdminOrCommercial(req.user)) {
@@ -85,19 +85,19 @@ export async function searchTerm(req, res, next) {
         roles: { $in: req.user.roles },
       };
 
-  const trainings = await Training.find(selector, null, {
-    limit: 50,
-    sort: { createdAt: -1 },
-  });
+  // const trainings = await Training.find(selector, null, {
+  //   limit: 50,
+  //   sort: { createdAt: -1 },
+  // });
 
-  const trainingsFormatted = trainings.map((doc) => ({
-    _id: doc._id,
-    type: "training",
-    context: "Formation",
-    name: doc.name,
-  }));
+  // // const trainingsFormatted = trainings.map((doc) => ({
+  // //   _id: doc._id,
+  // //   type: "training",
+  // //   context: "Formation",
+  // //   name: doc.name,
+  // // }));
 
-  results.push(...trainingsFormatted);
+  // results.push(...trainingsFormatted);
 
   if (isAdminOrCommercial(req.user)) {
     const clients = await Client.find(
@@ -120,23 +120,23 @@ export async function searchTerm(req, res, next) {
 
     results.push(...clientsFormatted);
 
-    const folders = await Folder.find(
-      { name: { $regex: t, $options: "i" } },
-      null,
-      {
-        sort: { createdAt: -1 },
-        limit: 50,
-      }
-    ).exec();
+    // const folders = await Folder.find(
+    //   { name: { $regex: t, $options: "i" } },
+    //   null,
+    //   {
+    //     sort: { createdAt: -1 },
+    //     limit: 50,
+    //   }
+    // ).exec();
 
-    const foldersFormatted = folders.map((folder) => ({
-      _id: folder._id,
-      type: "folder",
-      context: "Dossier",
-      name: folder.name,
-    }));
+    // const foldersFormatted = folders.map((folder) => ({
+    //   _id: folder._id,
+    //   type: "folder",
+    //   context: "Dossier",
+    //   name: folder.name,
+    // }));
 
-    results.push(...foldersFormatted);
+    // results.push(...foldersFormatted);
   }
 
   if (isAdmin(req.user)) {
