@@ -139,27 +139,27 @@ export async function searchTerm(req, res, next) {
     // results.push(...foldersFormatted);
   }
 
-  if (isAdmin(req.user)) {
-    const users = await User.find(
-      {
-        $or: [
-          { displayName: { $regex: t, $options: "i" } },
-          { email: { $regex: t, $options: "i" } },
-        ],
-      },
-      null,
-      { limit: 50, sort: { createdAt: -1 } }
-    ).lean();
+  // if (isAdmin(req.user)) {
+  //   const users = await User.find(
+  //     {
+  //       $or: [
+  //         { displayName: { $regex: t, $options: "i" } },
+  //         { email: { $regex: t, $options: "i" } },
+  //       ],
+  //     },
+  //     null,
+  //     { limit: 50, sort: { createdAt: -1 } }
+  //   ).lean();
 
-    const usersFormatted = users.map((user) => ({
-      _id: user._id,
-      type: "user",
-      context: "Utilisateur",
-      name: user.displayName,
-    }));
+  //   const usersFormatted = users.map((user) => ({
+  //     _id: user._id,
+  //     type: "user",
+  //     context: "Utilisateur",
+  //     name: user.displayName,
+  //   }));
 
-    results.push(...usersFormatted);
-  }
+  //   results.push(...usersFormatted);
+  // }
 
   return res.json({ success: true, data: results });
 }
