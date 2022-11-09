@@ -19,7 +19,11 @@ originNameMandate: String,
   name: String,
   url: String,
   num_mandat:String,
-  date_mandat:String
+  date_mandat:String,
+  type_mandat: String ,
+  origine_mandate: String,
+  honoraires_previsionnels: String,
+  commerciaux: String
 });
 
 const SalesSheet = new mongoose.Schema({

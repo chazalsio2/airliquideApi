@@ -2338,7 +2338,7 @@ export async function uploadMandateForProject(req, res, next) {
   try {
     console.log("ajout du mandat")
     const { projectId } = req.params;
-    const { fileName, fileData, contentType,originNameMandate, num_mandat, date_mandat } = req.body;
+    const { fileName, fileData, contentType,originNameMandate, num_mandat, date_mandat, type_mandat, origine_mandate, honoraires_previsionnels, commerciaux } = req.body;
     const user = await User.findById(req.user._id).lean();
 
     const project = await Project.findById(projectId).lean();
@@ -2369,7 +2369,11 @@ export async function uploadMandateForProject(req, res, next) {
       projectId,
       contentType,
       num_mandat: num_mandat,
-      date_mandat: date_mandat
+      date_mandat: date_mandat,
+      type_mandat: type_mandat ,
+      origine_mandate: origine_mandate,
+      honoraires_previsionnels: honoraires_previsionnels,
+      commerciaux: commerciaux
     }).save();
 
     const location = await uploadFile(
@@ -2396,7 +2400,11 @@ export async function uploadMandateForProject(req, res, next) {
             name: document.name,
             url: location,
             num_mandat: num_mandat,
-            date_mandat: date_mandat
+            date_mandat: date_mandat,
+            type_mandat: type_mandat ,
+            origine_mandate: origine_mandate,
+            honoraires_previsionnels: honoraires_previsionnels,
+            commerciaux: commerciaux
           },
           status: "wait_mandate_validation"
         }
@@ -2419,6 +2427,47 @@ export async function uploadMandateForProject(req, res, next) {
     }).save();
     
 
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}export async function postDetailsMandateForProject(req, res, next) {
+  try {
+    console.log("Post details mandat")
+    const { projectId } = req.params;
+    console.log("_____")
+    console.log(projectId)
+    console.log("_____")
+    const { fileName, fileData, contentType,originNameMandate, num_mandat, date_mandat, type_mandat, origine_mandate, honoraires_previsionnels, commerciaux } = req.body;
+    //const user = await User.findById(req.user._id).lean();
+
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    if (project.status !== "wait_mandate") {
+      return next(generateError("Wrong state for project", 403));
+    }
+
+    await Project.updateOne(
+      { _id: projectId },
+      {
+        $set: {
+          mandateDoc: {
+            date_mandat: date_mandat,
+            type_mandat: type_mandat ,
+            origine_mandate: origine_mandate,
+            honoraires_previsionnels: honoraires_previsionnels,
+            commerciaux: commerciaux
+          },
+        }
+      }
+    ).exec();
+    console.log("ici2")
+
+    await sendNewStatusProject(project);
     return res.json({ success: true });
   } catch (e) {
     next(generateError(e.message));

@@ -89,7 +89,7 @@ import {
   editSalesSheet,
   backToStatus,
   preValidationAllStep,
-  uploadMandateForProjectExterne
+  uploadMandateForProjectExterne, postDetailsMandateForProject
 } from "./controllers/project";
 import {matchProperties} from "./controllers/matchR";
 import {
@@ -1067,6 +1067,11 @@ app.put(
   app.post(
     "/projects/:projectId/mandateExterne",
     uploadMandateForProjectExterne,
+    errorHandle
+  );
+  app.post(
+    "/projects/:projectId/mandateDetails",
+      postDetailsMandateForProject,
     errorHandle
   );
 
