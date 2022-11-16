@@ -2439,7 +2439,6 @@ export async function uploadMandateForProject(req, res, next) {
     console.log(projectId)
     console.log("_____")
     const { fileName, fileData, contentType,originNameMandate, num_mandat, date_mandat, type_mandat, origine_mandate, honoraires_previsionnels, commerciaux } = req.body;
-    //const user = await User.findById(req.user._id).lean();
 
     const project = await Project.findById(projectId).lean();
 
