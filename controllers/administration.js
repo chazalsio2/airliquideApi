@@ -77,7 +77,6 @@ export async function createUser(req, res, next) {
         message: `Un nouvel utilisateur a été ajouté : ${user.displayName} (${roles})
           Merci de l'ajouter dans les automatisations lorsque celui-ci aura intégré l'espace Slack et Trello de Vision-R.
           <${lien_auto}|Completer le formulaire>`
-
       });
     }else {
       sendMessageToSlack({
