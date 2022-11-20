@@ -786,8 +786,7 @@ export async function getProperties(req, res, next) {
 
   let selectorPrix;
 
-  console.log(PrixMax);
-  console.log(PrixMin);
+  console.log(req.query);
 const stats=1000000000000000000000000000000000000000000000000000;
 
   const val = {

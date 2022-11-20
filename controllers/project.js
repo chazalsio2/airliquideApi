@@ -1004,7 +1004,6 @@ export async function acceptAgreement(req, res, next) {
       ).exec();
     }else{
 
-
     await Project.updateOne(
       { _id: projectId },
       {
@@ -1026,7 +1025,7 @@ export async function acceptAgreement(req, res, next) {
       message: `Le compromis de vente pour le mandat de ${project.type === "search" ? "recherche" : "vente"
         } du client ${client.displayName} a été accepté par ${user.displayName}: ${process.env.APP_URL
         }/projects/${projectId}`
-    });//validation compromis  
+    });
 
     if (project.type === "sales") {
       sendSalesAgreementAcceptedForSalesProject(client,com?com:null);
