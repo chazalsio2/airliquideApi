@@ -2,6 +2,7 @@ import User from "../models/User";
 import _ from "underscore";
 import { generateError } from "../lib/utils";
 import { sendWelcomeEmail } from "../lib/email";
+import {sendMessageToSlack} from "../lib/slack";
 
 const allowedRoles = [
   "admin",
@@ -69,6 +70,19 @@ export async function createUser(req, res, next) {
   try {
     await new User({ email, roles, displayName, phone ,ZoneSector}).save();
     const user = await User.findOne({ email }).exec();
+    if(roles.includes("commercial_agent") ){
+      const lien_auto = encodeURI(`https://tally.so/r/mVp0ON?nom=${user.displayName}&mail=${user.email}`)
+          // "https://tally.so/r/mVp0ON?nom="+user.displayName+"&mail="+user.email
+      sendMessageToSlack({
+        message: `Un nouvel utilisateur a été ajouté : ${user.displayName} (${roles})
+          Merci de l'ajouter dans les automatisations lorsque celui-ci aura intégré l'espace Slack et Trello de Vision-R.
+          <${lien_auto}|Completer le formulaire>`
+      });
+    }else {
+      sendMessageToSlack({
+        message: `Un nouvel utilisateur a été ajouté ${user.displayName} (${roleToAdd})`
+      });
+    }
     sendWelcomeEmail(user);
   } catch (e) {
     return res.status(500).json({ success: false, reason: e.message });
