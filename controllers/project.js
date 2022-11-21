@@ -2472,6 +2472,34 @@ export async function uploadMandateForProject(req, res, next) {
     next(generateError(e.message));
   }
 }
+export async function postTrelloLinkToProject(req, res, next) {
+  try {
+    console.log("Post details mandat")
+    const { projectId } = req.params;
+    const { trelloLink } = req.body;
+
+    const project = await Project.findById(projectId).lean();
+
+    if (!project) {
+      return next(generateError("Project not found", 404));
+    }
+
+    await Project.updateOne(
+      { _id: projectId },
+      {
+        $set: {
+          trelloLink: trelloLink
+        }
+      }
+    ).exec();
+    console.log("ici2")
+
+    await sendNewStatusProject(project);
+    return res.json({ success: true });
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
 export async function uploadMandateForProjectExterne(req, res, next) {
   try {
     console.log("ajout du mandat")
