@@ -2094,7 +2094,16 @@ export async function acceptProject(req, res, next) {
     const { projectId } = req.params;
 
     const project = await Project.findById(projectId).lean();
-    const client = (await Client.findById(project.clientId).lean()||await Insul_r.findById(project.clientId).lean());
+
+    const insul = await Insul_r.findById(project.clientId).lean();
+
+    if(insul){
+      await new Client(insul).save();
+      await Insul_r.deleteOne({ _id: project.clientId }).exec();
+    }
+
+    const client = (await Client.findById(project.clientId).lean());
+
     if (!project) {
       return next(generateError("Project not found", 404));
     }
