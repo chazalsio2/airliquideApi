@@ -89,7 +89,7 @@ import {
   editSalesSheet,
   backToStatus,
   preValidationAllStep,
-  uploadMandateForProjectExterne, postDetailsMandateForProject
+  uploadMandateForProjectExterne, postDetailsMandateForProject, postTrelloLinkToProject
 } from "./controllers/project";
 import {matchProperties} from "./controllers/matchR";
 import {
@@ -1072,6 +1072,11 @@ app.put(
   app.post(
     "/projects/:projectId/mandateDetails",
       postDetailsMandateForProject,
+    errorHandle
+  );
+  app.post(
+    "/projects/:projectId/trelloLink",
+      postTrelloLinkToProject,
     errorHandle
   );
 

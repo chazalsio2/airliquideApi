@@ -198,6 +198,10 @@ const schema = new mongoose.Schema(
       type: String,
       enum: ["reunion", "maurice", "alsace"]
     },
+    trelloLink:{
+      type: String,
+      required: false
+    },
     searchSheet: {
       type: SearchSheet,
       required: false,
