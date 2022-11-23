@@ -169,6 +169,15 @@ const SearchSheet = new mongoose.Schema({
   },
   budget: {
     type: Number
+  },
+  Typmoney: {
+    type: String
+  },
+  budget_$: {
+    type: Number
+  },
+  budget_Rs: {
+    type: Number
   }
 });
 
