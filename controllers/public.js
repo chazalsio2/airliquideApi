@@ -57,7 +57,10 @@ export async function publicCreateForm(req, res, next) {
         swimmingpool,
         varangue,
         delay,
-        budget
+        budget,
+        Typmoney,
+        budget_$,
+        budget_Rs
       } = req.body;
 
       const searchSheet = {
@@ -74,6 +77,9 @@ export async function publicCreateForm(req, res, next) {
         searchSector,
         delay,
         budget,
+        Typmoney,
+        budget_$,
+         budget_Rs,
         searchSectorCities: searchSectorCities || []
       };
 
@@ -182,7 +188,10 @@ export async function publicCreateFormExtern(req, res, next) {
         swimmingpool,
         varangue,
         delay,
-        budget
+        budget,
+        Typmoney,
+        budget_$,
+        budget_Rs
       } = req.body;
 
       const searchSheet = {
@@ -198,6 +207,9 @@ export async function publicCreateFormExtern(req, res, next) {
         searchSector,
         delay,
         budget,
+        Typmoney,
+        budget_$,
+        budget_Rs,
         searchSectorCities: searchSectorCities || []
       };
 

@@ -1301,7 +1301,10 @@ export async function saveSearchSheet(req, res, next) {
       swimmingpool,
       varangue,
       delay,
-      budget
+      budget,
+      Typmoney,
+      budget_$,
+      budget_Rs
     } = req.body;
 
     const { projectId } = req.params;
@@ -1325,7 +1328,7 @@ export async function saveSearchSheet(req, res, next) {
 
 
     const searchSheet = {
-      propertySize :propertySize === "bigger" ? Number(propertySizeDetail) : Number(propertySize),
+      propertySize :propertySize ? propertySize === "bigger" ? Number(propertySizeDetail) : Number(propertySize):null,
       investmentType:
         investmentType === "other" ? otherInvestmentType : investmentType,
         propertyType,
@@ -1338,6 +1341,9 @@ export async function saveSearchSheet(req, res, next) {
       searchSector,
       delay,
       budget,
+      Typmoney,
+      budget_$,
+      budget_Rs,
       searchSectorCities: searchSectorCities || []
     };
 
@@ -1413,7 +1419,10 @@ export async function editSearchProject(req, res, next) {
       delay,
       investalone,
       desiredgrossyield,
-      budget
+      budget,
+      Typmoney,
+      budget_$,
+      budget_Rs
     } = req.body;
     console.log(propertySize );
 
@@ -1428,7 +1437,7 @@ export async function editSearchProject(req, res, next) {
     const modifier = {
       
       searchSheet: {
-      propertySize :propertySize === "bigger" ? Number(propertySizeDetail) : Number(propertySize),
+      propertySize :propertySize ?propertySize === "bigger" ? Number(propertySizeDetail) : Number(propertySize):null,
 
         investmentType:
           investmentType === "other" ? otherInvestmentType : investmentType,
@@ -1441,6 +1450,9 @@ export async function editSearchProject(req, res, next) {
         searchSector,
         delay,
         budget,
+        Typmoney,
+        budget_$,
+        budget_Rs,
         searchSectorCities: searchSectorCities || []
       }
     };
