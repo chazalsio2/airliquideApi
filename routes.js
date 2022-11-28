@@ -137,6 +137,7 @@ import {
   editContact,
   blackListeContact
 } from "./controllers/contact";
+import {createAnnonce, getAnnonces} from "./controllers/annonce";
 
 const checkAdmin = (req, res, next) => checkRoles("admin", req, res, next);
 const checkAdminOrCommercial = (req, res, next) =>
@@ -1078,6 +1079,22 @@ app.put(
     "/projects/:projectId/trelloLink",
       postTrelloLinkToProject,
     errorHandle
+  );
+  app.post(
+      "/annonce",
+      passport.authenticate("jwt", { session: false }),
+      checkAdminOrCommercial,
+      checkAccountDesactivated,
+      createAnnonce,
+      errorHandle
+  );
+  app.get(
+      "/annonces",
+      passport.authenticate("jwt", { session: false }),
+      checkAdminOrCommercial,
+      checkAccountDesactivated,
+      getAnnonces,
+      errorHandle
   );
 
   app.post(
