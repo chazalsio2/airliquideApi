@@ -1,5 +1,5 @@
 import _ from "underscore";
-import Project from "../models/Project";
+import Property from "../models/Property";
 import { generateError, isAdmin, isAdminOrCommercial } from "../lib/utils";
 import Annonce from "../models/Annonce";
 
@@ -12,178 +12,148 @@ import Annonce from "../models/Annonce";
  */
 export async function createAnnonce(req, res, next) {
     try {
-        // const { projectId } = req.params;
-        // const project = await Project.findById(projectId).lean();
-        // if (!project) {
-        //     return next(generateError("Project not found", 404));
-        // }
+        const { bienId } = req.params;
+        const biens = await Property.findById(bienId).lean();
 
-        const {
-            reference,
-            published,
-            titre,
-            titre_anglais,
-            texte,
-            texte_anglais,
-            date_saisie,
-            visite_virtuelle,
-            photo,
-            //bien
-            b_code_type,
-            b_pays,
-            b_code_postal_reel,
-            b_ville_reelle,
-            b_code_postal,
-            b_ville,
-            b_ville_insee,
-            b_quartier,
-            b_departement,
-            b_surface,
-            b_nb_pieces_logement,
-            b_surface_sejour,
-            b_nombre_de_chambres,
-            b_annee_construction,
-            b_nb_salles_de_bain,
-            b_nombre_etages,
-            b_nombre_stationnement,
-            b_type_stationnement,
-            b_balcon,
-            b_d_dpe_valeur_ges,
-            b_d_dpe_etiquette_ges,
-            b_d_dpe_valeur_conso,
-            b_d_dpe_etiquette_conso,
-            b_negociateur_nom,
-            b_negociateur_prenom,
-            b_negociateur_adresse,
-            b_negociateur_cp,
-            b_negociateur_ville,
-            b_negociateur_telephone,
-            b_negociateur_email,
-            b_nom_residence,
-            b_wc_independant,
-            // Prestation
-            p_type,
-            p_mandat_type,
-            p_prix,
+        if (!biens) {
+            return next(generateError("Property not found", 404));
+        }
 
-        } = req.body;
-
-
+        const type = ()=> {
+           if(biens.type === "Appartement"){
+            return "1100"
+           }
+           if(biens.type === "Maison"){
+            return "1200"
+           }
+           if(biens.type === "Terrain de construction"){
+            return "1300"
+           }
+           if(biens.type === "Local commercial"){
+            return "2430"
+           }
+           if(biens.type === "Immeuble"){
+            return "1500"
+           }
+           if(biens.type === "Garage / Parking"){
+            return "1421"
+           }
+        }
 
         const photos = {};
-        if (photo) {
-            photos.photo = photo;
+        if (biens.photos) {
+            photos.photo = biens.photos;
         }
         const bien = {};
-        if (b_code_type) {
-            bien.b_code_type = b_code_type;
+        if (biens.type) {
+            bien.b_code_type = type();
         }
-        if (b_pays) {
-            bien.b_pays = b_pays;
+        if (biens.ZoneSector) {
+            bien.b_pays = biens.ZoneSector;
         }
-        if (b_code_postal_reel) {
-            bien.b_code_postal_reel = b_code_postal_reel;
-        }if (b_ville) {
-            bien.b_ville = b_ville;
+        if (biens.code_postale) {
+            bien.b_code_postal_reel = biens.code_postale;
+        }if (biens.city) {
+            bien.b_ville = biens.city;
         }
-        if (b_ville_reelle) {
-            bien.b_ville_reelle = b_ville_reelle;
+        if (biens.city) {
+            bien.b_ville_reelle = biens.city;
         }
-        if (b_ville_reelle) {
-            bien.b_ville_reelle = b_ville_reelle;
+        if (biens.code_postale) {
+            bien.b_code_postal = biens.code_postale;
         }
-        if (b_code_postal) {
-            bien.b_code_postal = b_code_postal;
+        if (biens.city) {
+            bien.b_ville_insee = biens.city;
         }
-        if (b_ville_insee) {
-            bien.b_ville_insee = b_ville_insee;
+        // if (b_quartier) {
+        //     bien.b_quartier = b_quartier;
+        // }
+        // if (b_departement) {
+        //     bien.b_departement = b_departement;
+        // }
+        if (biens.livingArea||biens.landArea) {
+            bien.b_surface = biens.livingArea||biens.landArea;
         }
-        if (b_quartier) {
-            bien.b_quartier = b_quartier;
+        // a voir avec nombre de cambre 
+        // if (biens.numberOfRooms) {
+        //     bien.b_nb_pieces_logement = biens.numberOfRooms;
+        // }
+        // if (b_surface_sejour) {
+        //     bien.b_surface_sejour = b_surface_sejour;
+        // }
+        if (biens.numberOfRooms) {
+            bien.b_nombre_de_chambres = biens.numberOfRooms;
         }
-        if (b_departement) {
-            bien.b_departement = b_departement;
+        if (biens.yearOfConstruction) {
+            bien.b_annee_construction = biens.yearOfConstruction;
         }
-        if (b_surface) {
-            bien.b_surface = b_surface;
+        //donneé manquante
+        // if (b_nb_salles_de_bain) {
+        //     bien.b_nb_salles_de_bain = b_nb_salles_de_bain;
+        // }
+        if (biens.floor) {
+            bien.b_nombre_etages = biens.floor;
         }
-        if (b_nb_pieces_logement) {
-            bien.b_nb_pieces_logement = b_nb_pieces_logement;
-        }
-        if (b_surface_sejour) {
-            bien.b_surface_sejour = b_surface_sejour;
-        }
-        if (b_nombre_de_chambres) {
-            bien.b_nombre_de_chambres = b_nombre_de_chambres;
-        }
-        if (b_annee_construction) {
-            bien.b_annee_construction = b_annee_construction;
-        }
-        if (b_nb_salles_de_bain) {
-            bien.b_nb_salles_de_bain = b_nb_salles_de_bain;
-        }
-        if (b_nombre_etages) {
-            bien.b_nombre_etages = b_nombre_etages;
-        }
-        if (b_nombre_stationnement) {
-            bien.b_nombre_stationnement = b_nombre_stationnement;
-        }
-        if (b_type_stationnement) {
-            bien.b_type_stationnement = b_type_stationnement;
-        }
-        if (b_balcon) {
-            bien.b_balcon = b_balcon;
-        }
-        bien.diagnostiques = {};
-        if (b_d_dpe_valeur_ges) {
-            bien.diagnostiques.b_d_dpe_valeur_ges = b_d_dpe_valeur_ges;
-        }
-        if (b_d_dpe_etiquette_ges) {
-            bien.diagnostiques.b_d_dpe_etiquette_ges = b_d_dpe_etiquette_ges;
-        }
-        if (b_d_dpe_valeur_conso) {
-            bien.diagnostiques.b_d_dpe_valeur_conso = b_d_dpe_valeur_conso;
-        }
-        if (b_d_dpe_etiquette_conso) {
-            bien.diagnostiques.b_d_dpe_etiquette_conso = b_d_dpe_etiquette_conso;
-        }
-        if (b_negociateur_nom) {
-            bien.b_negociateur_nom = b_negociateur_nom;
-        }
-        if (b_negociateur_prenom) {
-            bien.b_negociateur_prenom = b_negociateur_prenom;
-        }
-        if (b_negociateur_adresse) {
-            bien.b_negociateur_adresse = b_negociateur_adresse;
-        }
-        if (b_negociateur_cp) {
-            bien.b_negociateur_cp = b_negociateur_cp;
-        }
-        if (b_negociateur_ville) {
-            bien.b_negociateur_ville = b_negociateur_ville;
-        }
-        if (b_negociateur_telephone) {
-            bien.b_negociateur_telephone = b_negociateur_telephone;
-        }
-        if (b_negociateur_email) {
-            bien.b_negociateur_email = b_negociateur_email;
-        }
-        if (b_nom_residence) {
-            bien.b_nom_residence = b_nom_residence;
-        }
-        if (b_wc_independant) {
-            bien.b_wc_independant = b_wc_independant;
-        }
+        //donneé manquante
+        // if (b_nombre_stationnement) {
+        //     bien.b_nombre_stationnement = b_nombre_stationnement;
+        // }
+        // if (b_type_stationnement) {
+        //     bien.b_type_stationnement = b_type_stationnement;
+        // }
+        // if (b_balcon) {
+        //     bien.b_balcon = b_balcon;
+        // }
+        // bien.diagnostiques = {};
+        // if (b_d_dpe_valeur_ges) {
+        //     bien.diagnostiques.b_d_dpe_valeur_ges = b_d_dpe_valeur_ges;
+        // }
+        // if (b_d_dpe_etiquette_ges) {
+        //     bien.diagnostiques.b_d_dpe_etiquette_ges = b_d_dpe_etiquette_ges;
+        // }
+        // if (b_d_dpe_valeur_conso) {
+        //     bien.diagnostiques.b_d_dpe_valeur_conso = b_d_dpe_valeur_conso;
+        // }
+        // if (b_d_dpe_etiquette_conso) {
+        //     bien.diagnostiques.b_d_dpe_etiquette_conso = b_d_dpe_etiquette_conso;
+        // }
+        // if (b_negociateur_nom) {
+        //     bien.b_negociateur_nom = b_negociateur_nom;
+        // }
+        // if (b_negociateur_prenom) {
+        //     bien.b_negociateur_prenom = b_negociateur_prenom;
+        // }
+        // if (b_negociateur_adresse) {
+        //     bien.b_negociateur_adresse = b_negociateur_adresse;
+        // }
+        // if (b_negociateur_cp) {
+        //     bien.b_negociateur_cp = b_negociateur_cp;
+        // }
+        // if (b_negociateur_ville) {
+        //     bien.b_negociateur_ville = b_negociateur_ville;
+        // }
+        // if (b_negociateur_telephone) {
+        //     bien.b_negociateur_telephone = b_negociateur_telephone;
+        // }
+        // if (b_negociateur_email) {
+        //     bien.b_negociateur_email = b_negociateur_email;
+        // }
+        // if (b_nom_residence) {
+        //     bien.b_nom_residence = b_nom_residence;
+        // }
+        // if (b_wc_independant) {
+        //     bien.b_wc_independant = b_wc_independant;
+        // }
 
         const prestation = {};
-        if (p_type) {
-            prestation.p_type = p_type;
+        if (biens.type) {
+            prestation.p_type = biens.type;
         }
-        if (p_mandat_type) {
-            prestation.p_mandat_type = p_mandat_type;
+        if (biens.propertyStatus) {
+            prestation.p_mandat_type = `${biens.propertyStatus === "forsale" ? "Vente" : "Chasse"}`;
         }
-        if (p_prix) {
-            prestation.b_code_type = b_code_type;
+        if (biens.salesPrice) {
+            prestation.p_prix = biens.salesPrice;
         }
 
         const AnnonceData = {
@@ -200,9 +170,9 @@ export async function createAnnonce(req, res, next) {
             prestation // OBJET
         };
         //console.log( "AnnonceData :", AnnonceData)
-        await new Annonce(AnnonceData).save();
+        const annonce = await new Annonce(AnnonceData).save();
 
-        return res.json({ success: true,data: { completed: true } });
+        return res.json({ success: true,data: { completed: true,annonce:annonce } });
     } catch (e) {
         next(generateError(e.message));
     }

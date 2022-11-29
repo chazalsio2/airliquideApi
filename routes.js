@@ -1081,10 +1081,10 @@ app.put(
     errorHandle
   );
   app.post(
-      "/annonce",
-      passport.authenticate("jwt", { session: false }),
-      checkAdminOrCommercial,
-      checkAccountDesactivated,
+      "/annonce/:bienId",
+      // passport.authenticate("jwt", { session: false }),
+      // checkAdminOrCommercial,
+      // checkAccountDesactivated,
       createAnnonce,
       errorHandle
   );
