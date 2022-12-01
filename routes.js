@@ -1082,9 +1082,9 @@ app.put(
   );
   app.post(
       "/annonce/:bienId",
-      // passport.authenticate("jwt", { session: false }),
-      // checkAdminOrCommercial,
-      // checkAccountDesactivated,
+      passport.authenticate("jwt", { session: false }),
+      checkAdminOrCommercial,
+      checkAccountDesactivated,
       createAnnonce,
       errorHandle
   );
