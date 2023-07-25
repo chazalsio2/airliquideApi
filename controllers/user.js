@@ -12,7 +12,7 @@ export async function getUser(req, res, next) {
 
     const user = await User.findById(
       userId,
-      "displayName roles email active deactivated ZoneSector"
+      "displayName roles email active deactivated ZoneSector _id"
     ).lean();
 
     if (!userId) {

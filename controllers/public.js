@@ -1,7 +1,7 @@
 import moment from "moment";
 
 import { generateError } from "../lib/utils";
-import Client from "../models/Client";
+import Client from "../models/Material";
 import Insul_r from "../models/Insul_r";
 import Project, { projectTypes } from "../models/Project";
 import { sendNewClientEmail } from "../lib/email";
@@ -170,7 +170,7 @@ export async function publicCreateFormExtern(req, res, next) {
       sendNewClientEmail(client);
 
       sendMessageToSlack({
-        message: `L'insul-R' ${client.firstname} ${client.lastname} a été ajouté : ${process.env.APP_URL}/clients/${client._id}`,
+        message: `L'Materiel' ${client.firstname} ${client.lastname} a été ajouté : ${process.env.APP_URL}/clients/${client._id}`,
       });
       const {
         propertyType,

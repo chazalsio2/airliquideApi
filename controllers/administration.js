@@ -31,7 +31,7 @@ export async function getUsers(req, res, next) {
   const userCount = await User.countDocuments(selector).exec();
   const users = await User.find(
     selector,
-    "email roles createdAt active displayName phone active deactivated ZoneSector",
+    "email roles createdAt active displayName phone active deactivated ZoneSector _id",
     {
       limit: LIMIT_BY_PAGE,
       skip: (pageNumber - 1) * LIMIT_BY_PAGE,
@@ -69,21 +69,21 @@ export async function createUser(req, res, next) {
 
   try {
     await new User({ email, roles, displayName, phone ,ZoneSector}).save();
-    const user = await User.findOne({ email }).exec();
-    if(roles.includes("commercial_agent") ){
-      const lien_auto = encodeURI(`https://tally.so/r/mVp0ON?nom=${user.displayName}&mail=${user.email}`)
-          // "https://tally.so/r/mVp0ON?nom="+user.displayName+"&mail="+user.email
-      sendMessageToSlack({
-        message: `Un nouvel utilisateur a été ajouté : ${user.displayName} (${roles})
-          Merci de l'ajouter dans les automatisations lorsque celui-ci aura intégré l'espace Slack et Trello de Vision-R.
-          <${lien_auto}|Completer le formulaire>`
-      });
-    }else {
-      sendMessageToSlack({
-        message: `Un nouvel utilisateur a été ajouté ${user.displayName} (${roleToAdd})`
-      });
-    }
-    sendWelcomeEmail(user);
+    // const user = await User.findOne({ email }).exec();
+    // // if(roles.includes("commercial_agent") ){
+    // //   // const lien_auto = encodeURI(`https://tally.so/r/mVp0ON?nom=${user.displayName}&mail=${user.email}`)
+    // //   //     // "https://tally.so/r/mVp0ON?nom="+user.displayName+"&mail="+user.email
+    // //   // sendMessageToSlack({
+    // //   //   message: `Un nouvel utilisateur a été ajouté : ${user.displayName} (${roles})
+    // //   //     Merci de l'ajouter dans les automatisations lorsque celui-ci aura intégré l'espace Slack et Trello de Vision-R.
+    // //   //     <${lien_auto}|Completer le formulaire>`
+    // //   // });
+    // // }else {
+    // //   sendMessageToSlack({
+    // //     message: `Un nouvel utilisateur a été ajouté ${user.displayName} (${roleToAdd})`
+    // //   });
+    // // }
+    // sendWelcomeEmail(user);
   } catch (e) {
     return res.status(500).json({ success: false, reason: e.message });
   }
@@ -137,7 +137,7 @@ export async function editUser(req, res, next) {
 
     const userUpdated = await User.findOne(
       { _id: userId },
-      "email roles createdAt active displayName active deactivated ZoneSector" 
+      "email roles createdAt active displayName active deactivated ZoneSector _id" 
     ).lean();
     return res.json({ success: true, data: userUpdated });
   } catch (e) {

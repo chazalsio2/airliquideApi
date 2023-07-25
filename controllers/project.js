@@ -2,7 +2,7 @@ import moment from "moment";
 import { generateError, isAdmin, isAdminOrCommercial } from "../lib/utils";
 import User from "../models/User";
 import Project from "../models/Project";
-import Client from "../models/Client";
+import Client from "../models/Material";
 import DossierNotaire from "../models/DossierNotaire";
 import Document from "../models/Document";
 import ProjectEvent from "../models/ProjectEvent";

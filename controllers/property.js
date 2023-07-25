@@ -6,16 +6,16 @@ import {
 } from "../lib/utils";
 import { uploadPhotos } from "../lib/cloudinary";
 import { uploadFile } from "../lib/aws";
-
+import {createAnnonce, getAnnonces} from "./annonce";
 import Property, { getPropertyType } from "../models/Property";
 import Project from "../models/Project"; 
-import Client from "../models/Client"; 
+import Client from "../models/Material"; 
 import Insul_r from "../models/Insul_r"; 
 import PropertyCont from "../models/PropertyCont"; 
 import { sendMessageToSlack } from "../lib/slack";
 import { checkMatchingForProperty } from "../lib/matching";
 import {sendNewDProprieteWebhook,sendMatchProjectEmail} from '../services/webhook.service';
-
+import {sendAnbonceJSON} from '../lib/email'
 
 const LIMIT_BY_PAGE = 12;
 
@@ -418,11 +418,15 @@ export async function updatePropertyVisibility(req, res, next) {
       throw new Error("Property not found");
     }
 
+    await createAnnonce(propertyId,req.body.public)
+
     await Property.updateOne(
       { _id: propertyId },
       { $set: { public: !!req.body.public } }
     ).exec();
 
+    sendAnbonceJSON()
+    
     /*if (req.body.public && property.propertyStatus === "forsale")  {
       try {
         checkMatchingForProperty(property._id);

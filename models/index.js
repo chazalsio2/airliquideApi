@@ -1,5 +1,5 @@
 export { default as Insul_r } from './Insul_r'
-export { default as Client } from './Client'
+export { default as Client } from './Material'
 export { default as Contact } from './Contact'
 export { default as ContactCategory } from './ContactCategory'
 export { default as Document } from './Document'

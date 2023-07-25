@@ -220,7 +220,7 @@ const schema = new mongoose.Schema(
       type: Array
     },
     "matchedProperties.$": {
-      type: Types.ObjectId
+      type: mongoose.Types.ObjectId
     },
     salesSheet: {
       type: SalesSheet,
@@ -272,7 +272,7 @@ const schema = new mongoose.Schema(
       required: false
     },
     mandateDocId: {
-      type: Types.ObjectId,
+      type: mongoose.Types.ObjectId,
       required: false
     },
     mandateDoc: {
@@ -292,19 +292,19 @@ const schema = new mongoose.Schema(
       required: false
     },
     salesAgreementDocId: {
-      type: Types.ObjectId,
+      type: mongoose.Types.ObjectId,
       required: false
     },
     salesDeedDocId: {
-      type: Types.ObjectId,
+      type: mongoose.Types.ObjectId,
       required: false
     },
     purchaseOfferDocId: {
-      type: Types.ObjectId,
+      type: mongoose.Types.ObjectId,
       required: false
     },
     loanOfferDocId: {
-      type: Types.ObjectId,
+      type: mongoose.Types.ObjectId,
       required: false
     },
     salesDeedDoc: {

@@ -67,13 +67,13 @@ export async function login(req, res, next) {
     return res.json({
       success: true,
       data: {
+        _id:user._id,
         jwt: jwtGenerated,
         displayName: user.displayName,
         ZoneSector: user.ZoneSector,
         Numphone:user.phone,
         roles: user.roles,
         deactivated: user.deactivated,
-        id:user._id,
         mail: user.email,
       },
     });
@@ -137,6 +137,7 @@ export async function createPassword(req, res, next) {
   return res.json({
     success: true,
     data: {
+      _id:user._id,
       jwt: jwtGenerated,
       displayName: user.displayName,
       roles: user.roles,

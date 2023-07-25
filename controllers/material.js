@@ -1,5 +1,6 @@
 import moment from "moment";
-import Client from "../models/Client";
+import Material from "../models/Material";
+import EquipmentAssignments from "../models/EquipmentAssignments";
 import Insul_r from "../models/Insul_r";
 import User from "../models/User";
 import { generateError } from "../lib/utils";
@@ -50,14 +51,14 @@ export async function getClients(req, res, next) {
     selector._id = { $in: clients5 }
 
     
-        const client = await Client.find(selector, null, {
+        const client = await Material.find(selector, null, {
           limit: LIMIT_BY_PAGE,
           skip: (pageNumber - 1) * LIMIT_BY_PAGE,
           sort: { createdAt: -1 }
         }).lean();
   
 
-    const clientCount = await Client.countDocuments(selector).exec();
+    const clientCount = await Material.countDocuments(selector).exec();
 
 
     const clientsWithProjects = await Promise.all(
@@ -132,14 +133,14 @@ export async function getClientInsulR(req, res, next) {
     selector._id = { $in: clients5 }
 
     
-        const client = await Client.find(selector, null, {
+        const client = await Material.find(selector, null, {
           limit: LIMIT_BY_PAGE,
           skip: (pageNumber - 1) * LIMIT_BY_PAGE,
           sort: { createdAt: -1 }
         }).lean();
   
 
-    const clientCount = await Client.countDocuments(selector).exec();
+    const clientCount = await Material.countDocuments(selector).exec();
 
 
     const clientsWithProjects = await Promise.all(
@@ -175,7 +176,7 @@ export async function getClientInsulR(req, res, next) {
 export async function getClient(req, res, next) {
   try {
     const { clientId } = req.params;
-    const client = await Client.findById(clientId).lean();
+    const client = await Material.findById(clientId).lean();
     const insul_r = await Insul_r.findById(clientId).lean();
 
 
@@ -183,14 +184,14 @@ export async function getClient(req, res, next) {
       if (insul_r) {
         
       }else{
-        return next(generateError("Client not found", 404));
+        return next(generateError("Material not found", 404));
     }
     }
     if (!insul_r) {
       if (client) {
         
       }else{
-        return next(generateError("Client not found", 404));
+        return next(generateError("Material not found", 404));
     }
     }
 
@@ -233,59 +234,106 @@ export async function getClient(req, res, next) {
   }
 }
 
-export async function createClient(req, res, next) {
+
+
+export async function getmaterialPC(req, res, next) {
   try {
-    const {
-      firstname,
-      lastname,
-      email,
-      phone,
-      serviceType,
-      geographicSector,
-      ZoneSector,
-      city,
-      zipcode,
-      referral,
-      lieux_de_naissance,
-      nationalite
-    } = req.body;
-
-    if (projectTypes.indexOf(serviceType) === -1) {
-      return next(generateError("Invalid service", 403));
-    }
-
-    const clientData = {
-      firstname,
-      lastname,
-      geographicSector,
-      ZoneSector,
-      email,
-      phone,
-      city,
-      zipcode,
-      referral,
-      lieux_de_naissance,
-      nationalite
+    const LIMIT_BY_PAGE = 10;
+    const { page = "", filter = "", types ,mandate=""} = req.query;
+    const pageNumber = Number(page) || 1;
+    const selector = {
+          type:mandate === "divers" ?{ $nin: ['Ordinateur', 'mobile']}:{ $regex: mandate , $options: "i" }
     };
 
-    const client = await new Client(clientData).save();
-
-    if (projectTypes.indexOf(serviceType) !== -1) {
-      const project = await new Project({
-        clientId: client,
-        type: serviceType
-      }).save();
-
-      await Client.updateOne({ _id: client._id }, { $addToSet: { projectTypes: serviceType } }).exec()
-
-
-      return res.json({
-        success: true,
-        data: {
-          projectId: project._id
-        }
-      });
+    if (types) {
+      const typesSplitted = types.split(',')
+      selector.type = { $elemMatch: { $in: typesSplitted } }
     }
+    const MaterialCount = await Material.countDocuments(selector).exec();
+
+    const material = await Material.find(selector, null, {
+      limit: LIMIT_BY_PAGE,
+      skip: (pageNumber - 1) * LIMIT_BY_PAGE,
+      sort: { createdAt: -1 }
+    }).lean();
+
+    const assigned = await Promise.all(
+      material.map(async (matérial) => {
+        matérial.equipe = await EquipmentAssignments.findOne({equipmentId:matérial._id}, "user_id status").lean();
+        return matérial
+      })
+    );
+
+    const mat = await Promise.all(
+      assigned.map(async (assigne) => {
+        if (assigne.equipe) {
+          
+          assigne.user = await User.findById(assigne.equipe.user_id,"displayName _id").lean();
+        }
+        return assigne
+  }))
+    // console.log(user);
+
+    // const MaterialCountWithUser = await Promise.all(
+    //   material.map(async (material) => {
+    //     const users = await User.find({
+    //       _Id: material.user_id,
+    //     }).lean();
+    //     Material.user = users;
+    //     return Material;
+    //   })
+    // );
+    // console.log(MaterialCountWithUser);
+
+    const pageCount = Math.ceil(MaterialCount / LIMIT_BY_PAGE);
+
+    return res.json({
+      success: true,
+      data: { Material: mat, pageCount, total: MaterialCount }
+    });
+  } catch (e) {
+    return next(generateError(e.message));
+  }
+}
+export async function getMyMaterial(req, res, next) {
+  try {
+
+    const material = await Material.find().lean()
+    const assigne = await EquipmentAssignments.find().lean()
+    
+    return res.json({ success: true, data: material,assigneEquipe: assigne});
+  } catch (e) {
+    next(generateError(e.message));
+  }
+}
+
+export async function createMaterial(req, res, next) {
+  try {
+    const {
+      user_id,
+      model,
+      nom,
+      divers,
+      num_seri
+    } = req.body;
+    const type= req.body.referral !=="divers" ? req.body.referral : divers[0];
+
+    const dataMaterial = {
+      type,
+      model,
+      nom,
+      num_seri
+    }
+
+    const material = await new Material(dataMaterial).save();
+
+    if (user_id !== "") {
+      const assigned = await new EquipmentAssignments({
+        equipmentId:material._id,
+        user_id:user_id
+      }).save();
+    }
+
     return res.json({ success: true, data: { completed: true } });
   } catch (e) {
     next(generateError(e.message));
@@ -305,28 +353,28 @@ export async function addProject(req, res, next) {
       return next(generateError("Invalid request", 401));
     }
 
-    const client = await Client.findById(clientId).lean();
+    const client = await Material.findById(clientId).lean();
     const insul_r = await Insul_r.findById(clientId).lean();
 
     if (!client) {
       if (insul_r) {
         
       }else{
-        return next(generateError("Client not found", 404));
+        return next(generateError("Material not found", 404));
     }
     }
     if (!insul_r) {
       if (client) {
         
       }else{
-        return next(generateError("Client not found", 404));
+        return next(generateError("Material not found", 404));
     }
     }
     const project = await new Project({ clientId, type: projectType,ZoneSector:ZoneSector }).save();
 
 
     if (client) {
-      await Client.updateOne({ _id: clientId }, { $addToSet: { projectTypes: projectType } }).exec()
+      await Material.updateOne({ _id: clientId }, { $addToSet: { projectTypes: projectType } }).exec()
 
       await ProjectEvent({
         projectId: project._id,
@@ -342,7 +390,6 @@ export async function addProject(req, res, next) {
     }
 
     return res.json({ success: true, data: { projectId: project._id } });
-    console.log(res);
   } catch (e) {
     next(generateError(e.message));
   }
@@ -467,7 +514,7 @@ export async function editClient(req, res, next) {
 
     const { clientId } = req.params;
     const opts = { runValidators: true };
-    const client = await Client.updateOne(
+    const client = await Material.updateOne(
       { _id: clientId },
       { $set: modifier },
       opts
@@ -483,13 +530,13 @@ export async function deleteClient(req, res, next) {
   try {
     const { clientId } = req.params;
 
-    const client = await Client.findById(clientId).lean();
+    const client = await Material.findById(clientId).lean();
 
     if (!client) {
       throw new Error("Cannot find client", 404);
     }
 
-    await Client.deleteOne({ _id: clientId }).exec();
+    await Material.deleteOne({ _id: clientId }).exec();
 
     return res.json({ success: true });
   } catch (e) {

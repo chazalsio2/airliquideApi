@@ -2,7 +2,8 @@ import _ from "underscore";
 import Property from "../models/Property";
 import { generateError, isAdmin, isAdminOrCommercial } from "../lib/utils";
 import Annonce from "../models/Annonce";
-
+import moment from 'moment';
+const fs = require('fs')
 /**
  * Creation d'une annonce
  * @param req
@@ -10,13 +11,12 @@ import Annonce from "../models/Annonce";
  * @param next
  * @returns {Promise<*>}
  */
-export async function createAnnonce(req, res, next) {
+export async function createAnnonce(propertyId,visibles,req,res,next) {
     try {
-        const { bienId } = req.params;
-        const biens = await Property.findById(bienId).lean();
+        const biens = await Property.findById(propertyId).lean();
 
         if (!biens) {
-            return next(generateError("Property not found", 404));
+             throw new Error("Property not found", 404);
         }
 
         const type = ()=> {
@@ -47,6 +47,7 @@ export async function createAnnonce(req, res, next) {
         const bien = {};
         if (biens.type) {
             bien.b_code_type = type();
+            bien.libelle_type= biens.type;
         }
         if (biens.ZoneSector) {
             bien.b_pays = biens.ZoneSector;
@@ -71,6 +72,9 @@ export async function createAnnonce(req, res, next) {
         // if (b_departement) {
         //     bien.b_departement = b_departement;
         // }
+        if(biens.ZoneSector){
+            bien.pays= biens.ZoneSector;
+        }
         if (biens.livingArea||biens.landArea) {
             bien.b_surface = biens.livingArea||biens.landArea;
         }
@@ -82,7 +86,7 @@ export async function createAnnonce(req, res, next) {
         //     bien.b_surface_sejour = b_surface_sejour;
         // }
         if (biens.numberOfRooms) {
-            bien.b_nombre_de_chambres = biens.numberOfRooms;
+            bien.nb_pieces_logement = biens.numberOfRooms;
         }
         if (biens.yearOfConstruction) {
             bien.b_annee_construction = biens.yearOfConstruction;
@@ -156,25 +160,28 @@ export async function createAnnonce(req, res, next) {
             prestation.p_prix = biens.salesPrice;
         }
 
+        
         const AnnonceData = {
-            reference,
-            published,
-            titre,
-            titre_anglais,
-            texte,
-            texte_anglais,
-            date_saisie,
-            visite_virtuelle,
+            reference:biens.ref,
+            // published,
+            titre:biens.name,
+            texte: biens.description,
+            date_saisie: moment(biens.createdAt).format('DD/MM/YYYY'),
+            visite_virtuelle: biens.virtualVisitLink,
             photos, // OBJET
             bien, // OBJET
             prestation // OBJET
         };
         //console.log( "AnnonceData :", AnnonceData)
         const annonce = await new Annonce(AnnonceData).save();
+        if(annonce){
+            fs.appendFile('annonce.json', `${JSON.stringify(annonce)}` , function (err) {   if (err) throw console.log(err);   console.log('Fichier créé !');});
+        }
 
-        return res.json({ success: true,data: { completed: true,annonce:annonce } });
+
+        // return res.json({ success: true,data: { completed: true,annonce:annonce } });
     } catch (e) {
-        next(generateError(e.message));
+        throw new Error(e.message);
     }
 }
 

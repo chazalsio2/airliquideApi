@@ -1,6 +1,6 @@
 import Property from "../models/Property";
 import Project from "../models/Project";
-import Client from "../models/Client";
+import Client from "../models/Material";
 import Insul_r from "../models/Insul_r";
 import User from "../models/User";
 import { generateError, isAdmin, isAdminOrCommercial } from "../lib/utils";

@@ -2,12 +2,16 @@ import { sendMessageToSlack } from "../lib/slack";
 import Project from "../models/Project";
 import Document from "../models/Document";
 import ProjectEvent from "../models/ProjectEvent";
-import Client from "../models/Client";
+import Client from "../models/Material";
 import User from "../models/User";
 import crypto from "crypto";
 import { generateError } from "../lib/utils";
 import { sendMandateSignatureConfirmation } from "../lib/email";
 import { uploadFileFromStringData } from "../lib/aws";
+import EquipmentAssignments from "../models/EquipmentAssignments";
+import Material from "../models/Material";
+
+
 
 import DocusignManager from "../lib/docusign";
 import { sendNewDocWebhook } from "../services/webhook.service";
@@ -18,6 +22,34 @@ function computeHash(payload) {
   hmac.end();
   return hmac.read().toString("base64");
 }
+export async function getOneUser(req, res, next) {
+  try {
+    const userid = req.params.userid;
+
+    // Récupérer l'utilisateur par son ID
+    const user = await User.findById(userid).lean();
+
+    // Récupérer les assignations d'équipement de l'utilisateur
+    user.equipe = await EquipmentAssignments.find({ user_id: user._id }).lean();
+
+    // Obtenir les IDs d'équipements à partir des assignations
+    const equipeIds = user.equipe.map((equipement) => equipement.equipmentId);
+
+    // Récupérer les matériaux correspondant aux IDs d'équipements
+    user.material = await Material.find({ _id: { $in: equipeIds } }).lean();
+    console.log(user.equipe);
+    console.log(user.material);
+
+    // Retourner les données de l'utilisateur
+    return res.json({ success: true, data: user });
+
+  } catch (e) {
+    // Gérer les erreurs ici
+    console.error(e);
+    return res.status(500).json({ success: false, error: 'Une erreur est survenue' });
+  }
+}
+
 
 export async function handleWebhookDocusign(req, res, next) {
   try {

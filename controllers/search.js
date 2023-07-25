@@ -1,6 +1,6 @@
 import { isAdminOrCommercial, isAdmin, generateError } from "../lib/utils";
 import Document from "../models/Document";
-import Client from "../models/Client";
+import Client from "../models/Material";
 import User from "../models/User";
 import Folder from "../models/Folder";
 import Training from "../models/Training";

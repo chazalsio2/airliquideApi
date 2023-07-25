@@ -30,12 +30,14 @@ import {
   getClients,
   getClientInsulR,
   getClient,
-  createClient,
+  createMaterial,
+  getmaterialPC,
   addProject,
   editClient,
   deleteClient,
-  deleteProject
-} from "./controllers/client";
+  deleteProject,
+  getMyMaterial
+} from "./controllers/material";
 import { publicCreateClient,publicCreateForm,publicCreateFormExtern } from "./controllers/public";
 import { createDossierNotaire,editDossierNotaire,editFinaleDossierNotaire } from "./controllers/dossierNotaire"
 import {
@@ -125,7 +127,7 @@ import {
   removeTraining,
   editTraining
 } from "./controllers/training";
-import { handleWebhookDocusign } from "./controllers/webhook";
+import { handleWebhookDocusign , getOneUser} from "./controllers/webhook";
 import { getDashboardData } from "./controllers/dashboard";
 import routeNotDefined from "./middlewares/routeNotDefined";
 import {
@@ -138,6 +140,8 @@ import {
   blackListeContact
 } from "./controllers/contact";
 import {createAnnonce, getAnnonces} from "./controllers/annonce";
+import {asignmentsMaterial,fetchAsignments,SuppAsignmentsMaterial,UpAsignmentsMaterial,DemandeAssignedUser,getAssigne} from "./controllers/assigned"
+
 
 const checkAdmin = (req, res, next) => checkRoles("admin", req, res, next);
 const checkAdminOrCommercial = (req, res, next) =>
@@ -903,19 +907,101 @@ app.put(
     deleteProject,
     errorHandle
   );
-  //// remove client
+  //// Ajout matériel
   app.post(
-    "/clients",
+    "/Material",
     passport.authenticate("jwt", { session: false }),
     checkAdminOrCommercial,
     checkAccountDesactivated,
-    createClient,
+    createMaterial,
+    errorHandle
+  );
+  // afficher matériel
+  app.get(
+    "/Material",
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    checkAccountDesactivated,
+    getmaterialPC,
+    errorHandle
+  );
+  app.get(
+    "/AllMaterial",
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    checkAccountDesactivated,
+    getMyMaterial,
+    errorHandle
+  );
+  // app.get('/messages', (req, res) => {
+  //   res.json(messages);
+  // });
+  app.post('/messages', (req, res) => {
+  messages.push(req.body);
+  res.json(req.body);
+});
+  app.get(
+    "/assigned",
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    checkAccountDesactivated,
+    getAssigne,
+    errorHandle
+  );
+  //assigner un mat"riel
+  app.post(
+    "/assignedUser/:materialid",
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    asignmentsMaterial,
     errorHandle
   );
   app.post(
+    "/DemandeAssignedUser/:materialid",
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    checkAccountDesactivated,
+    DemandeAssignedUser,
+    errorHandle
+  );
+  app.delete(
+    "/assigned/:materialid",
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    checkAccountDesactivated,
+    SuppAsignmentsMaterial,
+    errorHandle
+  );
+  app.put(
+    "/assigned/:materialid",
+    passport.authenticate("jwt", { session: false }),
+    checkAdmin,
+    checkAccountDesactivated,
+    UpAsignmentsMaterial,
+    errorHandle
+  );
+  app.get(
+    "/assigned/:materialid",
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    checkAccountDesactivated,
+    fetchAsignments,
+    errorHandle
+  );
+  app.get(
+    "/user/:userid",
+    passport.authenticate("jwt", { session: false }),
+    checkAdminOrCommercial,
+    checkAccountDesactivated,
+    getOneUser,
+    errorHandle
+  );
+  
+  app.post(
     "/clients/taly",
     passport.authenticate("jwt", { session: false }),
-    createClient,
+    createMaterial,
     errorHandle
   );
 //check email in visionR
@@ -924,7 +1010,7 @@ app.put(
     passport.authenticate("jwt", { session: false }),
     checkAdminOrCommercial,
     checkAccountDesactivated,
-    createClient,
+    createMaterial,
     errorHandle
   );
 
